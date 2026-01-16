@@ -1,0 +1,92 @@
+.contact-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    position: relative;
+}
+
+.ctc-user-infos {
+    min-width: 300px;
+    min-height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: #d9d4d4;
+    gap: 10px;
+    padding-top: 60px;
+    padding-bottom: 60px;
+    padding: 20px;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    z-index: 1; 
+    cursor: url('/assets/cursor.png') 32 32, pointer;}
+
+.ctc-content:hover {
+    cursor: url('/assets/cursor.png') 32 32, pointer;
+}
+
+.ctc-content {
+    height: 500px;
+    max-width: 400px;
+    position: relative;
+    bottom: 50px;
+    right: -10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: #9b3b3b;
+    gap: 10px;
+    padding-top: 60px;
+    padding-bottom: 60px;
+    padding: 20px;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    z-index: 1; 
+    cursor: url('/assets/sn.cur.png'), auto;
+}
+
+.ctc-content.below {
+    z-index: 2; 
+}
+
+.ctc-content:hover {
+    cursor: url('/assets/sn.cur') 32 32, pointer;
+}
+
+.ctc-user-infos input,
+.ctc-content select,
+.ctc-content textarea {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 300px;
+}
+
+.ctc-content button {
+    padding: 10px;
+    border: none;
+    background-color: #0073e6;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.ctc-content button:hover {
+    background-color: #005bb5;
+}
+
+.ctc-user-infos,
+.ctc-content {
+    z-index: 1;
+    transition: z-index 0.3s ease, transform 0.3s ease;
+}
+
+.ctc-user-infos.active,
+.ctc-content.active {
+    z-index: 1000;
+}

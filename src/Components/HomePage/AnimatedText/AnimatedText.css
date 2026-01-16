@@ -1,0 +1,217 @@
+.homepage-text-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    font-family: 'Arial', sans-serif;
+    transform: translate(-50%, -50%);
+    color: white;
+    text-align: center;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100vw;
+}
+
+.text {
+  /* font-size: 40px; */
+  font-weight: bold;
+  transition: opacity 1s ease-out;
+  position: relative;
+}
+
+.hikari {
+  font-size: 75px;
+  opacity: 0;
+  height: 60px;
+  /* transition: transform 1s ease-in-out, opacity 1s ease-in-out; */
+}
+
+.fade-in {
+  animation: fadeIn 2s forwards;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.pulse {
+  animation: pulse 1.5s ease-out forwards;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.slogan {
+  font-size: 44px;
+  font-family: 'Oswald', sans-serif;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 0;
+  opacity: 0;
+  position: relative;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.7), 0 0 20px rgba(255, 255, 255, 0.7);
+}
+
+.typewriter {
+  animation: typewriter 2.5s steps(22) 1s forwards, fadeIn 1s forwards; 
+}
+
+@keyframes typewriter {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+.slogan::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 70%);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  animation: dynamicChargeEffect 1.5s infinite;
+}
+
+@keyframes dynamicChargeEffect {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1) translateX(0) translateY(0);
+  }
+  25% {
+    opacity: 0.7;
+    transform: translate(-50%, -50%) scale(1.1) translateX(10px) translateY(-10px); 
+  }
+  50% {
+    opacity: 0.5;
+    transform: translate(-50%, -50%) scale(1.2) translateX(-10px) translateY(10px); 
+  }
+  75% {
+    opacity: 0.3;
+    transform: translate(-50%, -50%) scale(1.3) translateX(20px) translateY(-20px); 
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.5) translateX(0) translateY(0);
+  }
+}
+
+.slide-out-right {
+  animation: slideOutRight 1s forwards;
+}
+
+@keyframes slideOutRight {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  70% {
+    transform: translateX(100vw);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(100vw);
+    opacity: 0;
+  }
+}
+
+.animated-text-container {
+  pointer-events: none;  
+  z-index: 100;
+  top: 50%;
+  left: 50%;
+}
+
+
+/* .light-effect {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 100%);
+  opacity: 0.7;
+  pointer-events: none;
+  z-index: 5;
+  transform: translateY(-50%);
+} */
+
+.background-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); 
+  filter: blur(8px); 
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+}
+
+.background-overlay.active {
+  opacity: 1;
+}
+
+.homepage-text-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-family: 'Arial', sans-serif;
+  transform: translate(-50%, -50%);
+  color: white;
+  text-align: center;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+
+@media (max-width: 442px) {
+  .slogan, .hikari {
+      font-size: 30px !important;
+      padding-top: 8%;
+  }
+}
+
+@font-face {
+  font-family: 'Monoskull';
+  src: url('./assets/fonts/GloryMessup-drjPE.woff2') format('woff2'),
+       url('./assets/fonts/GloryMessup-drjPE.woff') format('woff'),
+       url('./assets/fonts/GloryMessup-drjPE.otf') format('opentype'),
+       url('./assets/fonts/GloryMessup-drjPE.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.slogan {
+  font-family: 'Monoskull', sans-serif;
+  color: rgb(255, 255, 255);
+}

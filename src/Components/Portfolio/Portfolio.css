@@ -1,0 +1,60 @@
+.portfolio-container-all {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+.portfolio-title {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    color: white;
+    font-size: 87px;
+    font-family: "Oswald", serif;
+}
+
+.portfolio-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+}
+
+.portfolio-item {
+    position: relative;
+    width: 100%; 
+    height: 200px; 
+    overflow: hidden;
+}
+
+.project-images {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.image-slider {
+    display: flex;
+    width: 100%;
+    transition: transform 0.2s ease;
+    scroll-snap-type: x mandatory; 
+}
+
+.image-slider img {
+    width: 100%; 
+    object-fit: cover; 
+    scroll-snap-align: start; 
+}
+
+.project-details {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    z-index: 3;
+    color: white;
+    font-size: 16px;
+}
+  
