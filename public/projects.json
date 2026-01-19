@@ -1,7 +1,8 @@
 [
     {
       "id": 1,
-      "title": "Projet 1",
+      "title": "Excuse_App",
+      "function": "Web Dev",
       "description": "Description projet 1",
       "images": [
         "/assets/color.png",
@@ -14,8 +15,21 @@
     },
     {
         "id": 2,
-        "title": "Projet 2",
+        "title": "SideGeek",
+        "function": "Web Dev",
         "description": "Description projet 2",
+        "images": [
+          "/assets/SideGeek/s1.png",
+          "/assets/SideGeek/s3.png",
+          "/assets/SideGeek/side.png"
+        ],
+        "link": "https://www.lien.com"
+    },
+    {
+        "id": 3,
+        "title": "Pasta_Timer",
+        "function": "Web Dev",
+        "description": "Description projet 3",
         "images": [
           "/assets/color.png",
           "/assets/s.jpg",
@@ -26,17 +40,102 @@
         "link": "https://www.lien.com"
     },
     {
-        "id": 3,
-        "title": "Projet 3",
-        "description": "Description projet 3",
-        "images": [
-          "/assets/color.png",
-          "/assets/s.jpg",
-          "/assets/aura.jpg",
-          "/assets/s.jpg",
-          "/assets/aura.jpg"
-        ],
-        "link": "https://www.lien.com"
-    }
-  ]
+      "id": 4,
+      "title": "Mc_Do",
+      "function": "Web Dev",
+      "description": "Description projet 3",
+      "images": [
+        "/assets/color.png",
+        "/assets/s.jpg",
+        "/assets/aura.jpg",
+        "/assets/s.jpg",
+        "/assets/aura.jpg"
+      ],
+      "link": "https://www.lien.com"
+  },
+  {
+    "id": 5,
+    "title": "Pasta_Timer",
+    "function": "Web Dev",
+    "description": "Description projet 3",
+    "images": [
+      "/assets/color.png",
+      "/assets/s.jpg",
+      "/assets/aura.jpg",
+      "/assets/s.jpg",
+      "/assets/aura.jpg"
+    ],
+    "link": "https://www.lien.com"
+  },
+  {
+    "id": 6,
+    "title": "Tarmac",
+    "function": "3D",
+    "description": "Description projet 3",
+    "images": [
+      "/assets/color.png",
+      "/assets/s.jpg",
+      "/assets/aura.jpg",
+      "/assets/s.jpg",
+      "/assets/aura.jpg"
+    ],
+    "link": "https://www.lien.com"
+  },
+  {
+    "id": 7,
+    "title": "Brainy",
+    "function": "3D",
+    "description": "Description projet 3",
+    "images": [
+      "/assets/color.png",
+      "/assets/s.jpg",
+      "/assets/aura.jpg",
+      "/assets/s.jpg",
+      "/assets/aura.jpg"
+    ],
+    "link": "https://www.lien.com"
+  },
+  {
+    "id": 8,
+    "title": "Why Not",
+    "function": "Web Dev",
+    "description": "Description projet 3",
+    "images": [
+      "/assets/color.png",
+      "/assets/s.jpg",
+      "/assets/aura.jpg",
+      "/assets/s.jpg",
+      "/assets/aura.jpg"
+    ],
+    "link": "https://www.lien.com"
+  },
+  {
+    "id": 9,
+    "title": "MolenGame",
+    "function": "Web Dev",
+    "description": "Description projet 3",
+    "images": [
+      "/assets/color.png",
+      "/assets/s.jpg",
+      "/assets/aura.jpg",
+      "/assets/s.jpg",
+      "/assets/aura.jpg"
+    ],
+    "link": "https://www.lien.com"
+  },
+  {
+    "id": 10,
+    "title": "Sneakers",
+    "function": "Web Dev",
+    "description": "Description projet 3",
+    "images": [
+      "/assets/color.png",
+      "/assets/s.jpg",
+      "/assets/aura.jpg",
+      "/assets/s.jpg",
+      "/assets/aura.jpg"
+    ],
+    "link": "https://www.lien.com"
+  }
+]
   
