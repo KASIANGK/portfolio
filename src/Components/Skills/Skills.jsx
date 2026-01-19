@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import gsap from 'gsap';
 import { FaGithub, FaTwitter, FaLinkedin, FaInstagram } from 'react-icons/fa';
-import './Members.css';
+import './Skills.css';
 
 const Members = () => {
     const [members, setMembers] = useState([]);

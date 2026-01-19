@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import './Expertise.css';
+import './Essential.css';
 import gsap from 'gsap';
 
-const Expertise = () => {
+const Essential = () => {
     
     const [services, setServices] = useState([]);
     const [hovered, setHovered] = useState(null);
@@ -84,4 +84,4 @@ const Expertise = () => {
     )
 }
 
-export default Expertise
+export default Essential

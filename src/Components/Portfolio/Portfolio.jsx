@@ -1,19 +1,25 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+// src/Pages/Portfolio/Portfolio.jsx
+import React, { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import "./Portfolio.css";
 import gsap from "gsap";
 
-const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
+const clamp01 = (n) => Math.max(0, Math.min(1, n));
 
 export default function Portfolio() {
   const [projects, setProjects] = useState([]);
   const [hovered, setHovered] = useState(null);
 
-  // ✅ Filters (All auto-checks both)
+  // ✅ Filters
   const [filters, setFilters] = useState({ all: true, web: true, d3: true });
 
-  // refs per card
-  const sliderRefs = useRef(new Map());
-  const wrapperRefs = useRef(new Map());
+  // ✅ Pagination
+  const PAGE_SIZE = 6;
+  const [page, setPage] = useState(1); // 1-based
+  const gridRef = useRef(null);
+
+  // Refs
+  const viewportRefs = useRef(new Map()); // viewport (pcard__slider)
+  const trackRefs = useRef(new Map()); // track (pcard__track)
 
   const isTouch = useMemo(() => {
     if (typeof window === "undefined") return false;
@@ -31,16 +37,18 @@ export default function Portfolio() {
       .catch((err) => console.error("Error:", err));
   }, []);
 
-  const setSliderRef = (id) => (el) => {
+  // --- refs setters
+  const setViewportRef = (id) => (el) => {
     if (!el) return;
-    sliderRefs.current.set(id, el);
+    viewportRefs.current.set(id, el);
   };
 
-  const setWrapperRef = (id) => (el) => {
+  const setTrackRef = (id) => (el) => {
     if (!el) return;
-    wrapperRefs.current.set(id, el);
+    trackRefs.current.set(id, el);
   };
 
+  // --- overlay anim
   const animateOverlayIn = (id) => {
     gsap.to(`.pcard__overlay--${id}`, { opacity: 1, duration: 0.22, ease: "power2.out" });
     gsap.to(`.pcard__cta--${id}`, { y: 0, opacity: 1, duration: 0.26, ease: "power3.out" });
@@ -51,43 +59,87 @@ export default function Portfolio() {
     gsap.to(`.pcard__cta--${id}`, { y: 8, opacity: 0, duration: 0.18, ease: "power2.out" });
   };
 
+  // --- smooth “scan swipe” (mouse -> translateX)
+  const handleMove = (e, id) => {
+    if (isTouch) return;
+
+    const viewport = viewportRefs.current.get(id);
+    const track = trackRefs.current.get(id);
+    if (!viewport || !track) return;
+
+    const rect = viewport.getBoundingClientRect();
+    const t = clamp01((e.clientX - rect.left) / rect.width);
+
+    const slidesCount = track.children?.length || 0;
+    if (slidesCount <= 1) return;
+
+    const vw = viewport.clientWidth;
+    const maxX = (slidesCount - 1) * vw; // total travel
+    const targetX = -t * maxX;
+
+    if (!track._quickX) {
+      track._quickX = gsap.quickTo(track, "x", { duration: 0.28, ease: "power3.out" });
+    }
+    track._quickX(targetX);
+  };
+
+  // --- optional: auto-swipe loop on hover (glide)
+  const startAutoSwipe = (id) => {
+    if (isTouch) return;
+
+    const viewport = viewportRefs.current.get(id);
+    const track = trackRefs.current.get(id);
+    if (!viewport || !track) return;
+
+    const slidesCount = track.children?.length || 0;
+    if (slidesCount <= 1) return;
+
+    // kill existing
+    if (track._tl) {
+      track._tl.kill();
+      track._tl = null;
+    }
+
+    const vw = viewport.clientWidth;
+
+    const tl = gsap.timeline({ repeat: -1, defaults: { ease: "power2.inOut" } });
+    tl.set(track, { x: 0 });
+
+    for (let i = 1; i < slidesCount; i++) {
+      tl.to(track, { x: -i * vw, duration: 0.6 }, "+=0.55");
+    }
+    tl.to(track, { x: 0, duration: 0.7 }, "+=0.65");
+
+    track._tl = tl;
+  };
+
+  const stopAutoSwipe = (id) => {
+    const track = trackRefs.current.get(id);
+    if (!track) return;
+
+    if (track._tl) {
+      track._tl.kill();
+      track._tl = null;
+    }
+  };
+
   const handleEnter = (id) => {
     if (isTouch) return;
     setHovered(id);
     animateOverlayIn(id);
+
+    // si tu veux juste “mouse scan” sans loop: commente la ligne suivante
+    startAutoSwipe(id);
   };
 
   const handleLeave = (id) => {
     if (isTouch) return;
     setHovered(null);
     animateOverlayOut(id);
+    stopAutoSwipe(id);
   };
 
-  // ✅ Desktop "scan": move mouse -> scroll horizontally (reliable)
-  const handleMove = (e, id) => {
-    if (isTouch) return;
-
-    const slider = sliderRefs.current.get(id);
-    const wrapper = wrapperRefs.current.get(id);
-    if (!slider || !wrapper) return;
-
-    const rect = wrapper.getBoundingClientRect();
-    const localX = e.clientX - rect.left;
-    const t = clamp(localX / rect.width, 0, 1);
-
-    const max = Math.max(0, slider.scrollWidth - slider.clientWidth);
-    const target = t * max;
-
-    if (!slider._quickScroll) {
-      slider._quickScroll = gsap.quickTo(slider, "scrollLeft", {
-        duration: 0.25,
-        ease: "power3.out",
-      });
-    }
-    slider._quickScroll(target);
-  };
-
-  // ---- Filter logic (as requested)
+  // --- filters logic
   const toggleAll = () => setFilters({ all: true, web: true, d3: true });
 
   const toggleWeb = () => {
@@ -119,15 +171,88 @@ export default function Portfolio() {
     });
   }, [projects, filters]);
 
+  // ✅ Pagination derived values
+  const totalPages = useMemo(() => {
+    const t = Math.ceil(filteredProjects.length / PAGE_SIZE);
+    return Math.max(1, t);
+  }, [filteredProjects.length]);
+
+  // ✅ Reset to page 1 when filters change
+  useEffect(() => {
+    setPage(1);
+  }, [filters]);
+
+  // ✅ Clamp page if current page becomes invalid (ex: fewer results)
+  useEffect(() => {
+    setPage((p) => Math.min(Math.max(1, p), totalPages));
+  }, [totalPages]);
+
+  const pagedProjects = useMemo(() => {
+    const start = (page - 1) * PAGE_SIZE;
+    return filteredProjects.slice(start, start + PAGE_SIZE);
+  }, [filteredProjects, page]);
+
+  // ✅ “Showing 1–6 of 18”
+  const startIndex = filteredProjects.length === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
+  const endIndex = Math.min(page * PAGE_SIZE, filteredProjects.length);
+
+  const scrollGridIntoView = useCallback(() => {
+    const el = gridRef.current;
+    if (!el) return;
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, []);
+
+  const goToPage = useCallback(
+    (nextPage) => {
+      setPage(() => {
+        const p = Math.min(Math.max(1, nextPage), totalPages);
+        return p;
+      });
+      requestAnimationFrame(scrollGridIntoView);
+    },
+    [totalPages, scrollGridIntoView]
+  );
+
+  const goPrev = () => goToPage(page - 1);
+  const goNext = () => goToPage(page + 1);
+
+  // Dots logic (premium + not too many)
+  const pageDots = useMemo(() => {
+    const maxDots = 7;
+    if (totalPages <= maxDots) return Array.from({ length: totalPages }, (_, i) => i + 1);
+
+    const windowSize = 5;
+    let start = Math.max(1, page - Math.floor(windowSize / 2));
+    let end = start + windowSize - 1;
+
+    if (end > totalPages) {
+      end = totalPages;
+      start = end - windowSize + 1;
+    }
+
+    const dots = [];
+    dots.push(1);
+
+    if (start > 2) dots.push("…");
+
+    for (let i = start; i <= end; i++) {
+      if (i !== 1 && i !== totalPages) dots.push(i);
+    }
+
+    if (end < totalPages - 1) dots.push("…");
+
+    dots.push(totalPages);
+
+    return dots.filter((v, idx, arr) => !(v === arr[idx - 1]));
+  }, [page, totalPages]);
+
   return (
     <div className="portfolio">
       <header className="portfolio__header">
         <div className="portfolio__headerInner">
           <div className="portfolio__titleWrap">
             <h1 className="portfolio__title">PORTFOLIO</h1>
-            <p className="portfolio__subtitle">
-              Web Dev & 3D — a selection of my builds.
-            </p>
+            <p className="portfolio__subtitle">Web Dev & 3D — a selection of my builds.</p>
 
             <div className="portfolio__filters" role="group" aria-label="Project filters">
               <label className="pf">
@@ -154,11 +279,14 @@ export default function Portfolio() {
         </div>
       </header>
 
-      <section className="portfolio__grid">
-        {filteredProjects.map((project) => {
+      {/* ✅ GRID */}
+      <section className="portfolio__grid" ref={gridRef}>
+        {pagedProjects.map((project) => {
           const id = project.id;
           const images = Array.isArray(project.images) ? project.images.filter(Boolean) : [];
           const cover = project.cover || images[0];
+
+          const slides = [...(cover ? [cover] : []), ...images.filter((src) => src !== cover)];
 
           return (
             <article
@@ -168,23 +296,20 @@ export default function Portfolio() {
               onMouseLeave={() => handleLeave(id)}
               onMouseMove={(e) => handleMove(e, id)}
             >
-              <div className="pcard__media" ref={setWrapperRef(id)}>
+              <div className="pcard__media">
                 <div className="pcard__scanlines" />
 
-                <div className="pcard__slider" ref={setSliderRef(id)}>
-                  {cover && (
-                    <div className="pcard__imgWrap pcard__imgWrap--cover">
-                      <img src={cover} alt={`${project.title} cover`} loading="lazy" />
-                    </div>
-                  )}
-
-                  {images
-                    .filter((src) => src !== cover)
-                    .map((src, idx) => (
-                      <div className="pcard__imgWrap" key={`${id}-${idx}`}>
-                        <img src={src} alt={`${project.title} ${idx + 2}`} loading="lazy" />
+                <div className="pcard__slider" ref={setViewportRef(id)}>
+                  <div className="pcard__track" ref={setTrackRef(id)}>
+                    {slides.map((src, idx) => (
+                      <div
+                        className={`pcard__imgWrap ${idx === 0 ? "pcard__imgWrap--cover" : ""}`}
+                        key={`${id}-${idx}`}
+                      >
+                        <img src={src} alt={`${project.title} ${idx + 1}`} loading="lazy" />
                       </div>
                     ))}
+                  </div>
                 </div>
 
                 <div className={`pcard__overlay pcard__overlay--${id}`} />
@@ -193,7 +318,6 @@ export default function Portfolio() {
               <div className="pcard__content">
                 <div className="pcard__top">
                   <h3 className="pcard__title">{project.title}</h3>
-
                   <div className="pcard__tags">
                     <span className="pcard__tag">{project.function}</span>
                     {project.tags?.slice?.(0, 2)?.map((t) => (
@@ -223,104 +347,63 @@ export default function Portfolio() {
           );
         })}
       </section>
+
+      {/* ✅ PAGINATION */}
+      <nav className="portfolio__pager" aria-label="Portfolio pagination">
+        <button className="ppg__btn" onClick={goPrev} disabled={page <= 1} aria-label="Previous page">
+          <span className="ppg__icon" aria-hidden="true">
+            ←
+          </span>
+          <span className="ppg__txt">Prev</span>
+        </button>
+
+        <div className="ppg__center">
+          <div className="ppg__dots" role="list" aria-label="Pages">
+            {pageDots.map((d, idx) => {
+              if (d === "…") {
+                return (
+                  <span className="ppg__ellipsis" key={`e-${idx}`} aria-hidden="true">
+                    …
+                  </span>
+                );
+              }
+              const p = d;
+              const active = p === page;
+              return (
+                <button
+                  key={p}
+                  type="button"
+                  className={`ppg__dot ${active ? "is-active" : ""}`}
+                  onClick={() => goToPage(p)}
+                  aria-current={active ? "page" : undefined}
+                  aria-label={`Go to page ${p}`}
+                />
+              );
+            })}
+          </div>
+
+          <div className="ppg__meta" aria-label="Page indicator">
+            <span className="ppg__showing">
+              Showing <b>{startIndex}</b>–<b>{endIndex}</b> of <b>{filteredProjects.length}</b>
+            </span>
+            <span className="ppg__sep" aria-hidden="true">
+              •
+            </span>
+            <span className="ppg__count">
+              Page <b>{page}</b> / <b>{totalPages}</b>
+            </span>
+          </div>
+        </div>
+
+        <button className="ppg__btn" onClick={goNext} disabled={page >= totalPages} aria-label="Next page">
+          <span className="ppg__txt">Next</span>
+          <span className="ppg__icon" aria-hidden="true">
+            →
+          </span>
+        </button>
+      </nav>
     </div>
   );
 }
 
 
-
-
-
-
-
-// import React, { useEffect, useState } from 'react';
-// import './Portfolio.css';
-// import gsap from 'gsap';
-
-// const Portfolio = () => {
-//   const [projects, setProjects] = useState([]) 
-//   const [hovered, setHovered] = useState(null) 
-//   const [lastScrollPosition, setLastScrollPosition] = useState({}) // stocker la derniere position du slide 
-
-
-//   useEffect(() => {
-//     fetch('/projects.json')
-//       .then(response => response.json()) 
-//       .then(projectsData => {
-//         setProjects(projectsData); 
-//       })
-//       .catch(error => console.error("Error:", error)); 
-//   }, []); 
-
-//   // fonction qui s'active au survol d'un projet
-//   const handleMouseEnter = (id) => {
-//     setHovered(id) // marquer le projet comme survole
-//     gsap.to(`.project-images-${id}`, { opacity: 1, duration: 0.5 }); 
-//     gsap.to(`.project-image-${id}`, { opacity: 0.5, duration: 0.5 }); 
-//   }
-
-//   // fonction qui s'active quand le survol d'un projet est quitte
-//   const handleMouseLeave = (id) => {
-//     setHovered(null) // pour enlever le survol
-//     // reinitialisation du defilement en appliquant la derniere position
-//     const imageSlider = document.querySelector(`.image-slider-${id}`);
-//     if (imageSlider && lastScrollPosition[id] !== undefined) {
-//       imageSlider.style.transform = `translateX(-${lastScrollPosition[id]}px)`; // reinitialisation du defilement selon la derniere position
-//     }
-//   }
-
-//   // fonction qui gere le mouvement de la mouse pour defiler les images horizontalement
-//   const handleMouseMove = (e, id) => {
-//     const { clientX, currentTarget } = e; // coordonnees de la mouse
-//     const { width } = currentTarget.getBoundingClientRect(); // largeur de l'element cible
-//     const mouseXPercentage = (clientX / width) * 100; // pourcentage du mouvement horizontal de la mouse
-
-//     // recuperation du slider des images
-//     const imageSlider = document.querySelector(`.image-slider-${id}`);
-//     if (imageSlider) {
-//       const totalWidth = imageSlider.scrollWidth; // largeur totale des images dans le slider
-//       const offset = (mouseXPercentage / 100) * (totalWidth - width); // calcul du deplacement horizontal en fonction du pourcentage de la mouse
-//       imageSlider.style.transform = `translateX(-${offset}px)`; // deplacement sur le slider
-
-//       // memoire de la derniere position du defilement pour chaque projet
-//       setLastScrollPosition(prevState => ({
-//         ...prevState,
-//         [id]: offset // stockage de la nouvelle position
-//       }));
-//     }
-//   }
-
-//   return (
-//     <div className='portfolio-container-all'>
-//         <div className='portfolio-title'>
-//             <h3>Portfolio</h3>
-//         </div>
-//         <div className="portfolio-container">
-//         {projects.map((project) => (
-//             <div 
-//             key={project.id} 
-//             className="portfolio-item"
-//             onMouseEnter={() => handleMouseEnter(project.id)}
-//             onMouseLeave={() => handleMouseLeave(project.id)} 
-//             onMouseMove={(e) => handleMouseMove(e, project.id)} 
-//             >
-//             <div className={`project-images project-images-${project.id}`}>
-//                 <div className={`image-slider image-slider-${project.id}`}>
-//                 {Array.isArray(project.images) && project.images.map((img, index) => (
-//                     <img key={index} src={img} alt={`Additional ${project.title}`} /> // affichage des images supplementaires du projet
-//                 ))}
-//                 </div>
-//             </div>
-//             <div className="project-details">
-//                 <h3>{project.title}</h3> 
-//                 <p>{project.description}</p> 
-//                 <a href={project.link} target="_blank" rel="noopener noreferrer">View Project</a> 
-//             </div>
-//             </div>
-//         ))}
-//         </div>
-//     </div>
-//   )
-// }
-
-// export default Portfolio

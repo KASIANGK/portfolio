@@ -37,10 +37,10 @@ const Navbar = () => {
         <div className={`menu ${isOpen ? 'open' : ''}`}>
             <ul>
                 <li><a href="/">Home</a></li>
-                <li><a href="/expertise">Expertise</a></li>
+                <li><a href="/essential">Essential</a></li>
                 <li><a href="/about">About</a></li>
                 <li><a href="/contact">Ctc</a></li>
-                <li><a href="/members">Members</a></li>
+                <li><a href="/skills">Skills</a></li>
                 <li><a href="/portfolio">Portfolio</a></li>
             </ul>
             <div className="social-icons-navbar">
