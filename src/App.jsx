@@ -4,11 +4,11 @@ import { ThemeProvider } from "./ThemeContext";
 
 import HomeCity from "./Components/HomeCity/HomeCity";
 import About from "./Components/About/About";
-import Expertise from "./Components/Expertise/Expertise";
+import Essential from "./Components/Essential/Essential";
 import Navbar from "./Components/Navbar/Navbar";
-import Members from "./Components/Members/Members";
+import Skills from "./Components/Skills/Skills";
 import Contact from "./Components/Contact/Contact";
-import AnimatedText from "./Components/HomePage/AnimatedText/AnimatedText";
+// import AnimatedText from "./Components/HomePage/AnimatedText/AnimatedText";
 import Dandelion from "./Components/Dandlion/Dandlion";
 import Footer from "./Components/Footer/Footer";
 import Portfolio from "./Components/Portfolio/Portfolio";
@@ -25,12 +25,12 @@ function Layout() {
 
       <Routes>
         <Route path="/" element={<HomeCity />} />
-        <Route path="/expertise" element={<Expertise />} />
-        <Route path="/members" element={<Members />} />
+        <Route path="/essential" element={<Essential />} />
+        <Route path="/skills" element={<Skills />} />
         <Route path="/about" element={<About />} />
         <Route path="/portfolio" element={<Portfolio />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="/animated-txt" element={<AnimatedText />} />
+        {/* <Route path="/animated-txt" element={<AnimatedText />} /> */}
       </Routes>
 
       <Footer />

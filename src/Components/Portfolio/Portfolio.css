@@ -110,10 +110,7 @@
   }
   
   @media (max-width: 520px) {
-    .portfolio__headerInner {
-      grid-template-columns: 1fr;
-      align-items: start;
-    }
+    .portfolio__headerInner { grid-template-columns: 1fr; align-items: start; }
     .portfolio__chip { justify-self: start; max-width: 100%; }
   }
   
@@ -139,11 +136,7 @@
     color: rgba(255,255,255,0.84);
   }
   
-  .pf input {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
-  }
+  .pf input { position: absolute; opacity: 0; pointer-events: none; }
   
   .pf__box {
     width: 18px;
@@ -170,8 +163,6 @@
     border-radius: 4px;
     background: linear-gradient(135deg, rgba(255,0,170,0.9), rgba(124,58,237,0.9));
   }
-  
-  .pf__label { opacity: 0.95; }
   
   /* =========================
      GRID
@@ -208,7 +199,7 @@
   }
   
   /* =========================
-     MEDIA (frame + slider inside)
+     MEDIA
   ========================= */
   .pcard__media {
     position: relative;
@@ -246,7 +237,7 @@
     filter: drop-shadow(0 0 10px rgba(255, 0, 170, 0.22));
   }
   
-  /* Scanlines overlay */
+  /* scanlines overlay */
   .pcard__scanlines {
     position: absolute;
     inset: 0;
@@ -264,29 +255,40 @@
   }
   
   /* =========================
-     SLIDER (✅ 1 image visible, then scroll for others)
+     SLIDER VIEWPORT + TRACK
+     (✅ transform translateX on TRACK => glide smooth)
   ========================= */
   .pcard__slider {
     position: absolute;
     inset: var(--mediaPad);
   
-    display: flex;
-    gap: 0;
-    padding: 0;
-  
     border-radius: 18px;
-    overflow: hidden; /* keep rounded clip */
+    overflow: hidden; /* ✅ keep rounded clip */
+    z-index: 4;
   
-    overflow-x: auto; /* ✅ allow scrollLeft + swipe */
+    /* touch: can swipe horizontally if you want (track width allows it) */
+    overflow-x: auto;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
   
     scrollbar-width: none;
-    z-index: 4;
   }
   .pcard__slider::-webkit-scrollbar { height: 0px; }
   
-  /* Each slide full width */
+  /* ✅ On desktop, we DON’T want native scroll, we animate transform */
+  @media (hover: hover) and (pointer: fine) {
+    .pcard__slider { overflow: hidden; }
+  }
+  
+  /* track that moves */
+  .pcard__track {
+    display: flex;
+    height: 100%;
+    will-change: transform;
+    transform: translate3d(0,0,0);
+  }
+  
+  /* each slide = 100% of viewport */
   .pcard__imgWrap {
     flex: 0 0 100%;
     height: 100%;
@@ -295,7 +297,7 @@
     background: rgba(0,0,0,0.18);
   }
   
-  /* Default (other images): NEVER crop */
+  /* images: non-crop by default */
   .pcard__imgWrap img {
     width: 100%;
     height: 100%;
@@ -306,7 +308,7 @@
     filter: saturate(1.02) contrast(1.02);
   }
   
-  /* Cover: looks premium, fills frame */
+  /* cover looks premium */
   .pcard__imgWrap--cover img {
     object-fit: cover;
   }
@@ -384,7 +386,7 @@
     display: flex;
     gap: 10px;
     align-items: center;
-    opacity: 0;               /* desktop hidden until hover (gsap) */
+    opacity: 0;
     transform: translateY(8px);
   }
   
@@ -403,11 +405,7 @@
     letter-spacing: 0.04em;
     transition: transform 120ms ease, filter 120ms ease;
   }
-  
-  .pcard__btn:hover {
-    transform: translateY(-1px);
-    filter: brightness(1.02);
-  }
+  .pcard__btn:hover { transform: translateY(-1px); filter: brightness(1.02); }
   
   .pcard__btn--ghost {
     background: rgba(255, 255, 255, 0.08);
@@ -415,18 +413,12 @@
     border-color: rgba(255, 0, 170, 0.28);
   }
   
-  /* Touch: CTA visible + overlay visible */
+  /* Touch: CTA + overlay visible */
   @media (hover: none) {
-    .pcard__cta {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    .pcard__overlay {
-      opacity: 1;
-    }
+    .pcard__cta { opacity: 1; transform: translateY(0); }
+    .pcard__overlay { opacity: 1; }
   }
   
-  /* Hint */
   .pcard__hint {
     font-size: 11px;
     color: rgba(255, 255, 255, 0.60);
@@ -462,71 +454,140 @@
       to { transform: translateX(60%) rotate(6deg); }
     }
   }
-  
-  
-  
-  
-  
-  
-
-
-/* .portfolio-container-all {
-    width: 100%;
-    display: flex;
+  /* =========================
+   PAGINATION
+========================= */
+.portfolio__pager {
+    width: var(--container);
+    margin: 22px auto 0;
+    padding: 14px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.10);
+    background:
+      radial-gradient(900px 240px at 18% 50%, rgba(255,0,170,0.10), transparent 55%),
+      radial-gradient(900px 240px at 82% 50%, rgba(124,58,237,0.12), transparent 55%),
+      rgba(0,0,0,0.28);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 18px 60px rgba(0,0,0,0.35);
+    display: grid;
+    grid-template-columns: auto 1fr auto;
     align-items: center;
-    justify-content: center;
-    flex-direction: column;
-}
-.portfolio-title {
-    display: flex;
-    justify-content: flex-end;
-    width: 100%;
-    color: white;
-    font-size: 87px;
-    font-family: "Oswald", serif;
-}
-
-.portfolio-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
+    gap: 12px;
+  }
+  
+  .ppg__btn {
+    display: inline-flex;
     align-items: center;
-}
-
-.portfolio-item {
-    position: relative;
-    width: 100%; 
-    height: 200px; 
-    overflow: hidden;
-}
-
-.project-images {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-}
-
-.image-slider {
-    display: flex;
-    width: 100%;
-    transition: transform 0.2s ease;
-    scroll-snap-type: x mandatory; 
-}
-
-.image-slider img {
-    width: 100%; 
-    object-fit: cover; 
-    scroll-snap-align: start; 
-}
-
-.project-details {
-    position: absolute;
-    bottom: 10px;
-    left: 10px;
-    z-index: 3;
-    color: white;
-    font-size: 16px;
-} */
+    gap: 10px;
+    height: 42px;
+    padding: 0 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.14);
+    background: rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.90);
+    font-weight: 850;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: transform 140ms ease, filter 140ms ease, border-color 140ms ease;
+  }
+  
+  .ppg__btn:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.03);
+    border-color: rgba(255,0,170,0.24);
+  }
+  
+  .ppg__btn:disabled {
+    opacity: 0.38;
+    cursor: not-allowed;
+    transform: none;
+    filter: none;
+  }
+  
+  .ppg__icon {
+    font-size: 14px;
+    opacity: 0.9;
+  }
+  
+  .ppg__txt {
+    font-size: 11px;
+  }
+  
+  .ppg__center {
+    display: grid;
+    justify-items: center;
+    gap: 10px;
+  }
+  
+  .ppg__dots {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .ppg__dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.22);
+    background: rgba(255,255,255,0.08);
+    cursor: pointer;
+    transition: transform 140ms ease, background 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
+  }
+  
+  .ppg__dot:hover {
+    transform: scale(1.15);
+    border-color: rgba(255,0,170,0.30);
+    box-shadow: 0 0 18px rgba(255,0,170,0.10);
+  }
+  
+  .ppg__dot.is-active {
+    width: 30px;
+    background: linear-gradient(135deg, rgba(255,0,170,0.95), rgba(124,58,237,0.95));
+    border-color: rgba(255,255,255,0.18);
+    box-shadow:
+      0 0 24px rgba(255,0,170,0.12),
+      0 0 24px rgba(124,58,237,0.10);
+  }
+  
+  .ppg__ellipsis {
+    color: rgba(255,255,255,0.55);
+    font-weight: 900;
+    letter-spacing: 0.2em;
+    transform: translateY(-1px);
+  }
+  
+  .ppg__meta {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.70);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .ppg__count b {
+    color: rgba(255,255,255,0.92);
+  }
+  
+  .ppg__sep {
+    opacity: 0.55;
+  }
+  
+  @media (max-width: 620px) {
+    .portfolio__pager {
+      grid-template-columns: 1fr;
+      border-radius: 22px;
+      gap: 10px;
+    }
+    .ppg__btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+  
+  
+  
   
