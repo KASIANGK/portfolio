@@ -1,4 +1,4 @@
-.hoveredText-selectedPart {
+/* .hoveredText-selectedPart {
     font-family: 'Oswald', sans-serif;
     font-size: 17px;
     color: white;
@@ -8,4 +8,19 @@
     box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.5);
     text-align: center;
     min-width: 100px;
-}
+} */
+
+.hoveredText-selectedPart{
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: rgba(0,0,0,0.55);
+    border: 1px solid rgba(255, 122, 0, 0.35);
+    color: #ff7a00;
+    font-weight: 800;
+    letter-spacing: .06em;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 18px rgba(255, 122, 0, 0.12);
+    font-family: 'Oswald', sans-serif;
+    font-size: 17px;
+  }
+  

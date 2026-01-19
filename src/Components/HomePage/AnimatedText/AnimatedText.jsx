@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import './AnimatedText.css'
 
-const AnimatedText = () => {
+const AnimatedText = ({ title = "HELLO", slogan = "Build. Design. Illuminate." }) => {
   const [hikariVisible, setHikariVisible] = useState(false);
   const [sloganVisible, setSloganVisible] = useState(false);
   const [opacity, setOpacity] = useState(0);
   const [typedText, setTypedText] = useState('');
   const [slideOut, setSlideOut] = useState(false); 
-  const slogan = "Light up your vision"
+  // const slogan = "Light up your vision"
+
 
   // pour animer "Hikari"
   useEffect(() => {
@@ -83,7 +84,7 @@ const AnimatedText = () => {
           repeatDelay: 0.5
         }}
       >
-        <h1>Hikari</h1>
+        <h1>{title}</h1>
       </motion.div>
       <motion.div
         className={`text slogan ${sloganVisible ? 'typewriter' : ''} ${slideOut ? 'slide-out-right' : ''}`}

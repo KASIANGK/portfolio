@@ -121,3 +121,43 @@
     cursor: pointer;
     z-index: 10; 
   }
+
+
+  .homepage-container{
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(900px 600px at 20% 20%, rgba(255,122,0,0.12), transparent 60%),
+      radial-gradient(800px 600px at 80% 30%, rgba(160,80,214,0.10), transparent 55%),
+      radial-gradient(900px 700px at 60% 80%, rgba(120,173,25,0.08), transparent 60%),
+      linear-gradient(180deg, #0a0f16 0%, #070a0f 100%);
+  }
+  
+  /* Vignette pro */
+  .homepage-container::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    background: radial-gradient(1200px 900px at 50% 50%, transparent 55%, rgba(0,0,0,0.55) 100%);
+    z-index: 0;
+  }
+  
+  /* Noise léger */
+  .homepage-container::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    opacity: 0.06;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
+    z-index: 0;
+  }
+  
+  .custom-canvas{
+    position: relative;
+    z-index: 1;
+  }
+  

@@ -6,6 +6,9 @@ import './HomePage.css';
 import AnimatedText from './AnimatedText/AnimatedText';
 import Navbar from '../Navbar/Navbar';
 import { motion, AnimatePresence } from 'framer-motion';
+import { EffectComposer, Bloom } from "@react-three/postprocessing";
+import * as THREE from "three";
+
 
 
 const HomePage = () => {
@@ -100,6 +103,10 @@ const HomePage = () => {
     localStorage.setItem('animatedTextBeenSeen', 'true')
   }
 
+  {!hasAnimatedRef.current && (
+    <AnimatedText title="Kasia" slogan="Creative dev • 3D • Real-time experiences" />
+  )}
+  
 
 
   // Fonction de rotation pour la lumiere
@@ -161,10 +168,36 @@ const HomePage = () => {
 
         <button className='reinitialisation' onClick={handleResetPopups}>Reinitialiser Popups</button>
 
-        <Canvas className='custom-canvas' onClick={(event) => console.log("event position: " + event)}>
+        {/* <Canvas className='custom-canvas' onClick={(event) => console.log("event position: " + event)}> */}
+        <Canvas
+          className="custom-canvas"
+          shadows
+          dpr={[1, 2]}
+          gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 0.9 }}
+          >
+          <EffectComposer>
+            <Bloom intensity={0.6} luminanceThreshold={0.2} luminanceSmoothing={0.8} />
+          </EffectComposer>
+
 
         {/* lumieres */}
-        <ambientLight intensity={0.5} />
+        <ambientLight intensity={0.2} />
+        <directionalLight
+          position={[6, 10, 6]}
+          intensity={0.8}
+          castShadow
+          shadow-mapSize-width={2048}
+          shadow-mapSize-height={2048}
+        />
+        {/* key light chaude */}
+        <spotLight
+          position={[8, 8, 8]}
+          intensity={3.2}
+          angle={Math.PI / 5}
+          penumbra={0.9}
+          color="#ff8a00"
+          castShadow
+        />
         <spotLight 
             position={popups[popupIndex]?.lightPosition || [10, 10, 10]} 
             intensity={10} 
@@ -183,8 +216,11 @@ const HomePage = () => {
         )}
 
         {/* Lumieres animees */}
-        <RotatingLight position={[2, 2, 2]} color="#E0B2FF" intensity={10} />
-        <RotatingLight position={[-3, 0, 5]} color="#AB50D6" intensity={10}/>
+        {/* <RotatingLight position={[2, 2, 2]} color="#E0B2FF" intensity={10} />
+        <RotatingLight position={[-3, 0, 5]} color="#AB50D6" intensity={10}/> */}
+        <RotatingLight position={[2, 2, 2]} color="#E0B2FF" intensity={2.2} />
+        <RotatingLight position={[-3, 0, 5]} color="#AB50D6" intensity={2.2} />
+
 
         {/* modele 3D */}
         <Model mousePosition={mousePosition} />
