@@ -1,0 +1,45 @@
+{
+    "title": "ABOUT",
+    "playHint": "Pobaw się ze mną",
+    "skillsLink": "SKILLS",
+    "aboutVisualAlt": "Wizual About",
+    "bio": {
+      "kicker": "Profil",
+      "title": "KASIA — FULLSTACK WEB DEV & 3D CREATOR",
+      "lead": "Tworzę interaktywne doświadczenia jak mini-wszechświat: czysta inżynieria + filmowa skóra — systemy UI, animacje i światy 3D.",
+      "pills": {
+        "location": "Bruksela",
+        "stack": "React / Three.js",
+        "tool": "Blender"
+      }
+    },
+    "sections": {
+      "exp": {
+        "title": "Doświadczenie",
+        "items": {
+          "urbanTech": { "bold": "Urban Tech", "text": "— 5-miesięczny staż (2024), projekty webowe i delivery produktu." },
+          "sideGeek": { "bold": "SideGeek / współprace", "text": "— funkcje, UI, integracje." },
+          "visual": { "bold": "Tło wizualne / 3D", "text": "— podejście design-first, mocne wizuale." },
+          "urbanTechh": { "bold": "Urban Tech", "text": "— 5-miesięczny staż (2024), projekty webowe i delivery produktu." },
+          "sideGeekk": { "bold": "SideGeek / współprace", "text": "— funkcje, UI, integracje." },
+          "visuall": { "bold": "Tło wizualne / 3D", "text": "— podejście design-first, mocne wizuale." }
+        }
+      },
+      "stack": { "title": "Stack" },
+      "highlights": {
+        "title": "Highlights",
+        "text": "Lubię systemy premium: glass UI, neonowe akcenty, płynny ruch i interakcje, które chce się odkrywać."
+      },
+      "seeMore": "Zobacz więcej",
+      "seeLess": "Zobacz mniej"
+    },
+    "buttons": {
+      "portfolio": "Zobacz Portfolio",
+      "contact": "Kontakt"
+    },
+    "stack": {
+      "title": "Stack",
+      "seeAll": "Zobacz wszystko"
+    }    
+  }
+  
