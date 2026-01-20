@@ -1,0 +1,19 @@
+{
+    "menu": "MENU",
+    "hint": "Ouvrir le canal",
+    "language": "Langue",
+    "items": {
+      "home": "Accueil",
+      "essential": "Essentiel",
+      "about": "À propos",
+      "contact": "Contact",
+      "portfolio": "Portfolio"
+    },
+    "social": {
+      "email": "Email",
+      "phone": "Téléphone",
+      "instagram": "Instagram",
+      "twitter": "Twitter"
+    }
+  }
+  

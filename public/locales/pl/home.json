@@ -1,0 +1,7 @@
+{
+  "loader": {
+    "subLabel": "Włamuję się do Matrixa",
+    "eta": "ETA ~{{seconds}}s",
+    "calibrating": "Kalibruję portale… (już prawie 😇)"
+  }
+}

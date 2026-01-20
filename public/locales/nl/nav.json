@@ -1,0 +1,19 @@
+{
+    "menu": "MENU",
+    "hint": "Kanaal openen",
+    "language": "Taal",
+    "items": {
+      "home": "Home",
+      "essential": "Essential",
+      "about": "Over",
+      "contact": "Contact",
+      "portfolio": "Portfolio"
+    },
+    "social": {
+      "email": "E-mail",
+      "phone": "Telefoon",
+      "instagram": "Instagram",
+      "twitter": "Twitter"
+    }
+  }
+  

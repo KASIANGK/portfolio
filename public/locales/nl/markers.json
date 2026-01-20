@@ -1,0 +1,38 @@
+{
+    "portalBadge": "Portaal",
+    "ctaHint": "(SPATIE / ENTER)",
+    "footerHint": "Nader → popup • Klik orb → vastzetten • ESC → muis vrij",
+    "markers": {
+      "TRIGGER_PORTFOLIO": {
+        "title": "Portfolio-kluis",
+        "kicker": "Geselecteerde werken",
+        "description": "Web + 3D + prototypes. Kort, strak, impactgericht.",
+        "cta": "Open Portfolio"
+      },
+      "TRIGGER_SKILLS": {
+        "title": "Skill Tree",
+        "kicker": "Stack & superkrachten",
+        "description": "Tools die ik beheers + wat ik aan het upgraden ben. Spoiler: ik ship snel.",
+        "cta": "Open Skills"
+      },
+      "TRIGGER_ABOUT": {
+        "title": "Over Kasia",
+        "kicker": "De builder erachter",
+        "description": "Hybride profiel: fullstack dev + 3D + productvisie. Ja, bewust.",
+        "cta": "Leer me kennen"
+      },
+      "TRIGGER_VISION": {
+        "title": "Vision Room",
+        "kicker": "Waarom dit bestaat",
+        "description": "Angels Gang: evoluerende fashion + tech + experience. Een merk, niet alleen een product.",
+        "cta": "Bekijk visie"
+      },
+      "TRIGGER_CONTACT": {
+        "title": "Contact Portaal",
+        "kicker": "Samenwerken?",
+        "description": "Wil je iemand die uitvoert, itereert en levert — hi 👋",
+        "cta": "Contact"
+      }
+    }
+  }
+  

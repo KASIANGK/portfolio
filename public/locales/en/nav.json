@@ -1,0 +1,19 @@
+{
+    "menu": "MENU",
+    "hint": "Open channel",
+    "language": "Language",
+    "items": {
+      "home": "Home",
+      "essential": "Essential",
+      "about": "About",
+      "contact": "Contact",
+      "portfolio": "Portfolio"
+    },
+    "social": {
+      "email": "Email",
+      "phone": "Phone",
+      "instagram": "Instagram",
+      "twitter": "Twitter"
+    }
+  }
+  
