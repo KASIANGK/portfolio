@@ -94,7 +94,7 @@ export default function Navbar() {
 
         <div className="navHUD__panelTop">
           <div className="navHUD__chip">NAV</div>
-          <div className="navHUD__hint">{t("hint")}</div>
+          {/* <div className="navHUD__hint">{t("hint")}</div> */}
         </div>
 
         {/* ✅ Language picker */}

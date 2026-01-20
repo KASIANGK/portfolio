@@ -1,0 +1,45 @@
+{
+    "title": "ABOUT",
+    "playHint": "Speel met mij",
+    "skillsLink": "SKILLS",
+    "aboutVisualAlt": "About visual",
+    "bio": {
+      "kicker": "Profiel",
+      "title": "KASIA — FULLSTACK WEB DEV & 3D CREATOR",
+      "lead": "Ik bouw interactieve ervaringen die aanvoelen als een universum: clean engineering met een cinematografische skin — UI-systemen, animaties en 3D-werelden.",
+      "pills": {
+        "location": "Brussel",
+        "stack": "React / Three.js",
+        "tool": "Blender"
+      }
+    },
+    "sections": {
+      "exp": {
+        "title": "Ervaring",
+        "items": {
+          "urbanTech": { "bold": "Urban Tech", "text": "— 5 maanden stage (2024), webprojecten & product delivery." },
+          "sideGeek": { "bold": "SideGeek / samenwerkingen", "text": "— features, UI, integraties." },
+          "visual": { "bold": "Visuele / 3D achtergrond", "text": "— design-first aanpak, sterke visuals." },
+          "urbanTechh": { "bold": "Urban Tech", "text": "— 5-miesięczny staż (2024), projekty webowe i delivery produktu." },
+          "sideGeekk": { "bold": "SideGeek / współprace", "text": "— funkcje, UI, integracje." },
+          "visuall": { "bold": "Tło wizualne / 3D", "text": "— podejście design-first, mocne wizuale." }
+        }
+      },
+      "stack": { "title": "Stack" },
+      "highlights": {
+        "title": "Highlights",
+        "text": "Ik hou van premium systemen: glass UI, neon accenten, smooth motion en interacties die mensen willen laten ontdekken."
+      },
+      "seeMore": "Meer zien",
+      "seeLess": "Minder zien"
+    },
+    "buttons": {
+      "portfolio": "Bekijk Portfolio",
+      "contact": "Contact"
+    },
+    "stack": {
+      "title": "Stack",
+      "seeAll": "Alles bekijken"
+    }    
+  }
+  
