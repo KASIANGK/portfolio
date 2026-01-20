@@ -1,0 +1,7 @@
+{
+  "loader": {
+    "subLabel": "Ik breek in in de Matrix",
+    "eta": "ETA ~{{seconds}}s",
+    "calibrating": "Portalen kalibreren… (bijna daar 😇)"
+  }
+}

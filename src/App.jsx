@@ -8,10 +8,10 @@ import Essential from "./Components/Essential/Essential";
 import Navbar from "./Components/Navbar/Navbar";
 import Skills from "./Components/Skills/Skills";
 import Contact from "./Components/Contact/Contact";
-// import AnimatedText from "./Components/HomePage/AnimatedText/AnimatedText";
 import Dandelion from "./Components/Dandlion/Dandlion";
 import Footer from "./Components/Footer/Footer";
 import Portfolio from "./Components/Portfolio/Portfolio";
+import LanguageToast from "./Components/Navbar/LanguageToast";
 
 function Layout() {
   const location = useLocation();
@@ -20,6 +20,8 @@ function Layout() {
   return (
     <>
       <Navbar />
+      <LanguageToast /> 
+
       {/* ✅ Hide custom cursor on Home (FPS/pointerlock page) */}
       {!isHome && <Dandelion />}
 
@@ -30,7 +32,6 @@ function Layout() {
         <Route path="/about" element={<About />} />
         <Route path="/portfolio" element={<Portfolio />} />
         <Route path="/contact" element={<Contact />} />
-        {/* <Route path="/animated-txt" element={<AnimatedText />} /> */}
       </Routes>
 
       <Footer />
@@ -49,49 +50,3 @@ function App() {
 }
 
 export default App;
-
-
-
-
-
-
-
-//ok
-// import React, { useEffect, useState } from 'react';
-// import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-// import { ThemeProvider } from './ThemeContext'; 
-// import HomeCity from "./Components/HomeCity/HomeCity";
-// import About from './Components/About/About';
-// import Expertise from './Components/Expertise/Expertise';
-// import Navbar from './Components/Navbar/Navbar';
-// import Members from './Components/Members/Members';
-// import Contact from './Components/Contact/Contact';
-// import AnimatedText from './Components/HomePage/AnimatedText/AnimatedText';
-// import Dandelion from './Components/Dandlion/Dandlion';
-// import Footer from './Components/Footer/Footer';
-// import Portfolio from './Components/Portfolio/Portfolio';
-
-
-// function App() {
-//   return (
-//     <ThemeProvider>
-//       <Router>
-//           <Navbar />
-//           <Dandelion/>
-//           <Routes>
-//             <Route path="/" element={<HomeCity  />} />
-//             <Route path="/expertise" element={<Expertise  />} />
-//             <Route path="/members" element={<Members  />} />
-//             <Route path="/about" element={<About  />} />
-//             <Route path="/portfolio" element={<Portfolio  />} />
-//             <Route path="/contact" element={<Contact  />} />
-//             <Route path="/animated-txt" element={<AnimatedText  />} />
-
-//           </Routes>
-//           <Footer/>
-//       </Router>
-//     </ThemeProvider>
-//   );
-// }
-
-// export default App;

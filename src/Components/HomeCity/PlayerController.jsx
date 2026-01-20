@@ -21,6 +21,10 @@ export default function PlayerController({
   lockMovement = false,
   teleportNonce = 0,
   onPlayerReady,
+  lookInput = { x: 0, y: 0 },
+  mobileSpeedMultiplier = 1.0,
+  mobileLookSensitivity = 0.045, // tweak feel (joystick -> radians)
+
 
   // External move input (joystick) in [-1..1]
   moveInput = { x: 0, y: 0 },
@@ -35,7 +39,7 @@ export default function PlayerController({
   playerHeight = 1.8,
 
   speed = 4.6,
-  sprintAfterMs = 4000,
+  sprintAfterMs = 2000,
   sprintMultiplier = 2.6,
 
   stepHeight = 0.55,
@@ -310,12 +314,29 @@ export default function PlayerController({
       return;
     }
 
+    // ===== MOBILE LOOK (right joystick) =====
+    // Only apply when pointer lock is NOT active (mobile / touch)
+    if (!look.current.locked) {
+      const lx = clamp(lookInput?.x ?? 0, -1, 1);
+      const ly = clamp(lookInput?.y ?? 0, -1, 1);
+
+      if (lx || ly) {
+        const signY = invertY ? -1 : 1;
+        // lx: left/right -> yaw
+        yawPitch.current.yaw -= lx * mobileLookSensitivity;
+        // ly: down positive -> pitch down (adjust sign)
+        yawPitch.current.pitch -= ly * mobileLookSensitivity * signY;
+        yawPitch.current.pitch = clamp(yawPitch.current.pitch, minPitch, maxPitch);
+      }
+    }
+
     // ===== MOVE INPUT =====
     const kx = (keys.current.right ? 1 : 0) - (keys.current.left ? 1 : 0);
     const ky = (keys.current.up ? 1 : 0) - (keys.current.down ? 1 : 0);
 
     const jx = clamp(moveInput?.x ?? 0, -1, 1);
     const jy = clamp(moveInput?.y ?? 0, -1, 1);
+
 
     // joystick y down positive -> invert for forward
     let mx = clamp(kx + jx, -1, 1);
@@ -350,7 +371,10 @@ export default function PlayerController({
     velY.current -= g * dt;
     velY.current = Math.max(velY.current, -25);
 
-    const moveSpeed = speed * sprintMul;
+    // const moveSpeed = speed * sprintMul;
+    const hasJoy = Math.abs(jx) > 0.01 || Math.abs(jy) > 0.01;
+    const moveSpeed = speed * sprintMul * (hasJoy ? mobileSpeedMultiplier : 1.0);
+    // const moveSpeed = speed * sprintMul * mobileSpeedMultiplier;
     const dxw = tmp.move.x * moveSpeed * dt;
     const dzw = tmp.move.z * moveSpeed * dt;
     const dyw = velY.current * dt;

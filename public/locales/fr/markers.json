@@ -1,0 +1,38 @@
+{
+    "portalBadge": "Portail",
+    "ctaHint": "(ESPACE / ENTRÉE)",
+    "footerHint": "Approche → popup • Clique l’orbe → épingle • ESC → libère la souris",
+    "markers": {
+      "TRIGGER_PORTFOLIO": {
+        "title": "Coffre Portfolio",
+        "kicker": "Projets sélectionnés",
+        "description": "Web + 3D + prototypes. Court, propre, orienté impact.",
+        "cta": "Entrer"
+      },
+      "TRIGGER_SKILLS": {
+        "title": "Arbre de skills",
+        "kicker": "Stack & super-pouvoirs",
+        "description": "Les outils que je maîtrise + ceux que j’upgrade. Spoiler : je ship vite.",
+        "cta": "Ouvrir"
+      },
+      "TRIGGER_ABOUT": {
+        "title": "À propos de Kasia",
+        "kicker": "La builder derrière tout ça",
+        "description": "Profil hybride : dev fullstack + 3D + vision produit. Oui, c’est volontaire.",
+        "cta": "Me découvrir"
+      },
+      "TRIGGER_VISION": {
+        "title": "Salle Vision",
+        "kicker": "Pourquoi ça existe",
+        "description": "Angels Gang : mode évolutive + tech + expérience. Une marque, pas juste un produit.",
+        "cta": "Voir la vision"
+      },
+      "TRIGGER_CONTACT": {
+        "title": "Portail Contact",
+        "kicker": "On collab ?",
+        "description": "Si tu veux quelqu’un qui exécute, itère et livre — tu viens de me trouver.",
+        "cta": "Contacter"
+      }
+    }
+  }
+  

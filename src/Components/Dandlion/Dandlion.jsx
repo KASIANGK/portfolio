@@ -1,93 +1,140 @@
-import React, { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import "./Dandelion.css";
 
 const Dandelion = () => {
   const location = useLocation();
 
-if (location.pathname === '/' || location.pathname === '/about' || location.pathname === '/portfolio') {
-  return null;
-}
+  // hide on these pages
+  if (location.pathname === "/" || location.pathname === "/about" || location.pathname === "/portfolio") {
+    return null;
+  }
 
-
-  // crea particules
   useEffect(() => {
-    const createDandelions = (e) => {
-      const target = e.target
-      const rect = target.getBoundingClientRect(); // pour obtenir la position et les dimensions d'un element dans le viewport
+    const proximity = 14;
+    const spawnCount = 3; // low = classy HUD
+    const maxParticlesOnScreen = 60;
 
-      // verif proximite de la mouse par rapport a l'element cible
-      const mouseX = e.clientX
-      const mouseY = e.clientY
-      const proximity = 15
+    // Angels / cyberpunk palette
+    const palette = [
+      "rgba(255, 0, 170, 0.85)",  // pink
+      "rgba(124, 58, 237, 0.85)", // violet
+      "rgba(255, 122, 0, 0.80)",  // orange
+      "rgba(255, 255, 255, 0.55)" // white accent
+    ];
 
-      // pour eviter dandlion sur une className
-      const hasClass = (element, className) => {
-        while (element) {
-          if (element.classList && element.classList.contains(className)) {
-            return true;
-          }
-          element = element.parentElement;
-        }
-        return false;
-      };
+    const glyphTypes = ["spark", "bracket", "tick", "chevron"];
 
+    const hasClass = (element, className) => {
+      let el = element;
+      while (el) {
+        if (el.classList && el.classList.contains(className)) return true;
+        el = el.parentElement;
+      }
+      return false;
+    };
+
+    const isBlockedTarget = (target) => {
+      if (!target) return true;
+      const tag = target.tagName;
+      return (
+        tag === "INPUT" ||
+        tag === "TEXTAREA" ||
+        tag === "BUTTON" ||
+        tag === "A" ||
+        tag === "UL" ||
+        tag === "LI" ||
+        hasClass(target, "social-icons-navbar")
+      );
+    };
+
+    // rAF throttle
+    let raf = null;
+    let lastEvent = null;
+
+    const spawn = (e) => {
+      const target = e.target;
+      if (!target || isBlockedTarget(target)) return;
+
+      const rect = target.getBoundingClientRect();
+      const mouseX = e.clientX;
+      const mouseY = e.clientY;
+
+      // only near elements (your original “proximity” logic)
       if (
-        (mouseX > rect.left - proximity && mouseX < rect.right + proximity) &&
-        (mouseY > rect.top - proximity && mouseY < rect.bottom + proximity) &&
-        (target.tagName === 'INPUT' ||
-        target.tagName === 'TEXTAREA' ||
-        target.tagName === 'BUTTON' ||
-        target.tagName === 'A' ||
-        target.tagName === 'UL' ||
-        target.tagName === 'LI' ||
-        hasClass(target, 'social-icons-navbar'))
+        !(mouseX > rect.left - proximity && mouseX < rect.right + proximity) ||
+        !(mouseY > rect.top - proximity && mouseY < rect.bottom + proximity)
       ) {
         return;
       }
 
-      for (let i = 0; i < 5; i++) { 
-        const particle = document.createElement('div')
-        particle.classList.add('particle')
-
-        // position random autour de la mouse
-        const offsetX = (Math.random() - 0.5) * 20
-        const offsetY = (Math.random() - 0.5) * 20
-
-        particle.style.left = `${e.clientX + offsetX}px`
-        particle.style.top = `${e.clientY + offsetY}px`
-
-        // styles
-        particle.style.position = 'absolute'
-        particle.style.width = `${Math.random() * 10 + 5}px`
-        particle.style.height = `${Math.random() * 10 + 5}px`
-        particle.style.backgroundColor = `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 0.7)`
-        particle.style.borderRadius = `${Math.random() < 0.5 ? '50%' : '0%'}`
-        particle.style.zIndex = '9999'
-        particle.style.pointerEvents = 'none'
-        particle.style.transition = 'transform 1s ease-out, opacity 1s ease-out'
-        particle.style.transform = `translate(${(Math.random() - 0.5) * 100}px, ${(Math.random() - 0.5) * 100}px) scale(${Math.random() + 0.5})`
-
-        document.body.appendChild(particle)
-
-        setTimeout(() => {
-          particle.style.opacity = '0'; // fade out
-          particle.style.transform += ' scale(0)'
-        }, 50);
-
-        setTimeout(() => {
-          particle.remove()
-        }, 1000); 
+      // prevent DOM spam
+      const existing = document.querySelectorAll(".hud-glyph");
+      if (existing.length > maxParticlesOnScreen) {
+        for (let i = 0; i < Math.min(10, existing.length); i++) existing[i].remove();
       }
-    }
 
-    document.addEventListener('mousemove', createDandelions)
+      for (let i = 0; i < spawnCount; i++) {
+        const g = document.createElement("div");
+        g.className = "hud-glyph";
 
+        const type = glyphTypes[Math.floor(Math.random() * glyphTypes.length)];
+        const color = palette[Math.floor(Math.random() * palette.length)];
+
+        // small + sleek
+        const w = 18 + Math.random() * 28;   // 18..46
+        const h = 8 + Math.random() * 18;    // 8..26
+        const thickness = Math.random() < 0.6 ? 1 : 2;
+
+        const offsetX = (Math.random() - 0.5) * 14;
+        const offsetY = (Math.random() - 0.5) * 14;
+
+        // float drift
+        const driftX = (Math.random() - 0.5) * 90;
+        const driftY = (Math.random() - 0.5) * 90 - 30;
+
+        const rot = (Math.random() - 0.5) * 60; // not too chaotic
+        const duration = 650 + Math.random() * 650;
+
+        g.style.left = `${mouseX + offsetX}px`;
+        g.style.top = `${mouseY + offsetY}px`;
+        g.style.setProperty("--g-w", `${w}px`);
+        g.style.setProperty("--g-h", `${h}px`);
+        g.style.setProperty("--g-t", `${thickness}px`);
+        g.style.setProperty("--g-color", color);
+        g.style.setProperty("--g-dx", `${driftX}px`);
+        g.style.setProperty("--g-dy", `${driftY}px`);
+        g.style.setProperty("--g-rot", `${rot}deg`);
+        g.style.setProperty("--g-dur", `${duration}ms`);
+        g.dataset.type = type;
+
+        // tiny “scanline” phase offset
+        g.style.setProperty("--g-phase", `${Math.random() * 1}s`);
+
+        document.body.appendChild(g);
+        requestAnimationFrame(() => g.classList.add("is-on"));
+
+        window.setTimeout(() => g.remove(), duration + 80);
+      }
+    };
+
+    const onMove = (e) => {
+      lastEvent = e;
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = null;
+        if (lastEvent) spawn(lastEvent);
+      });
+    };
+
+    document.addEventListener("mousemove", onMove, { passive: true });
     return () => {
-      document.removeEventListener('mousemove', createDandelions)
-    }
-  }, [])
+      document.removeEventListener("mousemove", onMove);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
 
-  return <div className="dandelion-container"></div>
-}
+  return <div className="dandelion-container" aria-hidden="true" />;
+};
 
-export default Dandelion
+export default Dandelion;

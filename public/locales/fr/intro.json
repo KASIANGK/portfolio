@@ -1,0 +1,48 @@
+{
+    "kicker": "KASIA NAGORKA / INTERACTIVE SPACE",
+    "stepLabel": "Étape {{current}}/{{total}}",
+  
+    "title1": "Bienvenue. Fais comme chez toi.",
+    "sub1": "Un mini-monde : moitié portfolio, moitié playground. Explore, clique, et va droit à l’essentiel.",
+  
+    "title2": "Contrôles rapides. Zéro drama.",
+    "sub2": "Deux touches et tu es dedans. (Et oui — tu peux toujours t’échapper 😇)",
+  
+    "cmd": {
+      "boot": "boot: kasiaverse.exe",
+      "mode": "mode: portfolio interactif",
+      "hint": "hint: trouve les ORBES → ouvre des PORTAILS",
+      "continue": "Appuie sur SPACE / ENTER pour continuer.",
+  
+      "move": "FLÈCHES → bouger",
+      "look": "SOURIS  → regarder",
+      "esc": "ESC     → libérer le curseur",
+      "enter": "Appuie sur SPACE / ENTER pour entrer.",
+      "clickToLock": "Clique dans la scène pour verrouiller la souris (ESC pour la libérer)."
+    },
+  
+    "buttons": {
+      "goPortfolio": "Aller au Portfolio",
+      "goEssential": "Aller à l’Essentiel",
+      "nextControls": "Suivant → Contrôles",
+      "back": "← Retour",
+      "enter": "Entrer"
+    },
+  
+    "footer": {
+      "dontShowAgain": "Ne plus afficher",
+      "tip": "tip: ESC libère la souris"
+    },
+  
+    "language": {
+      "title": "Choisis ta langue",
+      "subtitle": "Petit setup rapide. Modifiable plus tard.",
+      "fr": "Français",
+      "nl": "Nederlands",
+      "en": "English",
+      "pl": "Polski",
+      "confirm": "Continuer"
+    },
+    "microHint": "Tu pourras changer à tout moment dans le menu."
+  }
+  
