@@ -53,17 +53,19 @@ export default function MiniMapHUD({
     const { x, z, yaw } = stateRef.current;
 
     const half = size / 2;
-    const px = half + (x - centerX) * scale;
-    const pz = half + (z - centerZ) * scale;
-
+    const px = half + (z - centerZ) * scale;
+    const py = half - (x - centerX) * scale;
+    
     const dotX = Math.max(10, Math.min(size - 10, px));
-    const dotY = Math.max(10, Math.min(size - 10, pz));
+    const dotY = Math.max(10, Math.min(size - 10, py));
+    
+
 
     el.innerHTML = `
       <div style="
         position:fixed;
-        right:16px;
-        top:16px;
+        left:16px;
+        top:16px;        
         width:${size}px;
         height:${size}px;
         border-radius:18px;
@@ -93,7 +95,8 @@ export default function MiniMapHUD({
           width:10px;
           height:10px;
           border-radius:999px;
-          background:rgba(255,122,0,0.95);
+          background:rgba(0,180,255,0.95);    
+          box-shadow:0 0 12px rgba(0,180,255,0.6), 0 0 0 2px rgba(0,0,0,0.35);
           box-shadow:0 0 0 2px rgba(0,0,0,0.35);
         "></div>
 
@@ -105,7 +108,7 @@ export default function MiniMapHUD({
           height:16px;
           background:rgba(255,255,255,0.9);
           transform-origin:50% 18px;
-          transform:rotate(${yaw}rad);
+          transform:rotate(${yaw + Math.PI / 2}rad);
           border-radius:2px;
         "></div>
 

@@ -1,9 +1,9 @@
 // src/Components/Navbar/Navbar.jsx
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FaEnvelope, FaPhoneAlt, FaInstagram, FaTwitter } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
-import LanguagePicker from './LanguagePicker'
+import LanguagePicker from "./LanguagePicker";
 import "./Navbar.css";
 
 export default function Navbar() {
@@ -13,13 +13,44 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
 
-  const isMobile =
+  // ✅ hover only when supported
+  const canHover =
+    typeof window !== "undefined" &&
+    window.matchMedia?.("(hover: hover)")?.matches;
+
+  // ✅ mobile/touch detection (safe)
+  const isTouch =
     typeof window !== "undefined" &&
     (window.matchMedia?.("(hover: none)")?.matches ||
       /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent));
 
-  const openMenu = () => setIsOpen(true);
-  const closeMenu = () => setIsOpen(false);
+  // Desktop hover open/close with a small delay to avoid flicker
+  const closeTimerRef = useRef(null);
+  const clearCloseTimer = () => {
+    if (closeTimerRef.current) {
+      window.clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+  };
+
+  const openMenu = useCallback(() => {
+    clearCloseTimer();
+    setIsOpen(true);
+  }, []);
+
+  const closeMenu = useCallback(() => {
+    clearCloseTimer();
+    setIsOpen(false);
+  }, []);
+
+  const scheduleCloseMenu = useCallback(() => {
+    clearCloseTimer();
+    closeTimerRef.current = window.setTimeout(() => {
+      setIsOpen(false);
+      closeTimerRef.current = null;
+    }, 140); // ✅ tiny grace time
+  }, []);
+
   const toggleMenu = () => setIsOpen((v) => !v);
 
   // close on route change
@@ -45,6 +76,12 @@ export default function Navbar() {
       document.removeEventListener("click", onClick);
       document.removeEventListener("keydown", onKeyDown);
     };
+  }, [closeMenu]);
+
+  useEffect(() => {
+    return () => {
+      clearCloseTimer();
+    };
   }, []);
 
   const navItems = useMemo(
@@ -63,12 +100,12 @@ export default function Navbar() {
       className={`navHUD ${isOpen ? "isOpen" : ""}`}
       ref={menuRef}
       aria-label="Primary navigation"
-      onMouseEnter={() => {
-        if (!isMobile) openMenu();
-      }}
-      onMouseLeave={() => {
-        if (!isMobile) closeMenu();
-      }}
+      // onMouseEnter={() => {
+      //   if (canHover && !isTouch) openMenu();
+      // }}
+      // onMouseLeave={() => {
+      //   if (canHover && !isTouch) scheduleCloseMenu();
+      // }}
     >
       <button
         className={`navHUD__hamburger ${isOpen ? "isOpen" : ""}`}
@@ -76,12 +113,20 @@ export default function Navbar() {
         aria-expanded={isOpen}
         aria-controls="navHUD-menu"
         type="button"
+        onMouseEnter={() => {
+          if (canHover && !isTouch) openMenu();   // ✅ hover on burger
+        }}
+        onMouseLeave={() => {
+          if (canHover && !isTouch) scheduleCloseMenu();
+        }}
       >
         <span className="navHUD__hamburgerBars" aria-hidden="true">
           <span className="navHUD__bar" />
           <span className="navHUD__bar" />
           <span className="navHUD__bar" />
         </span>
+
+        {/* ✅ label hidden in mobile via CSS */}
         <span className="navHUD__label">{t("menu")}</span>
       </button>
 
@@ -89,12 +134,18 @@ export default function Navbar() {
         id="navHUD-menu"
         className={`navHUD__panel ${isOpen ? "open" : ""}`}
         role="menu"
+        // ✅ keep open while hovering the panel
+        onMouseEnter={() => {
+          if (canHover && !isTouch) openMenu();
+        }}
+        onMouseLeave={() => {
+          if (canHover && !isTouch) scheduleCloseMenu();
+        }}
       >
         <div className="navHUD__panelScan" aria-hidden="true" />
 
         <div className="navHUD__panelTop">
           <div className="navHUD__chip">NAV</div>
-          {/* <div className="navHUD__hint">{t("hint")}</div> */}
         </div>
 
         {/* ✅ Language picker */}
@@ -145,3 +196,5 @@ export default function Navbar() {
     </nav>
   );
 }
+
+

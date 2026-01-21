@@ -16,6 +16,9 @@ import LanguageToast from "./Components/Navbar/LanguageToast";
 function Layout() {
   const location = useLocation();
   const isHome = location.pathname === "/";
+  const isPortfolio = location.pathname === "/portfolio";
+  const isAbout = location.pathname === "/about";
+
 
   return (
     <>
@@ -23,7 +26,7 @@ function Layout() {
       <LanguageToast /> 
 
       {/* ✅ Hide custom cursor on Home (FPS/pointerlock page) */}
-      {!isHome && <Dandelion />}
+      {!isHome && !isPortfolio && !isAbout && <Dandelion />}
 
       <Routes>
         <Route path="/" element={<HomeCity />} />

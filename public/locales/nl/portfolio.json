@@ -1,0 +1,34 @@
+{
+    "title": "PORTFOLIO",
+    "subtitle": "Web Dev & 3D — een selectie van mijn projecten.",
+    "chip": "KASIA",
+  
+    "filters": {
+      "label": "Projectfilters",
+      "all": "Alles",
+      "web": "Web Dev",
+      "d3": "3D"
+    },
+  
+    "card": {
+      "viewProject": "Bekijk project",
+      "repo": "Repo",
+      "swipeHint": "Swipe afbeeldingen →"
+    },
+  
+    "pager": {
+      "prev": "Vorige",
+      "next": "Volgende",
+      "showing": "Toont <b>{{start}}</b>–<b>{{end}}</b> van <b>{{total}}</b>",
+      "pageOf": "Pagina <b>{{page}}</b> / <b>{{total}}</b>"
+    },
+  
+    "a11y": {
+      "pagination": "Portfolio paginering",
+      "previousPage": "Vorige pagina",
+      "nextPage": "Volgende pagina",
+      "pages": "Pagina's",
+      "goToPage": "Ga naar pagina {{page}}"
+    }
+  }
+  
