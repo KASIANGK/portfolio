@@ -8,6 +8,7 @@ const Contact = () => {
   const [selectedSubject, setSelectedSubject] = useState("");
   const [message, setMessage] = useState("");
   const [activeDiv, setActiveDiv] = useState("userInfos");
+  const DRAG_CANCEL = "input, textarea, select, button, a";
 
   const title = useMemo(() => "CONTACT ME", []);
 
@@ -58,7 +59,8 @@ const Contact = () => {
         <Draggable
           nodeRef={userNodeRef}
           bounds="parent"
-          handle=".ctc-panel__header"
+          // handle=".ctc-panel__header"
+          cancel={DRAG_CANCEL}
           disabled={!canDrag}
           onStart={() => setActiveDiv("userInfos")}
         >
@@ -68,10 +70,16 @@ const Contact = () => {
               activeDiv === "userInfos" ? "active" : ""
             }`}
             onMouseDown={() => setActiveDiv("userInfos")}
-            onClick={() => setActiveDiv("userInfos")}
-            role="button"
-            tabIndex={0}
+            // onClick={() => setActiveDiv("userInfos")}
+            role="group"
+            // tabIndex={0}
           >
+            {/* ✅ mini bubble "grab me" (pas le vieux texte) */}
+            <div className="ctc-grab" aria-hidden="true">
+              <span className="ctc-grab__hand">✋</span>
+              <span className="ctc-grab__txt">grab me</span>
+            </div>
+
             <div className="ctc-panel__hud" aria-hidden="true" />
 
             <div className="ctc-panel__header">
@@ -103,7 +111,7 @@ const Contact = () => {
               />
             </label>
 
-            <div className="ctc-hint">Click this panel to bring it to front.</div>
+            {/* <div className="ctc-hint">Click this panel to bring it to front.</div> */}
           </div>
         </Draggable>
 
@@ -111,7 +119,8 @@ const Contact = () => {
         <Draggable
           nodeRef={contentNodeRef}
           bounds="parent"
-          handle=".ctc-panel__header"
+          // handle=".ctc-panel__header"
+          cancel={DRAG_CANCEL}
           disabled={!canDrag}
           onStart={() => setActiveDiv("content")}
         >
@@ -121,11 +130,16 @@ const Contact = () => {
               activeDiv === "content" ? "active" : ""
             }`}
             onMouseDown={() => setActiveDiv("content")}
-            onClick={() => setActiveDiv("content")}
-            role="button"
-            tabIndex={0}
+            // onClick={() => setActiveDiv("content")}
+            role="role"
+            // tabIndex={0}
           >
             <div className="ctc-panel__hud" aria-hidden="true" />
+
+            <div className="ctc-grab" aria-hidden="true">
+              <span className="ctc-grab__hand">✋</span>
+              <span className="ctc-grab__txt">grab me</span>
+            </div>
 
             <div className="ctc-panel__header">
               <div className="ctc-kicker">message</div>
@@ -161,7 +175,7 @@ const Contact = () => {
               Send
             </button>
 
-            <div className="ctc-hint">Click this panel to bring it to front.</div>
+            {/* <div className="ctc-hint">Click this panel to bring it to front.</div> */}
           </div>
         </Draggable>
       </div>

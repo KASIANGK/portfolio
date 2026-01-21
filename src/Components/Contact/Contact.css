@@ -290,13 +290,13 @@
   }
   .ctc-send:hover .ctc-send__glow{ opacity: 1; }
   
-  .ctc-hint{
+  /* .ctc-hint{
     position: relative;
     z-index: 2;
     margin-top: 12px;
     font-size: 11px;
     color: rgba(255,255,255,0.55);
-  } 
+  }  */
   
   /* responsive: stack nicely */
   @media (max-width: 720px){
@@ -312,26 +312,6 @@
    LAYOUT SPACING — Laptop & Tablet
 ========================================= */
 
-@media (min-width: 900px) {
-    .contact-container {
-      display: grid;
-      /* grid-template-columns: 1fr 1fr; */
-      gap: 80px;              /* 🔥 vrai espace horizontal */
-      align-items: start;
-    }
-  
-    .ctc-user-infos {
-      justify-self: end;
-      transform: translateX(-40px);  /* léger offset stylé */
-    }
-  
-    .ctc-content {
-      justify-self: start;
-      transform: translateX(40px);   /* léger offset stylé */
-      margin-top: 80px;              /* overlap vertical élégant */
-    }
-  }
-  
 
   /* ================================
    Laptop: Identity left + Message right
@@ -363,6 +343,7 @@
   .ctc-panel {
     position: absolute;
   }
+  .ctc-panel:hover{ transform: none; }
 }
 
 
@@ -417,3 +398,43 @@
     0 0 90px rgba(124, 58, 237, 0.25);
 }
   
+/* =========================
+   Grab bubble (replaces "Click this panel...")
+========================= */
+.ctc-grab{
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(10px);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.78);
+  opacity: 0.0;
+  transform: translateY(-4px);
+  transition: opacity 160ms ease, transform 160ms ease;
+  pointer-events: none; /* important: bubble ne bloque pas le drag */
+}
+
+.ctc-grab__hand{
+  filter: drop-shadow(0 0 10px rgba(255,0,170,0.20));
+}
+
+.ctc-panel:hover .ctc-grab{
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Si tu veux: montrer aussi quand la card est active */
+.ctc-panel.active .ctc-grab{
+  opacity: 1;
+  transform: translateY(0);
+}
