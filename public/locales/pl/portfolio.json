@@ -1,0 +1,34 @@
+{
+    "title": "PORTFOLIO",
+    "subtitle": "Web Dev & 3D — wybrane realizacje.",
+    "chip": "KASIA",
+  
+    "filters": {
+      "label": "Filtry projektów",
+      "all": "Wszystko",
+      "web": "Web Dev",
+      "d3": "3D"
+    },
+  
+    "card": {
+      "viewProject": "Zobacz projekt",
+      "repo": "Repo",
+      "swipeHint": "Przesuń obrazy →"
+    },
+  
+    "pager": {
+      "prev": "Wstecz",
+      "next": "Dalej",
+      "showing": "Wyświetlono <b>{{start}}</b>–<b>{{end}}</b> z <b>{{total}}</b>",
+      "pageOf": "Strona <b>{{page}}</b> / <b>{{total}}</b>"
+    },
+  
+    "a11y": {
+      "pagination": "Paginacja portfolio",
+      "previousPage": "Poprzednia strona",
+      "nextPage": "Następna strona",
+      "pages": "Strony",
+      "goToPage": "Przejdź do strony {{page}}"
+    }
+  }
+  

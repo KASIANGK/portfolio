@@ -4,21 +4,31 @@ import { useTranslation } from "react-i18next";
 export default function LanguageToast() {
   const { t, i18n } = useTranslation("common");
   const [open, setOpen] = useState(false);
+  const [toastKey, setToastKey] = useState(0);
   const timerRef = useRef(null);
 
+  // 1) on écoute le changement de langue
   useEffect(() => {
     const onLang = () => {
       setOpen(true);
-      if (timerRef.current) window.clearTimeout(timerRef.current);
-      timerRef.current = window.setTimeout(() => setOpen(false), 1400);
+      setToastKey((k) => k + 1); // ✅ force un "restart" du timer
     };
 
     i18n.on("languageChanged", onLang);
+    return () => i18n.off("languageChanged", onLang);
+  }, [i18n]);
+
+  // 2) timer séparé, garanti
+  useEffect(() => {
+    if (!open) return;
+
+    if (timerRef.current) window.clearTimeout(timerRef.current);
+    timerRef.current = window.setTimeout(() => setOpen(false), 2000); 
+
     return () => {
-      i18n.off("languageChanged", onLang);
       if (timerRef.current) window.clearTimeout(timerRef.current);
     };
-  }, [i18n]);
+  }, [open, toastKey]);
 
   if (!open) return null;
 
@@ -49,8 +59,7 @@ export default function LanguageToast() {
           color: "rgba(255,255,255,0.92)",
           boxShadow:
             "0 18px 55px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,0,170,0.12), 0 0 40px rgba(124,58,237,0.10)",
-          fontFamily:
-            "system-ui, -apple-system, Segoe UI, Roboto, sans-serif",
+          fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, sans-serif",
           fontWeight: 900,
           letterSpacing: 0.2,
           whiteSpace: "nowrap",

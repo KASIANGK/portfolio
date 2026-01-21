@@ -1,0 +1,28 @@
+{
+    "subtitle": "Web Dev & 3D — a selection of my builds.",
+    "chip": "KASIA",
+    "filters": {
+      "aria": "Project filters",
+      "all": "All",
+      "web": "Web Dev",
+      "d3": "3D"
+    },
+    "buttons": {
+      "view": "View Project",
+      "repo": "Repo"
+    },
+    "hintSwipe": "Swipe images →",
+    "pager": {
+      "aria": "Portfolio pagination",
+      "pagesAria": "Pages",
+      "metaAria": "Page indicator",
+      "prev": "Prev",
+      "next": "Next",
+      "prevAria": "Previous page",
+      "nextAria": "Next page",
+      "goToPage": "Go to page {{page}}",
+      "showing": "Showing <b>{{start}}</b>–<b>{{end}}</b> of <b>{{total}}</b>",
+      "pageOf": "Page <b>{{page}}</b> / <b>{{total}}</b>"
+    }
+  }
+  
