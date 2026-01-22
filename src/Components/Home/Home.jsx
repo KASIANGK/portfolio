@@ -1,7 +1,6 @@
 // src/Components/Home/Home.jsx
 import React, { useRef } from "react";
 import HomeOverlay from "./HomeOverlay";
-import DevResetOnboarding from "./ui/DevResetOnboarding";
 import useOnboarding from "../../hooks/useOnboarding";
 import "./Home.css";
 
@@ -29,8 +28,6 @@ export default function Home() {
         onGoContact={() => scrollTo(contactRef)}
       />
 
-      {/* ✅ Dev reset toujours visible (z-index via CSS) */}
-      {import.meta.env.DEV && <DevResetOnboarding />}
 
       {/* ✅ petit gap sous le header Step2 */}
       {!shouldShowLanguageStep && <div className="homePage__afterHeader" />}

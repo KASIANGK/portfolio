@@ -18,10 +18,12 @@
     "title": "Welkom bij mij! Voel je thuis!",
     "subtitle": "Een mini-wereld: half portfolio, half playground. Verken — of ga meteen naar de essentie.",
     "hint": "↑ ↓ ← → navigeren • Enter/Spatie bevestigen",
-    "explore": "Verkennen",
-    "about": "Over mij",
-    "projects": "Projecten",
-    "contact": "Contact",
+    "buttons":{
+        "explore": "Verkennen",
+        "about": "Over mij",
+        "projects": "Projecten",
+        "contact": "Contact"
+    },
     "titleLine1": "Welkom bij mij!",
     "titleLine2": "Voel je thuis!"
   }

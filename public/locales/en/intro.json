@@ -18,10 +18,12 @@
     "title": "Welcome to my place! Make yourself at home!",
     "subtitle": "A mini-world: half portfolio, half playground. Explore — or go straight to the essentials.",
     "hint": "↑ ↓ ← → to navigate • Enter/Space to confirm",
-    "explore": "Explore",
-    "about": "About",
-    "projects": "Projects",
-    "contact": "Contact",
+    "buttons": {
+      "explore": "Explore",
+      "about": "About",
+      "projects": "Projects",
+      "contact": "Contact"
+    },
     "titleLine1": "Welcome to my place!",
     "titleLine2": "Make yourself at home!"
   }

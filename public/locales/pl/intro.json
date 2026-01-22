@@ -18,10 +18,12 @@
     "title": "Witaj u mnie! Czuj się jak u siebie!",
     "subtitle": "Mini-świat: pół portfolio, pół playground. Eksploruj — albo przejdź prosto do konkretów.",
     "hint": "↑ ↓ ← → nawigacja • Enter/Spacja potwierdź",
-    "explore": "Eksploruj",
-    "about": "O mnie",
-    "projects": "Projekty",
-    "contact": "Kontakt",
+    "buttons": {
+      "explore": "Eksploruj",
+      "about": "O mnie",
+      "projects": "Projekty",
+      "contact": "Kontakt"
+    },
     "titleLine1": "Witaj u mnie!",
     "titleLine2": "Czuj się jak u siebie!"
   }
