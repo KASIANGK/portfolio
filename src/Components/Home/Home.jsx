@@ -1,6 +1,6 @@
 // src/Components/Home/Home.jsx
 import React, { useRef } from "react";
-import HomeOverlay from "./HomeOverlay";
+import HomeOverlay from "./HomeOverlay/HomeOverlay";
 import useOnboarding from "../../hooks/useOnboarding";
 import "./Home.css";
 
