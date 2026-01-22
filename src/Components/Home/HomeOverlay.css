@@ -1,0 +1,591 @@
+/* ===============================
+   HEADER ROOT (100vh)
+   =============================== */
+   .homeOverlay, .homeOverlay * {
+    box-sizing: border-box;
+  }
+  
+   .homeOverlay {
+    position: relative;
+    width: 100%;
+  
+    height: 100vh;
+    min-height: 100vh;
+  
+    /* mobile safe viewport */
+    height: 100svh;
+    min-height: 100svh;
+  
+    overflow: hidden;
+  }
+  
+  /* ===============================
+     BACKGROUND LAYERS (crossfade)
+     =============================== */
+  
+  .homeOverlay__bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  
+    background:
+      radial-gradient(800px 500px at 15% 20%, rgba(255, 0, 170, 0.18), transparent 60%),
+      radial-gradient(900px 600px at 80% 70%, rgba(0, 255, 255, 0.12), transparent 65%),
+      radial-gradient(700px 500px at 60% 10%, rgba(120, 70, 255, 0.10), transparent 60%),
+      linear-gradient(180deg, rgba(5, 0, 22, 0.92), rgba(5, 0, 22, 0.75));
+  
+    background-size: auto, auto, auto, auto;
+    background-position: center, center, center, center;
+    background-repeat: no-repeat;
+    background-blend-mode: screen, screen, screen, normal;
+  
+    filter: saturate(0.98) contrast(1.02);
+  
+    opacity: 0;
+    transition: opacity 420ms ease;
+    will-change: opacity;
+  }
+  
+  .homeOverlay__bg--step1 {
+    background-image:
+      radial-gradient(800px 500px at 15% 20%, rgba(255, 0, 170, 0.18), transparent 60%),
+      radial-gradient(900px 600px at 80% 70%, rgba(0, 255, 255, 0.12), transparent 65%),
+      radial-gradient(700px 500px at 60% 10%, rgba(120, 70, 255, 0.10), transparent 60%),
+      linear-gradient(180deg, rgba(5, 0, 22, 0.92), rgba(5, 0, 22, 0.75)),
+      url("/home_bg.jpg");
+  
+    background-size: auto, auto, auto, auto, cover;
+    background-position: center, center, center, center, 50% 50%;
+    background-repeat: no-repeat;
+  }
+  
+  .homeOverlay__bg--step2 {
+    background-image:
+      radial-gradient(800px 500px at 15% 20%, rgba(255, 0, 170, 0.16), transparent 60%),
+      radial-gradient(900px 600px at 80% 70%, rgba(0, 255, 255, 0.10), transparent 65%),
+      radial-gradient(700px 500px at 60% 10%, rgba(120, 70, 255, 0.10), transparent 60%),
+      linear-gradient(180deg, rgba(5, 0, 22, 0.92), rgba(5, 0, 22, 0.75)),
+      url("/home_bg_v2.jpg");
+  
+    background-size: auto, auto, auto, auto, cover;
+    background-position: center, center, center, center, 50% 50%;
+    background-repeat: no-repeat;
+  }
+  
+  /* crossfade */
+  .homeOverlay[data-step="1"] .homeOverlay__bg--step1 { opacity: 1; }
+  .homeOverlay[data-step="1"] .homeOverlay__bg--step2 { opacity: 0; }
+  .homeOverlay[data-step="2"] .homeOverlay__bg--step1 { opacity: 0; }
+  .homeOverlay[data-step="2"] .homeOverlay__bg--step2 { opacity: 1; }
+  
+  .homeOverlay__noise {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+  
+    background:
+      repeating-linear-gradient(
+        0deg,
+        rgba(255, 255, 255, 0.03),
+        rgba(255, 255, 255, 0.03) 1px,
+        transparent 1px,
+        transparent 6px
+      );
+  
+    opacity: 0.08;
+    mix-blend-mode: overlay;
+  }
+  
+  .homeOverlay__screenFx {
+    position: absolute;
+    inset: -20%;
+    z-index: 2;
+    pointer-events: none;
+  
+    background:
+      radial-gradient(closest-side, transparent 65%, rgba(0,0,0,0.55) 100%),
+      repeating-linear-gradient(
+        180deg,
+        rgba(0, 0, 0, 0.10),
+        rgba(0, 0, 0, 0.10) 2px,
+        transparent 2px,
+        transparent 7px
+      );
+  
+    opacity: 0.30;
+  }
+  
+  /* ===============================
+     RESET BUTTON (fixed bottom-right)
+     =============================== */
+  
+  .homeOverlay__resetBtn {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 6000;
+  
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  
+    padding: 10px 14px;
+    border-radius: 999px;
+  
+    background: rgba(12, 10, 22, 0.62);
+    backdrop-filter: blur(10px) saturate(140%);
+    -webkit-backdrop-filter: blur(10px) saturate(140%);
+  
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow:
+      0 14px 36px rgba(0, 0, 0, 0.45),
+      0 0 0 1px rgba(0, 255, 255, 0.10) inset;
+  
+    color: rgba(245, 245, 255, 0.92);
+    cursor: pointer;
+  
+    transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+  }
+  
+  .homeOverlay__resetBtn:hover {
+    transform: translateY(-1px);
+    border-color: rgba(0, 255, 255, 0.26);
+    box-shadow:
+      0 18px 46px rgba(0, 0, 0, 0.50),
+      0 0 26px rgba(0, 255, 255, 0.12),
+      0 0 26px rgba(255, 0, 170, 0.10);
+  }
+  
+  .homeOverlay__resetBtn:focus-visible {
+    outline: 2px solid rgba(0, 255, 255, 0.45);
+    outline-offset: 2px;
+  }
+  
+  .homeOverlay__resetIcon {
+    width: 26px;
+    height: 26px;
+    display: grid;
+    place-items: center;
+  
+    border-radius: 999px;
+    background: linear-gradient(135deg, rgba(255,0,170,0.25), rgba(0,255,255,0.10));
+    border: 1px solid rgba(255, 0, 170, 0.18);
+  
+    color: rgba(255, 0, 170, 0.95);
+    text-shadow: 0 0 12px rgba(255, 0, 170, 0.65);
+  }
+  
+  .homeOverlay__resetText {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.92;
+  }
+  
+/* ===============================
+   CAROUSEL (VW = indécalable)
+   =============================== */
+
+   .homeOverlay__viewport {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    touch-action: pan-y;
+  }
+  
+  /* track en VW, pas en % */
+  .homeOverlay__track {
+    display: flex;
+    height: 100%;
+    width: 200vw;               /* ✅ 2 slides = 200vw */
+    will-change: transform;
+    transition: transform 520ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  
+  .homeOverlay__track.isInstant {
+    transition: none !important;
+  }
+  
+  /* slide = 100vw strict */
+  .homeOverlay__slide {
+    flex: 0 0 100vw;            /* ✅ largeur exacte viewport */
+    width: 100vw;
+    height: 100%;
+  
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  
+    padding: 0 24px;            /* ✅ padding fixe, safe */
+    box-sizing: border-box;
+  
+    opacity: 0;
+    transition: opacity 320ms ease;
+  }
+  
+  .homeOverlay__slide.isActive {
+    opacity: 1;
+  }
+  
+  /* panel centré quoi qu'il arrive */
+  .homeOverlay__panel {
+    width: min(720px, 100%);
+    margin: 0 auto;
+  }
+  
+  
+  /* ===============================
+     PANEL (glass)
+     =============================== */
+  
+  .homeOverlay__panel {
+    position: relative;
+    /* width: min(720px, 92vw); */
+    /* width: min(720px, calc(100vw - 2 * clamp(14px, 2.4vw, 28px))); */
+    margin: 0 auto; 
+    margin-inline: auto;
+    width: min(720px, 100%);
+    padding: clamp(18px, 3.2vw, 34px);
+    border-radius: 22px;
+  
+    background: rgba(16, 10, 38, 0.45);
+    backdrop-filter: blur(14px) saturate(130%);
+    -webkit-backdrop-filter: blur(14px) saturate(130%);
+  
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    box-shadow:
+      0 20px 60px rgba(0, 0, 0, 0.55),
+      0 0 0 1px rgba(255, 0, 170, 0.08) inset;
+  
+    overflow: hidden;
+  }
+  
+  .homeOverlay__panel::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: 22px;
+    padding: 1px;
+  
+    background: linear-gradient(
+      135deg,
+      rgba(255, 0, 170, 0.55),
+      rgba(0, 255, 255, 0.35),
+      rgba(120, 70, 255, 0.45)
+    );
+  
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  
+    opacity: 0.40;
+    pointer-events: none;
+  }
+  
+  .homeOverlay__panel::after {
+    content: "";
+    position: absolute;
+    inset: -60px;
+  
+    background:
+      radial-gradient(420px 260px at 25% 30%, rgba(255, 0, 170, 0.28), transparent 60%),
+      radial-gradient(420px 260px at 80% 70%, rgba(0, 255, 255, 0.18), transparent 60%);
+  
+    filter: blur(18px);
+    opacity: 0.65;
+    pointer-events: none;
+  }
+  
+  /* FX inside panel */
+  .homeOverlay__fx {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    border-radius: 22px;
+  }
+  
+  .homeOverlay__orb {
+    position: absolute;
+    width: 420px;
+    height: 420px;
+    left: -120px;
+    top: -140px;
+  
+    background:
+      radial-gradient(circle at 35% 35%, rgba(255, 0, 170, 0.40), transparent 55%),
+      radial-gradient(circle at 70% 65%, rgba(0, 255, 255, 0.22), transparent 60%);
+  
+    filter: blur(10px);
+    opacity: 0.75;
+    animation: orbFloat 7s ease-in-out infinite;
+  }
+  
+  @keyframes orbFloat {
+    0%, 100% { transform: translate(0px, 0px) scale(1); }
+    50% { transform: translate(28px, 18px) scale(1.03); }
+  }
+  
+  .homeOverlay__grid {
+    position: absolute;
+    inset: 0;
+  
+    background:
+      linear-gradient(rgba(0, 255, 255, 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 0, 170, 0.06) 1px, transparent 1px);
+  
+    background-size: 34px 34px;
+    opacity: 0.22;
+    mask-image: radial-gradient(circle at 50% 35%, #000 30%, transparent 70%);
+  }
+  
+  /* Badge */
+  .homeOverlay__badge {
+    display: inline-flex;
+    gap: 10px;
+    align-items: center;
+  
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  
+    color: rgba(200, 255, 255, 0.85);
+    background: rgba(0, 0, 0, 0.22);
+    border: 1px solid rgba(0, 255, 255, 0.18);
+  
+    padding: 10px 12px;
+    border-radius: 999px;
+    width: fit-content;
+    margin-bottom: 14px;
+  
+    box-shadow: 0 0 18px rgba(0, 255, 255, 0.12);
+    position: relative;
+    z-index: 2;
+  }
+  
+  .homeOverlay__badge::before {
+    content: "●";
+    color: rgba(255, 0, 170, 0.95);
+    text-shadow: 0 0 12px rgba(255, 0, 170, 0.75);
+  }
+  
+  /* Typography */
+  .homeOverlay__title {
+    margin: 0 0 8px;
+    font-size: clamp(26px, 4vw, 44px);
+    line-height: 1.05;
+    color: rgba(245, 245, 255, 0.95);
+    letter-spacing: -0.02em;
+  
+    text-shadow:
+      0 0 26px rgba(255, 0, 170, 0.16),
+      0 0 30px rgba(0, 255, 255, 0.10);
+  
+    position: relative;
+    z-index: 2;
+  }
+  
+  .homeOverlay__subtitle {
+    margin: 0 0 20px;
+    color: rgba(220, 230, 255, 0.75);
+  
+    font-size: 14px;
+    line-height: 1.45;
+    max-width: 54ch;
+  
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    opacity: 0.95;
+  
+    position: relative;
+    z-index: 2;
+  }
+  
+  /* Grids / Menu */
+  .homeOverlay__langGrid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin: 18px 0 16px;
+    position: relative;
+    z-index: 2;
+  }
+  
+  @media (max-width: 520px) {
+    .homeOverlay__langGrid { grid-template-columns: 1fr; }
+  }
+  
+  .homeOverlay__menu {
+    display: grid;
+    gap: 12px;
+    margin-top: 12px;
+    position: relative;
+    z-index: 2;
+  }
+  
+  /* Buttons */
+  .homeOverlay__langBtn,
+  .homeOverlay__primaryBtn,
+  .homeOverlay__secondaryBtn,
+  .homeOverlay__menuBtn {
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    background: rgba(10, 8, 22, 0.45);
+    color: rgba(245, 245, 255, 0.92);
+  
+    padding: 14px 14px;
+    cursor: pointer;
+  
+    transition:
+      transform 160ms ease,
+      box-shadow 160ms ease,
+      border-color 160ms ease,
+      background 160ms ease;
+  
+    text-align: left;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    letter-spacing: 0.02em;
+  
+    position: relative;
+    overflow: hidden;
+    z-index: 2;
+  }
+  
+  .homeOverlay__langBtn:hover,
+  .homeOverlay__primaryBtn:hover,
+  .homeOverlay__secondaryBtn:hover,
+  .homeOverlay__menuBtn:hover {
+    transform: translateY(-1px);
+    border-color: rgba(0, 255, 255, 0.26);
+    box-shadow:
+      0 12px 26px rgba(0, 0, 0, 0.40),
+      0 0 26px rgba(0, 255, 255, 0.12),
+      0 0 26px rgba(255, 0, 170, 0.10);
+  }
+  
+  /* shimmer */
+  .homeOverlay__langBtn::after,
+  .homeOverlay__primaryBtn::after,
+  .homeOverlay__secondaryBtn::after,
+  .homeOverlay__menuBtn::after {
+    content: "";
+    position: absolute;
+    top: -40%;
+    left: -30%;
+    width: 60%;
+    height: 180%;
+    transform: rotate(18deg);
+  
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.10), transparent);
+    opacity: 0;
+  
+    transition: opacity 160ms ease, transform 220ms ease;
+  }
+  
+  .homeOverlay__langBtn:hover::after,
+  .homeOverlay__primaryBtn:hover::after,
+  .homeOverlay__secondaryBtn:hover::after,
+  .homeOverlay__menuBtn:hover::after {
+    opacity: 1;
+    transform: translateX(70%) rotate(18deg);
+  }
+  
+  .homeOverlay__langBtn.isActive,
+  .homeOverlay__menuBtn.isActive {
+    border-color: rgba(255, 0, 170, 0.35);
+    box-shadow:
+      0 0 0 1px rgba(255, 0, 170, 0.20) inset,
+      0 0 22px rgba(255, 0, 170, 0.18),
+      0 0 18px rgba(0, 255, 255, 0.08);
+    background: rgba(28, 10, 40, 0.55);
+  }
+  
+  /* Primary */
+  .homeOverlay__primaryBtn {
+    background:
+      linear-gradient(135deg, rgba(255, 0, 170, 0.28), rgba(0, 255, 255, 0.10)),
+      rgba(10, 8, 22, 0.52);
+  
+    border-color: rgba(255, 0, 170, 0.22);
+    box-shadow:
+      0 0 0 1px rgba(255, 0, 170, 0.12) inset,
+      0 0 28px rgba(255, 0, 170, 0.12);
+  }
+  
+  .homeOverlay__secondaryBtn {
+    background: rgba(10, 8, 22, 0.40);
+    border-color: rgba(0, 255, 255, 0.14);
+  }
+  
+  .homeOverlay__primaryBtn:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+  
+  /* focus */
+  .homeOverlay__langBtn:focus-visible,
+  .homeOverlay__primaryBtn:focus-visible,
+  .homeOverlay__secondaryBtn:focus-visible,
+  .homeOverlay__menuBtn:focus-visible {
+    outline: 2px solid rgba(0, 255, 255, 0.45);
+    outline-offset: 2px;
+  }
+  
+  /* Chevron */
+  .homeOverlay__chev {
+    display: inline-block;
+    width: 18px;
+    margin-right: 8px;
+    opacity: 0;
+    transform: translateX(-2px);
+    transition: opacity 160ms ease, transform 160ms ease;
+  
+    color: rgba(255, 0, 170, 0.95);
+    text-shadow: 0 0 12px rgba(255, 0, 170, 0.75);
+  }
+  
+  .homeOverlay__chev.isOn {
+    opacity: 1;
+    transform: translateX(0px);
+  }
+  
+  .homeOverlay__langLabel {
+    display: inline-block;
+  }
+  
+  /* Footer */
+  .homeOverlay__footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: 18px;
+    position: relative;
+    z-index: 2;
+  }
+  
+  .homeOverlay__continueBtn {
+    padding-left: 26px;
+    padding-right: 26px;
+  }
+  
+  /* Hint */
+  .homeOverlay__hint {
+    margin-top: 14px;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(200, 255, 255, 0.65);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    opacity: 0.9;
+    position: relative;
+    z-index: 2;
+  }
+   

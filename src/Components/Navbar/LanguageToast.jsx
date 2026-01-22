@@ -1,72 +1,145 @@
+// src/Components/LanguageToast/LanguageToast.jsx
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import useOnboarding from "../../hooks/useOnboarding";
+import "./LanguageToast.css";
+
+const LANG_LABELS = {
+  en: "English",
+  fr: "Français",
+  nl: "Nederlands",
+  pl: "Polski",
+};
+
+function isNavbarIntentFresh() {
+  const intent = window.__AG_LANG_INTENT__;
+  if (!intent || intent.src !== "navbar") return false;
+  if (typeof intent.at !== "number") return false;
+  return Date.now() - intent.at < 1200;
+}
 
 export default function LanguageToast() {
   const { t, i18n } = useTranslation("common");
-  const [open, setOpen] = useState(false);
-  const [toastKey, setToastKey] = useState(0);
-  const timerRef = useRef(null);
+  const { shouldShowLanguageStep } = useOnboarding();
 
-  // 1) on écoute le changement de langue
+  const [open, setOpen] = useState(false);
+  const [closing, setClosing] = useState(false);
+  const [lang, setLang] = useState(i18n.resolvedLanguage || i18n.language || "en");
+
+  const timerRef = useRef(null);
+  const suppressRef = useRef(shouldShowLanguageStep);
+
   useEffect(() => {
-    const onLang = () => {
+    suppressRef.current = shouldShowLanguageStep;
+  }, [shouldShowLanguageStep]);
+
+  useEffect(() => {
+    const onLang = (lng) => {
+      // ✅ jamais pendant Step1
+      if (suppressRef.current) return;
+
+      // ✅ uniquement si ça vient de la navbar
+      if (!isNavbarIntentFresh()) return;
+
+      // clean intent pour éviter des triggers doubles
+      window.__AG_LANG_INTENT__ = null;
+
+      const next = lng || i18n.resolvedLanguage || i18n.language || "en";
+      setLang(next);
+      setClosing(false);
       setOpen(true);
-      setToastKey((k) => k + 1); // ✅ force un "restart" du timer
+
+      if (timerRef.current) window.clearTimeout(timerRef.current);
+
+      timerRef.current = window.setTimeout(() => {
+        setClosing(true);
+        setTimeout(() => setOpen(false), 600);
+      }, 2400);
     };
 
     i18n.on("languageChanged", onLang);
     return () => i18n.off("languageChanged", onLang);
   }, [i18n]);
 
-  // 2) timer séparé, garanti
-  useEffect(() => {
-    if (!open) return;
-
-    if (timerRef.current) window.clearTimeout(timerRef.current);
-    timerRef.current = window.setTimeout(() => setOpen(false), 2000); 
-
-    return () => {
-      if (timerRef.current) window.clearTimeout(timerRef.current);
-    };
-  }, [open, toastKey]);
-
   if (!open) return null;
 
+  const label = LANG_LABELS[lang] || lang;
+
   return (
-    <div
-      style={{
-        position: "fixed",
-        left: "50%",
-        bottom: 22,
-        transform: "translateX(-50%)",
-        zIndex: 5000,
-        pointerEvents: "none",
-      }}
-      aria-live="polite"
-      aria-atomic="true"
-    >
-      <div
-        style={{
-          pointerEvents: "none",
-          padding: "10px 14px",
-          borderRadius: 14,
-          border: "1px solid rgba(255,0,170,0.35)",
-          background:
-            "radial-gradient(520px 220px at 15% 20%, rgba(255,0,170,0.14), transparent 60%)," +
-            "radial-gradient(520px 220px at 85% 30%, rgba(124,58,237,0.14), transparent 60%)," +
-            "rgba(0,0,0,0.72)",
-          backdropFilter: "blur(10px)",
-          color: "rgba(255,255,255,0.92)",
-          boxShadow:
-            "0 18px 55px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,0,170,0.12), 0 0 40px rgba(124,58,237,0.10)",
-          fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, sans-serif",
-          fontWeight: 900,
-          letterSpacing: 0.2,
-          whiteSpace: "nowrap",
-        }}
-      >
-        {t("toast.languageChanged")}
+    <div className={`agToast ${closing ? "isClosing" : "isOpen"}`} aria-live="polite">
+      <div className="agToast__card" role="status">
+        <span className="agToast__chev">{">"}</span>
+        <span className="agToast__text">
+          {t("toast.languageChangedTo", { lang: label })}
+        </span>
       </div>
     </div>
   );
 }
+
+
+//ok
+// import React, { useEffect, useRef, useState } from "react";
+// import { useTranslation } from "react-i18next";
+// import useOnboarding from "../../hooks/useOnboarding";
+// import "./LanguageToast.css";
+
+// const LANG_LABELS = {
+//   en: "English",
+//   fr: "Français",
+//   nl: "Nederlands",
+//   pl: "Polski",
+// };
+
+// export default function LanguageToast() {
+//   const { t, i18n } = useTranslation("common");
+//   const { shouldShowLanguageStep } = useOnboarding();
+
+//   const [open, setOpen] = useState(false);
+//   const [closing, setClosing] = useState(false);
+//   const [lang, setLang] = useState(i18n.resolvedLanguage || i18n.language || "en");
+
+//   const timerRef = useRef(null);
+//   const suppressRef = useRef(shouldShowLanguageStep);
+
+//   useEffect(() => {
+//     suppressRef.current = shouldShowLanguageStep;
+//   }, [shouldShowLanguageStep]);
+
+//   useEffect(() => {
+//     const onLang = (lng) => {
+//       if (suppressRef.current) return;
+
+//       const next = lng || i18n.resolvedLanguage || i18n.language || "en";
+//       setLang(next);
+//       setClosing(false);
+//       setOpen(true);
+
+//       if (timerRef.current) window.clearTimeout(timerRef.current);
+
+//       // visible 2.4s → fade out 0.6s
+//       timerRef.current = window.setTimeout(() => {
+//         setClosing(true);
+//         setTimeout(() => setOpen(false), 600);
+//       }, 2400);
+//     };
+
+//     i18n.on("languageChanged", onLang);
+//     return () => i18n.off("languageChanged", onLang);
+//   }, [i18n]);
+
+//   if (!open) return null;
+
+//   const label = LANG_LABELS[lang] || lang;
+
+//   return (
+//     <div className={`agToast ${closing ? "isClosing" : "isOpen"}`} aria-live="polite">
+//       <div className="agToast__card" role="status">
+//         <span className="agToast__chev">{">"}</span>
+//         <span className="agToast__text">
+//           {t("toast.languageChangedTo", { lang: label })}
+//         </span>
+//       </div>
+//     </div>
+//   );
+// }

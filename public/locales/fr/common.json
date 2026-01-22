@@ -1,6 +1,6 @@
 {
-    "toast": {
-      "languageChanged": "Langue : Français ✅"
-    }
+  "toast": {
+    "languageChangedTo": "Langue : {{lang}}",
+    "dismiss": "Fermer"
   }
-  
+}

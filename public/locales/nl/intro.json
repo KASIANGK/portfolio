@@ -1,49 +1,30 @@
 {
-    "kicker": "KASIA NAGORKA / INTERACTIVE SPACE",
-    "stepLabel": "Stap {{current}}/{{total}}",
-  
-    "title1": "Welkom. Maak het jezelf gemakkelijk.",
-    "sub1": "Een mini-wereld: deels portfolio, deels playground. Verken, klik en ga meteen naar wat telt.",
-  
-    "title2": "Snelle controls. Geen drama.",
-    "sub2": "Twee toetsen en je bent binnen. (En ja — je kan altijd ontsnappen 😇)",
-  
-    "cmd": {
-      "boot": "boot: kasiaverse.exe",
-      "mode": "mode: interactieve portfolio",
-      "hint": "hint: zoek ORBS → open PORTALS",
-      "continue": "Druk op SPACE / ENTER om verder te gaan.",
-  
-      "move": "PIJLEN  → bewegen",
-      "look": "MUIS    → rondkijken",
-      "esc": "ESC     → cursor vrij",
-      "enter": "Druk op SPACE / ENTER om binnen te gaan.",
-      "clickToLock": "Klik in de scène om de muis te vergrendelen (ESC om los te laten)."
-    },
-  
-    "buttons": {
-      "goPortfolio": "Naar Portfolio",
-      "goEssential": "Naar Essential",
-      "nextControls": "Volgende → Controls",
-      "back": "← Terug",
-      "enter": "Enter"
-    },
-  
-    "footer": {
-      "dontShowAgain": "Niet meer tonen",
-      "tip": "tip: ESC maakt de muis vrij"
-    },
-  
-    "language": {
-      "title": "Kies je taal",
-      "subtitle": "Snelle setup. Je kan dit later wijzigen.",
+  "a11y": {
+    "languageSelector": "Taalkeuze",
+    "menuSelector": "Startmenu"
+  },
+  "language": {
+    "title": "Kies je taal",
+    "subtitle": "Je kunt de taal later altijd wijzigen via de navbar.",
+    "continue": "Doorgaan",
+    "languages": {
+      "en": "English",
       "fr": "Français",
       "nl": "Nederlands",
-      "en": "English",
-      "pl": "Polski",
-      "confirm": "Doorgaan"
-    },
-    "microHint": "Je kunt dit altijd wijzigen in het menu."
-
+      "pl": "Polski"
+    }
+  },
+  "menu": {
+    "title": "Welkom bij mij! Voel je thuis!",
+    "subtitle": "Een mini-wereld: half portfolio, half playground. Verken — of ga meteen naar de essentie.",
+    "hint": "↑ ↓ ← → navigeren • Enter/Spatie bevestigen",
+    "explore": "Verkennen",
+    "about": "Over mij",
+    "projects": "Projecten",
+    "contact": "Contact",
+    "titleLine1": "Welkom bij mij!",
+    "titleLine2": "Voel je thuis!"
   }
+}
+
   
