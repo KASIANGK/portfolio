@@ -22,6 +22,32 @@ import OverlayResetButtons from "./parts/OverlayResetButtons";
 import StepLanguage from "./parts/StepLanguage";
 import StepMenu from "./parts/StepMenu";
 import ScrollHint from "./parts/ScrollHint";
+import { pickProjectImages, getProjects } from "../../../utils/projectsCache";
+import { warmPreviewAssets, warmProjectImages } from "../../../utils/projectsCache";
+
+// HomeOverlay.jsx (ajoute ces helpers au-dessus du component)
+function preloadImage(src) {
+  return new Promise((resolve) => {
+    if (!src) return resolve();
+    const img = new Image();
+    img.decoding = "async";
+    img.onload = () => resolve();
+    img.onerror = () => resolve();
+    img.src = src;
+  });
+}
+
+function buildProjectPicks(data) {
+  return (Array.isArray(data) ? data : [])
+    .slice(0, 5)
+    .flatMap((p) => {
+      const images = Array.isArray(p.images) ? p.images.filter(Boolean) : [];
+      const cover = p.cover || images[0];
+      const all = [...(cover ? [cover] : []), ...images.filter((s) => s !== cover)];
+      return all.slice(0, 2);
+    })
+    .slice(0, 6);
+}
 
 export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
   const navigate = useNavigate();
@@ -46,31 +72,80 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
     if (firstVisit) return 0;
     return shouldShowLanguageStep ? 0 : 1;
   });
+
+  function preloadImage(src) {
+    if (!src) return;
+    const img = new Image();
+    img.decoding = "async";
+    img.src = src;
+  }
   
-  // const [slideIndex, setSlideIndex] = useState(() => {
-  //   let first = true;
-  //   try {
-  //     first = localStorage.getItem(FIRST_VISIT_KEY) !== "1";
-  //   } catch {
-  //     first = true;
-  //   }
+  useEffect(() => {
+    if (slideIndex !== 1) return;
   
-  //   // 1) première visite -> Step 1
-  //   if (first) return 0;
+    // images statiques menu
+    ["/preview_city.png", "/preview_kasia.jpg"].forEach(preloadImage);
   
-  //   // 2) sinon -> logique onboarding existante
-  //   return shouldShowLanguageStep ? 0 : 1;
-  // });
+    // projects.json + images
+    getProjects().then(projects => {
+      pickProjectImages(projects, 6).forEach(preloadImage);
+    });
+  }, [slideIndex]);
   
+  const [menuAssetsReady, setMenuAssetsReady] = useState(false);
+  const [projectSlides, setProjectSlides] = useState([]);
+  const warmedOnceRef = useRef(false);
+
+  useEffect(() => {
+    if (slideIndex !== 1) return;         // on warmup uniquement Step2
+    if (warmedOnceRef.current) return;    // une seule fois
+    warmedOnceRef.current = true;
+  
+    let alive = true;
+  
+    (async () => {
+      setMenuAssetsReady(false);
+  
+      // 1) Preload previews fixes (toujours utiles)
+      const base = [
+        "/preview_city.png",
+        "/preview_kasia.jpg",
+        "/preview_project_1.png",
+        "/preview_project_2.png",
+        "/preview_project_3.png",
+      ];
+      await Promise.all(base.map(preloadImage));
+      if (!alive) return;
+  
+      // 2) Fetch projects + preload picks
+      try {
+        const r = await fetch("/projects.json");
+        const data = await r.json();
+        const picks = buildProjectPicks(data);
+  
+        await Promise.all(picks.map(preloadImage));
+        if (!alive) return;
+  
+        setProjectSlides(picks);
+      } catch {
+        // pas grave, on garde fallback
+        setProjectSlides([]);
+      }
+  
+      if (!alive) return;
+      setMenuAssetsReady(true);
+    })();
+  
+    return () => {
+      alive = false;
+    };
+  }, [slideIndex]);
+
   
   useEffect(() => {
     if (shouldShowLanguageStep) setSlideIndex(0);
   }, [shouldShowLanguageStep]);
 
-  useEffect(() => {
-    i18n.loadNamespaces(["intro"]);
-    i18n.loadLanguages(LANGS);
-  }, [i18n]);
 
   // Step1 scroll lock
   useEffect(() => {
@@ -297,6 +372,21 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
     setSlideIndex(0);
   };
   
+  useEffect(() => {
+    if (slideIndex !== 1) return;
+  
+    // previews direct
+    warmPreviewAssets();
+  
+    // projets réels en idle (pas de lag UI)
+    const run = () => warmProjectImages(12);
+  
+    if ("requestIdleCallback" in window) {
+      requestIdleCallback(() => run(), { timeout: 1200 });
+    } else {
+      setTimeout(run, 250);
+    }
+  }, [slideIndex]);
 
   // global flag
   useEffect(() => {
@@ -339,6 +429,8 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
             menuActiveIndex={menuActiveIndex}
             setMenuActiveIndex={setMenuActiveIndex}
             onRunAction={runMenuAction}
+            projectSlides={projectSlides}
+            menuAssetsReady={menuAssetsReady}
           />
         </div>
       </div>
