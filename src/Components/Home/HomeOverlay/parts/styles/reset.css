@@ -1,0 +1,86 @@
+/* ===============================
+   RESET BUTTONS (fixed)
+   =============================== */
+
+/* Base shared styles */
+.homeOverlay__resetBtn,
+.homeOverlay__resetBtn__Hint,
+.homeOverlay__resetBtn__Step {
+  position: fixed;
+  right: 16px;
+  z-index: 6000;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 10px 14px;
+  border-radius: 999px;
+
+  background: rgba(12, 10, 22, 0.62);
+  backdrop-filter: blur(10px) saturate(140%);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 14px 36px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(0, 255, 255, 0.10) inset;
+
+  color: rgba(245, 245, 255, 0.92);
+  cursor: pointer;
+
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+}
+
+.homeOverlay__resetBtn { bottom: 16px; }
+.homeOverlay__resetBtn__Hint { bottom: 80px; }
+.homeOverlay__resetBtn__Step { bottom: 160px; }
+
+.homeOverlay__resetBtn:hover,
+.homeOverlay__resetBtn__Hint:hover,
+.homeOverlay__resetBtn__Step:hover {
+  transform: translateY(-1px);
+  border-color: rgba(0, 255, 255, 0.26);
+  box-shadow:
+    0 18px 46px rgba(0, 0, 0, 0.50),
+    0 0 26px rgba(0, 255, 255, 0.12),
+    0 0 26px rgba(255, 0, 170, 0.10);
+}
+
+/* Remove default chrome ring */
+.homeOverlay button:focus {
+  outline: none;
+}
+
+/* Ultra-light pink focus (keyboard only) */
+.homeOverlay button:focus-visible {
+  outline: none;
+
+  border-color: rgba(255, 0, 170, 0.35);
+
+  box-shadow:
+    0 0 0 1px rgba(255, 0, 170, 0.25),
+    0 0 12px rgba(255, 0, 170, 0.15);
+}
+
+.homeOverlay__resetIcon {
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(255,0,170,0.25), rgba(0,255,255,0.10));
+  border: 1px solid rgba(255, 0, 170, 0.18);
+
+  color: rgba(255, 0, 170, 0.95);
+  text-shadow: 0 0 12px rgba(255, 0, 170, 0.65);
+}
+
+.homeOverlay__resetText {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.92;
+}

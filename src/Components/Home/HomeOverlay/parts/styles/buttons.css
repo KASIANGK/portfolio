@@ -1,0 +1,175 @@
+/* Buttons */
+.homeOverlay__langBtn,
+.homeOverlay__primaryBtn,
+.homeOverlay__secondaryBtn,
+.homeOverlay__menuBtn {
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: rgba(10, 8, 22, 0.45);
+  color: rgba(245, 245, 255, 0.92);
+
+  padding: 14px 14px;
+  cursor: pointer;
+
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    border-color 160ms ease,
+    background 160ms ease;
+
+  text-align: left;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  letter-spacing: 0.02em;
+
+  position: relative;
+  overflow: hidden;
+  z-index: 2;
+}
+
+.homeOverlay__menuBtn {
+  max-width: 420px;
+}
+
+.homeOverlay__langBtn:hover,
+.homeOverlay__primaryBtn:hover,
+.homeOverlay__secondaryBtn:hover,
+.homeOverlay__menuBtn:hover {
+  transform: translateY(-1px);
+  border-color: rgba(0, 255, 255, 0.26);
+  box-shadow:
+    0 12px 26px rgba(0, 0, 0, 0.40),
+    0 0 26px rgba(0, 255, 255, 0.12),
+    0 0 26px rgba(255, 0, 170, 0.10);
+}
+
+/* shimmer */
+.homeOverlay__langBtn::after,
+.homeOverlay__primaryBtn::after,
+.homeOverlay__secondaryBtn::after,
+.homeOverlay__menuBtn::after {
+  content: "";
+  position: absolute;
+  top: -40%;
+  left: -30%;
+  width: 60%;
+  height: 180%;
+  transform: rotate(18deg);
+
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.10), transparent);
+  opacity: 0;
+
+  transition: opacity 160ms ease, transform 220ms ease;
+}
+
+.homeOverlay__langBtn:hover::after,
+.homeOverlay__primaryBtn:hover::after,
+.homeOverlay__secondaryBtn:hover::after,
+.homeOverlay__menuBtn:hover::after {
+  opacity: 1;
+  transform: translateX(70%) rotate(18deg);
+}
+
+.homeOverlay__langBtn.isActive,
+.homeOverlay__menuBtn.isActive {
+  border-color: rgba(255, 0, 170, 0.35);
+  box-shadow:
+    0 0 0 1px rgba(255, 0, 170, 0.20) inset,
+    0 0 22px rgba(255, 0, 170, 0.18),
+    0 0 18px rgba(0, 255, 255, 0.08);
+  background: rgba(28, 10, 40, 0.55);
+}
+
+/* Primary */
+.homeOverlay__primaryBtn {
+  background:
+    linear-gradient(135deg, rgba(255, 0, 170, 0.28), rgba(0, 255, 255, 0.10)),
+    rgba(10, 8, 22, 0.52);
+
+  border-color: rgba(255, 0, 170, 0.22);
+  box-shadow:
+    0 0 0 1px rgba(255, 0, 170, 0.12) inset,
+    0 0 28px rgba(255, 0, 170, 0.12);
+}
+
+.homeOverlay__secondaryBtn {
+  background: rgba(10, 8, 22, 0.40);
+  border-color: rgba(0, 255, 255, 0.14);
+}
+
+.homeOverlay__primaryBtn:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* focus */
+.homeOverlay__langBtn:focus-visible,
+.homeOverlay__primaryBtn:focus-visible,
+.homeOverlay__secondaryBtn:focus-visible,
+.homeOverlay__menuBtn:focus-visible {
+  outline: 2px solid rgba(0, 255, 255, 0.45);
+  outline-offset: 2px;
+}
+
+/* Chevron */
+.homeOverlay__chev {
+  display: inline-block;
+  width: 18px;
+  margin-right: 8px;
+  opacity: 0;
+  transform: translateX(-2px);
+  transition: opacity 160ms ease, transform 160ms ease;
+
+  color: rgba(255, 0, 170, 0.95);
+  text-shadow: 0 0 12px rgba(255, 0, 170, 0.75);
+}
+
+.homeOverlay__chev.isOn {
+  opacity: 1;
+  transform: translateX(0px);
+}
+
+.homeOverlay__langLabel {
+  display: inline-block;
+}
+
+/* =========================================================
+   STEP 2 — Shimmer plus premium (estompé) sur les boutons menu
+   ========================================================= */
+
+.homeOverlay[data-step="2"] .homeOverlay__menuBtn::after {
+  content: "";
+  position: absolute;
+
+  top: -60%;
+  left: -50%;
+  width: 85%;
+  height: 220%;
+
+  transform: rotate(18deg);
+  opacity: 0;
+
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255,255,255,0.00) 35%,
+    rgba(255,255,255,0.06) 46%,
+    rgba(255,255,255,0.14) 50%,
+    rgba(255,255,255,0.06) 54%,
+    rgba(255,255,255,0.00) 65%,
+    transparent 100%
+  );
+
+  filter: blur(8px);
+  mix-blend-mode: screen;
+
+  transition: opacity 160ms ease, transform 260ms ease;
+  will-change: transform, opacity;
+}
+
+.homeOverlay[data-step="2"] .homeOverlay__menuBtn:hover::after,
+.homeOverlay[data-step="2"] .homeOverlay__menuBtn:focus-visible::after {
+  opacity: 1;
+  transform: translateX(85%) rotate(18deg);
+}
