@@ -105,4 +105,10 @@
       min-height: 220px;
     }
   }
-  
+  .homeOverlay__previewStage{ position: relative; height: 100%; }
+  .homeOverlay__previewLayer{
+    position: absolute;
+    inset: 0;
+  }
+  .homeOverlay__previewLayer--prev{ pointer-events: none; }
+  .homeOverlay__previewLayer--next{ pointer-events: auto; }

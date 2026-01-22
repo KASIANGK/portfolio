@@ -10,6 +10,8 @@ export default function StepMenu({
   menuActiveIndex,
   setMenuActiveIndex,
   onRunAction,
+  projectSlides,
+  menuAssetsReady,
 }) {
 
   const activeKey = MENU[menuActiveIndex]?.key;
@@ -64,12 +66,8 @@ export default function StepMenu({
               <span>{String(MENU[menuActiveIndex]?.key || "").toUpperCase()}</span>
             </div>
             <div className="homeOverlay__menuPreviewBody">
-              <MenuPreview activeKey={activeKey} />
+              <MenuPreview activeKey={activeKey}  projectSlides={projectSlides} menuAssetsReady={menuAssetsReady}/>
             </div>
-
-            {/* <div className="homeOverlay__menuPreviewBody">
-              <div className="homeOverlay__menuPreviewPlaceholder">PREVIEW CONTENT — SOON ✦</div>
-            </div> */}
           </aside>
         </div>
       </div>
