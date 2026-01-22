@@ -1,5 +1,7 @@
 // src/Components/Home/HomeOverlay/parts/StepMenu.jsx
 import React from "react";
+import MenuPreview from "./MenuPreview";
+
 
 export default function StepMenu({
   isActive,
@@ -9,6 +11,9 @@ export default function StepMenu({
   setMenuActiveIndex,
   onRunAction,
 }) {
+
+  const activeKey = MENU[menuActiveIndex]?.key;
+
   return (
     <section className={`homeOverlay__slide ${isActive ? "isActive" : ""}`} aria-hidden={!isActive}>
       <div className="homeOverlay__panel">
@@ -58,10 +63,13 @@ export default function StepMenu({
               <span>PREVIEW</span>
               <span>{String(MENU[menuActiveIndex]?.key || "").toUpperCase()}</span>
             </div>
-
             <div className="homeOverlay__menuPreviewBody">
-              <div className="homeOverlay__menuPreviewPlaceholder">PREVIEW CONTENT — SOON ✦</div>
+              <MenuPreview activeKey={activeKey} />
             </div>
+
+            {/* <div className="homeOverlay__menuPreviewBody">
+              <div className="homeOverlay__menuPreviewPlaceholder">PREVIEW CONTENT — SOON ✦</div>
+            </div> */}
           </aside>
         </div>
       </div>
