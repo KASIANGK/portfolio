@@ -1,5 +1,5 @@
 /* =========================================
-   ScrollHint.css
+   scrollHint.css
    - Step2 only scroll hint (bottom-right)
    ========================================= */
 
@@ -75,5 +75,72 @@
       transition: none !important;
       animation: none !important;
     }
+  }
+  /* Step1 keyboard hint (one-shot) */
+.homeOverlay__kbdHint{
+    --kbdX: -50px;
+    --kbdY: 10px;
+  
+    margin-top: 12px;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(200, 255, 255, 0.62);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  
+    opacity: 0;
+    transform: translate3d(-50px, 10px, 0);
+    filter: blur(2px);
+  
+    transition:
+      opacity 320ms ease,
+      transform 420ms cubic-bezier(0.16, 1, 0.3, 1),
+      filter 320ms ease;
+  
+    will-change: opacity, transform, filter;
+    position: relative;
+    z-index: 5;
+    flex-wrap: wrap;
+  }
+  
+  .homeOverlay__kbdHint.isVisible{
+    opacity: 1;
+    transform: translate3d(var(--kbdX), var(--kbdY), 0);
+    filter: blur(0px);
+  }
+  
+  .homeOverlay__kbdHint.isHiding{
+    opacity: 0;
+    transform: translate3d(var(--kbdX), var(--kbdY), 0);
+    filter: blur(3px);
+  }
+  
+  .homeOverlay__kbdPill{
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: rgba(0,0,0,0.18);
+    border: 1px solid rgba(0,255,255,0.16);
+    box-shadow: 0 0 18px rgba(0,255,255,0.10);
+  }
+  
+  .homeOverlay__kbdKey{
+    padding: 2px 6px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.10);
+    color: rgba(245,245,255,0.85);
+  }
+  
+  .homeOverlay__hintSlot{
+    min-height: 44px;
+    display: flex;
+    align-items: center;
   }
   

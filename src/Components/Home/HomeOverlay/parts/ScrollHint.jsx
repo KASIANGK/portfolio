@@ -1,4 +1,3 @@
-// src/Components/Home/HomeOverlay/parts/ScrollHint.jsx
 import React from "react";
 
 export default function ScrollHint({ visible }) {

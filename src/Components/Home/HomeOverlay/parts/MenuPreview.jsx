@@ -356,9 +356,9 @@ export default function MenuPreview({ activeKey }) {
 
   return (
     <div className="homeOverlay__previewStage" data-preview={activeKey}>
-      <div ref={prevRef} className="homeOverlay__previewLayer homeOverlay__previewLayer--prev">
+      {/* <div ref={prevRef} className="homeOverlay__previewLayer homeOverlay__previewLayer--prev">
         {renderKey(prevKey, false)}
-      </div>
+      </div> */}
 
       <div ref={nextRef} className="homeOverlay__previewLayer homeOverlay__previewLayer--next">
         {renderKey(activeKey, true)}
