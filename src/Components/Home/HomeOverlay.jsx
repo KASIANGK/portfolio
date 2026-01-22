@@ -98,7 +98,7 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
   );
   const [selectedLang, setSelectedLang] = useState(initialLang);
   const [isSwitchingLang, setIsSwitchingLang] = useState(false);
-  const KB_HINT_KEY = "ag_step1_kb_hint_seen";
+  const KB_HINT_KEY = "ag_step1_kb_hint_seen_v2";
 
   const [showKbHint, setShowKbHint] = useState(() => {
     try { return localStorage.getItem(KB_HINT_KEY) !== "1"; }
@@ -386,33 +386,32 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
                 })}
               </div>
 
-              {slideIndex === 0 && showKbHint && (
-                <div
-                  className={`homeOverlay__kbdHint ${
-                    kbHintPhase === "visible" ? "isVisible" : ""
-                  } ${kbHintPhase === "hiding" ? "isHiding" : ""}`}
-                  aria-hidden={!showKbHint}
-                >
-                  <span className="homeOverlay__kbdPill">
-                  <p className="homeOverlay__hint">{t("menu.hint")}</p>
-
-                    <span className="homeOverlay__kbdKey">↑</span>
-                    <span className="homeOverlay__kbdKey">↓</span>
-                    <span className="homeOverlay__kbdKey">←</span>
-                    <span className="homeOverlay__kbdKey">→</span>
-                    <span>to navigate</span>
-                  </span>
-
-                  <span className="homeOverlay__kbdPill">
-                    <span className="homeOverlay__kbdKey">Enter</span>
-                    <span className="homeOverlay__kbdKey">Space</span>
-                    <span>to continue</span>
-                  </span>
-                </div>
-              )}
-
-
               <div className="homeOverlay__footer">
+                <div className="homeOverlay__hintSlot">
+                  {slideIndex === 0 && showKbHint && (
+                    <div
+                      className={`homeOverlay__kbdHint ${
+                        kbHintPhase === "visible" ? "isVisible" : ""
+                      } ${kbHintPhase === "hiding" ? "isHiding" : ""}`}
+                      aria-hidden={!showKbHint}
+                    >
+                      <span className="homeOverlay__kbdPill">
+
+                        <span className="homeOverlay__kbdKey">↑</span>
+                        <span className="homeOverlay__kbdKey">↓</span>
+                        <span className="homeOverlay__kbdKey">←</span>
+                        <span className="homeOverlay__kbdKey">→</span>
+                        <span>to navigate</span>
+                      </span>
+
+                      <span className="homeOverlay__kbdPill">
+                        <span className="homeOverlay__kbdKey">Enter</span>
+                        <span className="homeOverlay__kbdKey">Space</span>
+                        <span>to continue</span>
+                      </span>
+                    </div>
+                  )}
+                </div>
                 <button
                   ref={continueBtnRef}
                   type="button"
@@ -448,7 +447,7 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
 
               <p className="homeOverlay__subtitle">{t("menu.subtitle")}</p>
 
-              <div className="homeOverlay__menu" role="menu" aria-label={t("a11y.menu")}>
+              {/* <div className="homeOverlay__menu" role="menu" aria-label={t("a11y.menu")}>
                 {MENU.map((item, idx) => {
                   const isActive = idx === menuActiveIndex;
                   const btnClass =
@@ -479,7 +478,48 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
                     </button>
                   );
                 })}
+              </div> */}
+              <div className="homeOverlay__menuShell">
+                {/* LEFT: buttons */}
+                <div className="homeOverlay__menuCol" role="menu" aria-label={t("a11y.menu")}>
+                  {MENU.map((item, idx) => {
+                    const isActive = idx === menuActiveIndex;
+                    const btnClass =
+                      item.kind === "primary" ? "homeOverlay__primaryBtn" : "homeOverlay__secondaryBtn";
+
+                    return (
+                      <button
+                        key={item.key}
+                        type="button"
+                        className={`${btnClass} homeOverlay__menuBtn ${isActive ? "isActive" : ""}`}
+                        onMouseEnter={() => setMenuActiveIndex(idx)}
+                        onFocus={() => setMenuActiveIndex(idx)}
+                        onClick={() => runMenuAction(item)}
+                      >
+                        <span className={`homeOverlay__chev ${isActive ? "isOn" : ""}`} aria-hidden="true">
+                          &gt;
+                        </span>
+                        <span className="homeOverlay__langLabel">{t(`menu.buttons.${item.key}`)}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* RIGHT: preview skeleton (changes with hover/keyboard because menuActiveIndex changes) */}
+                <aside className="homeOverlay__menuPreview" aria-live="polite">
+                  <div className="homeOverlay__menuPreviewHeader">
+                    <span>PREVIEW</span>
+                    <span>{String(MENU[menuActiveIndex]?.key || "").toUpperCase()}</span>
+                  </div>
+
+                  <div className="homeOverlay__menuPreviewBody">
+                    <div className="homeOverlay__menuPreviewPlaceholder">
+                      PREVIEW CONTENT — SOON ✦
+                    </div>
+                  </div>
+                </aside>
               </div>
+
             </div>
             
             {/* Scroll hint */}
