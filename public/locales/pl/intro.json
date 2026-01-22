@@ -1,49 +1,28 @@
 {
-    "kicker": "KASIA NAGORKA / INTERACTIVE SPACE",
-    "stepLabel": "Krok {{current}}/{{total}}",
-  
-    "title1": "Witaj. Czuj się jak u siebie.",
-    "sub1": "Mini-świat: trochę portfolio, trochę playground. Eksploruj, klikaj i przechodź do sedna.",
-  
-    "title2": "Sterowanie szybko. Zero dramy.",
-    "sub2": "Dwa klawisze i jesteś w środku. (I tak — zawsze możesz uciec 😇)",
-  
-    "cmd": {
-      "boot": "boot: kasiaverse.exe",
-      "mode": "mode: interaktywne portfolio",
-      "hint": "hint: znajdź ORBS → otwórz PORTALS",
-      "continue": "Naciśnij SPACE / ENTER, aby kontynuować.",
-  
-      "move": "STRZAŁKI → ruch",
-      "look": "MYSZ     → rozglądanie",
-      "esc": "ESC      → uwolnij kursor",
-      "enter": "Naciśnij SPACE / ENTER, aby wejść.",
-      "clickToLock": "Kliknij w scenę, aby zablokować mysz (ESC, aby ją odblokować)."
-    },
-  
-    "buttons": {
-      "goPortfolio": "Przejdź do Portfolio",
-      "goEssential": "Przejdź do Essential",
-      "nextControls": "Dalej → Controls",
-      "back": "← Wstecz",
-      "enter": "Enter"
-    },
-  
-    "footer": {
-      "dontShowAgain": "Nie pokazuj ponownie",
-      "tip": "tip: ESC uwalnia mysz"
-    },
-  
-    "language": {
-      "title": "Wybierz język",
-      "subtitle": "Szybka konfiguracja. Zmienisz później.",
+  "a11y": {
+    "languageSelector": "Wybór języka",
+    "menuSelector": "Menu startowe"
+  },
+  "language": {
+    "title": "Wybierz język",
+    "subtitle": "Zawsze możesz zmienić język później w navbarze.",
+    "continue": "Dalej",
+    "languages": {
+      "en": "English",
       "fr": "Français",
       "nl": "Nederlands",
-      "en": "English",
-      "pl": "Polski",
-      "confirm": "Kontynuuj"
-    },
-    "microHint": "Możesz to zmienić w dowolnym momencie w menu."
-
+      "pl": "Polski"
+    }
+  },
+  "menu": {
+    "title": "Witaj u mnie! Czuj się jak u siebie!",
+    "subtitle": "Mini-świat: pół portfolio, pół playground. Eksploruj — albo przejdź prosto do konkretów.",
+    "hint": "↑ ↓ ← → nawigacja • Enter/Spacja potwierdź",
+    "explore": "Eksploruj",
+    "about": "O mnie",
+    "projects": "Projekty",
+    "contact": "Kontakt",
+    "titleLine1": "Witaj u mnie!",
+    "titleLine2": "Czuj się jak u siebie!"
   }
-  
+}

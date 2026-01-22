@@ -1,6 +1,6 @@
 {
-    "toast": {
-      "languageChanged": "Taal ingesteld op Nederlands ✅"
-    }
+  "toast": {
+    "languageChangedTo": "Taal ingesteld op {{lang}}",
+    "dismiss": "Sluiten"
   }
-  
+}

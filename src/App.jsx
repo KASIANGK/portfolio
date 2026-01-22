@@ -1,8 +1,8 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { ThemeProvider } from "./ThemeContext";
-
-import HomeCity from "./Components/HomeCity/HomeCity";
+import Home from "./Components/Home/Home";
+import HomeCity from "./Components/Home/HomeCity";
 import About from "./Components/About/About";
 import Essential from "./Components/Essential/Essential";
 import Navbar from "./Components/Navbar/Navbar";
@@ -18,6 +18,8 @@ function Layout() {
   const isHome = location.pathname === "/";
   const isPortfolio = location.pathname === "/portfolio";
   const isAbout = location.pathname === "/about";
+  const isCity = location.pathname === "/city";
+
 
 
   return (
@@ -26,10 +28,11 @@ function Layout() {
       <LanguageToast /> 
 
       {/* ✅ Hide custom cursor on Home (FPS/pointerlock page) */}
-      {!isHome && !isPortfolio && !isAbout && <Dandelion />}
+      {!isHome && !isPortfolio && !isAbout && !isCity && <Dandelion />}
 
       <Routes>
-        <Route path="/" element={<HomeCity />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/city" element={<HomeCity />} />
         <Route path="/essential" element={<Essential />} />
         <Route path="/skills" element={<Skills />} />
         <Route path="/about" element={<About />} />
