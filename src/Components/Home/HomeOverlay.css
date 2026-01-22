@@ -171,6 +171,33 @@
       0 0 26px rgba(0, 255, 255, 0.12),
       0 0 26px rgba(255, 0, 170, 0.10);
   }
+  .homeOverlay__resetBtn__Hint {
+    position: fixed;
+    right: 16px;
+    bottom: 80px;
+    z-index: 6000;
+  
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  
+    padding: 10px 14px;
+    border-radius: 999px;
+  
+    background: rgba(12, 10, 22, 0.62);
+    backdrop-filter: blur(10px) saturate(140%);
+    -webkit-backdrop-filter: blur(10px) saturate(140%);
+  
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow:
+      0 14px 36px rgba(0, 0, 0, 0.45),
+      0 0 0 1px rgba(0, 255, 255, 0.10) inset;
+  
+    color: rgba(245, 245, 255, 0.92);
+    cursor: pointer;
+  
+    transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+  }
   
   /* Remove default chrome ring */
   .homeOverlay button:focus {
@@ -359,9 +386,10 @@
     position: absolute;
     inset: 0;
     pointer-events: none;
-    overflow: hidden;
+    /* overflow: hidden; */
     border-radius: 22px;
     z-index: 2;
+    width: 300px;
   }
   .homeOverlay__shine{
     position: absolute;
@@ -390,9 +418,9 @@
   
   @keyframes panelSweep{
     0%   { transform: translate(-40%, -55%) rotate(18deg); opacity: 0.00; }
-    15%  { opacity: 0.08; }
-    50%  { transform: translate(25%, 35%) rotate(18deg); opacity: 0.12; } /* ✅ traverse en oblique */
-    80%  { opacity: 0.06; }
+    15%  { opacity: 0.1; }
+    50%  { transform: translate(25%, 35%) rotate(18deg); opacity: 0.15; } /* ✅ traverse en oblique */
+    80%  { opacity: 0.12; }
     100% { transform: translate(-40%, -55%) rotate(18deg); opacity: 0.00; }
   }
   
@@ -400,21 +428,21 @@
     position: absolute;
     width: 420px;
     height: 420px;
-    left: -120px;
-    top: -140px;
+    left: -140px;
+    top: -180px;
   
     background:
       radial-gradient(circle at 35% 35%, rgba(255, 0, 170, 0.40), transparent 55%),
       radial-gradient(circle at 70% 65%, rgba(0, 255, 255, 0.22), transparent 60%);
   
-    filter: blur(10px);
+    filter: blur(20px);
     opacity: 0.75;
     animation: orbFloat 7s ease-in-out infinite;
   }
   
   @keyframes orbFloat {
     0%, 100% { transform: translate(0px, 0px) scale(1); }
-    50% { transform: translate(28px, 18px) scale(1.03); }
+    50% { transform: translate(88px, 88px) scale(1.03); }
   }
   
   .homeOverlay__grid {
@@ -459,6 +487,27 @@
     margin: 0;
     z-index: 3;
     opacity: 0.92; */
+    isolation: isolate;
+
+  }
+  .homeOverlay__badge::after{
+    content:"";
+    position:absolute;
+    inset:-4px -8px;
+    border-radius:999px;
+    z-index:-1;
+  
+    /* ✅ vrai gradient rose -> bleu */
+    background: linear-gradient(
+      90deg,
+      rgba(255, 0, 170, 0.65) 0%,
+      rgba(120, 70, 255, 0.45) 45%,
+      rgba(0, 255, 255, 0.55) 100%
+    );
+  
+    filter: blur(16px);
+    opacity: 0.45;
+    pointer-events:none;
   }
   
   .homeOverlay__badge::before {
@@ -548,7 +597,7 @@
   z-index: 2;
 }
 .homeOverlay__menuBtn {
-  max-width: 300px;
+  max-width: 420px;
 }
 
 .homeOverlay__langBtn:hover,
@@ -795,5 +844,60 @@
   .homeOverlay[data-step="2"] .homeOverlay__menuBtn:focus-visible::after {
     opacity: 1;
     transform: translateX(85%) rotate(18deg);
+  }
+/* ===============================
+   Step1 keyboard hint (one-shot)
+   =============================== */
+   .homeOverlay__kbdHint{
+    margin-top: 12px;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(200, 255, 255, 0.62);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 320ms ease, transform 320ms ease;
+  }
+  
+  .homeOverlay__kbdHint.isVisible{
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .homeOverlay__kbdHint.isHiding{
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  
+  .homeOverlay__kbdPill{
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: 999px;
+  
+    background: rgba(0,0,0,0.18);
+    border: 1px solid rgba(0,255,255,0.16);
+    box-shadow: 0 0 18px rgba(0,255,255,0.10);
+  }
+  
+  .homeOverlay__kbdKey{
+    padding: 2px 6px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.10);
+    color: rgba(245,245,255,0.85);
+  }
+  
+  .homeOverlay__kbdHint{
+    position: relative;
+    z-index: 5;  /* ✅ au-dessus des FX */
+    flex-wrap: wrap; /* au cas où */
   }
   
