@@ -18,10 +18,12 @@
     "title": "Bienvenue chez moi ! Fais comme chez toi !",
     "subtitle": "Un mini-monde : moitié portfolio, moitié playground. Explore et/ou va droit à l’essentiel.",
     "hint": "↑ ↓ ← → pour naviguer • Entrée/Espace pour valider",
-    "explore": "Explore",
-    "about": "À propos",
-    "projects": "Projets",
-    "contact": "Contact",
+    "buttons": {
+      "explore": "Explore",
+      "about": "À propos",
+      "projects": "Projets",
+      "contact": "Contact"
+    },
     "titleLine1": "Bienvenue chez moi!",
     "titleLine2": "Fais comme chez toi!"
   }
