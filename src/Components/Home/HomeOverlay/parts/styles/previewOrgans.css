@@ -273,3 +273,37 @@
   transform: scale(1.12);
   filter: drop-shadow(0 0 10px rgba(255,62,201,0.7));
 }
+
+/* le slider doit recevoir les events */
+.homeOverlay__previewSlider,
+.homeOverlay__previewViewport,
+.homeOverlay__previewTrack {
+  pointer-events: auto;
+}
+
+/* les boutons doivent être cliquables */
+.homeOverlay__previewSlideBtn {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+/* overlays déco: ne doivent JAMAIS capter les clicks */
+.homeOverlay__previewScanlines,
+.homeOverlay__previewGlow {
+  pointer-events: none;
+}
+  
+.homeOverlay__previewSlideBtn{
+  all: unset;
+  display: block;
+  width: 280px;
+  height: 100%;
+  cursor: pointer;
+}
+
+.homeOverlay__previewSlideBtn img{
+  width: 280px;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
