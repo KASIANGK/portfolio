@@ -66,7 +66,12 @@ export default function StepMenu({
               <span>{String(MENU[menuActiveIndex]?.key || "").toUpperCase()}</span>
             </div>
             <div className="homeOverlay__menuPreviewBody">
-              <MenuPreview activeKey={activeKey}  projectSlides={projectSlides} menuAssetsReady={menuAssetsReady}/>
+              <MenuPreview 
+                activeKey={activeKey}  
+                projectSlides={projectSlides} 
+                menuAssetsReady={menuAssetsReady}
+                instant
+              />
             </div>
           </aside>
         </div>

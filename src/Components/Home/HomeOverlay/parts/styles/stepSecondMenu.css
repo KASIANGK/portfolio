@@ -112,3 +112,26 @@
   }
   .homeOverlay__previewLayer--prev{ pointer-events: none; }
   .homeOverlay__previewLayer--next{ pointer-events: auto; }
+
+  /* ✅ MenuPreview instant switch (no transition, no blur) */
+.homeOverlay__previewLayer.isHidden {
+  display: none;
+}
+.homeOverlay__previewLayer.isShown {
+  display: block;
+}
+
+/* ✅ icon color on hover works */
+.homeOverlay__iconOnlySvg{
+  width: 30px;
+  height: 30px;
+  color: currentColor; /* IMPORTANT */
+  filter: drop-shadow(0 10px 18px rgba(0,0,0,0.35));
+  transition: transform 160ms ease, filter 160ms ease;
+}
+
+/* ✅ FIX: class name */
+.homeOverlay__iconOnlyBtn:hover .homeOverlay__iconOnlySvg{
+  transform: scale(1.12);
+  filter: drop-shadow(0 0 10px rgba(255,62,201,0.7));
+}
