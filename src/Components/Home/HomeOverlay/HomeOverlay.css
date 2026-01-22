@@ -693,6 +693,154 @@
   letter-spacing: 0.06em;
 }
 
+/* =========================
+   PREVIEW ORGANS
+========================= */
+
+.homeOverlay__menuPreviewBody{
+  position: relative;
+  padding: 16px;
+  min-height: 200px;
+}
+
+.homeOverlay__previewMedia{
+  height: 100%;
+  min-height: 180px;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(0,0,0,0.18);
+  position: relative;
+}
+
+.homeOverlay__previewImg{
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  object-position: center;
+  filter: saturate(1.02) contrast(1.02);
+}
+.homeOverlay__previewImg--cover{
+  object-fit: cover;
+}
+
+.homeOverlay__previewCaption{
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(0,0,0,0.28);
+  color: rgba(245,245,255,0.86);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  box-shadow: 0 14px 36px rgba(0,0,0,0.35);
+}
+
+/* Projects mini carousel */
+.homeOverlay__previewSlider{
+  height: 100%;
+  min-height: 180px;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(0,0,0,0.18);
+  position: relative;
+}
+
+.homeOverlay__previewScanlines{
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.03),
+    rgba(255, 255, 255, 0.03) 1px,
+    transparent 1px,
+    transparent 4px
+  );
+  opacity: 0.18;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.homeOverlay__previewViewport{
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 2;
+}
+
+.homeOverlay__previewTrack{
+  display: flex;
+  height: 100%;
+  will-change: transform;
+  transform: translate3d(0,0,0);
+}
+
+.homeOverlay__previewSlide{
+  flex: 0 0 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.12);
+}
+
+.homeOverlay__previewSlide img{
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover; /* looks premium in small preview */
+  object-position: center;
+}
+
+/* Contact */
+.homeOverlay__previewContacts{
+  min-height: 180px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(0,0,0,0.18);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 14px;
+  position: relative;
+}
+
+.homeOverlay__iconBtn{
+  display: grid;
+  place-items: center;
+  gap: 8px;
+
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(10, 8, 22, 0.45);
+  text-decoration: none;
+  color: rgba(245,245,255,0.92);
+
+  transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.homeOverlay__iconBtn:hover{
+  transform: translateY(-1px);
+  border-color: rgba(0, 255, 255, 0.26);
+  box-shadow:
+    0 12px 26px rgba(0,0,0,0.35),
+    0 0 22px rgba(0,255,255,0.10),
+    0 0 22px rgba(255,0,170,0.08);
+}
+
+.homeOverlay__iconLbl{
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+
 /* Responsive: on empile */
 @media (max-width: 860px){
   .homeOverlay__menuShell{
