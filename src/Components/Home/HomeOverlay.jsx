@@ -14,6 +14,7 @@ const MENU = [
   { key: "contact", kind: "secondary", to: "#contact" },
 ];
 
+
 export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation("intro");
@@ -97,6 +98,15 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
   );
   const [selectedLang, setSelectedLang] = useState(initialLang);
   const [isSwitchingLang, setIsSwitchingLang] = useState(false);
+  const KB_HINT_KEY = "ag_step1_kb_hint_seen";
+
+  const [showKbHint, setShowKbHint] = useState(() => {
+    try { return localStorage.getItem(KB_HINT_KEY) !== "1"; }
+    catch { return true; }
+  });
+
+  const [kbHintPhase, setKbHintPhase] = useState("hidden"); 
+  // "hidden" | "visible" | "hiding"
 
   useEffect(() => {
     if (slideIndex !== 0) return;
@@ -109,6 +119,31 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
 
     requestAnimationFrame(() => continueBtnRef.current?.focus?.());
   }, [slideIndex, i18n, selectedLang]);
+
+  useEffect(() => {
+    if (slideIndex !== 0) return;
+  
+    if (showKbHint) {
+      requestAnimationFrame(() => setKbHintPhase("visible"));
+    } else {
+      setKbHintPhase("hidden");
+    }
+  }, [slideIndex, showKbHint]);
+
+  const consumeKbHint = useCallback(() => {
+    if (!showKbHint) return;
+  
+    setKbHintPhase("hiding");
+  
+    try { localStorage.setItem(KB_HINT_KEY, "1"); } catch {}
+  
+    window.setTimeout(() => {
+      setShowKbHint(false);
+      setKbHintPhase("hidden");
+    }, 320);
+  }, [showKbHint]);
+  
+  
 
   const handlePickLanguage = useCallback(
     async (code, idx) => {
@@ -133,7 +168,7 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
 
   const goToStep2 = useCallback(async () => {
     if (!selectedLang) return;
-
+    consumeKbHint(); 
     setIsSwitchingLang(true);
     try {
       await setLanguage(selectedLang);
@@ -150,7 +185,7 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
       const first = document.querySelector(".homeOverlay__menuBtn");
       first?.focus?.();
     }, 420);
-  }, [selectedLang, setLanguage, completeLanguageStep]);
+  }, [selectedLang, setLanguage, completeLanguageStep, consumeKbHint]);
 
   // keyboard Step1: arrows select, enter/space continue
   useEffect(() => {
@@ -158,6 +193,7 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
 
     const onKeyDown = (e) => {
       if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
+        consumeKbHint();
         e.preventDefault();
         const dir = e.key === "ArrowUp" || e.key === "ArrowLeft" ? -1 : 1;
         const nextIdx = (langActiveIndex + dir + LANGS.length) % LANGS.length;
@@ -167,6 +203,7 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
 
       if (e.key === "Enter" || e.key === " ") {
         if (!canContinue) return;
+        consumeKbHint();
         e.preventDefault();
         goToStep2();
       }
@@ -236,10 +273,16 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
   /* -----------------------
      Reset -> Step1 instant
   ------------------------ */
-  const handleReset = useCallback(() => {
+  const handleResetLanguage = useCallback(() => {
     if (typeof resetLanguageStep === "function") resetLanguageStep();
     goToStep1Instant();
   }, [resetLanguageStep, goToStep1Instant]);
+
+  const handleResetHint = useCallback(() => {
+    try { localStorage.removeItem(KB_HINT_KEY); } catch {}
+    setShowKbHint(true);
+    setKbHintPhase("hidden");
+  }, []);
 
   useEffect(() => {
     // Step1 visible => on suppress le toast global
@@ -274,11 +317,18 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
       <div className="homeOverlay__screenFx" aria-hidden="true" />
 
       {/* Reset button fixed bottom-right */}
-      <button type="button" className="homeOverlay__resetBtn" onClick={handleReset}>
+      <button type="button" className="homeOverlay__resetBtn" onClick={handleResetLanguage}>
         <span className="homeOverlay__resetIcon" aria-hidden="true">
           ↺
         </span>
         <span className="homeOverlay__resetText">{t("language.reset")}</span>
+      </button>
+      {/* Reset button fixed bottom-right */}
+      <button type="button" className="homeOverlay__resetBtn__Hint" onClick={handleResetHint}>
+        <span className="homeOverlay__resetIcon" aria-hidden="true">
+          ↺
+        </span>
+        <span className="homeOverlay__resetText">RESET HINT</span>
       </button>
 
       {/* Carousel viewport (no swipe handlers) */}
@@ -335,6 +385,32 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
                   );
                 })}
               </div>
+
+              {slideIndex === 0 && showKbHint && (
+                <div
+                  className={`homeOverlay__kbdHint ${
+                    kbHintPhase === "visible" ? "isVisible" : ""
+                  } ${kbHintPhase === "hiding" ? "isHiding" : ""}`}
+                  aria-hidden={!showKbHint}
+                >
+                  <span className="homeOverlay__kbdPill">
+                  <p className="homeOverlay__hint">{t("menu.hint")}</p>
+
+                    <span className="homeOverlay__kbdKey">↑</span>
+                    <span className="homeOverlay__kbdKey">↓</span>
+                    <span className="homeOverlay__kbdKey">←</span>
+                    <span className="homeOverlay__kbdKey">→</span>
+                    <span>to navigate</span>
+                  </span>
+
+                  <span className="homeOverlay__kbdPill">
+                    <span className="homeOverlay__kbdKey">Enter</span>
+                    <span className="homeOverlay__kbdKey">Space</span>
+                    <span>to continue</span>
+                  </span>
+                </div>
+              )}
+
 
               <div className="homeOverlay__footer">
                 <button
@@ -404,9 +480,8 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
                   );
                 })}
               </div>
-
-              <p className="homeOverlay__hint">{t("menu.hint")}</p>
             </div>
+            
             {/* Scroll hint */}
             <div className={`homeOverlay__scrollHint ${showScrollHint ? "isVisible" : ""}`}>
               <div className="homeOverlay__scrollCircle">
