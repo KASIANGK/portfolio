@@ -1,0 +1,132 @@
+/* Badge */
+.homeOverlay__badge {
+    display: inline-flex;
+    gap: 10px;
+    align-items: center;
+  
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  
+    color: rgba(200, 255, 255, 0.85);
+    background: rgba(0, 0, 0, 0.22);
+    border: 1px solid rgba(0, 255, 255, 0.18);
+  
+    padding: 10px 12px;
+    border-radius: 999px;
+    width: fit-content;
+    margin-bottom: 14px;
+  
+    box-shadow: 0 0 18px rgba(0, 255, 255, 0.12);
+    position: relative;
+    z-index: 2;
+    isolation: isolate;
+  }
+  
+  .homeOverlay__badge::after{
+    content:"";
+    position:absolute;
+    inset:-4px -8px;
+    border-radius:999px;
+    z-index:-1;
+  
+    background: linear-gradient(
+      90deg,
+      rgba(255, 0, 170, 0.65) 0%,
+      rgba(120, 70, 255, 0.45) 45%,
+      rgba(0, 255, 255, 0.55) 100%
+    );
+  
+    filter: blur(16px);
+    opacity: 0.45;
+    pointer-events:none;
+  }
+  
+  .homeOverlay__badge::before {
+    content: "●";
+    color: rgba(255, 0, 170, 0.95);
+    text-shadow: 0 0 12px rgba(255, 0, 170, 0.75);
+  }
+  
+  /* Typography */
+  .homeOverlay__title {
+    margin: 0 0 8px;
+    font-size: clamp(26px, 4vw, 44px);
+    line-height: 1.05;
+    color: rgba(245, 245, 255, 0.95);
+    letter-spacing: -0.02em;
+  
+    text-shadow:
+      0 0 26px rgba(255, 0, 170, 0.16),
+      0 0 30px rgba(0, 255, 255, 0.10);
+  
+    position: relative;
+    z-index: 2;
+  }
+  
+  .homeOverlay__subtitle {
+    margin: 0 0 20px;
+    color: rgba(220, 230, 255, 0.75);
+  
+    font-size: 14px;
+    line-height: 1.45;
+    max-width: 44ch;
+  
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    opacity: 0.95;
+  
+    position: relative;
+    z-index: 2;
+  }
+  
+  /* Grids / Menu */
+  .homeOverlay__langGrid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin: 18px 0 16px;
+    position: relative;
+    z-index: 2;
+  }
+  
+  @media (max-width: 520px) {
+    .homeOverlay__langGrid { grid-template-columns: 1fr; }
+  }
+  
+  .homeOverlay__menu {
+    display: grid;
+    gap: 12px;
+    margin-top: 12px;
+    position: relative;
+    z-index: 2;
+  }
+  
+  /* Footer */
+  .homeOverlay__footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: 18px;
+    position: relative;
+    z-index: 2;
+  }
+  
+  .homeOverlay__continueBtn {
+    padding-left: 26px;
+    padding-right: 26px;
+  }
+  
+  /* Hint */
+  .homeOverlay__hint {
+    margin-top: 14px;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(200, 255, 255, 0.65);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    opacity: 0.9;
+    position: relative;
+    z-index: 2;
+  }
+  

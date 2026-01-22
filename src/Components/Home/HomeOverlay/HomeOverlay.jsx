@@ -3,7 +3,19 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import useOnboarding from "../../../hooks/useOnboarding";
-import "./HomeOverlay.css";
+// import "./HomeOverlay.css";
+import "./parts/styles/base.css";
+import "./parts/styles/background.css";
+import "./parts/styles/reset.css";
+import "./parts/styles/panel.css";
+import "./parts/styles/buttons.css";
+import "./parts/styles/stepFirst.css";
+import "./parts/styles/stepSecondMenu.css";
+import "./parts/styles/previewOrgans.css";
+import "./parts/styles/scrollHint.css";
+import "./parts/styles/carousel.css";
+import "./parts/styles/typography.css";
+
 
 import { LANGS, MENU } from "./constants";
 import OverlayBackground from "./parts/OverlayBackground";
