@@ -236,11 +236,24 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
   // Step2 menu
   const [menuActiveIndex, setMenuActiveIndex] = useState(0);
 
+  // const runMenuAction = useCallback(
+  //   (item) => {
+  //     if (!item) return;
+
+  //     if (item.key === "explore") return navigate(item.to);
+  //     if (item.key === "about") return onGoAbout?.();
+  //     if (item.key === "projects") return onGoProjects?.();
+  //     if (item.key === "contact") return onGoContact?.();
+  //   },
+  //   [navigate, onGoAbout, onGoProjects, onGoContact]
+  // );
   const runMenuAction = useCallback(
     (item) => {
       if (!item) return;
-
-      if (item.key === "explore") return navigate(item.to);
+  
+      if (item.key === "explore") {
+        return navigate(item.to, { state: { autoEnterCity: true } }); // ✅
+      }
       if (item.key === "about") return onGoAbout?.();
       if (item.key === "projects") return onGoProjects?.();
       if (item.key === "contact") return onGoContact?.();
@@ -270,20 +283,6 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [slideIndex, menuActiveIndex, runMenuAction]);
 
-  // scroll hint 4s
-  // const [showScrollHint, setShowScrollHint] = useState(false);
-  // useEffect(() => {
-  //   if (slideIndex !== 1) return;
-  //   setShowScrollHint(true);
-  //   const t = setTimeout(() => setShowScrollHint(false), 4000);
-  //   return () => clearTimeout(t);
-  // }, [slideIndex]);
-
-  // resets
-  // const handleResetLanguage = useCallback(() => {
-  //   if (typeof resetLanguageStep === "function") resetLanguageStep();
-  //   goToStep1Instant();
-  // }, [resetLanguageStep, goToStep1Instant]);
   const handleResetLanguage = useCallback(async () => {
     if (typeof resetLanguageStep === "function") resetLanguageStep();
   
