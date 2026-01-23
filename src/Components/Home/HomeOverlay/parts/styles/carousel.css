@@ -1,5 +1,5 @@
 /* ===============================
-   CAROUSEL — 2 SLIDES (stable en %)
+   CAROUSEL (VW = indécalable)
    =============================== */
 
    .homeOverlay__viewport {
@@ -11,13 +11,12 @@
     touch-action: pan-y;
   }
   
-  /* Track = 200% (2 slides) */
+  /* track en VW, pas en % */
   .homeOverlay__track {
     display: flex;
     height: 100%;
-    width: 200%;
+    width: 200vw; /* ✅ 2 slides = 200vw */
     will-change: transform;
-    transform: translate3d(0, 0, 0);
     transition: transform 900ms cubic-bezier(0.16, 1, 0.3, 1);
   }
   
@@ -25,28 +24,32 @@
     transition: none !important;
   }
   
-  /* Chaque slide = 50% du track => 100% du viewport */
+  /* slide = 100vw strict */
   .homeOverlay__slide {
-    flex: 0 0 50%;
-    width: 50%;
+    flex: 0 0 100vw; /* ✅ largeur exacte viewport */
+    width: 100vw;
     height: 100%;
   
     display: flex;
     justify-content: center;
     align-items: center;
   
-    padding: 0 24px;
+    padding: 0 24px; /* ✅ padding fixe, safe */
     box-sizing: border-box;
+  
+    opacity: 0;
+    transition: opacity 320ms ease;
   }
   
-  /* Optionnel (recommandé) : empêcher interactions sur slide inactive */
-  .homeOverlay__slide[aria-hidden="true"] {
-    pointer-events: none;
+  .homeOverlay__slide.isActive {
+    opacity: 1;
   }
   
-  /* Panel centré */
+  /* panel centré quoi qu'il arrive */
   .homeOverlay__panel {
     width: min(720px, 100%);
     margin: 0 auto;
   }
   
+
+
