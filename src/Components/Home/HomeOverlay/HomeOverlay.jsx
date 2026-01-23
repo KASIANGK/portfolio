@@ -251,9 +251,13 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
     (item) => {
       if (!item) return;
   
+      // if (item.key === "explore") {
+      //   return navigate(item.to, { state: { autoEnterCity: true } }); // ✅
+      // }
       if (item.key === "explore") {
-        return navigate(item.to, { state: { autoEnterCity: true } }); // ✅
+        return navigate("/city", { state: { autoEnterCity: true } });
       }
+      
       if (item.key === "about") return onGoAbout?.();
       if (item.key === "projects") return onGoProjects?.();
       if (item.key === "contact") return onGoContact?.();
