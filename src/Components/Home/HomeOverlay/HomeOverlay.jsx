@@ -102,6 +102,23 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
   const [langActiveIndex, setLangActiveIndex] = useState(() =>
     Math.max(0, LANGS.indexOf(initialLang))
   );
+
+  // ✅ Sync Step1 selector when language changes from outside (Navbar, etc.)
+  useEffect(() => {
+    if (slideIndex !== 0) return; // only while in Step1
+
+    const lng = (i18n.resolvedLanguage || i18n.language || "en").slice(0, 2);
+    const safe = LANGS.includes(lng) ? lng : "en";
+
+    // Avoid useless re-renders
+    setSelectedLang((prev) => (prev === safe ? prev : safe));
+    setLangActiveIndex((prev) => {
+      const next = Math.max(0, LANGS.indexOf(safe));
+      return prev === next ? prev : next;
+    });
+  }, [i18n.resolvedLanguage, i18n.language, slideIndex]);
+
+
   const [selectedLang, setSelectedLang] = useState(initialLang);
   const [isSwitchingLang, setIsSwitchingLang] = useState(false);
 
@@ -354,6 +371,7 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
             menuActiveIndex={menuActiveIndex}
             setMenuActiveIndex={setMenuActiveIndex}
             onRunAction={runMenuAction}
+            onGoAbout={onGoAbout}
           />
         </div>
       </div>

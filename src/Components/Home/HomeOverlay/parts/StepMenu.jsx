@@ -12,6 +12,7 @@ export default function StepMenu({
   onRunAction,
   projectSlides,
   menuAssetsReady,
+  onGoAbout,
 }) {
 
   const activeKey = MENU[menuActiveIndex]?.key;
@@ -79,7 +80,7 @@ export default function StepMenu({
           </aside>
         </div>
       </div>
-      <ScrollHint visible={isActive} />
+      <ScrollHint visible={isActive} onClick={onGoAbout} />
     </section>
   );
 }

@@ -49,6 +49,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
+
+    pointer-events: auto;
+    cursor: pointer;
   
     background:
       radial-gradient(120px 80px at 30% 30%, rgba(255,0,170,0.25), transparent 60%),
