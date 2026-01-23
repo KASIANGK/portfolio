@@ -251,9 +251,6 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
     (item) => {
       if (!item) return;
   
-      // if (item.key === "explore") {
-      //   return navigate(item.to, { state: { autoEnterCity: true } }); // ✅
-      // }
       if (item.key === "explore") {
         return navigate("/city", { state: { autoEnterCity: true } });
       }
@@ -378,8 +375,6 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
           />
         </div>
       </div>
-
-      {/* <ScrollHint visible={showScrollHint && slideIndex === 1} /> */}
     </header>
   );
 }
