@@ -5,15 +5,13 @@ import "../style/StepsHomeCity.css";
 
 const LS_KEY = "ag_city_tutorial_done_v1";
 
-// ✅ timings
-const LOOK_SECONDS = 2.4; // 2–3s réelles
+// timings
+const LOOK_SECONDS = 2.4; // 2–3s
 const MOVE_SECONDS = 1.2;
 
-// detection thresholds
+// thresholds
 const LOOK_MAG_THRESHOLD = 0.18;
 const MOVE_MAG_THRESHOLD = 0.18;
-
-// Desktop: how much mouse delta counts as “real movement”
 const MOUSE_DELTA_THRESHOLD = 14;
 
 const ARROWS_ONLY = new Set(["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"]);
@@ -85,7 +83,6 @@ export default function StepsHomeCity({
       const s = nextStep ?? stepRef.current;
       const captured = lookPhaseRef.current === "captured";
 
-      // ✅ Desktop: if pointer lock failed, keep showing “click to take control”
       const pointerLocked =
         !isMobile &&
         typeof document !== "undefined" &&
@@ -108,14 +105,11 @@ export default function StepsHomeCity({
       }
 
       if (s === STEP.LOOK) {
-        // Before capture: lock look + request capture
-        // After capture: unlock look (head control allowed)
         policy.lockLook = !captured;
         policy.lockMove = true;
 
-        // ✅ request capture UI:
-        // - before captured → yes
-        // - after captured → only if desktop and pointer lock not acquired yet
+        // before capture -> show request
+        // after capture -> only request if desktop and pointerlock not acquired
         policy.requestLookCaptureNow = !captured || (!isMobile && !pointerLocked);
       }
 
@@ -141,7 +135,6 @@ export default function StepsHomeCity({
     [onControlChange, orbitWorld, isMobile]
   );
 
-  // keep policy in sync
   useEffect(() => {
     if (!enabled) return;
     pushPolicy(step);
@@ -185,9 +178,7 @@ export default function StepsHomeCity({
     const onKeyDown = (e) => {
       const code = e.code;
 
-      if (ARROWS_ONLY.has(code)) {
-        arrowsRef.current.add(code);
-      }
+      if (ARROWS_ONLY.has(code)) arrowsRef.current.add(code);
 
       if (stepRef.current === STEP.ESCAPE && code === "Escape") {
         e.preventDefault();
@@ -218,8 +209,7 @@ export default function StepsHomeCity({
   }, [enabled]);
 
   // -----------------------------------
-  // Desktop mouse delta tracking (for LOOK validation)
-  // We track movementX/Y regardless; but Step2 will only “count” it once captured.
+  // Desktop mouse delta tracking (LOOK validation)
   // -----------------------------------
   useEffect(() => {
     if (!enabled) return;
@@ -241,8 +231,6 @@ export default function StepsHomeCity({
 
   // -----------------------------------
   // Capture head control on first click/tap ONLY on LOOK step
-  // - switch UI to “captured”
-  // - bump nonce (HomeCity will pointer-lock due to gesture)
   // -----------------------------------
   useEffect(() => {
     if (!enabled) return;
@@ -251,19 +239,15 @@ export default function StepsHomeCity({
     const captureNow = () => {
       if (lookPhaseRef.current !== "needCapture") return;
 
-      // ✅ make it immediate (avoid ref stale in pushPolicy)
       lookPhaseRef.current = "captured";
       setLookPhase("captured");
       setLookProg(0);
 
-      // clear deltas so the first “active” is real
       mouseDeltaRef.current.dx = 0;
       mouseDeltaRef.current.dy = 0;
 
-      // bump nonce so HomeCity can react *on the same gesture* (Canvas pointerdown)
       setLookCaptureNonce((n) => n + 1);
 
-      // push policy right away => unlock look ASAP
       queueMicrotask(() => pushPolicy(STEP.LOOK));
     };
 
@@ -278,7 +262,6 @@ export default function StepsHomeCity({
 
   // -----------------------------------
   // Timed completion loops (LOOK / MOVE)
-  // LOOK: only progresses when there is real movement
   // -----------------------------------
   useEffect(() => {
     if (!enabled) return;
@@ -293,10 +276,7 @@ export default function StepsHomeCity({
       const s = stepRef.current;
 
       if (s === STEP.LOOK) {
-        if (lookPhaseRef.current !== "captured") {
-          // keep at 0
-          // (avoid setState spam)
-        } else {
+        if (lookPhaseRef.current === "captured") {
           let active = false;
 
           if (isMobile) {
@@ -308,7 +288,6 @@ export default function StepsHomeCity({
 
             active = delta > MOUSE_DELTA_THRESHOLD;
 
-            // decay so you must keep moving (stable)
             m.dx *= 0.35;
             m.dy *= 0.35;
           }
@@ -489,10 +468,49 @@ export default function StepsHomeCity({
   }, [step, isMobile, lookPhase, lookProg, moveProg, orbitWorldPicker]);
 
   const showArrow = step === STEP.PORTALS && orbitHintScreen?.onScreen;
+  const matrixCols = useMemo(() => {
+    const n = 26; // + dense, mais random => OK
+    return Array.from({ length: n }, (_, i) => {
+      const x = Math.random() * 100;                // position X random
+      const dur = 2.2 + Math.random() * 3.8;        // 2.2s → 6.0s
+      const delay = -Math.random() * dur;           // start “déjà en cours”
+      const alpha = 0.25 + Math.random() * 0.55;    // opacité random
+      const size = 11 + Math.random() * 6;          // font-size random
+      const blur = Math.random() < 0.25 ? 0.6 : 0;  // léger blur sur qques colonnes
+  
+      return { i, x, dur, delay, alpha, size, blur };
+    });
+  }, [step]);
 
   return (
-    <div className="agCitySteps" role="dialog" aria-label="City tutorial" aria-live="polite">
+    <div
+      className="agCitySteps"
+      data-step={step}
+      role="dialog"
+      aria-label="City tutorial"
+      aria-live="polite"
+    >
       <div className="agCitySteps__bg" aria-hidden="true" />
+
+      {/* Matrix rain ONLY Step 1 */}
+      {step === STEP.BOOT && (
+        <div className="agCitySteps__matrixRain" aria-hidden="true">
+          {matrixCols.map((c) => (
+            <span
+              key={c.i}
+              className="agCitySteps__matrixCol"
+              style={{
+                "--x": `${c.x}%`,
+                "--dur": `${c.dur}s`,
+                "--delay": `${c.delay}s`,
+                "--a": c.alpha,
+                "--fs": `${c.size}px`,
+                "--blur": `${c.blur}px`,
+              }}
+            />
+          ))}
+        </div>
+      )}
 
       <AnimatePresence mode="wait">
         <motion.div
@@ -513,7 +531,7 @@ export default function StepsHomeCity({
           <div className="agCitySteps__title">{content.title}</div>
           <div className="agCitySteps__desc">{content.desc}</div>
 
-          {content.showProgress && (
+          {content.showProgress ? (
             <div className="agCitySteps__progressBlock">
               <div className="agCitySteps__progressTop">
                 <span className="agCitySteps__progressLabel">{content.progressLabel}</span>
@@ -521,17 +539,17 @@ export default function StepsHomeCity({
                   {Math.round((content.progressValue || 0) * 100)}%
                 </span>
               </div>
+
               <div className="agCitySteps__bar">
                 <div
                   className="agCitySteps__barFill"
                   style={{ transform: `scaleX(${clamp01(content.progressValue || 0)})` }}
                 />
               </div>
+
               <div className="agCitySteps__hintMono">{content.hint}</div>
             </div>
-          )}
-
-          {!content.showProgress && (
+          ) : (
             <div className="agCitySteps__footer">
               <div className="agCitySteps__hint">{content.hint}</div>
 
