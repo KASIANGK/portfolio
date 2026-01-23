@@ -28,6 +28,43 @@ function clamp01(v) {
   return Math.max(0, Math.min(1, v));
 }
 
+/* =========================
+   KEYCAPS UI (hints premium)
+========================= */
+function Key({ icon, label, sub, active, pressed }) {
+  return (
+    <span className={`agKey ${active ? "isActive" : ""} ${pressed ? "isPressed" : ""}`}>
+      {icon ? <span className="agKey__icon">{icon}</span> : null}
+      <span className="agKey__label">{label}</span>
+      {sub ? <span className="agKey__sub">{sub}</span> : null}
+    </span>
+  );
+}
+
+function ArrowCluster({ active, pressedSet }) {
+  const isPressed = (k) => !!pressedSet?.has?.(k);
+  return (
+    <span className="agKeyCluster" aria-label="Arrow keys">
+      <span className="agKeyGrid">
+        <span className={`agArrowKey up ${active ? "isActive" : ""} ${isPressed("ArrowUp") ? "isPressed" : ""}`}>
+          ↑
+        </span>
+        <span className={`agArrowKey left ${active ? "isActive" : ""} ${isPressed("ArrowLeft") ? "isPressed" : ""}`}>
+          ←
+        </span>
+        <span className={`agArrowKey down ${active ? "isActive" : ""} ${isPressed("ArrowDown") ? "isPressed" : ""}`}>
+          ↓
+        </span>
+        <span
+          className={`agArrowKey right ${active ? "isActive" : ""} ${isPressed("ArrowRight") ? "isPressed" : ""}`}
+        >
+          →
+        </span>
+      </span>
+    </span>
+  );
+}
+
 export default function StepsHomeCity({
   enabled,
   isMobile,
@@ -74,6 +111,36 @@ export default function StepsHomeCity({
   // desktop input tracking
   const mouseDeltaRef = useRef({ dx: 0, dy: 0 });
   const arrowsRef = useRef(new Set());
+
+  // pressed keys (for keycap "press" animation)
+  const [pressedKeys, setPressedKeys] = useState(new Set());
+  const pressedRef = useRef(new Set());
+
+  useEffect(() => {
+    if (!enabled) return;
+
+    const down = (e) => {
+      const next = new Set(pressedRef.current);
+      next.add(e.code);
+      pressedRef.current = next;
+      setPressedKeys(next);
+    };
+
+    const up = (e) => {
+      const next = new Set(pressedRef.current);
+      next.delete(e.code);
+      pressedRef.current = next;
+      setPressedKeys(next);
+    };
+
+    window.addEventListener("keydown", down, { passive: true });
+    window.addEventListener("keyup", up, { passive: true });
+
+    return () => {
+      window.removeEventListener("keydown", down);
+      window.removeEventListener("keyup", up);
+    };
+  }, [enabled]);
 
   // -----------------------------------
   // Policy pushed to HomeCity
@@ -170,7 +237,7 @@ export default function StepsHomeCity({
   }, [enabled, step]);
 
   // -----------------------------------
-  // Global keyboard handling
+  // Global keyboard handling (logic)
   // -----------------------------------
   useEffect(() => {
     if (!enabled) return;
@@ -395,7 +462,6 @@ export default function StepsHomeCity({
           badge: "CITY://JACK-IN",
           title: "Bienvenue dans la matrice.",
           desc: "Promis… ici c’est légal. (Et franchement premium.)",
-          hint: "Enter • Space • Click",
           cta: "JACK IN",
           showProgress: false,
         };
@@ -408,7 +474,6 @@ export default function StepsHomeCity({
             desc: isMobile
               ? "Tap pad (zone droite) pour prendre le contrôle de la vue."
               : "Clique dans la scène pour prendre le contrôle de la vue.",
-            hint: "Click • Tap Pad",
             cta: null,
             showProgress: false,
             subLock: "En attente du contrôle…",
@@ -421,7 +486,6 @@ export default function StepsHomeCity({
           desc: isMobile
             ? "Joystick droit → bouge vraiment la caméra (≈2–3s)."
             : "Souris → bouge vraiment la caméra (≈2–3s).",
-          hint: "Objectif : bouger la caméra",
           cta: null,
           showProgress: true,
           progressLabel: "POV SYNC",
@@ -433,7 +497,6 @@ export default function StepsHomeCity({
           badge: "POV://EXIT",
           title: "Échappe-toi du contrôle.",
           desc: "Appuie sur ESC pour quitter le contrôle de la tête quand tu veux.",
-          hint: "ESC • Enter • Space • Click",
           cta: "OK",
           showProgress: false,
         };
@@ -445,7 +508,6 @@ export default function StepsHomeCity({
           desc: isMobile
             ? "Joystick gauche → bouge. On valide quand tu avances vraiment (≈1.2s)."
             : "Flèches ← ↑ ↓ → uniquement. On valide quand tu bouges vraiment (≈1.2s).",
-          hint: "Objectif : avancer",
           cta: null,
           showProgress: true,
           progressLabel: "MOTOR LINK",
@@ -460,7 +522,6 @@ export default function StepsHomeCity({
           desc: orbitWorldPicker
             ? "Ce sont des portails. Je t’en ping un, juste 2 secondes… ensuite à toi."
             : "Ce sont des portails. Approche-toi… et la ville te répond.",
-          hint: "Enter • Space • Click",
           cta: "GOT IT",
           showProgress: false,
         };
@@ -468,19 +529,82 @@ export default function StepsHomeCity({
   }, [step, isMobile, lookPhase, lookProg, moveProg, orbitWorldPicker]);
 
   const showArrow = step === STEP.PORTALS && orbitHintScreen?.onScreen;
+
+  // Matrix rain ONLY step 1: random columns
   const matrixCols = useMemo(() => {
-    const n = 26; // + dense, mais random => OK
+    const n = 26;
     return Array.from({ length: n }, (_, i) => {
-      const x = Math.random() * 100;                // position X random
-      const dur = 2.2 + Math.random() * 3.8;        // 2.2s → 6.0s
-      const delay = -Math.random() * dur;           // start “déjà en cours”
-      const alpha = 0.25 + Math.random() * 0.55;    // opacité random
-      const size = 11 + Math.random() * 6;          // font-size random
-      const blur = Math.random() < 0.25 ? 0.6 : 0;  // léger blur sur qques colonnes
-  
+      const x = Math.random() * 100;
+      const dur = 2.2 + Math.random() * 3.8;
+      const delay = -Math.random() * dur;
+      const alpha = 0.25 + Math.random() * 0.55;
+      const size = 11 + Math.random() * 6;
+      const blur = Math.random() < 0.25 ? 0.6 : 0;
       return { i, x, dur, delay, alpha, size, blur };
     });
-  }, [step]);
+  }, []);
+
+  // Premium hint renderer (keycaps)
+  const hintRow = useMemo(() => {
+    // BOOT
+    if (step === STEP.BOOT) {
+      return (
+        <div className="agCitySteps__hintRow">
+          <Key icon="↵" label="ENTER" active pressed={pressedKeys.has("Enter")} />
+          <Key icon="␣" label="SPACE" active pressed={pressedKeys.has("Space")} />
+          <Key icon="●" label={isMobile ? "TAP" : "CLICK"} active />
+        </div>
+      );
+    }
+
+    // LOOK (need capture)
+    if (step === STEP.LOOK && lookPhase !== "captured") {
+      return (
+        <div className="agCitySteps__hintRow">
+          <Key icon="●" label={isMobile ? "TAP PAD" : "CLICK SCENE"} active />
+        </div>
+      );
+    }
+
+    // LOOK (captured)
+    if (step === STEP.LOOK && lookPhase === "captured") {
+      return (
+        <div className="agCitySteps__hintRow">
+          <Key icon={isMobile ? "▦" : "🖱"} label={isMobile ? "JOY RIGHT" : "MOUSE"} active />
+        </div>
+      );
+    }
+
+    // ESCAPE
+    if (step === STEP.ESCAPE) {
+      return (
+        <div className="agCitySteps__hintRow">
+          <Key icon="⎋" label="ESC" active pressed={pressedKeys.has("Escape")} />
+          <Key icon="↵" label="ENTER" pressed={pressedKeys.has("Enter")} />
+          <Key icon="␣" label="SPACE" pressed={pressedKeys.has("Space")} />
+          <Key icon="●" label={isMobile ? "TAP" : "CLICK"} />
+        </div>
+      );
+    }
+
+    // MOVE
+    if (step === STEP.MOVE) {
+      return (
+        <div className="agCitySteps__hintRow">
+          {isMobile ? <Key icon="▦" label="JOY LEFT" active /> : <ArrowCluster active pressedSet={pressedKeys} />}
+        </div>
+      );
+    }
+
+    // PORTALS
+    return (
+      <div className="agCitySteps__hintRow">
+        <Key icon="↵" label="ENTER" active pressed={pressedKeys.has("Enter")} />
+        <Key icon="␣" label="SPACE" active pressed={pressedKeys.has("Space")} />
+        <Key icon="●" label={isMobile ? "TAP" : "CLICK"} active />
+      </div>
+    );
+  }, [step, isMobile, lookPhase, pressedKeys]);
 
   return (
     <div
@@ -547,11 +671,12 @@ export default function StepsHomeCity({
                 />
               </div>
 
-              <div className="agCitySteps__hintMono">{content.hint}</div>
+              {/* progress footer hint */}
+              <div className="agCitySteps__hintMono">{hintRow}</div>
             </div>
           ) : (
             <div className="agCitySteps__footer">
-              <div className="agCitySteps__hint">{content.hint}</div>
+              <div className="agCitySteps__hint">{hintRow}</div>
 
               <div className="agCitySteps__actions">
                 {content.cta ? (
