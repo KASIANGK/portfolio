@@ -13,20 +13,16 @@ import * as THREE from "three";
 import { Physics, RigidBody, CuboidCollider } from "@react-three/rapier";
 import { EffectComposer, Bloom, Vignette, SMAA } from "@react-three/postprocessing";
 
-import PlayerController from "./Player/PlayerController";
-import MiniMapHUD from "./City/MiniMapHUD";
-import CityModel from "./City/CityModel";
-import CityMarkers from "./City/CityMarkers";
-import CityNightLights from "./City/CityNightLights";
-import Joystick from "./Player/Joystick";
+import PlayerController from "../Player/PlayerController";
+import MiniMapHUD from "../City/MiniMapHUD";
+import CityModel from "../City/CityModel";
+import CityMarkers from "../City/CityMarkers";
+import CityNightLights from "../City/CityNightLights";
+import Joystick from "../Player/Joystick";
 import { useTranslation } from "react-i18next";
-// import StepMenu from "./HomeOverlay/parts/StepMenu";
-
 
 // ✅ Lazy UI (loaded only when needed)
-const FullScreenLoader = lazy(() => import("./ui/FullScreenLoader"));
-// const DevResetIntroButton = lazy(() => import("./ui/DevResetIntroButton"));
-
+const FullScreenLoader = lazy(() => import("../HomeCity/FullScreenLoader"));
 
 export default function HomeCity() {
   const navigate = useNavigate();
@@ -45,10 +41,6 @@ export default function HomeCity() {
     ? localStorage.getItem("angels_city_skip_intro") === "1"
     : false;
 
-  // const skipIntro =
-  //   typeof window !== "undefined"
-  //     ? localStorage.getItem("angels_city_skip_intro") === "1"
-  //     : false;
   // ✅ si on arrive depuis Step2, on force l'entrée directe
   const skipIntro = autoEnterCity || skipIntroStorage;
 
@@ -302,21 +294,6 @@ export default function HomeCity() {
     <div style={{ width: "100vw", height: "100vh", background: "#070916" }}>
       {!requestedEnter && introBg}
 
-      {/* Intro overlay */}
-      {/* {uiIntro && !enterPressed && (
-        <Suspense fallback={null}>
-          <StepMenu
-            step={introStep}
-            setStep={setIntroStep}
-            dontShowAgain={dontShowAgain}
-            setDontShowAgain={setDontShowAgain}
-            onEnterRequest={onEnterRequest}
-            onGoPortfolio={goPortfolio}
-            onGoEssential={goEssential}
-          />
-        </Suspense>
-      )} */}
-
       {/* Scene */}
       {requestedEnter && (
         <>
@@ -500,13 +477,6 @@ export default function HomeCity() {
           </div>
         </>
       )}
-
-      {/* Dev helper */}
-      {/* {import.meta.env.DEV && (
-        <Suspense fallback={null}>
-          <DevResetIntroButton />
-        </Suspense>
-      )} */}
     </div>
   );
 }

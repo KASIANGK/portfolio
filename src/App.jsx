@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { ThemeProvider } from "./ThemeContext";
 import Home from "./Components/Home/Home";
-import HomeCity from "./Components/Home/HomeCity";
+import HomeCity from "./Components/Home/HomeCity/HomeCity";
 import About from "./Components/About/About";
 import Essential from "./Components/Essential/Essential";
 import Navbar from "./Components/Navbar/Navbar";
