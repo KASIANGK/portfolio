@@ -20,11 +20,12 @@ import CityMarkers from "./City/CityMarkers";
 import CityNightLights from "./City/CityNightLights";
 import Joystick from "./Player/Joystick";
 import { useTranslation } from "react-i18next";
+// import StepMenu from "./HomeOverlay/parts/StepMenu";
 
 
 // ✅ Lazy UI (loaded only when needed)
 const FullScreenLoader = lazy(() => import("./ui/FullScreenLoader"));
-const DevResetIntroButton = lazy(() => import("./ui/DevResetIntroButton"));
+// const DevResetIntroButton = lazy(() => import("./ui/DevResetIntroButton"));
 
 
 export default function HomeCity() {
@@ -72,12 +73,20 @@ export default function HomeCity() {
   // ✅ Sticky gate (prevents loader flashing)
   const [gateOpen, setGateOpen] = useState(false);
   const gateOpeningRef = useRef(false);
-
   useEffect(() => {
     if (!autoEnterCity) return;
-    // on “consomme” le state, comme ça refresh/back n’auto-enter pas par accident
+  
+    setRequestedEnter(true);
+    setGateOpen(false);
+    gateOpeningRef.current = false;
+    setPlayerReady(false);
+    setTeleportNonce((n) => n + 1);
+  
+    // consomme le state
     window.history.replaceState({}, document.title);
   }, [autoEnterCity]);
+  
+
 
   useEffect(() => {
     if (skipIntro) {
@@ -294,9 +303,9 @@ export default function HomeCity() {
       {!requestedEnter && introBg}
 
       {/* Intro overlay */}
-      {uiIntro && !enterPressed && (
+      {/* {uiIntro && !enterPressed && (
         <Suspense fallback={null}>
-          <IntroOverlay3Steps
+          <StepMenu
             step={introStep}
             setStep={setIntroStep}
             dontShowAgain={dontShowAgain}
@@ -306,7 +315,7 @@ export default function HomeCity() {
             onGoEssential={goEssential}
           />
         </Suspense>
-      )}
+      )} */}
 
       {/* Scene */}
       {requestedEnter && (
@@ -493,11 +502,11 @@ export default function HomeCity() {
       )}
 
       {/* Dev helper */}
-      {import.meta.env.DEV && (
+      {/* {import.meta.env.DEV && (
         <Suspense fallback={null}>
           <DevResetIntroButton />
         </Suspense>
-      )}
+      )} */}
     </div>
   );
 }
