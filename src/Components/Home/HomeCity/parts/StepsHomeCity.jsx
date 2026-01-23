@@ -5,25 +5,30 @@ import "../style/StepsHomeCity.css";
 
 const LS_KEY = "ag_city_tutorial_done_v1";
 
-// timings
-const LOOK_SECONDS = 2.0;   // ~2s
-const MOVE_SECONDS = 1.2;   // ~1.2s
+// ✅ timings
+const LOOK_SECONDS = 2.4; // 2–3s réelles
+const MOVE_SECONDS = 1.2;
 
 // detection thresholds
 const LOOK_MAG_THRESHOLD = 0.18;
 const MOVE_MAG_THRESHOLD = 0.18;
 
+// Desktop: how much mouse delta counts as “real movement”
 const MOUSE_DELTA_THRESHOLD = 14;
+
 const ARROWS_ONLY = new Set(["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"]);
 
 const STEP = {
   BOOT: 1,
-  LOOK: 2,      // click/tap => capture head control => progressbar + move head
-  ESCAPE: 3,    // prompt ESC (or continue)
-  MOVE: 4,      // arrows-only calibration
-  PORTALS: 5,   // portals + former GUIDE merged
-  NAV_HINT: 6,  // navbar hint step (handled outside)
+  LOOK: 2,
+  ESCAPE: 3,
+  MOVE: 4,
+  PORTALS: 5,
 };
+
+function clamp01(v) {
+  return Math.max(0, Math.min(1, v));
+}
 
 export default function StepsHomeCity({
   enabled,
@@ -37,8 +42,6 @@ export default function StepsHomeCity({
 
   onControlChange,
   onDone,
-
-  onShowNavHint,
 }) {
   const [step, setStep] = useState(STEP.BOOT);
 
@@ -57,7 +60,7 @@ export default function StepsHomeCity({
     lookPhaseRef.current = lookPhase;
   }, [lookPhase]);
 
-  // 🔥 nonce to tell HomeCity “capture requested NOW”
+  // nonce to tell HomeCity “capture happened NOW”
   const [lookCaptureNonce, setLookCaptureNonce] = useState(0);
   const lookCaptureNonceRef = useRef(0);
   useEffect(() => {
@@ -74,13 +77,19 @@ export default function StepsHomeCity({
   const mouseDeltaRef = useRef({ dx: 0, dy: 0 });
   const arrowsRef = useRef(new Set());
 
-  // -----------------------------
-  // Policy (locks) pushed to HomeCity
-  // -----------------------------
+  // -----------------------------------
+  // Policy pushed to HomeCity
+  // -----------------------------------
   const pushPolicy = useCallback(
     (nextStep) => {
       const s = nextStep ?? stepRef.current;
       const captured = lookPhaseRef.current === "captured";
+
+      // ✅ Desktop: if pointer lock failed, keep showing “click to take control”
+      const pointerLocked =
+        !isMobile &&
+        typeof document !== "undefined" &&
+        document.pointerLockElement != null;
 
       const policy = {
         lockLook: true,
@@ -89,7 +98,6 @@ export default function StepsHomeCity({
         showOrbitHint: false,
         orbitHintWorld: null,
 
-        // ✅ HomeCity can use this to trigger pointer lock / pad activation
         requestLookCaptureNow: false,
         lookCaptureNonce: lookCaptureNonceRef.current,
       };
@@ -100,11 +108,15 @@ export default function StepsHomeCity({
       }
 
       if (s === STEP.LOOK) {
-        // before capture: lock look, ask for capture
-        // after capture: unlock look, run progress
+        // Before capture: lock look + request capture
+        // After capture: unlock look (head control allowed)
         policy.lockLook = !captured;
         policy.lockMove = true;
-        policy.requestLookCaptureNow = !captured; // show “click to take control”
+
+        // ✅ request capture UI:
+        // - before captured → yes
+        // - after captured → only if desktop and pointer lock not acquired yet
+        policy.requestLookCaptureNow = !captured || (!isMobile && !pointerLocked);
       }
 
       if (s === STEP.ESCAPE) {
@@ -124,14 +136,9 @@ export default function StepsHomeCity({
         policy.orbitHintWorld = orbitWorld;
       }
 
-      if (s === STEP.NAV_HINT) {
-        policy.lockLook = false;
-        policy.lockMove = false;
-      }
-
       onControlChange?.(policy);
     },
-    [onControlChange, orbitWorld]
+    [onControlChange, orbitWorld, isMobile]
   );
 
   // keep policy in sync
@@ -146,9 +153,9 @@ export default function StepsHomeCity({
     pushPolicy(step);
   }, [enabled, step, lookPhase, pushPolicy]);
 
-  // -----------------------------
+  // -----------------------------------
   // Step enter side-effects
-  // -----------------------------
+  // -----------------------------------
   useEffect(() => {
     if (!enabled) return;
 
@@ -163,37 +170,37 @@ export default function StepsHomeCity({
       setMoveProg(0);
       arrowsRef.current.clear();
     }
+
+    if (step === STEP.PORTALS) {
+      orbitHintArmedRef.current = false;
+    }
   }, [enabled, step]);
 
-  // -----------------------------
-  // Global keyboard handling (capture phase to avoid being eaten)
-  // -----------------------------
+  // -----------------------------------
+  // Global keyboard handling
+  // -----------------------------------
   useEffect(() => {
     if (!enabled) return;
 
     const onKeyDown = (e) => {
       const code = e.code;
 
-      // ✅ arrows tracking (even if someone prevents bubble)
       if (ARROWS_ONLY.has(code)) {
         arrowsRef.current.add(code);
       }
 
-      // ESC step
       if (stepRef.current === STEP.ESCAPE && code === "Escape") {
         e.preventDefault();
         goNext();
         return;
       }
 
-      // enter/space CTAs
       if (code !== "Enter" && code !== "Space") return;
       e.preventDefault();
 
       if (stepRef.current === STEP.BOOT) return goNext();
       if (stepRef.current === STEP.ESCAPE) return goNext();
-      if (stepRef.current === STEP.PORTALS) return goNext();
-      if (stepRef.current === STEP.NAV_HINT) return complete();
+      if (stepRef.current === STEP.PORTALS) return complete();
     };
 
     const onKeyUp = (e) => {
@@ -203,7 +210,6 @@ export default function StepsHomeCity({
 
     window.addEventListener("keydown", onKeyDown, { passive: false, capture: true });
     window.addEventListener("keyup", onKeyUp, { passive: true, capture: true });
-
     return () => {
       window.removeEventListener("keydown", onKeyDown, true);
       window.removeEventListener("keyup", onKeyUp, true);
@@ -211,9 +217,10 @@ export default function StepsHomeCity({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enabled]);
 
-  // -----------------------------
-  // Desktop mouse delta tracking (only while LOOK is captured)
-  // -----------------------------
+  // -----------------------------------
+  // Desktop mouse delta tracking (for LOOK validation)
+  // We track movementX/Y regardless; but Step2 will only “count” it once captured.
+  // -----------------------------------
   useEffect(() => {
     if (!enabled) return;
     if (isMobile) return;
@@ -232,12 +239,11 @@ export default function StepsHomeCity({
     return () => window.removeEventListener("mousemove", onMove);
   }, [enabled, isMobile]);
 
-  // -----------------------------
+  // -----------------------------------
   // Capture head control on first click/tap ONLY on LOOK step
-  // ✅ MUST instantly:
-  // - switch UI to progressbar
-  // - ask HomeCity to activate capture now (pointer lock / pad)
-  // -----------------------------
+  // - switch UI to “captured”
+  // - bump nonce (HomeCity will pointer-lock due to gesture)
+  // -----------------------------------
   useEffect(() => {
     if (!enabled) return;
     if (step !== STEP.LOOK) return;
@@ -245,23 +251,22 @@ export default function StepsHomeCity({
     const captureNow = () => {
       if (lookPhaseRef.current !== "needCapture") return;
 
-      // 1) switch UI immediately
+      // ✅ make it immediate (avoid ref stale in pushPolicy)
+      lookPhaseRef.current = "captured";
       setLookPhase("captured");
       setLookProg(0);
 
-      // 2) clear deltas so first movement is real
+      // clear deltas so the first “active” is real
       mouseDeltaRef.current.dx = 0;
       mouseDeltaRef.current.dy = 0;
 
-      // 3) bump nonce so HomeCity can react IMMEDIATELY without needing a 2nd click
+      // bump nonce so HomeCity can react *on the same gesture* (Canvas pointerdown)
       setLookCaptureNonce((n) => n + 1);
 
-      // 4) push policy right away (don’t wait next render)
-      //    -> this is the “instant unlock” side
+      // push policy right away => unlock look ASAP
       queueMicrotask(() => pushPolicy(STEP.LOOK));
     };
 
-    // pointerdown works for mouse + many gamepads via “click emulation”
     window.addEventListener("pointerdown", captureNow, { passive: true, capture: true });
     window.addEventListener("touchstart", captureNow, { passive: true, capture: true });
 
@@ -271,9 +276,10 @@ export default function StepsHomeCity({
     };
   }, [enabled, step, pushPolicy]);
 
-  // -----------------------------
+  // -----------------------------------
   // Timed completion loops (LOOK / MOVE)
-  // -----------------------------
+  // LOOK: only progresses when there is real movement
+  // -----------------------------------
   useEffect(() => {
     if (!enabled) return;
 
@@ -286,10 +292,10 @@ export default function StepsHomeCity({
 
       const s = stepRef.current;
 
-      // LOOK step: only progress after capture
       if (s === STEP.LOOK) {
         if (lookPhaseRef.current !== "captured") {
-          if (lookProg !== 0) setLookProg(0);
+          // keep at 0
+          // (avoid setState spam)
         } else {
           let active = false;
 
@@ -299,9 +305,12 @@ export default function StepsHomeCity({
           } else {
             const m = mouseDeltaRef.current;
             const delta = m.dx + m.dy;
+
             active = delta > MOUSE_DELTA_THRESHOLD;
-            mouseDeltaRef.current.dx *= 0.35;
-            mouseDeltaRef.current.dy *= 0.35;
+
+            // decay so you must keep moving (stable)
+            m.dx *= 0.35;
+            m.dy *= 0.35;
           }
 
           setLookProg((p) => {
@@ -317,7 +326,6 @@ export default function StepsHomeCity({
         }
       }
 
-      // MOVE step: arrows only (desktop) / joystick (mobile)
       if (s === STEP.MOVE) {
         let active = false;
 
@@ -345,11 +353,11 @@ export default function StepsHomeCity({
 
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [enabled, isMobile, lookInput, moveInput, lookProg]);
+  }, [enabled, isMobile, lookInput, moveInput]);
 
-  // -----------------------------
-  // PORTALS (merged GUIDE): auto-ping orbit 2s then hide arrow (stay in PORTALS)
-  // -----------------------------
+  // -----------------------------------
+  // PORTALS: auto-ping orbit 2s then hide arrow (stay in PORTALS)
+  // -----------------------------------
   useEffect(() => {
     if (!enabled) return;
 
@@ -376,18 +384,9 @@ export default function StepsHomeCity({
     if (step !== STEP.PORTALS) orbitHintArmedRef.current = false;
   }, [enabled, step, orbitWorldPicker, onControlChange]);
 
-  // -----------------------------
-  // NAV_HINT
-  // -----------------------------
-  useEffect(() => {
-    if (!enabled) return;
-    if (step !== STEP.NAV_HINT) return;
-    onShowNavHint?.();
-  }, [enabled, step, onShowNavHint]);
-
-  // -----------------------------
+  // -----------------------------------
   // Navigation helpers
-  // -----------------------------
+  // -----------------------------------
   const goNext = useCallback(() => {
     setLookProg(0);
     setMoveProg(0);
@@ -397,7 +396,6 @@ export default function StepsHomeCity({
       if (s === STEP.LOOK) return STEP.ESCAPE;
       if (s === STEP.ESCAPE) return STEP.MOVE;
       if (s === STEP.MOVE) return STEP.PORTALS;
-      if (s === STEP.PORTALS) return STEP.NAV_HINT;
       return s;
     });
   }, []);
@@ -437,12 +435,13 @@ export default function StepsHomeCity({
             subLock: "En attente du contrôle…",
           };
         }
+
         return {
           badge: "CALIBRATE://POV",
-          title: "Prends quelques étirements.",
+          title: "OK, bouge la vue.",
           desc: isMobile
-            ? "Bouge la vue (joystick droit). On valide quand tu bouges vraiment (≈2s)."
-            : "Bouge la vue (souris). On valide quand tu bouges vraiment (≈2s).",
+            ? "Joystick droit → bouge vraiment la caméra (≈2–3s)."
+            : "Souris → bouge vraiment la caméra (≈2–3s).",
           hint: "Objectif : bouger la caméra",
           cta: null,
           showProgress: true,
@@ -475,23 +474,13 @@ export default function StepsHomeCity({
         };
 
       case STEP.PORTALS:
+      default:
         return {
           badge: "PORTALS://ORBIT",
           title: "Repère les orbits roses.",
           desc: orbitWorldPicker
             ? "Ce sont des portails. Je t’en ping un, juste 2 secondes… ensuite à toi."
             : "Ce sont des portails. Approche-toi… et la ville te répond.",
-          hint: "Enter • Space • Click",
-          cta: "CONTINUER",
-          showProgress: false,
-        };
-
-      case STEP.NAV_HINT:
-      default:
-        return {
-          badge: "UI://NAV",
-          title: "La Navbar existe.",
-          desc: "Petit rappel: tu peux naviguer à tout moment. (Je te l’affiche juste à côté.)",
           hint: "Enter • Space • Click",
           cta: "GOT IT",
           showProgress: false,
@@ -554,15 +543,16 @@ export default function StepsHomeCity({
                     onClick={() => {
                       if (step === STEP.BOOT) goNext();
                       else if (step === STEP.ESCAPE) goNext();
-                      else if (step === STEP.PORTALS) goNext();
-                      else if (step === STEP.NAV_HINT) complete();
+                      else if (step === STEP.PORTALS) complete();
                     }}
                   >
-                    <span className="agCitySteps__chev" aria-hidden="true">&gt;</span>
+                    <span className="agCitySteps__chev" aria-hidden="true">
+                      &gt;
+                    </span>
                     {content.cta}
                   </button>
                 ) : (
-                  <span className="agCitySteps__lock">{content.subLock || "Waiting…"} </span>
+                  <span className="agCitySteps__lock">{content.subLock || "Waiting…"}</span>
                 )}
               </div>
             </div>
@@ -574,7 +564,6 @@ export default function StepsHomeCity({
             <span className={`p ${step >= 3 ? "on" : ""}`} />
             <span className={`p ${step >= 4 ? "on" : ""}`} />
             <span className={`p ${step >= 5 ? "on" : ""}`} />
-            <span className={`p ${step >= 6 ? "on" : ""}`} />
           </div>
         </motion.div>
       </AnimatePresence>
@@ -592,8 +581,4 @@ export default function StepsHomeCity({
       )}
     </div>
   );
-}
-
-function clamp01(v) {
-  return Math.max(0, Math.min(1, v));
 }
