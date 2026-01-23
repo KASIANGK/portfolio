@@ -15,6 +15,8 @@ import { Physics, RigidBody, CuboidCollider } from "@react-three/rapier";
 import { EffectComposer, Bloom, Vignette, SMAA } from "@react-three/postprocessing";
 import { useTranslation } from "react-i18next";
 
+import "./HomeCity.css";
+
 import PlayerController from "../Player/PlayerController";
 import MiniMapHUD from "../City/MiniMapHUD";
 import CityModel from "../City/CityModel";
@@ -25,16 +27,9 @@ import Joystick from "../Player/Joystick";
 import StepsHomeCity from "./parts/StepsHomeCity";
 import ResetStepsHomeCity from "./parts/ResetStepsHomeCity";
 
-// ✅ IMPORTANT: keep ONE source of truth
 const TUTO_KEY = "ag_city_tutorial_done_v1";
-
-// ✅ Lazy UI (same path for lazy + prefetch)
 const FullScreenLoader = lazy(() => import("./parts/FullScreenLoader"));
 
-/**
- * Projects a world point -> screen coords (x,y) every frame.
- * Keeps this inside Canvas context.
- */
 function OrbitHintProjector({ enabled, world, onScreen }) {
   const { camera, size } = useThree();
 
@@ -68,10 +63,9 @@ export default function HomeCity() {
 
   const autoEnterCity = !!location.state?.autoEnterCity;
 
-  // ✅ Redirect on direct navigation / reload (unless coming from Explore)
   useEffect(() => {
     const nav = performance.getEntriesByType?.("navigation")?.[0];
-    const type = nav?.type; // "reload" | "navigate" | "back_forward"
+    const type = nav?.type;
     const cameFromExplore = !!location.state?.autoEnterCity;
 
     if ((type === "reload" || type === "navigate") && !cameFromExplore) {
@@ -79,7 +73,6 @@ export default function HomeCity() {
     }
   }, [navigate, location.state]);
 
-  /* ----------------------------- Tutorial state ----------------------------- */
   const [tutorialDone, setTutorialDone] = useState(() => {
     try {
       return localStorage.getItem(TUTO_KEY) === "1";
@@ -88,20 +81,17 @@ export default function HomeCity() {
     }
   });
 
-  // Tutorial control policy (fed by StepsHomeCity)
   const [tutorialControl, setTutorialControl] = useState({
     lockLook: true,
     lockMove: true,
     showOrbitHint: false,
-    orbitHintWorld: null, // {x,y,z}
-
+    orbitHintWorld: null,
     requestLookCaptureNow: false,
     lookCaptureNonce: 0,
   });
 
-  const [orbitHintScreen, setOrbitHintScreen] = useState(null); // {x,y,onScreen}
+  const [orbitHintScreen, setOrbitHintScreen] = useState(null);
 
-  /* ----------------------------- Core states ----------------------------- */
   const [playerReady, setPlayerReady] = useState(false);
 
   const skipIntroStorage =
@@ -109,7 +99,6 @@ export default function HomeCity() {
       ? localStorage.getItem("angels_city_skip_intro") === "1"
       : false;
 
-  // ✅ if arriving from Explore, force direct entry
   const skipIntro = autoEnterCity || skipIntroStorage;
 
   const [uiIntro, setUiIntro] = useState(!skipIntro);
@@ -127,24 +116,19 @@ export default function HomeCity() {
   const [moveInput, setMoveInput] = useState({ x: 0, y: 0 });
   const [lookInput, setLookInput] = useState({ x: 0, y: 0 });
 
-  // Orbits (optional for premium arrow)
-  const [orbits, setOrbits] = useState([]); // [{id, position:[x,y,z]}]
+  const [orbits, setOrbits] = useState([]);
 
   const prePositionedRef = useRef(false);
 
-  // Sticky gate (prevents loader flashing)
   const [gateOpen, setGateOpen] = useState(false);
   const gateOpeningRef = useRef(false);
 
-  // ✅ head control toggling (click-to-enable / click-to-disable)
   const [headControlEnabled, setHeadControlEnabled] = useState(false);
 
-  // Touch-ish environments
   const isMobile =
     typeof window !== "undefined" &&
     /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
 
-  // ✅ Stable spawn points
   const streetPos = useMemo(() => [-142.49, 2, -40.345], []);
   const streetYaw = 0;
 
@@ -157,7 +141,6 @@ export default function HomeCity() {
   const collisionUrl = `${BASE}models/City_collision_2.glb`;
   const lightsUrl = `${BASE}models/city_light.glb`;
 
-  // ✅ Mark colliders as shown 1 frame after they are ready (more stable)
   useEffect(() => {
     if (!colliderReady) {
       setColliderShown(false);
@@ -166,7 +149,6 @@ export default function HomeCity() {
     requestAnimationFrame(() => setColliderShown(true));
   }, [colliderReady]);
 
-  // ✅ We consider the experience "enterable" only when EVERYTHING is ready
   const canEnterCity = visualReady && colliderShown && markersReady;
   const allReady = canEnterCity && playerReady;
 
@@ -181,14 +163,11 @@ export default function HomeCity() {
     [requestedEnter, uiIntro, streetPos]
   );
 
-  // ✅ Show tutorial only after scene is ready AND first time
   const shouldShowTutorial = requestedEnter && gateOpen && !tutorialDone;
 
-  // ✅ Compute locks: intro OR tutorial policy
   const lockLook = uiIntro || (shouldShowTutorial && tutorialControl.lockLook);
   const lockMove = uiIntro || (shouldShowTutorial && tutorialControl.lockMove);
 
-  // Canvas element ref for reliable pointer lock
   const canvasElRef = useRef(null);
 
   const requestPointerLock = useCallback(() => {
@@ -199,7 +178,6 @@ export default function HomeCity() {
     } catch {}
   }, []);
 
-  // ✅ Toggle head control (desktop = pointer lock)
   const toggleHeadControl = useCallback(() => {
     if (uiIntro || lockLook) return;
 
@@ -217,7 +195,6 @@ export default function HomeCity() {
     });
   }, [uiIntro, lockLook, isMobile, requestPointerLock]);
 
-  // ✅ DEV: reset tutorial steps (simple: clear + go "/")
   const resetStepsHomeCity = useCallback(() => {
     try {
       localStorage.removeItem(TUTO_KEY);
@@ -225,7 +202,6 @@ export default function HomeCity() {
     navigate("/", { replace: true, state: { resetCityTutorial: true } });
   }, [navigate]);
 
-  // ✅ autoEnterCity: force enter flow
   useEffect(() => {
     if (!autoEnterCity) return;
 
@@ -235,7 +211,6 @@ export default function HomeCity() {
     setPlayerReady(false);
     setTeleportNonce((n) => n + 1);
 
-    // consume state
     window.history.replaceState({}, document.title);
   }, [autoEnterCity]);
 
@@ -243,7 +218,6 @@ export default function HomeCity() {
     if (skipIntro) setUiIntro(false);
   }, [skipIntro]);
 
-  // ✅ nonce effect: ONLY safety for state (NO pointer lock here)
   const lastCaptureNonceRef = useRef(0);
   useEffect(() => {
     if (!shouldShowTutorial) return;
@@ -254,18 +228,11 @@ export default function HomeCity() {
     if (nonce === lastCaptureNonceRef.current) return;
     lastCaptureNonceRef.current = nonce;
 
-    // Only when Step2 has actually unlocked look (Steps sets lockLook=false)
-    // -> ensure state is ON, but do NOT request pointer lock here
     if (tutorialControl.lockLook === false) {
       setHeadControlEnabled(true);
     }
-  }, [
-    shouldShowTutorial,
-    tutorialControl?.lookCaptureNonce,
-    tutorialControl?.lockLook,
-  ]);
+  }, [shouldShowTutorial, tutorialControl?.lookCaptureNonce, tutorialControl?.lockLook]);
 
-  // Pre-position guard (do NOT teleport here; avoid flicker)
   useEffect(() => {
     if (!requestedEnter) return;
     if (!colliderReady) return;
@@ -273,7 +240,6 @@ export default function HomeCity() {
     prePositionedRef.current = true;
   }, [requestedEnter, colliderReady]);
 
-  // Exit pointer lock on unmount
   useEffect(() => {
     return () => {
       if (document.pointerLockElement) document.exitPointerLock?.();
@@ -293,7 +259,6 @@ export default function HomeCity() {
     }
   }, [isMobile, requestPointerLock]);
 
-  // When everything is ready -> close intro + teleport
   useEffect(() => {
     if (!requestedEnter) return;
     if (!canEnterCity) return;
@@ -307,7 +272,6 @@ export default function HomeCity() {
     setTeleportNonce((n) => n + 1);
   }, [requestedEnter, canEnterCity, dontShowAgain]);
 
-  // ✅ SPACE/ENTER on intro overlay (3 steps)
   useEffect(() => {
     if (!uiIntro) return;
 
@@ -327,7 +291,6 @@ export default function HomeCity() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [uiIntro, introStep, onEnterRequest]);
 
-  // ✅ Sticky Gate logic
   useEffect(() => {
     if (!requestedEnter) return;
 
@@ -347,31 +310,18 @@ export default function HomeCity() {
     });
   }, [requestedEnter, allReady]);
 
-  const introBg = (
-    <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        background:
-          "radial-gradient(1200px 800px at 20% 20%, rgba(124,58,237,0.18), transparent 60%), radial-gradient(900px 700px at 80% 30%, rgba(255,0,170,0.14), transparent 55%), #070916",
-      }}
-    />
-  );
-
   const waitingReason = !visualReady
     ? "Loading city visuals…"
     : !colliderShown
-    ? "Loading collisions…"
-    : !markersReady
-    ? "Loading portals…"
-    : !playerReady
-    ? "Spawning player…"
-    : "Finalizing…";
+      ? "Loading collisions…"
+      : !markersReady
+        ? "Loading portals…"
+        : !playerReady
+          ? "Spawning player…"
+          : "Finalizing…";
 
-  // ✅ Loader is only controlled by gateOpen (sticky)
   const shouldShowLoader = requestedEnter && !gateOpen;
 
-  // ✅ Prevent scroll/pinch on joystick zones
   useEffect(() => {
     if (!requestedEnter || uiIntro || !isMobile) return;
 
@@ -410,14 +360,12 @@ export default function HomeCity() {
     setOrbitHintScreen(null);
   }, []);
 
-  // Pick a target orbit (simple strategy: first orbit)
   const pickOrbitWorld = useCallback(() => {
     if (!orbits?.length) return null;
     const o = orbits[0];
     return { x: o.position[0], y: o.position[1], z: o.position[2] };
   }, [orbits]);
 
-  // ✅ Prefetch loader chunk ASAP (same path as lazy)
   useEffect(() => {
     const fn = () => import("./parts/FullScreenLoader").catch(() => {});
     const id = "requestIdleCallback" in window ? requestIdleCallback(fn) : setTimeout(fn, 0);
@@ -428,17 +376,17 @@ export default function HomeCity() {
     };
   }, []);
 
-  // If we lock look again (intro/tutorial), force disable head control + exit pointer lock
   useEffect(() => {
     if (!lockLook) return;
     setHeadControlEnabled(false);
     if (!isMobile) document.exitPointerLock?.();
   }, [lockLook, isMobile]);
 
-  return (
-    <div style={{ width: "100vw", height: "100vh", background: "#070916" }}>
-      {!requestedEnter && introBg}
+  const rootClass = `home-city${shouldShowTutorial ? " isTutorial" : ""}`;
 
+  return (
+    <div className={rootClass}>
+      {/* Loader / Tutorial (layers hautes) */}
       {requestedEnter && (
         <>
           {shouldShowLoader && (
@@ -459,146 +407,146 @@ export default function HomeCity() {
               onDone={onTutorialDone}
             />
           )}
-
-          <Canvas
-            dpr={shouldShowLoader ? 1 : [1, 1.5]}
-            gl={{
-              antialias: false,
-              alpha: false,
-              powerPreference: "high-performance",
-              preserveDrawingBuffer: false,
-            }}
-            onCreated={({ gl }) => {
-              canvasElRef.current = gl.domElement;
-
-              gl.outputColorSpace = THREE.SRGBColorSpace;
-              gl.toneMapping = THREE.ACESFilmicToneMapping;
-              gl.toneMappingExposure = 2.15;
-              gl.setClearColor(new THREE.Color("#0b1024"), 1);
-
-              gl.domElement.style.touchAction = "none";
-            }}
-            onPointerDown={() => {
-              if (uiIntro) return;
-            
-              // ✅ Step 2 capture gesture MUST work even if lockLook is currently true
-              if (shouldShowTutorial && tutorialControl.requestLookCaptureNow) {
-                setHeadControlEnabled(true);
-            
-                if (!isMobile) {
-                  window.focus?.();
-                  requestPointerLock();
-                }
-                return; // important: no toggle here
-              }
-            
-              // ✅ Outside tutorial: normal toggle behavior
-              if (lockLook) return;
-              toggleHeadControl();
-            }}
-            
-          >
-            <OrbitHintProjector
-              enabled={shouldShowTutorial && tutorialControl.showOrbitHint}
-              world={tutorialControl.orbitHintWorld}
-              onScreen={setOrbitHintScreen}
-            />
-
-            <fogExp2 attach="fog" density={0.00105} color={"#1a2455"} />
-
-            <ambientLight intensity={0.42} />
-            <hemisphereLight intensity={0.75} color={"#9dbbff"} groundColor={"#2a0030"} />
-            <directionalLight position={[12, 18, 10]} intensity={1.25} color={"#ffe2c0"} />
-            <directionalLight position={[-12, 14, -8]} intensity={0.85} color={"#b48cff"} />
-
-            <Suspense fallback={null}>
-              <CityModel url={visualUrl} withColliders={false} onLoaded={() => setVisualReady(true)} />
-            </Suspense>
-
-            <Suspense fallback={null}>
-              <CityMarkers
-                visible={!uiIntro}
-                radius={3}
-                openDistance={7}
-                closeDistance={9}
-                onLoaded={() => setMarkersReady(true)}
-                onOrbits={setOrbits}
-              />
-            </Suspense>
-
-            <Suspense fallback={null}>
-              <CityNightLights
-                url={lightsUrl}
-                lampIntensity={12}
-                lampRedIntensity={16}
-                neonIntensity={28}
-                fireIntensity={18}
-                lampDistance={20}
-                neonDistance={28}
-                fireDistance={22}
-              />
-            </Suspense>
-
-            <Physics gravity={[0, -9.81, 0]}>
-              <Suspense fallback={null}>
-                <CityModel
-                  url={collisionUrl}
-                  withColliders
-                  collisionOnly
-                  onLoaded={() => setColliderReady(true)}
-                />
-              </Suspense>
-
-              <RigidBody type="fixed" colliders={false}>
-                <CuboidCollider args={[2000, 1, 2000]} position={[0, -2, 0]} />
-              </RigidBody>
-
-              <PlayerController
-                teleportNonce={teleportNonce}
-                overviewPos={overviewPos}
-                overviewYaw={overviewYaw}
-                overviewPitch={overviewPitch}
-                streetPos={streetPos}
-                streetYaw={streetYaw}
-                playerHeight={2.3}
-                stepHeight={0.55}
-                maxSlopeDeg={50}
-                moveInput={moveInput}
-                lookInput={lookInput}
-                active
-                lockMovement={lockMove}
-                lockLook={lockLook}
-                yawOffset={-Math.PI / 2}
-                onPlayerReady={() => setPlayerReady(true)}
-                mobileSpeedMultiplier={1.35}
-                mobileLookSensitivity={0.05}
-                headControlEnabled={headControlEnabled}
-                onHeadControlChange={setHeadControlEnabled}
-              />
-            </Physics>
-
-            <MiniMapHUD
-              enabled={minimapConfig.enabled}
-              size={minimapConfig.size}
-              centerX={minimapConfig.centerX}
-              centerZ={minimapConfig.centerZ}
-              scale={minimapConfig.scale}
-            />
-
-            <EffectComposer multisampling={0}>
-              <SMAA />
-              <Bloom
-                intensity={0.45}
-                luminanceThreshold={0.25}
-                luminanceSmoothing={0.85}
-                mipmapBlur
-              />
-              <Vignette eskil={false} offset={0.15} darkness={0.25} />
-            </EffectComposer>
-          </Canvas>
         </>
       )}
 
+      {/* ✅ Canvas ABSOLU (ne bouge jamais) */}
+      {requestedEnter && (
+        <Canvas
+          className="home-city__canvas"
+          dpr={shouldShowLoader ? 1 : [1, 1.5]}
+          gl={{
+            antialias: false,
+            alpha: false,
+            powerPreference: "high-performance",
+            preserveDrawingBuffer: false,
+          }}
+          onCreated={({ gl }) => {
+            canvasElRef.current = gl.domElement;
+
+            gl.outputColorSpace = THREE.SRGBColorSpace;
+            gl.toneMapping = THREE.ACESFilmicToneMapping;
+            gl.toneMappingExposure = 2.15;
+            gl.setClearColor(new THREE.Color("#0b1024"), 1);
+
+            gl.domElement.style.touchAction = "none";
+          }}
+          onPointerDown={() => {
+            if (uiIntro) return;
+
+            if (shouldShowTutorial && tutorialControl.requestLookCaptureNow) {
+              setHeadControlEnabled(true);
+
+              if (!isMobile) {
+                window.focus?.();
+                requestPointerLock();
+              }
+              return;
+            }
+
+            if (lockLook) return;
+            toggleHeadControl();
+          }}
+        >
+          <OrbitHintProjector
+            enabled={shouldShowTutorial && tutorialControl.showOrbitHint}
+            world={tutorialControl.orbitHintWorld}
+            onScreen={setOrbitHintScreen}
+          />
+
+          <fogExp2 attach="fog" density={0.00105} color={"#1a2455"} />
+
+          <ambientLight intensity={0.42} />
+          <hemisphereLight intensity={0.75} color={"#9dbbff"} groundColor={"#2a0030"} />
+          <directionalLight position={[12, 18, 10]} intensity={1.25} color={"#ffe2c0"} />
+          <directionalLight position={[-12, 14, -8]} intensity={0.85} color={"#b48cff"} />
+
+          <Suspense fallback={null}>
+            <CityModel url={visualUrl} withColliders={false} onLoaded={() => setVisualReady(true)} />
+          </Suspense>
+
+          <Suspense fallback={null}>
+            <CityMarkers
+              visible={!uiIntro}
+              radius={3}
+              openDistance={7}
+              closeDistance={9}
+              onLoaded={() => setMarkersReady(true)}
+              onOrbits={setOrbits}
+            />
+          </Suspense>
+
+          <Suspense fallback={null}>
+            <CityNightLights
+              url={lightsUrl}
+              lampIntensity={12}
+              lampRedIntensity={16}
+              neonIntensity={28}
+              fireIntensity={18}
+              lampDistance={20}
+              neonDistance={28}
+              fireDistance={22}
+            />
+          </Suspense>
+
+          <Physics gravity={[0, -9.81, 0]}>
+            <Suspense fallback={null}>
+              <CityModel
+                url={collisionUrl}
+                withColliders
+                collisionOnly
+                onLoaded={() => setColliderReady(true)}
+              />
+            </Suspense>
+
+            <RigidBody type="fixed" colliders={false}>
+              <CuboidCollider args={[2000, 1, 2000]} position={[0, -2, 0]} />
+            </RigidBody>
+
+            <PlayerController
+              teleportNonce={teleportNonce}
+              overviewPos={overviewPos}
+              overviewYaw={overviewYaw}
+              overviewPitch={overviewPitch}
+              streetPos={streetPos}
+              streetYaw={streetYaw}
+              playerHeight={2.3}
+              stepHeight={0.55}
+              maxSlopeDeg={50}
+              moveInput={moveInput}
+              lookInput={lookInput}
+              active
+              lockMovement={lockMove}
+              lockLook={lockLook}
+              yawOffset={-Math.PI / 2}
+              onPlayerReady={() => setPlayerReady(true)}
+              mobileSpeedMultiplier={1.35}
+              mobileLookSensitivity={0.05}
+              headControlEnabled={headControlEnabled}
+              onHeadControlChange={setHeadControlEnabled}
+            />
+          </Physics>
+
+          <MiniMapHUD
+            enabled={minimapConfig.enabled}
+            size={minimapConfig.size}
+            centerX={minimapConfig.centerX}
+            centerZ={minimapConfig.centerZ}
+            scale={minimapConfig.scale}
+          />
+
+          <EffectComposer multisampling={0}>
+            <SMAA />
+            <Bloom intensity={0.45} luminanceThreshold={0.25} luminanceSmoothing={0.85} mipmapBlur />
+            <Vignette eskil={false} offset={0.15} darkness={0.25} />
+          </EffectComposer>
+        </Canvas>
+      )}
+
+      {/* ✅ Tint AU-DESSUS du Canvas, n'intercepte rien */}
+      {requestedEnter && <div className="agCityTint" aria-hidden="true" />}
+
+      {/* Joysticks mobile (au-dessus) */}
       {!uiIntro && requestedEnter && isMobile && (
         <>
           <div

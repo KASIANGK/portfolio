@@ -13,10 +13,11 @@
 
 - A realiser :
     - MiniMapHUD
+    - possibilite dajouter brume sur scene ?
     - Position Empties Blender
     - Collisions Blender
     - supprimer les details de la porte "transparente" batiment Blender
-    - Markers
+    - Markers + message devant la poubelle, devant escaliers.
     - json i18n dans HomeOverlay, StepsHomeCity et HomeCity
 
 - Implementation :

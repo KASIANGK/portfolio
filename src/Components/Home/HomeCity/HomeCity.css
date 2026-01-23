@@ -1,48 +1,93 @@
-.home-city {
-    width: 100vw;
-    height: 100vh;
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .ui-overlay {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 60px;
-    color: white;
-    font-family: Inter, system-ui;
-  }
-  
-  .ui-overlay h1 {
-    font-size: 4rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-  }
-  
-  .menu {
-    display: flex;
-    gap: 20px;
-    pointer-events: auto;
-  }
-  
-  .menu button {
-    background: rgba(0,0,0,0.5);
-    border: 1px solid rgba(255,255,255,0.2);
-    padding: 14px 26px;
-    color: white;
-    font-size: 1rem;
-    border-radius: 12px;
-    backdrop-filter: blur(10px);
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-  
-  .menu button:hover {
-    background: rgba(255,122,0,0.15);
-    border-color: #ff7a00;
-  }
-  
+/* src/Components/HomeCity/HomeCity.css */
+
+/* Root plein écran, hors layout (ne casse jamais le canvas) */
+.home-city{
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #070916;
+}
+
+/* Le canvas doit être ABSOLU */
+.home-city__canvas{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 0;
+}
+
+/* Tint global permanent (léger), ne bloque aucune interaction */
+.agCityTint{
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+
+  /* léger filtre noir-mauve */
+  background:
+    radial-gradient(1200px 800px at 20% 15%, rgba(255,0,170,0.04), transparent 58%),
+    radial-gradient(1200px 800px at 80% 25%, rgba(124,58,237,0.06), transparent 60%),
+    rgba(6, 0, 16, 0.10);
+
+  /* optionnel: rend la scène un peu plus “premium” */
+  backdrop-filter: saturate(1.05) contrast(1.05);
+  -webkit-backdrop-filter: saturate(1.05) contrast(1.05);
+}
+
+/* Tint renforcé uniquement pendant le tuto (si tu veux) */
+.home-city.isTutorial .agCityTint{
+  background:
+    radial-gradient(1200px 800px at 50% 18%, rgba(255,0,170,0.06), transparent 60%),
+    radial-gradient(1200px 800px at 50% 35%, rgba(124,58,237,0.08), transparent 62%),
+    rgba(6, 0, 16, 0.18);
+}
+
+/* UI overlay (si tu l’utilises) */
+.ui-overlay{
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 60px;
+
+  color: rgba(255,255,255,0.92);
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+}
+
+.ui-overlay h1{
+  font-size: 4rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.menu{
+  display: flex;
+  gap: 20px;
+  pointer-events: auto; /* ✅ clickable */
+}
+
+.menu button{
+  background: rgba(0,0,0,0.5);
+  border: 1px solid rgba(255,255,255,0.2);
+  padding: 14px 26px;
+  color: white;
+  font-size: 1rem;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.menu button:hover{
+  background: rgba(255,122,0,0.15);
+  border-color: #ff7a00;
+}
