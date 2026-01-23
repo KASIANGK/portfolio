@@ -2,7 +2,7 @@
 import React, { useMemo } from "react";
 import { useProgress } from "@react-three/drei";
 import { useTranslation } from "react-i18next";
-import "./FullScreenLoader.css";
+import "../style/FullScreenLoader.css";
 
 export default function FullScreenLoader({
   label = "Loading…",

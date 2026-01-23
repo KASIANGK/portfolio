@@ -1,29 +1,29 @@
 // src/Components/Home/HomeOverlay/HomeOverlay.jsx
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import useOnboarding from "../../../hooks/useOnboarding";
+
 import "./parts/styles/Base.css";
 import "./parts/styles/Background.css";
 import "./parts/styles/Reset.css";
 import "./parts/styles/Panel.css";
 import "./parts/styles/Buttons.css";
-import "./parts/styles/StepSecondMenu.css";
+import "./parts/styles/StepMenu.css";
 import "./parts/styles/PreviewOrgans.css";
 import "./parts/styles/ScrollHint.css";
 import "./parts/styles/Carousel.css";
 import "./parts/styles/Typography.css";
-
 
 import { LANGS, MENU } from "./constants";
 import OverlayBackground from "./parts/OverlayBackground";
 import OverlayResetButtons from "./parts/OverlayResetButtons";
 import StepLanguage from "./parts/StepLanguage";
 import StepMenu from "./parts/StepMenu";
-// import ScrollHint from "./parts/ScrollHint";
 
 export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const { t, i18n } = useTranslation("intro");
 
   const {
@@ -35,18 +35,21 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
   } = useOnboarding();
 
   const FIRST_VISIT_KEY = "ag_home_first_visit_done_v1";
+  const KB_HINT_KEY = "ag_step1_kb_hint_seen_v2";
 
   const firstVisit = (() => {
-    try { return localStorage.getItem(FIRST_VISIT_KEY) !== "1"; }
-    catch { return true; }
+    try {
+      return localStorage.getItem(FIRST_VISIT_KEY) !== "1";
+    } catch {
+      return true;
+    }
   })();
-  
+
   const [slideIndex, setSlideIndex] = useState(() => {
     if (firstVisit) return 0;
     return shouldShowLanguageStep ? 0 : 1;
   });
-  
-  
+
   useEffect(() => {
     if (shouldShowLanguageStep) setSlideIndex(0);
   }, [shouldShowLanguageStep]);
@@ -90,6 +93,27 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
     window.setTimeout(() => continueBtnRef.current?.focus?.(), 80);
   }, []);
 
+  // ✅ Point 2: consume reset flag from /city
+  useEffect(() => {
+    if (!location.state?.resetCityTutorial) return;
+
+    // 1) Reset "first visit" => force onboarding step1 visible
+    try {
+      localStorage.removeItem(FIRST_VISIT_KEY);
+    } catch {}
+
+    // 2) (optionnel mais pratique) réafficher le hint clavier step1
+    try {
+      localStorage.removeItem(KB_HINT_KEY);
+    } catch {}
+
+    // 3) Revenir step1 instant
+    goToStep1Instant();
+
+    // 4) Consommer le state (évite re-trigger au refresh)
+    window.history.replaceState({}, document.title);
+  }, [location.state, goToStep1Instant]);
+
   // Step1 language
   const detected = i18n.resolvedLanguage || i18n.language || "en";
   const safeDetected = LANGS.includes(detected) ? detected : "en";
@@ -103,14 +127,16 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
     Math.max(0, LANGS.indexOf(initialLang))
   );
 
+  const [selectedLang, setSelectedLang] = useState(initialLang);
+  const [isSwitchingLang, setIsSwitchingLang] = useState(false);
+
   // ✅ Sync Step1 selector when language changes from outside (Navbar, etc.)
   useEffect(() => {
-    if (slideIndex !== 0) return; // only while in Step1
+    if (slideIndex !== 0) return;
 
     const lng = (i18n.resolvedLanguage || i18n.language || "en").slice(0, 2);
     const safe = LANGS.includes(lng) ? lng : "en";
 
-    // Avoid useless re-renders
     setSelectedLang((prev) => (prev === safe ? prev : safe));
     setLangActiveIndex((prev) => {
       const next = Math.max(0, LANGS.indexOf(safe));
@@ -118,11 +144,6 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
     });
   }, [i18n.resolvedLanguage, i18n.language, slideIndex]);
 
-
-  const [selectedLang, setSelectedLang] = useState(initialLang);
-  const [isSwitchingLang, setIsSwitchingLang] = useState(false);
-
-  const KB_HINT_KEY = "ag_step1_kb_hint_seen_v2";
   const [showKbHint, setShowKbHint] = useState(() => {
     try {
       return localStorage.getItem(KB_HINT_KEY) !== "1";
@@ -195,12 +216,14 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
     } finally {
       setIsSwitchingLang(false);
     }
+
     try {
       localStorage.setItem(FIRST_VISIT_KEY, "1");
     } catch {}
+
     completeLanguageStep(selectedLang);
     setSlideIndex(1);
-  
+
     window.setTimeout(() => {
       const first = document.querySelector(".homeOverlay__menuBtn");
       first?.focus?.();
@@ -236,25 +259,14 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
   // Step2 menu
   const [menuActiveIndex, setMenuActiveIndex] = useState(0);
 
-  // const runMenuAction = useCallback(
-  //   (item) => {
-  //     if (!item) return;
-
-  //     if (item.key === "explore") return navigate(item.to);
-  //     if (item.key === "about") return onGoAbout?.();
-  //     if (item.key === "projects") return onGoProjects?.();
-  //     if (item.key === "contact") return onGoContact?.();
-  //   },
-  //   [navigate, onGoAbout, onGoProjects, onGoContact]
-  // );
   const runMenuAction = useCallback(
     (item) => {
       if (!item) return;
-  
+
       if (item.key === "explore") {
         return navigate("/city", { state: { autoEnterCity: true } });
       }
-      
+
       if (item.key === "about") return onGoAbout?.();
       if (item.key === "projects") return onGoProjects?.();
       if (item.key === "contact") return onGoContact?.();
@@ -286,35 +298,24 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
 
   const handleResetLanguage = useCallback(async () => {
     if (typeof resetLanguageStep === "function") resetLanguageStep();
-  
-    // Option: remettre la langue auto (ou 'en')
+
     const fallback = i18n.resolvedLanguage || i18n.language || "en";
     const safe = LANGS.includes(fallback) ? fallback : "en";
-  
+
     setSelectedLang(safe);
     setLangActiveIndex(Math.max(0, LANGS.indexOf(safe)));
-  
-    // Très important: appliquer la langue réellement
+
     try {
-      await setLanguage(safe);          // ton hook
-      await i18n.changeLanguage(safe);  // i18next (au cas où)
+      await setLanguage(safe);
+      await i18n.changeLanguage(safe);
     } catch {}
-  
-    // Reset "first visit" si tu veux vraiment refaire le flow complet
+
     try {
       localStorage.removeItem(FIRST_VISIT_KEY);
     } catch {}
-  
+
     goToStep1Instant();
-  }, [
-    resetLanguageStep,
-    i18n,
-    setLanguage,
-    goToStep1Instant,
-    setSelectedLang,
-    setLangActiveIndex,
-  ]);
-  
+  }, [resetLanguageStep, i18n, setLanguage, goToStep1Instant]);
 
   const handleResetHint = useCallback(() => {
     try {
@@ -324,11 +325,12 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
     setKbHintPhase("hidden");
   }, []);
 
-  const handleResetFirstStep = () => {
-    try { localStorage.removeItem(FIRST_VISIT_KEY); } catch {}
-    setSlideIndex(0);
-  };
-  
+  const handleResetFirstStep = useCallback(() => {
+    try {
+      localStorage.removeItem(FIRST_VISIT_KEY);
+    } catch {}
+    goToStep1Instant();
+  }, [goToStep1Instant]);
 
   // global flag
   useEffect(() => {
@@ -338,11 +340,41 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
     };
   }, [slideIndex]);
 
+  useEffect(() => {
+    if (!location.state?.resetCityTutorial) return;
+  
+    // ✅ go direct Step2 (menu) pour dev
+    setNoAnimOnce(true);
+    setSlideIndex(1);
+  
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => setNoAnimOnce(false));
+    });
+  
+    window.setTimeout(() => {
+      const first = document.querySelector(".homeOverlay__menuBtn");
+      first?.focus?.();
+    }, 80);
+  
+    // ✅ consomme le state pour éviter re-trigger au refresh/back
+    window.history.replaceState({}, document.title);
+  }, [location.state]);
+  
+
   return (
-    <header className="homeOverlay" data-step={slideIndex === 0 ? "1" : "2"} aria-label="Home onboarding header">
+    <header
+      className="homeOverlay"
+      data-step={slideIndex === 0 ? "1" : "2"}
+      aria-label="Home onboarding header"
+    >
       <OverlayBackground slideIndex={slideIndex} noAnimOnce={noAnimOnce} />
 
-      <OverlayResetButtons t={t} onResetLanguage={handleResetLanguage} onResetHint={handleResetHint} onResetStep={handleResetFirstStep} />
+      <OverlayResetButtons
+        t={t}
+        onResetLanguage={handleResetLanguage}
+        onResetHint={handleResetHint}
+        onResetStep={handleResetFirstStep}
+      />
 
       <div className="homeOverlay__viewport">
         <div
