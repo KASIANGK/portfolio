@@ -473,7 +473,7 @@ export default function HomeCity() {
               gl.domElement.style.touchAction = "none";
             }}
             onPointerDown={() => {
-              if (!uiIntro && !isMobile) {
+              if (!uiIntro && !isMobile && !lockLook) {
                 window.focus?.();
                 requestPointerLock();
               }
