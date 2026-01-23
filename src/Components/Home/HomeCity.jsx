@@ -7,10 +7,10 @@ import React, {
   useCallback,
   useRef,
 } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Canvas } from "@react-three/fiber";
 import * as THREE from "three";
 import { Physics, RigidBody, CuboidCollider } from "@react-three/rapier";
-import { useNavigate } from "react-router-dom";
 import { EffectComposer, Bloom, Vignette, SMAA } from "@react-three/postprocessing";
 
 import PlayerController from "./Player/PlayerController";
@@ -21,24 +21,35 @@ import CityNightLights from "./City/CityNightLights";
 import Joystick from "./Player/Joystick";
 import { useTranslation } from "react-i18next";
 
+
 // ✅ Lazy UI (loaded only when needed)
-const IntroOverlay3Steps = lazy(() => import("./ui/IntroOverlay3Steps"));
 const FullScreenLoader = lazy(() => import("./ui/FullScreenLoader"));
 const DevResetIntroButton = lazy(() => import("./ui/DevResetIntroButton"));
 
 
 export default function HomeCity() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const autoEnterCity = !!location.state?.autoEnterCity; // ✅ depuis Step2
+
   const { t, i18n } = useTranslation("home");
   console.log("lang:", i18n.language, "home subLabel:", t("loader.subLabel"));
 
 
   const [playerReady, setPlayerReady] = useState(false);
 
-  const skipIntro =
-    typeof window !== "undefined"
-      ? localStorage.getItem("angels_city_skip_intro") === "1"
-      : false;
+  const skipIntroStorage =
+  typeof window !== "undefined"
+    ? localStorage.getItem("angels_city_skip_intro") === "1"
+    : false;
+
+  // const skipIntro =
+  //   typeof window !== "undefined"
+  //     ? localStorage.getItem("angels_city_skip_intro") === "1"
+  //     : false;
+  // ✅ si on arrive depuis Step2, on force l'entrée directe
+  const skipIntro = autoEnterCity || skipIntroStorage;
 
   const [uiIntro, setUiIntro] = useState(!skipIntro);
   const [introStep, setIntroStep] = useState(1);
@@ -62,6 +73,18 @@ export default function HomeCity() {
   const [gateOpen, setGateOpen] = useState(false);
   const gateOpeningRef = useRef(false);
 
+  useEffect(() => {
+    if (!autoEnterCity) return;
+    // on “consomme” le state, comme ça refresh/back n’auto-enter pas par accident
+    window.history.replaceState({}, document.title);
+  }, [autoEnterCity]);
+
+  useEffect(() => {
+    if (skipIntro) {
+      setUiIntro(false);
+    }
+  }, [skipIntro]);
+  
   const isMobile =
     typeof window !== "undefined" &&
     /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
