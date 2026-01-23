@@ -19,7 +19,6 @@ export default function PlayerController({
   rbRef,
   active = true,
 
-  // ✅ Separate locks
   lockMovement = false,
   lockLook = false,
 
@@ -62,13 +61,20 @@ export default function PlayerController({
   const rb = rbRef ?? rbLocal;
 
   const keys = useRef({ up: false, down: false, left: false, right: false });
+
   const look = useRef({ dx: 0, dy: 0, locked: false });
   const holdRef = useRef({ anyArrowDownAt: null });
 
   const controllerRef = useRef(null);
   const velY = useRef(0);
 
-  const yawPitch = useRef({
+  // ✅ target vs current (smooth)
+  const yawPitchTarget = useRef({
+    yaw: Number.isFinite(overviewYaw) ? overviewYaw : 0,
+    pitch: Number.isFinite(overviewPitch) ? overviewPitch : 0,
+  });
+
+  const yawPitchCurrent = useRef({
     yaw: Number.isFinite(overviewYaw) ? overviewYaw : 0,
     pitch: Number.isFinite(overviewPitch) ? overviewPitch : 0,
   });
@@ -84,12 +90,11 @@ export default function PlayerController({
     []
   );
 
-  // Camera smoothing
+  // Camera smoothing (position)
   const camTarget = useRef(new THREE.Vector3());
   const camPos = useRef(new THREE.Vector3());
   const camInited = useRef(false);
 
-  // Capsule sizes
   const CAPSULE_HALF = 0.55;
   const CAPSULE_RADIUS = 0.35;
   const CENTER_FROM_GROUND = CAPSULE_HALF + CAPSULE_RADIUS;
@@ -155,15 +160,28 @@ export default function PlayerController({
     return () => document.removeEventListener("pointerlockchange", onPLC);
   }, [gl]);
 
-  // Mouse look (pointer locked)
+  // ✅ HARD BLOCK: if lockLook is true (Step1), ensure pointerlock cannot stay
+  useEffect(() => {
+    if (!lockLook) return;
+    if (document.pointerLockElement === gl.domElement) {
+      document.exitPointerLock?.();
+    }
+    // also flush deltas
+    look.current.dx = 0;
+    look.current.dy = 0;
+  }, [lockLook, gl.domElement]);
+
+  // Mouse look (ONLY when pointer locked)
   useEffect(() => {
     const onMouseMove = (e) => {
-      if (!look.current.locked) return;
       if (!active) return;
-      if (lockLook) return; // ✅ BLOCK look when tutorial wants
+      if (lockLook) return;
+      if (!look.current.locked) return; // ✅ requires pointer lock
+
       look.current.dx += e.movementX || 0;
       look.current.dy += e.movementY || 0;
     };
+
     window.addEventListener("mousemove", onMouseMove);
     return () => window.removeEventListener("mousemove", onMouseMove);
   }, [active, lockLook]);
@@ -206,14 +224,8 @@ export default function PlayerController({
       }
     };
 
-    window.addEventListener("keydown", onKeyDown, {
-      passive: false,
-      capture: true,
-    });
-    window.addEventListener("keyup", onKeyUp, {
-      passive: false,
-      capture: true,
-    });
+    window.addEventListener("keydown", onKeyDown, { passive: false, capture: true });
+    window.addEventListener("keyup", onKeyUp, { passive: false, capture: true });
 
     return () => {
       window.removeEventListener("keydown", onKeyDown, true);
@@ -247,8 +259,12 @@ export default function PlayerController({
     if (rb.current) rb.current.setTranslation({ x: oPos[0], y: oPos[1], z: oPos[2] }, true);
     else camera.position.set(oPos[0], oPos[1], oPos[2]);
 
-    yawPitch.current.yaw = oYaw;
-    yawPitch.current.pitch = oPitch;
+    yawPitchTarget.current.yaw = oYaw;
+    yawPitchTarget.current.pitch = oPitch;
+
+    yawPitchCurrent.current.yaw = oYaw;
+    yawPitchCurrent.current.pitch = oPitch;
+
     applyCameraOrientation(oYaw, oPitch);
 
     velY.current = 0;
@@ -271,8 +287,12 @@ export default function PlayerController({
       true
     );
 
-    yawPitch.current.yaw = sYaw;
-    yawPitch.current.pitch = 0;
+    yawPitchTarget.current.yaw = sYaw;
+    yawPitchTarget.current.pitch = 0;
+
+    yawPitchCurrent.current.yaw = sYaw;
+    yawPitchCurrent.current.pitch = 0;
+
     applyCameraOrientation(sYaw, 0);
 
     velY.current = 0;
@@ -282,44 +302,56 @@ export default function PlayerController({
     if (typeof onPlayerReady === "function") {
       requestAnimationFrame(() => onPlayerReady());
     }
-  }, [teleportNonce, getGroundY, streetPos, streetYaw]); // ✅ deps OK
+  }, [teleportNonce, getGroundY, streetPos, streetYaw]);
 
   useFrame((_, dt) => {
-    // ===== LOOK (mouse delta) =====
+    // ===== LOOK INPUT -> target yaw/pitch =====
     if (active && !lockLook) {
-      const dx = look.current.dx;
-      const dy = look.current.dy;
-      look.current.dx = 0;
-      look.current.dy = 0;
+      // desktop pointer-locked mouse
+      if (look.current.locked) {
+        const dx = look.current.dx;
+        const dy = look.current.dy;
+        look.current.dx = 0;
+        look.current.dy = 0;
 
-      if (dx || dy) {
-        const signY = invertY ? -1 : 1;
-        yawPitch.current.yaw -= dx * lookSensitivity;
-        yawPitch.current.pitch -= dy * lookSensitivity * signY;
-        yawPitch.current.pitch = clamp(yawPitch.current.pitch, minPitch, maxPitch);
+        if (dx || dy) {
+          const signY = invertY ? -1 : 1;
+          yawPitchTarget.current.yaw -= dx * lookSensitivity;
+          yawPitchTarget.current.pitch -= dy * lookSensitivity * signY;
+          yawPitchTarget.current.pitch = clamp(yawPitchTarget.current.pitch, minPitch, maxPitch);
+        }
+      } else {
+        // not locked => no mouse look (ESC escape = stops control)
+        look.current.dx = 0;
+        look.current.dy = 0;
+      }
+
+      // mobile joystick look
+      if (!look.current.locked) {
+        const lx = clamp(lookInput?.x ?? 0, -1, 1);
+        const ly = clamp(lookInput?.y ?? 0, -1, 1);
+
+        if (lx || ly) {
+          const signY = invertY ? -1 : 1;
+          yawPitchTarget.current.yaw -= lx * mobileLookSensitivity;
+          yawPitchTarget.current.pitch -= ly * mobileLookSensitivity * signY;
+          yawPitchTarget.current.pitch = clamp(yawPitchTarget.current.pitch, minPitch, maxPitch);
+        }
       }
     } else {
-      // consume deltas anyway (avoid “jump” after unlock)
       look.current.dx = 0;
       look.current.dy = 0;
     }
 
-    // ===== MOBILE / NON-LOCK look joystick =====
-    if (active && !lockLook && !look.current.locked) {
-      const lx = clamp(lookInput?.x ?? 0, -1, 1);
-      const ly = clamp(lookInput?.y ?? 0, -1, 1);
-
-      if (lx || ly) {
-        const signY = invertY ? -1 : 1;
-        yawPitch.current.yaw -= lx * mobileLookSensitivity;
-        yawPitch.current.pitch -= ly * mobileLookSensitivity * signY;
-        yawPitch.current.pitch = clamp(yawPitch.current.pitch, minPitch, maxPitch);
-      }
+    // ===== SMOOTH yaw/pitch (makes it fluid) =====
+    {
+      const smooth = 1 - Math.exp(-18 * dt); // higher = snappier, still smooth
+      yawPitchCurrent.current.yaw += (yawPitchTarget.current.yaw - yawPitchCurrent.current.yaw) * smooth;
+      yawPitchCurrent.current.pitch += (yawPitchTarget.current.pitch - yawPitchCurrent.current.pitch) * smooth;
+      applyCameraOrientation(yawPitchCurrent.current.yaw, yawPitchCurrent.current.pitch);
     }
 
-    applyCameraOrientation(yawPitch.current.yaw, yawPitch.current.pitch);
-
-    // ===== CAMERA FOLLOW =====
+    // ===== CAMERA FOLLOW (position) =====
     const followCamera = (dtLocal) => {
       if (!rb.current) return;
 
@@ -338,7 +370,6 @@ export default function PlayerController({
       camera.position.copy(camPos.current);
     };
 
-    // If inactive / movement locked -> just follow camera
     if (!active || lockMovement || !rb.current || !controllerRef.current) {
       followCamera(dt);
       return;
@@ -360,15 +391,13 @@ export default function PlayerController({
       my /= len;
     }
 
-    // Sprint only from keyboard hold
     const now = performance.now();
     const heldLong =
       holdRef.current.anyArrowDownAt !== null &&
       now - holdRef.current.anyArrowDownAt >= sprintAfterMs;
     const sprintMul = heldLong ? sprintMultiplier : 1.0;
 
-    // Forward/right based on yaw + yawOffset
-    tmp.yawEuler.set(0, yawPitch.current.yaw + yawOffset, 0, "YXZ");
+    tmp.yawEuler.set(0, yawPitchCurrent.current.yaw + yawOffset, 0, "YXZ");
     tmp.fwd.set(0, 0, -1).applyEuler(tmp.yawEuler);
     tmp.right.set(1, 0, 0).applyEuler(tmp.yawEuler);
     tmp.move.copy(tmp.right).multiplyScalar(mx).add(tmp.fwd.multiplyScalar(my));
@@ -377,7 +406,6 @@ export default function PlayerController({
     const collider = rb.current.collider(0);
     const t = rb.current.translation();
 
-    // ===== GRAVITY =====
     const g = 9.81;
     velY.current -= g * dt;
     velY.current = Math.max(velY.current, -25);
@@ -425,3 +453,5 @@ export default function PlayerController({
     </RigidBody>
   );
 }
+
+
