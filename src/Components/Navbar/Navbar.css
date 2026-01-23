@@ -293,3 +293,178 @@
   }
 }
 
+/* ===== ADD: topbar MENU + GAME + collapse ===== */
+.navHUD__topbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* reuse your hamburger styles; remove margin-bottom since topbar handles spacing */
+.navHUD__hamburger {
+  margin-bottom: 0;
+}
+
+/* GAME button */
+.navHUD__gameBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: rgba(0, 0, 0, 0.26);
+  backdrop-filter: blur(12px);
+  box-shadow: var(--nav-shadow);
+  color: rgba(255,255,255,0.86);
+  cursor: pointer;
+
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+
+  transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+}
+
+.navHUD__gameBtn:hover {
+  border-color: rgba(124, 58, 237, 0.55);
+  box-shadow:
+    0 0 0 1px rgba(124, 58, 237, 0.18),
+    0 0 22px rgba(124, 58, 237, 0.12),
+    var(--nav-shadow);
+  transform: translateY(-1px);
+}
+
+.navHUD__gameDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 0, 170, 0.85);
+  box-shadow: 0 0 16px rgba(255, 0, 170, 0.35);
+}
+
+.navHUD__hamburger.isActive,
+.navHUD__gameBtn.isActive {
+  border-color: rgba(255, 0, 170, 0.45);
+}
+
+/* Collapse button (tiny) */
+.navHUD__collapseBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(0,0,0,0.26);
+  backdrop-filter: blur(12px);
+  box-shadow: var(--nav-shadow);
+  color: rgba(255,255,255,0.75);
+  cursor: pointer;
+  transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.navHUD__collapseBtn:hover {
+  border-color: rgba(255, 0, 170, 0.35);
+  box-shadow:
+    0 0 0 1px rgba(255, 0, 170, 0.14),
+    0 0 18px rgba(255, 0, 170, 0.10),
+    var(--nav-shadow);
+  transform: translateY(-1px);
+}
+
+/* GAME content */
+.navHUD__gameWrap {
+  padding: 10px 10px 12px;
+}
+
+.navHUD__gameTitle {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.70);
+  padding: 6px 2px 10px;
+}
+
+.navHUD__gameList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.navHUD__gameRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+
+  height: 38px;
+  padding: 0 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.04);
+}
+
+.navHUD__gameK {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.70);
+}
+
+.navHUD__gameV {
+  font-size: 12px;
+  color: rgba(255,255,255,0.88);
+  opacity: 0.9;
+}
+
+.navHUD__gameDivider {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,0,170,0.35),
+    rgba(124,58,237,0.30),
+    transparent
+  );
+  opacity: 0.9;
+  margin: 4px 0;
+}
+
+.navHUD__gameAction {
+  width: 100%;
+  height: 40px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.05);
+  color: rgba(255,255,255,0.92);
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
+}
+
+.navHUD__gameAction:hover {
+  border-color: rgba(255, 0, 170, 0.40);
+  box-shadow:
+    0 0 0 1px rgba(255, 0, 170, 0.12),
+    0 0 22px rgba(255, 0, 170, 0.10);
+  transform: translateY(-1px);
+}
+
+.navHUD__gameFoot {
+  padding: 10px 2px 0;
+  font-size: 10px;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+}
+
+/* GAME collapsed: keep topbar visible but hide panel */
+.navHUD.isGame.isGameCollapsed .navHUD__panel {
+  opacity: 0;
+  transform: translateY(-8px) scale(0.98);
+  pointer-events: none;
+}

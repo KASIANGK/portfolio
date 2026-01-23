@@ -12,12 +12,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { Physics, RigidBody, CuboidCollider } from "@react-three/rapier";
-import {
-  EffectComposer,
-  Bloom,
-  Vignette,
-  SMAA,
-} from "@react-three/postprocessing";
+import { EffectComposer, Bloom, Vignette, SMAA } from "@react-three/postprocessing";
 import { useTranslation } from "react-i18next";
 
 import PlayerController from "../Player/PlayerController";
@@ -29,7 +24,6 @@ import Joystick from "../Player/Joystick";
 
 import StepsHomeCity from "./parts/StepsHomeCity";
 import ResetStepsHomeCity from "./parts/ResetStepsHomeCity";
-import NavHelpHint from "./parts/NavHelpHint";
 
 // ✅ IMPORTANT: keep ONE source of truth
 const TUTO_KEY = "ag_city_tutorial_done_v1";
@@ -95,20 +89,17 @@ export default function HomeCity() {
   });
 
   // Tutorial control policy (fed by StepsHomeCity)
-  // ✅ include new fields used to force pointer lock after capture
   const [tutorialControl, setTutorialControl] = useState({
     lockLook: true,
     lockMove: true,
     showOrbitHint: false,
     orbitHintWorld: null, // {x,y,z}
 
-    // NEW (optional fields coming from StepsHomeCity)
     requestLookCaptureNow: false,
     lookCaptureNonce: 0,
   });
 
   const [orbitHintScreen, setOrbitHintScreen] = useState(null); // {x,y,onScreen}
-  const [navHintOpen, setNavHintOpen] = useState(false);
 
   /* ----------------------------- Core states ----------------------------- */
   const [playerReady, setPlayerReady] = useState(false);
@@ -118,7 +109,7 @@ export default function HomeCity() {
       ? localStorage.getItem("angels_city_skip_intro") === "1"
       : false;
 
-  // ✅ if arriving from Step2, force direct entry
+  // ✅ if arriving from Explore, force direct entry
   const skipIntro = autoEnterCity || skipIntroStorage;
 
   const [uiIntro, setUiIntro] = useState(!skipIntro);
@@ -140,39 +131,15 @@ export default function HomeCity() {
   const [orbits, setOrbits] = useState([]); // [{id, position:[x,y,z]}]
 
   const prePositionedRef = useRef(false);
-  const [enterPressed, setEnterPressed] = useState(false);
 
   // Sticky gate (prevents loader flashing)
   const [gateOpen, setGateOpen] = useState(false);
   const gateOpeningRef = useRef(false);
 
-  // ✅ DEV: reset tutorial steps (simple: clear + go "/")
-  const resetStepsHomeCity = useCallback(() => {
-    try {
-      localStorage.removeItem(TUTO_KEY);
-    } catch {}
+  // ✅ head control toggling (click-to-enable / click-to-disable)
+  const [headControlEnabled, setHeadControlEnabled] = useState(false);
 
-    navigate("/", { replace: true, state: { resetCityTutorial: true } });
-  }, [navigate]);
-
-  // ✅ autoEnterCity: force enter flow
-  useEffect(() => {
-    if (!autoEnterCity) return;
-
-    setRequestedEnter(true);
-    setGateOpen(false);
-    gateOpeningRef.current = false;
-    setPlayerReady(false);
-    setTeleportNonce((n) => n + 1);
-
-    // consume state
-    window.history.replaceState({}, document.title);
-  }, [autoEnterCity]);
-
-  useEffect(() => {
-    if (skipIntro) setUiIntro(false);
-  }, [skipIntro]);
-
+  // Touch-ish environments
   const isMobile =
     typeof window !== "undefined" &&
     /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
@@ -229,16 +196,57 @@ export default function HomeCity() {
     if (!el) return;
     try {
       el.requestPointerLock?.();
-    } catch {
-      // ignore
-    }
+    } catch {}
   }, []);
 
-  // ✅ NEW: force pointer lock right after Step2 capture (nonce changes)
+  // ✅ Toggle head control (desktop = pointer lock)
+  const toggleHeadControl = useCallback(() => {
+    if (uiIntro || lockLook) return;
+
+    setHeadControlEnabled((prev) => {
+      const next = !prev;
+
+      if (!isMobile && next) {
+        window.focus?.();
+        requestPointerLock();
+      }
+      if (!isMobile && !next) {
+        document.exitPointerLock?.();
+      }
+      return next;
+    });
+  }, [uiIntro, lockLook, isMobile, requestPointerLock]);
+
+  // ✅ DEV: reset tutorial steps (simple: clear + go "/")
+  const resetStepsHomeCity = useCallback(() => {
+    try {
+      localStorage.removeItem(TUTO_KEY);
+    } catch {}
+    navigate("/", { replace: true, state: { resetCityTutorial: true } });
+  }, [navigate]);
+
+  // ✅ autoEnterCity: force enter flow
+  useEffect(() => {
+    if (!autoEnterCity) return;
+
+    setRequestedEnter(true);
+    setGateOpen(false);
+    gateOpeningRef.current = false;
+    setPlayerReady(false);
+    setTeleportNonce((n) => n + 1);
+
+    // consume state
+    window.history.replaceState({}, document.title);
+  }, [autoEnterCity]);
+
+  useEffect(() => {
+    if (skipIntro) setUiIntro(false);
+  }, [skipIntro]);
+
+  // ✅ nonce effect: ONLY safety for state (NO pointer lock here)
   const lastCaptureNonceRef = useRef(0);
   useEffect(() => {
     if (!shouldShowTutorial) return;
-    if (isMobile) return;
 
     const nonce = tutorialControl?.lookCaptureNonce ?? 0;
     if (!nonce) return;
@@ -246,17 +254,15 @@ export default function HomeCity() {
     if (nonce === lastCaptureNonceRef.current) return;
     lastCaptureNonceRef.current = nonce;
 
-    // Only do it once Step2 is actually "captured" (Steps sets lockLook=false)
+    // Only when Step2 has actually unlocked look (Steps sets lockLook=false)
+    // -> ensure state is ON, but do NOT request pointer lock here
     if (tutorialControl.lockLook === false) {
-      window.focus?.();
-      requestPointerLock();
+      setHeadControlEnabled(true);
     }
   }, [
     shouldShowTutorial,
-    isMobile,
     tutorialControl?.lookCaptureNonce,
     tutorialControl?.lockLook,
-    requestPointerLock,
   ]);
 
   // Pre-position guard (do NOT teleport here; avoid flicker)
@@ -275,16 +281,12 @@ export default function HomeCity() {
   }, []);
 
   const onEnterRequest = useCallback(() => {
-    // ✅ Called from user gesture (button, keydown)
-    setEnterPressed(true);
     setRequestedEnter(true);
     setPlayerReady(false);
 
-    // Reset gate so loader stays until stable ready again
     setGateOpen(false);
     gateOpeningRef.current = false;
 
-    // ✅ Desktop: request pointer lock immediately on gesture
     if (!isMobile) {
       window.focus?.();
       requestPointerLock();
@@ -292,7 +294,6 @@ export default function HomeCity() {
   }, [isMobile, requestPointerLock]);
 
   // When everything is ready -> close intro + teleport
-  // (NO pointer lock here – must be on gesture)
   useEffect(() => {
     if (!requestedEnter) return;
     if (!canEnterCity) return;
@@ -300,10 +301,8 @@ export default function HomeCity() {
     if (dontShowAgain) localStorage.setItem("angels_city_skip_intro", "1");
 
     setUiIntro(false);
-    setEnterPressed(false);
     document.activeElement?.blur?.();
 
-    // teleport now that collisions + markers exist
     setPlayerReady(false);
     setTeleportNonce((n) => n + 1);
   }, [requestedEnter, canEnterCity, dontShowAgain]);
@@ -316,7 +315,6 @@ export default function HomeCity() {
       if (e.code !== "Space" && e.code !== "Enter") return;
       e.preventDefault();
 
-      // 1 -> 2 -> 3 -> enter
       if (introStep < 3) {
         setIntroStep((s) => Math.min(3, s + 1));
         return;
@@ -377,9 +375,7 @@ export default function HomeCity() {
   useEffect(() => {
     if (!requestedEnter || uiIntro || !isMobile) return;
 
-    const zones = Array.from(
-      document.querySelectorAll("[data-joystick-zone='1']")
-    );
+    const zones = Array.from(document.querySelectorAll("[data-joystick-zone='1']"));
     if (!zones.length) return;
 
     const prevent = (e) => e.preventDefault();
@@ -403,7 +399,6 @@ export default function HomeCity() {
     } catch {}
     setTutorialDone(true);
 
-    // reset policy after done (optional)
     setTutorialControl({
       lockLook: false,
       lockMove: false,
@@ -425,8 +420,7 @@ export default function HomeCity() {
   // ✅ Prefetch loader chunk ASAP (same path as lazy)
   useEffect(() => {
     const fn = () => import("./parts/FullScreenLoader").catch(() => {});
-    const id =
-      "requestIdleCallback" in window ? requestIdleCallback(fn) : setTimeout(fn, 0);
+    const id = "requestIdleCallback" in window ? requestIdleCallback(fn) : setTimeout(fn, 0);
 
     return () => {
       if (typeof id === "number") clearTimeout(id);
@@ -434,25 +428,25 @@ export default function HomeCity() {
     };
   }, []);
 
+  // If we lock look again (intro/tutorial), force disable head control + exit pointer lock
+  useEffect(() => {
+    if (!lockLook) return;
+    setHeadControlEnabled(false);
+    if (!isMobile) document.exitPointerLock?.();
+  }, [lockLook, isMobile]);
+
   return (
     <div style={{ width: "100vw", height: "100vh", background: "#070916" }}>
       {!requestedEnter && introBg}
 
-      {/* Scene */}
       {requestedEnter && (
         <>
-          {/* ✅ Loader stays until gateOpen */}
           {shouldShowLoader && (
             <Suspense fallback={null}>
-              <FullScreenLoader
-                force
-                label={waitingReason}
-                subLabel={t("loader.subLabel")}
-              />
+              <FullScreenLoader force label={waitingReason} subLabel={t("loader.subLabel")} />
             </Suspense>
           )}
 
-          {/* ✅ Tutorial (first time only) */}
           {shouldShowTutorial && (
             <StepsHomeCity
               enabled
@@ -463,10 +457,8 @@ export default function HomeCity() {
               orbitHintScreen={orbitHintScreen}
               onControlChange={setTutorialControl}
               onDone={onTutorialDone}
-              onShowNavHint={() => setNavHintOpen(true)}
             />
           )}
-          <NavHelpHint open={navHintOpen} onClose={() => setNavHintOpen(false)} />
 
           <Canvas
             dpr={shouldShowLoader ? 1 : [1, 1.5]}
@@ -487,15 +479,25 @@ export default function HomeCity() {
               gl.domElement.style.touchAction = "none";
             }}
             onPointerDown={() => {
-              // ✅ Normal behavior: user click in scene requests pointer lock,
-              // but ONLY if look isn't locked by intro/tutorial.
-              if (!uiIntro && !isMobile && !lockLook) {
-                window.focus?.();
-                requestPointerLock();
+              if (uiIntro) return;
+            
+              // ✅ Step 2 capture gesture MUST work even if lockLook is currently true
+              if (shouldShowTutorial && tutorialControl.requestLookCaptureNow) {
+                setHeadControlEnabled(true);
+            
+                if (!isMobile) {
+                  window.focus?.();
+                  requestPointerLock();
+                }
+                return; // important: no toggle here
               }
+            
+              // ✅ Outside tutorial: normal toggle behavior
+              if (lockLook) return;
+              toggleHeadControl();
             }}
+            
           >
-            {/* 3D->2D projector for orbit arrow */}
             <OrbitHintProjector
               enabled={shouldShowTutorial && tutorialControl.showOrbitHint}
               world={tutorialControl.orbitHintWorld}
@@ -505,28 +507,12 @@ export default function HomeCity() {
             <fogExp2 attach="fog" density={0.00105} color={"#1a2455"} />
 
             <ambientLight intensity={0.42} />
-            <hemisphereLight
-              intensity={0.75}
-              color={"#9dbbff"}
-              groundColor={"#2a0030"}
-            />
-            <directionalLight
-              position={[12, 18, 10]}
-              intensity={1.25}
-              color={"#ffe2c0"}
-            />
-            <directionalLight
-              position={[-12, 14, -8]}
-              intensity={0.85}
-              color={"#b48cff"}
-            />
+            <hemisphereLight intensity={0.75} color={"#9dbbff"} groundColor={"#2a0030"} />
+            <directionalLight position={[12, 18, 10]} intensity={1.25} color={"#ffe2c0"} />
+            <directionalLight position={[-12, 14, -8]} intensity={0.85} color={"#b48cff"} />
 
             <Suspense fallback={null}>
-              <CityModel
-                url={visualUrl}
-                withColliders={false}
-                onLoaded={() => setVisualReady(true)}
-              />
+              <CityModel url={visualUrl} withColliders={false} onLoaded={() => setVisualReady(true)} />
             </Suspense>
 
             <Suspense fallback={null}>
@@ -536,7 +522,7 @@ export default function HomeCity() {
                 openDistance={7}
                 closeDistance={9}
                 onLoaded={() => setMarkersReady(true)}
-                onOrbits={setOrbits} // optional (for orbit arrow)
+                onOrbits={setOrbits}
               />
             </Suspense>
 
@@ -586,6 +572,8 @@ export default function HomeCity() {
                 onPlayerReady={() => setPlayerReady(true)}
                 mobileSpeedMultiplier={1.35}
                 mobileLookSensitivity={0.05}
+                headControlEnabled={headControlEnabled}
+                onHeadControlChange={setHeadControlEnabled}
               />
             </Physics>
 
@@ -611,7 +599,6 @@ export default function HomeCity() {
         </>
       )}
 
-      {/* Mobile dual joysticks */}
       {!uiIntro && requestedEnter && isMobile && (
         <>
           <div
@@ -625,12 +612,7 @@ export default function HomeCity() {
               touchAction: "none",
             }}
           >
-            <Joystick
-              variant="pink"
-              onOutput={setMoveInput}
-              size={140}
-              deadZone={0.1}
-            />
+            <Joystick variant="pink" onOutput={setMoveInput} size={140} deadZone={0.1} />
           </div>
 
           <div
@@ -644,17 +626,11 @@ export default function HomeCity() {
               touchAction: "none",
             }}
           >
-            <Joystick
-              variant="blue"
-              onOutput={setLookInput}
-              size={140}
-              deadZone={0.1}
-            />
+            <Joystick variant="blue" onOutput={setLookInput} size={140} deadZone={0.1} />
           </div>
         </>
       )}
 
-      {/* ✅ DEV: Reset tutorial button (only when city is entered) */}
       {import.meta.env.DEV && requestedEnter && (
         <ResetStepsHomeCity onResetSteps={resetStepsHomeCity} />
       )}
