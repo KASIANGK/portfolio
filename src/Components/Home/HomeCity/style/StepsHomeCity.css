@@ -1,298 +1,470 @@
 /* src/Components/HomeCity/StepsHomeCity.css */
 
+/* =========================
+   ROOT OVERLAY
+========================= */
 .agCitySteps{
-    position: fixed;
-    inset: 0;
-    z-index: 9998;
-    display: grid;
-    place-items: center;
-    padding: 18px;
-    pointer-events: none;
-    color: rgba(255,255,255,0.92);
-  }
-  
-  .agCitySteps__bg{
-    position: absolute;
-    inset: 0;
-    background:
-      radial-gradient(900px 700px at 18% 18%, rgba(255,0,170,0.12), transparent 60%),
-      radial-gradient(950px 700px at 78% 26%, rgba(0,255,255,0.10), transparent 60%),
-      radial-gradient(900px 700px at 50% 90%, rgba(124,58,237,0.14), transparent 62%);
-    opacity: .9;
-    filter: blur(.2px);
-  }
-  
-  .agCitySteps__card{
-    pointer-events: auto;
-    width: clamp(340px, 56vw, 560px);
-    border-radius: 22px;
-    padding: 18px 18px 14px;
-    position: relative;
-    overflow: hidden;
-  
-    background: rgba(5, 4, 16, 0.56);
-    border: 1px solid rgba(255,255,255,0.12);
-    backdrop-filter: blur(14px) saturate(140%);
-    -webkit-backdrop-filter: blur(14px) saturate(140%);
-  
-    box-shadow:
-      0 18px 70px rgba(0,0,0,0.55),
-      0 0 0 1px rgba(255,0,170,0.10),
-      0 0 70px rgba(124,58,237,0.16),
-      0 0 52px rgba(0,255,255,0.10);
-  }
-  
-  .agCitySteps__sheen{
-    position:absolute;
-    inset:-2px;
-    background:
-      radial-gradient(520px 220px at 20% 10%, rgba(255,0,170,0.18), transparent 60%),
-      radial-gradient(520px 220px at 85% 20%, rgba(0,255,255,0.14), transparent 60%);
-    opacity:.75;
-    pointer-events:none;
-  }
-  
-  .agCitySteps__badge{
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 11px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    opacity: 0.85;
-    padding: 4px 10px;
-    border-radius: 999px;
-    border: 1px solid rgba(255,255,255,0.10);
-    background: rgba(255,255,255,0.04);
-  }
-  
-  .agCitySteps__dot{
-    width: 8px;
-    height: 8px;
-    border-radius: 999px;
-    background: rgba(255,0,170,0.92);
-    box-shadow: 0 0 18px rgba(255,0,170,0.55), 0 0 24px rgba(124,58,237,0.35);
-  }
-  
-  .agCitySteps__title{
-    margin-top: 14px;
-    font-size: 22px;
-    font-weight: 900;
-    letter-spacing: .01em;
-  }
-  
-  .agCitySteps__desc{
-    margin-top: 8px;
-    font-size: 13px;
-    opacity: .78;
-    line-height: 1.45;
-  }
-  
-  .agCitySteps__footer{
-    margin-top: 14px;
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 12px;
-  }
-  
-  .agCitySteps__hint{
-    font-size: 12px;
-    opacity: .75;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  }
-  
-  .agCitySteps__actions{
-    display:flex;
-    gap: 10px;
-    align-items:center;
-  }
-  
-  /* === Progress block (Step2/Step3) === */
-  .agCitySteps__progressBlock{
-    margin-top: 14px;
-    padding: 12px 12px 10px;
-    border-radius: 16px;
-    border: 1px solid rgba(255,255,255,0.10);
-    background: rgba(255,255,255,0.03);
-  }
-  
-  .agCitySteps__progressTop{
-    display:flex;
-    justify-content: space-between;
-    align-items:center;
-    gap: 10px;
-    margin-bottom: 10px;
-  }
-  
-  .agCitySteps__progressLabel{
-    font-size: 11px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    opacity: 0.85;
-  }
-  
-  .agCitySteps__progressPct{
-    font-size: 12px;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    opacity: 0.85;
-  }
-  
-  .agCitySteps__bar{
-    height: 10px;
-    border-radius: 999px;
-    overflow: hidden;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.10);
-  }
-  
-  .agCitySteps__barFill{
-    height: 100%;
-    width: 100%;
-    transform-origin: left center;
-    background:
-      linear-gradient(90deg, rgba(0,255,255,0.18), rgba(255,0,170,0.22));
-    box-shadow: 0 0 26px rgba(255,0,170,0.12);
-  }
-  
-  .agCitySteps__hintMono{
-    margin-top: 10px;
-    font-size: 12px;
-    opacity: .78;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  }
-  
-  /* === CTA button (align with StepMenu vibe) === */
-  .agCitySteps__cta{
-    height: 42px;
-    padding: 0 14px;
-    border-radius: 14px;
-    border: 1px solid rgba(255, 255, 255, 0.10);
-    background: rgba(10, 8, 22, 0.45);
-    color: rgba(245, 245, 255, 0.92);
-  
-    cursor: pointer;
-    transition:
-      transform 120ms ease,
-      box-shadow 160ms ease,
-      border-color 160ms ease;
-  
-    text-align: left;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-    letter-spacing: 0.02em;
-  
-    position: relative;
-    overflow: hidden;
-    z-index: 2;
-  }
-  
-  .agCitySteps__cta:hover{
-    transform: translateY(-1px);
-    border-color: rgba(0, 255, 255, 0.26);
-    box-shadow:
-      0 12px 26px rgba(0, 0, 0, 0.40),
-      0 0 26px rgba(0, 255, 255, 0.12),
-      0 0 26px rgba(255, 0, 170, 0.10);
-  }
-  
-  .agCitySteps__cta::after{
-    content: "";
-    position: absolute;
-    top: -40%;
-    left: -30%;
-    width: 60%;
-    height: 180%;
-    transform: rotate(18deg);
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.10), transparent);
-    opacity: 0;
-    transition: opacity 160ms ease, transform 220ms ease;
-  }
-  
-  .agCitySteps__cta:hover::after{
-    opacity: 1;
-    transform: translateX(70%) rotate(18deg);
-  }
-  
-  .agCitySteps__chev{
-    display: inline-block;
-    width: 18px;
-    margin-right: 8px;
-    color: rgba(255, 0, 170, 0.95);
-    text-shadow: 0 0 12px rgba(255, 0, 170, 0.75);
-  }
-  
-  .agCitySteps__lock{
-    font-size: 12px;
-    opacity: .78;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  }
-  
-  /* dots */
-  .agCitySteps__dots{
-    margin-top: 12px;
-    display:flex;
-    gap: 8px;
-    justify-content:center;
-    opacity:.85;
-  }
-  
-  .agCitySteps__dots .p{
-    width: 10px;
-    height: 10px;
-    border-radius: 999px;
-    border: 1px solid rgba(255,255,255,0.16);
-    background: rgba(255,255,255,0.04);
-  }
-  
-  .agCitySteps__dots .p.on{
-    border-color: rgba(255,0,170,0.42);
-    background: rgba(255,0,170,0.22);
-    box-shadow: 0 0 18px rgba(255,0,170,0.22);
-  }
-  
-  /* === Orbit arrow hint (Step5) === */
-  .agCitySteps__arrow{
-    pointer-events: none;
-    position: fixed;
-    transform: translate(-50%, -115%);
-    z-index: 9999;
-    filter: drop-shadow(0 12px 30px rgba(0,0,0,0.45));
-  }
-  
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  pointer-events: none;
+  color: rgba(255,255,255,0.92);
+}
+
+/* =========================
+   BACKGROUND DIM (global)
+   -> léger pour steps 2-5
+   -> step 1 plus dark
+========================= */
+.agCitySteps__bg{
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+
+  /* ✅ moins sombre par défaut */
+  background: rgba(6, 0, 16, 0.38);
+
+  /* ✅ dim “soft” */
+  backdrop-filter: brightness(0.82) contrast(1.10) saturate(1.08);
+  -webkit-backdrop-filter: brightness(0.82) contrast(1.10) saturate(1.08);
+}
+
+/* vignette + halos neon doux */
+.agCitySteps__bg::before{
+  content:"";
+  position:absolute;
+  inset:-2px;
+  background:
+    radial-gradient(1200px 800px at 50% 35%, rgba(124,58,237,0.10), transparent 60%),
+    radial-gradient(900px 600px at 18% 18%, rgba(255,0,170,0.08), transparent 62%),
+    radial-gradient(900px 600px at 78% 26%, rgba(0,255,255,0.06), transparent 62%),
+    radial-gradient(1400px 900px at 50% 55%, transparent 62%, rgba(0,0,0,0.35) 100%);
+  opacity: 1;
+}
+
+/* grain subtil */
+.agCitySteps__bg::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.28'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+  opacity: 0.08;
+}
+
+/* ✅ STEP 1 (BOOT) -> plus dark + focus */
+.agCitySteps[data-step="1"] .agCitySteps__bg{
+  background: rgba(6, 0, 16, 0.70);
+  backdrop-filter: brightness(0.50) contrast(1.14) saturate(1.10);
+  -webkit-backdrop-filter: brightness(0.50) contrast(1.14) saturate(1.10);
+}
+
+/* =========================
+   MATRIX RAIN (STEP 1 ONLY)
+========================= */
+.agCitySteps__matrixRain{
+  position: absolute;
+  inset: 0;
+  z-index: 1; /* bg=0, matrix=1, card=3 */
+  pointer-events: none;
+  overflow: hidden;
+  opacity: 0.9;
+  mix-blend-mode: screen;
+
+  /* fade cinema */
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0,0,0,1) 12%,
+    rgba(0,0,0,1) 78%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0,0,0,1) 12%,
+    rgba(0,0,0,1) 78%,
+    transparent 100%
+  );
+}
+
+/* hard “only step 1” safety */
+.agCitySteps__matrixRain{ display:none; }
+.agCitySteps[data-step="1"] .agCitySteps__matrixRain{ display:block; }
+
+.agCitySteps__matrixCol{
+  position: absolute;
+  top: -130%;
+  left: var(--x);
+  width: 14px;
+  height: 260%;
+
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: var(--fs, 13px);
+  line-height: 16px;
+  letter-spacing: 0.35px;
+
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+
+  opacity: var(--a, 0.75);
+  filter: blur(var(--blur, 0px)) saturate(1.08) contrast(1.05);
+
+  /* ✅ utilise les variables random du JSX */
+  animation: agMatrixFall var(--dur, 3.6s) linear infinite;
+  animation-delay: var(--delay, -1.2s);
+
+  will-change: transform, opacity;
+}
+
+.agCitySteps__matrixCol::before{
+  content:
+    "AG//CITY 0101 1100 ϟ Ϟ ϟ "
+    "NULL::ANGELS 0xFF 0xA7 "
+    "KISS_MY_FIRE ██▓▒░ "
+    "BRX//NODE 1010 0110 "
+    "VX/NEON ΔΣΞ PORTAL://ORBIT ";
+
+  /* gradient “matrix Angels” */
+  background: linear-gradient(
+    to bottom,
+    rgba(255,0,170,0.95) 0%,
+    rgba(180,140,255,0.85) 18%,
+    rgba(0,255,255,0.38) 55%,
+    rgba(0,255,255,0.0) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+
+  text-shadow:
+    0 0 10px rgba(255,0,170,0.16),
+    0 0 18px rgba(124,58,237,0.14),
+    0 0 26px rgba(0,255,255,0.10);
+}
+
+@keyframes agMatrixFall{
+  0%   { transform: translateY(-12%); opacity: 0; }
+  10%  { opacity: 1; }
+  85%  { opacity: 0.95; }
+  100% { transform: translateY(66%); opacity: 0; }
+}
+
+/* =========================
+   CARD (premium glass)
+========================= */
+.agCitySteps__card{
+  pointer-events: auto;
+  width: clamp(340px, 56vw, 560px);
+  border-radius: 22px;
+  padding: 18px 18px 14px;
+  position: relative;
+  overflow: hidden;
+  z-index: 3;
+
+  background: rgba(5, 4, 16, 0.58);
+  border: 1px solid rgba(255,255,255,0.12);
+
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+
+  box-shadow:
+    0 18px 70px rgba(0,0,0,0.55),
+    0 0 0 1px rgba(255,0,170,0.10),
+    0 0 70px rgba(124,58,237,0.16),
+    0 0 52px rgba(0,255,255,0.10);
+}
+
+/* inner edge glow */
+.agCitySteps__card::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius: 22px;
+  pointer-events:none;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.08),
+    inset 0 0 0 2px rgba(255,0,170,0.06);
+  opacity: 1;
+}
+
+.agCitySteps__sheen{
+  position:absolute;
+  inset:-2px;
+  background:
+    radial-gradient(520px 220px at 20% 10%, rgba(255,0,170,0.18), transparent 60%),
+    radial-gradient(520px 220px at 85% 20%, rgba(0,255,255,0.14), transparent 60%);
+  opacity:.75;
+  pointer-events:none;
+}
+
+/* =========================
+   TEXT
+========================= */
+.agCitySteps__badge{
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.88;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.04);
+}
+
+.agCitySteps__dot{
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255,0,170,0.92);
+  box-shadow: 0 0 18px rgba(255,0,170,0.55), 0 0 24px rgba(124,58,237,0.35);
+}
+
+.agCitySteps__title{
+  margin-top: 14px;
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: .01em;
+}
+
+.agCitySteps__desc{
+  margin-top: 8px;
+  font-size: 13px;
+  opacity: .80;
+  line-height: 1.45;
+}
+
+/* =========================
+   FOOTER / ACTIONS
+========================= */
+.agCitySteps__footer{
+  margin-top: 14px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.agCitySteps__hint{
+  font-size: 12px;
+  opacity: .75;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.agCitySteps__actions{
+  display:flex;
+  gap: 10px;
+  align-items:center;
+}
+
+/* =========================
+   PROGRESS (Step2/Step4)
+========================= */
+.agCitySteps__progressBlock{
+  margin-top: 14px;
+  padding: 12px 12px 10px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.03);
+}
+
+.agCitySteps__progressTop{
+  display:flex;
+  justify-content: space-between;
+  align-items:center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.agCitySteps__progressLabel{
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+.agCitySteps__progressPct{
+  font-size: 12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  opacity: 0.85;
+}
+
+.agCitySteps__bar{
+  height: 10px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.10);
+}
+
+.agCitySteps__barFill{
+  height: 100%;
+  width: 100%;
+  transform-origin: left center;
+  background: linear-gradient(90deg, rgba(0,255,255,0.18), rgba(255,0,170,0.22));
+  box-shadow: 0 0 26px rgba(255,0,170,0.12);
+}
+
+.agCitySteps__hintMono{
+  margin-top: 10px;
+  font-size: 12px;
+  opacity: .78;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+/* =========================
+   CTA BUTTON
+========================= */
+.agCitySteps__cta{
+  height: 42px;
+  padding: 0 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: rgba(10, 8, 22, 0.45);
+  color: rgba(245, 245, 255, 0.92);
+
+  cursor: pointer;
+  transition:
+    transform 120ms ease,
+    box-shadow 160ms ease,
+    border-color 160ms ease;
+
+  text-align: left;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  letter-spacing: 0.02em;
+
+  position: relative;
+  overflow: hidden;
+  z-index: 2;
+}
+
+.agCitySteps__cta:hover{
+  transform: translateY(-1px);
+  border-color: rgba(0, 255, 255, 0.26);
+  box-shadow:
+    0 12px 26px rgba(0, 0, 0, 0.40),
+    0 0 26px rgba(0, 255, 255, 0.12),
+    0 0 26px rgba(255, 0, 170, 0.10);
+}
+
+.agCitySteps__cta::after{
+  content: "";
+  position: absolute;
+  top: -40%;
+  left: -30%;
+  width: 60%;
+  height: 180%;
+  transform: rotate(18deg);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.10), transparent);
+  opacity: 0;
+  transition: opacity 160ms ease, transform 220ms ease;
+}
+
+.agCitySteps__cta:hover::after{
+  opacity: 1;
+  transform: translateX(70%) rotate(18deg);
+}
+
+.agCitySteps__chev{
+  display: inline-block;
+  width: 18px;
+  margin-right: 8px;
+  color: rgba(255, 0, 170, 0.95);
+  text-shadow: 0 0 12px rgba(255, 0, 170, 0.75);
+}
+
+.agCitySteps__lock{
+  font-size: 12px;
+  opacity: .78;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+/* =========================
+   DOTS
+========================= */
+.agCitySteps__dots{
+  margin-top: 12px;
+  display:flex;
+  gap: 8px;
+  justify-content:center;
+  opacity:.85;
+}
+
+.agCitySteps__dots .p{
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.16);
+  background: rgba(255,255,255,0.04);
+}
+
+.agCitySteps__dots .p.on{
+  border-color: rgba(255,0,170,0.42);
+  background: rgba(255,0,170,0.22);
+  box-shadow: 0 0 18px rgba(255,0,170,0.22);
+}
+
+/* =========================
+   ORBIT ARROW (Step5)
+========================= */
+.agCitySteps__arrow{
+  pointer-events: none;
+  position: fixed;
+  transform: translate(-50%, -115%);
+  z-index: 9999;
+  filter: drop-shadow(0 12px 30px rgba(0,0,0,0.45));
+}
+
+.agCitySteps__arrowCore{
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: rgba(255,0,170,0.22);
+  border: 1px solid rgba(255,0,170,0.55);
+  box-shadow:
+    0 0 18px rgba(255,0,170,0.24),
+    0 0 26px rgba(0,255,255,0.12);
+  animation: agPulse 0.9s ease-in-out infinite;
+}
+
+.agCitySteps__arrowTip{
+  width: 0; height: 0;
+  margin: 6px auto 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 10px solid rgba(255,0,170,0.78);
+  filter: drop-shadow(0 0 10px rgba(255,0,170,0.35));
+}
+
+.agCitySteps__arrowLabel{
+  margin-top: 8px;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  color: rgba(245,245,255,0.88);
+  text-align: center;
+  text-shadow: 0 0 12px rgba(255,0,170,0.20);
+}
+
+@keyframes agPulse{
+  0%,100%{ transform: scale(1); opacity: 0.88; }
+  50%{ transform: scale(1.12); opacity: 1; }
+}
+
+/* =========================
+   ACCESSIBILITY / PERF
+========================= */
+@media (prefers-reduced-motion: reduce){
+  .agCitySteps__matrixCol,
   .agCitySteps__arrowCore{
-    width: 18px;
-    height: 18px;
-    border-radius: 999px;
-    background: rgba(255,0,170,0.22);
-    border: 1px solid rgba(255,0,170,0.55);
-    box-shadow:
-      0 0 18px rgba(255,0,170,0.24),
-      0 0 26px rgba(0,255,255,0.12);
-    animation: agPulse 0.9s ease-in-out infinite;
+    animation: none !important;
   }
-  
-  .agCitySteps__arrowTip{
-    width: 0; height: 0;
-    margin: 6px auto 0;
-    border-left: 8px solid transparent;
-    border-right: 8px solid transparent;
-    border-top: 10px solid rgba(255,0,170,0.78);
-    filter: drop-shadow(0 0 10px rgba(255,0,170,0.35));
-  }
-  
-  .agCitySteps__arrowLabel{
-    margin-top: 8px;
-    font-size: 11px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    color: rgba(245,245,255,0.88);
-    text-align: center;
-    text-shadow: 0 0 12px rgba(255,0,170,0.20);
-  }
-  
-  @keyframes agPulse{
-    0%,100%{ transform: scale(1); opacity: 0.88; }
-    50%{ transform: scale(1.12); opacity: 1; }
-  }
-  
+}
