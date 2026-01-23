@@ -1,7 +1,7 @@
 // src/Components/Home/HomeOverlay/parts/StepMenu.jsx
 import React from "react";
 import MenuPreview from "./MenuPreview";
-
+import ScrollHint from './ScrollHint'
 
 export default function StepMenu({
   isActive,
@@ -17,7 +17,10 @@ export default function StepMenu({
   const activeKey = MENU[menuActiveIndex]?.key;
 
   return (
-    <section className={`homeOverlay__slide ${isActive ? "isActive" : ""}`} aria-hidden={!isActive}>
+    <section
+      className={`homeOverlay__slide homeOverlay__slide--menu ${isActive ? "isActive" : ""}`}
+      aria-hidden={!isActive}
+    >
       <div className="homeOverlay__panel">
         <div className="homeOverlay__fx" aria-hidden="true">
           <div className="homeOverlay__orb" />
@@ -76,6 +79,7 @@ export default function StepMenu({
           </aside>
         </div>
       </div>
+      <ScrollHint visible={isActive} />
     </section>
   );
 }

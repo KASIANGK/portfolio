@@ -107,13 +107,13 @@
       transparent 100%
     );
   
-    animation: panelSweep 6.8s ease-in-out infinite;
+    animation: panelSweep 7.8s ease-in-out infinite;
   }
   
   @keyframes panelSweep{
     0%   { transform: translate(-40%, -55%) rotate(18deg); opacity: 0.00; }
-    15%  { opacity: 0.1; }
-    50%  { transform: translate(25%, 35%) rotate(18deg); opacity: 0.15; }
+    15%  { opacity: 0.15; }
+    50%  { transform: translate(25%, 35%) rotate(18deg); opacity: 0.55; }
     80%  { opacity: 0.12; }
     100% { transform: translate(-40%, -55%) rotate(18deg); opacity: 0.00; }
   }
