@@ -1,3 +1,4 @@
+// src/Components/HomeCity/HomeCity.jsx
 import React, {
   Suspense,
   lazy,
@@ -8,10 +9,11 @@ import React, {
   useRef,
 } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { Physics, RigidBody, CuboidCollider } from "@react-three/rapier";
 import { EffectComposer, Bloom, Vignette, SMAA } from "@react-three/postprocessing";
+import { useTranslation } from "react-i18next";
 
 import PlayerController from "../Player/PlayerController";
 import MiniMapHUD from "../City/MiniMapHUD";
@@ -19,41 +21,92 @@ import CityModel from "../City/CityModel";
 import CityMarkers from "../City/CityMarkers";
 import CityNightLights from "../City/CityNightLights";
 import Joystick from "../Player/Joystick";
-import { useTranslation } from "react-i18next";
 
-// ✅ Lazy UI (loaded only when needed)
-const FullScreenLoader = lazy(() => import("../HomeCity/FullScreenLoader"));
+import StepsHomeCity from "./parts/StepsHomeCity";
+import ResetStepsHomeCity from "./parts/ResetStepsHomeCity";
+
+// ✅ IMPORTANT: keep ONE source of truth
+const TUTO_KEY = "ag_city_tutorial_done_v1";
+
+// ✅ Lazy UI (same path for lazy + prefetch)
+const FullScreenLoader = lazy(() => import("./parts/FullScreenLoader"));
+
+/**
+ * Projects a world point -> screen coords (x,y) every frame.
+ * Keeps this inside Canvas context.
+ */
+function OrbitHintProjector({ enabled, world, onScreen }) {
+  const { camera, size } = useThree();
+
+  useFrame(() => {
+    if (!enabled || !world) return;
+
+    const v = new THREE.Vector3(world.x, world.y, world.z);
+    v.project(camera);
+
+    const x = (v.x * 0.5 + 0.5) * size.width;
+    const y = (-v.y * 0.5 + 0.5) * size.height;
+
+    const on =
+      v.z > -1 &&
+      v.z < 1 &&
+      x >= 0 &&
+      x <= size.width &&
+      y >= 0 &&
+      y <= size.height;
+
+    onScreen?.({ x, y, onScreen: on });
+  });
+
+  return null;
+}
 
 export default function HomeCity() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useTranslation("home");
 
-  const autoEnterCity = !!location.state?.autoEnterCity; // ✅ depuis Step2
-  
+  const autoEnterCity = !!location.state?.autoEnterCity;
+
+  // ✅ Redirect on direct navigation / reload (unless coming from Explore)
   useEffect(() => {
     const nav = performance.getEntriesByType?.("navigation")?.[0];
     const type = nav?.type; // "reload" | "navigate" | "back_forward"
     const cameFromExplore = !!location.state?.autoEnterCity;
-  
-    // redirect on reload OR when user lands directly without coming from StepMenu
+
     if ((type === "reload" || type === "navigate") && !cameFromExplore) {
       navigate("/", { replace: true });
     }
   }, [navigate, location.state]);
-  
 
-  const { t, i18n } = useTranslation("home");
-  console.log("lang:", i18n.language, "home subLabel:", t("loader.subLabel"));
+  /* ----------------------------- Tutorial state ----------------------------- */
+  const [tutorialDone, setTutorialDone] = useState(() => {
+    try {
+      return localStorage.getItem(TUTO_KEY) === "1";
+    } catch {
+      return false;
+    }
+  });
 
+  // Tutorial control policy (fed by StepsHomeCity)
+  const [tutorialControl, setTutorialControl] = useState({
+    lockLook: true,
+    lockMove: true,
+    showOrbitHint: false,
+    orbitHintWorld: null, // {x,y,z}
+  });
 
+  const [orbitHintScreen, setOrbitHintScreen] = useState(null); // {x,y,onScreen}
+
+  /* ----------------------------- Core states ----------------------------- */
   const [playerReady, setPlayerReady] = useState(false);
 
   const skipIntroStorage =
-  typeof window !== "undefined"
-    ? localStorage.getItem("angels_city_skip_intro") === "1"
-    : false;
+    typeof window !== "undefined"
+      ? localStorage.getItem("angels_city_skip_intro") === "1"
+      : false;
 
-  // ✅ si on arrive depuis Step2, on force l'entrée directe
+  // ✅ if arriving from Step2, force direct entry
   const skipIntro = autoEnterCity || skipIntroStorage;
 
   const [uiIntro, setUiIntro] = useState(!skipIntro);
@@ -71,33 +124,70 @@ export default function HomeCity() {
   const [moveInput, setMoveInput] = useState({ x: 0, y: 0 });
   const [lookInput, setLookInput] = useState({ x: 0, y: 0 });
 
+  // Orbits (optional for premium arrow)
+  const [orbits, setOrbits] = useState([]); // [{id, position:[x,y,z]}]
+
   const prePositionedRef = useRef(false);
   const [enterPressed, setEnterPressed] = useState(false);
 
-  // ✅ Sticky gate (prevents loader flashing)
+  // Sticky gate (prevents loader flashing)
   const [gateOpen, setGateOpen] = useState(false);
   const gateOpeningRef = useRef(false);
+
+  // ✅ DEV: reset tutorial steps (simple: clear + go "/")
+  const resetStepsHomeCity = useCallback(() => {
+    // ✅ 1) reset uniquement le tuto /city
+    try {
+      localStorage.removeItem(TUTO_KEY);
+    } catch {}
+  
+    // ✅ 2) retour vers "/" en demandant à HomeOverlay d'ouvrir Step2 direct
+    navigate("/", { replace: true, state: { resetCityTutorial: true } });
+  }, [navigate]);
+  
+
+  // // ✅ DEV: reset tutorial steps (without breaking loader gate)
+  // const resetStepsHomeCity = useCallback(() => {
+  //   try {
+  //     localStorage.removeItem(TUTO_KEY);
+  //   } catch {
+  //     // ignore
+  //   }
+
+  //   setTutorialDone(false);
+  //   setTutorialControl({
+  //     lockLook: true,
+  //     lockMove: true,
+  //     showOrbitHint: false,
+  //     orbitHintWorld: null,
+  //   });
+  //   setOrbitHintScreen(null);
+
+  //   // re-close gate so FullScreenLoader shows again until stable
+  //   setGateOpen(false);
+  //   gateOpeningRef.current = false;
+
+  //   console.info("[DEV] HomeCity tutorial reset");
+  // }, []);
+
+  // ✅ autoEnterCity: force enter flow
   useEffect(() => {
     if (!autoEnterCity) return;
-  
+
     setRequestedEnter(true);
     setGateOpen(false);
     gateOpeningRef.current = false;
     setPlayerReady(false);
     setTeleportNonce((n) => n + 1);
-  
-    // consomme le state
+
+    // consume state
     window.history.replaceState({}, document.title);
   }, [autoEnterCity]);
-  
-
 
   useEffect(() => {
-    if (skipIntro) {
-      setUiIntro(false);
-    }
+    if (skipIntro) setUiIntro(false);
   }, [skipIntro]);
-  
+
   const isMobile =
     typeof window !== "undefined" &&
     /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
@@ -115,7 +205,7 @@ export default function HomeCity() {
   const collisionUrl = `${BASE}models/City_collision_2.glb`;
   const lightsUrl = `${BASE}models/city_light.glb`;
 
-  // ✅ Mark colliders as "shown" 1 frame after they are ready (more stable)
+  // ✅ Mark colliders as shown 1 frame after they are ready (more stable)
   useEffect(() => {
     if (!colliderReady) {
       setColliderShown(false);
@@ -139,11 +229,17 @@ export default function HomeCity() {
     [requestedEnter, uiIntro, streetPos]
   );
 
+  // ✅ Show tutorial only after scene is ready AND first time
+  const shouldShowTutorial = requestedEnter && gateOpen && !tutorialDone;
+
+  // ✅ Compute locks: intro OR tutorial policy
+  const lockLook = uiIntro || (shouldShowTutorial && tutorialControl.lockLook);
+  const lockMove = uiIntro || (shouldShowTutorial && tutorialControl.lockMove);
+
   // Canvas element ref for reliable pointer lock
   const canvasElRef = useRef(null);
 
   const requestPointerLock = useCallback(() => {
-    // ✅ Must be called only from a user gesture (click/keydown)
     const el = canvasElRef.current;
     if (!el) return;
     try {
@@ -158,7 +254,6 @@ export default function HomeCity() {
     if (!requestedEnter) return;
     if (!colliderReady) return;
     if (prePositionedRef.current) return;
-
     prePositionedRef.current = true;
   }, [requestedEnter, colliderReady]);
 
@@ -168,16 +263,6 @@ export default function HomeCity() {
       if (document.pointerLockElement) document.exitPointerLock?.();
     };
   }, []);
-
-  const goPortfolio = useCallback(() => {
-    if (document.pointerLockElement) document.exitPointerLock?.();
-    navigate("/portfolio");
-  }, [navigate]);
-
-  const goEssential = useCallback(() => {
-    if (document.pointerLockElement) document.exitPointerLock?.();
-    navigate("/portfolio");
-  }, [navigate]);
 
   const onEnterRequest = useCallback(() => {
     // ✅ Called from user gesture (button, keydown)
@@ -234,8 +319,7 @@ export default function HomeCity() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [uiIntro, introStep, onEnterRequest]);
 
-  // ✅ Sticky Gate logic: once loader is shown, it will NOT disappear until
-  // allReady is stable and 2 frames have passed.
+  // ✅ Sticky Gate logic
   useEffect(() => {
     if (!requestedEnter) return;
 
@@ -279,8 +363,7 @@ export default function HomeCity() {
   // ✅ Loader is only controlled by gateOpen (sticky)
   const shouldShowLoader = requestedEnter && !gateOpen;
 
-  // ✅ Prevent scroll/pinch on joystick zones (non-passive native listeners)
-  // Mobile-only. Does NOTHING on desktop → no perf regression.
+  // ✅ Prevent scroll/pinch on joystick zones
   useEffect(() => {
     if (!requestedEnter || uiIntro || !isMobile) return;
 
@@ -302,6 +385,43 @@ export default function HomeCity() {
     };
   }, [requestedEnter, uiIntro, isMobile]);
 
+  const onTutorialDone = useCallback(() => {
+    try {
+      localStorage.setItem(TUTO_KEY, "1");
+    } catch {
+      // ignore
+    }
+    setTutorialDone(true);
+
+    // reset policy after done (optional)
+    setTutorialControl({
+      lockLook: false,
+      lockMove: false,
+      showOrbitHint: false,
+      orbitHintWorld: null,
+    });
+    setOrbitHintScreen(null);
+  }, []);
+
+  // Pick a target orbit (simple strategy: first orbit)
+  const pickOrbitWorld = useCallback(() => {
+    if (!orbits?.length) return null;
+    const o = orbits[0];
+    return { x: o.position[0], y: o.position[1], z: o.position[2] };
+  }, [orbits]);
+
+  // ✅ Prefetch loader chunk ASAP (same path as lazy)
+  useEffect(() => {
+    const fn = () => import("./parts/FullScreenLoader").catch(() => {});
+    const id =
+      "requestIdleCallback" in window ? requestIdleCallback(fn) : setTimeout(fn, 0);
+
+    return () => {
+      if (typeof id === "number") clearTimeout(id);
+      else cancelIdleCallback?.(id);
+    };
+  }, []);
+
   return (
     <div style={{ width: "100vw", height: "100vh", background: "#070916" }}>
       {!requestedEnter && introBg}
@@ -320,6 +440,20 @@ export default function HomeCity() {
             </Suspense>
           )}
 
+          {/* ✅ Tutorial (first time only) */}
+          {shouldShowTutorial && (
+            <StepsHomeCity
+              enabled
+              isMobile={isMobile}
+              lookInput={lookInput}
+              moveInput={moveInput}
+              orbitWorldPicker={pickOrbitWorld}
+              orbitHintScreen={orbitHintScreen}
+              onControlChange={setTutorialControl}
+              onDone={onTutorialDone}
+            />
+          )}
+
           <Canvas
             dpr={shouldShowLoader ? 1 : [1, 1.5]}
             gl={{
@@ -336,17 +470,22 @@ export default function HomeCity() {
               gl.toneMappingExposure = 2.15;
               gl.setClearColor(new THREE.Color("#0b1024"), 1);
 
-              // ✅ Makes touch interactions less “scrolly” if Canvas ever gets touches
               gl.domElement.style.touchAction = "none";
             }}
             onPointerDown={() => {
-              // ✅ Desktop: allow (re)locking mouse on click
               if (!uiIntro && !isMobile) {
                 window.focus?.();
                 requestPointerLock();
               }
             }}
           >
+            {/* 3D->2D projector for orbit arrow */}
+            <OrbitHintProjector
+              enabled={shouldShowTutorial && tutorialControl.showOrbitHint}
+              world={tutorialControl.orbitHintWorld}
+              onScreen={setOrbitHintScreen}
+            />
+
             <fogExp2 attach="fog" density={0.00105} color={"#1a2455"} />
 
             <ambientLight intensity={0.42} />
@@ -355,23 +494,11 @@ export default function HomeCity() {
               color={"#9dbbff"}
               groundColor={"#2a0030"}
             />
-            <directionalLight
-              position={[12, 18, 10]}
-              intensity={1.25}
-              color={"#ffe2c0"}
-            />
-            <directionalLight
-              position={[-12, 14, -8]}
-              intensity={0.85}
-              color={"#b48cff"}
-            />
+            <directionalLight position={[12, 18, 10]} intensity={1.25} color={"#ffe2c0"} />
+            <directionalLight position={[-12, 14, -8]} intensity={0.85} color={"#b48cff"} />
 
             <Suspense fallback={null}>
-              <CityModel
-                url={visualUrl}
-                withColliders={false}
-                onLoaded={() => setVisualReady(true)}
-              />
+              <CityModel url={visualUrl} withColliders={false} onLoaded={() => setVisualReady(true)} />
             </Suspense>
 
             <Suspense fallback={null}>
@@ -381,6 +508,7 @@ export default function HomeCity() {
                 openDistance={7}
                 closeDistance={9}
                 onLoaded={() => setMarkersReady(true)}
+                onOrbits={setOrbits} // optional (for orbit arrow)
               />
             </Suspense>
 
@@ -424,10 +552,10 @@ export default function HomeCity() {
                 moveInput={moveInput}
                 lookInput={lookInput}
                 active
-                lockMovement={uiIntro}
+                lockMovement={lockMove}
+                lockLook={lockLook}
                 yawOffset={-Math.PI / 2}
                 onPlayerReady={() => setPlayerReady(true)}
-                // ✅ mobile tuning (desktop unaffected because multiplier only applied when joystick has input)
                 mobileSpeedMultiplier={1.35}
                 mobileLookSensitivity={0.05}
               />
@@ -455,10 +583,9 @@ export default function HomeCity() {
         </>
       )}
 
-      {/* Mobile dual joysticks (kept, but desktop-first project) */}
+      {/* Mobile dual joysticks */}
       {!uiIntro && requestedEnter && isMobile && (
         <>
-          {/* Move (left) */}
           <div
             data-joystick-zone="1"
             style={{
@@ -473,7 +600,6 @@ export default function HomeCity() {
             <Joystick variant="pink" onOutput={setMoveInput} size={140} deadZone={0.1} />
           </div>
 
-          {/* Look (right) */}
           <div
             data-joystick-zone="1"
             style={{
@@ -488,6 +614,11 @@ export default function HomeCity() {
             <Joystick variant="blue" onOutput={setLookInput} size={140} deadZone={0.1} />
           </div>
         </>
+      )}
+
+      {/* ✅ DEV: Reset tutorial button (only when city is entered) */}
+      {import.meta.env.DEV && requestedEnter && (
+        <ResetStepsHomeCity onResetSteps={resetStepsHomeCity} />
       )}
     </div>
   );
