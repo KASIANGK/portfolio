@@ -3,7 +3,7 @@
    - Step2 only scroll hint (bottom-right)
    ========================================= */
 
-   .homeOverlay__scrollHint {
+   /* .homeOverlay__scrollHint {
     position: absolute;
     right: clamp(20px, 4vw, 60px);
     bottom: clamp(24px, 6vh, 80px);
@@ -13,12 +13,32 @@
     opacity: 0;
     transform: translateY(10px);
     transition: opacity 400ms ease, transform 400ms ease;
+  } */
+  .homeOverlay__scrollHint {
+    position: relative;
+    margin-top: 24px;
+  
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  
+    opacity: 1;
+    transform: none;
+    pointer-events: none;
   }
   
-  .homeOverlay__scrollHint.isVisible {
+  /* Step2 layout: stack panel + hint vertically */
+.homeOverlay__slide--menu {
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 18px;
+}
+
+  /* .homeOverlay__scrollHint.isVisible {
     opacity: 1;
     transform: translateY(0);
-  }
+  } */
   
   /* Circle */
   .homeOverlay__scrollCircle {
@@ -45,6 +65,7 @@
       0 0 18px rgba(0,255,255,0.18);
   }
   
+  
   /* Arrow */
   .homeOverlay__scrollArrow {
     font-size: 26px;
@@ -64,9 +85,11 @@
     100% { transform: translateY(0); }
   }
   
-  .homeOverlay__scrollHint.isVisible .homeOverlay__scrollCircle {
-    animation: scrollBounce 1s ease-in-out infinite;
+  /* bounce 3 times (~3s), then stop */
+  .homeOverlay__scrollCircle {
+    animation: scrollBounce 1s ease-in-out 3;
   }
+
   
   /* Respect reduced motion */
   @media (prefers-reduced-motion: reduce) {
@@ -92,7 +115,7 @@
     gap: 10px;
     align-items: center;
   
-    opacity: 0;
+    opacity: 1;
     transform: translate3d(-50px, 10px, 0);
     filter: blur(2px);
   

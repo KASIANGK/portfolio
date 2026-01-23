@@ -8,7 +8,6 @@ import "./parts/styles/Background.css";
 import "./parts/styles/Reset.css";
 import "./parts/styles/Panel.css";
 import "./parts/styles/Buttons.css";
-import "./parts/styles/StepFirst.css";
 import "./parts/styles/StepSecondMenu.css";
 import "./parts/styles/PreviewOrgans.css";
 import "./parts/styles/ScrollHint.css";
@@ -21,7 +20,7 @@ import OverlayBackground from "./parts/OverlayBackground";
 import OverlayResetButtons from "./parts/OverlayResetButtons";
 import StepLanguage from "./parts/StepLanguage";
 import StepMenu from "./parts/StepMenu";
-import ScrollHint from "./parts/ScrollHint";
+// import ScrollHint from "./parts/ScrollHint";
 
 export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
   const navigate = useNavigate();
@@ -46,21 +45,6 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
     if (firstVisit) return 0;
     return shouldShowLanguageStep ? 0 : 1;
   });
-  
-  // const [slideIndex, setSlideIndex] = useState(() => {
-  //   let first = true;
-  //   try {
-  //     first = localStorage.getItem(FIRST_VISIT_KEY) !== "1";
-  //   } catch {
-  //     first = true;
-  //   }
-  
-  //   // 1) première visite -> Step 1
-  //   if (first) return 0;
-  
-  //   // 2) sinon -> logique onboarding existante
-  //   return shouldShowLanguageStep ? 0 : 1;
-  // });
   
   
   useEffect(() => {
@@ -270,19 +254,50 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
   }, [slideIndex, menuActiveIndex, runMenuAction]);
 
   // scroll hint 4s
-  const [showScrollHint, setShowScrollHint] = useState(false);
-  useEffect(() => {
-    if (slideIndex !== 1) return;
-    setShowScrollHint(true);
-    const t = setTimeout(() => setShowScrollHint(false), 4000);
-    return () => clearTimeout(t);
-  }, [slideIndex]);
+  // const [showScrollHint, setShowScrollHint] = useState(false);
+  // useEffect(() => {
+  //   if (slideIndex !== 1) return;
+  //   setShowScrollHint(true);
+  //   const t = setTimeout(() => setShowScrollHint(false), 4000);
+  //   return () => clearTimeout(t);
+  // }, [slideIndex]);
 
   // resets
-  const handleResetLanguage = useCallback(() => {
+  // const handleResetLanguage = useCallback(() => {
+  //   if (typeof resetLanguageStep === "function") resetLanguageStep();
+  //   goToStep1Instant();
+  // }, [resetLanguageStep, goToStep1Instant]);
+  const handleResetLanguage = useCallback(async () => {
     if (typeof resetLanguageStep === "function") resetLanguageStep();
+  
+    // Option: remettre la langue auto (ou 'en')
+    const fallback = i18n.resolvedLanguage || i18n.language || "en";
+    const safe = LANGS.includes(fallback) ? fallback : "en";
+  
+    setSelectedLang(safe);
+    setLangActiveIndex(Math.max(0, LANGS.indexOf(safe)));
+  
+    // Très important: appliquer la langue réellement
+    try {
+      await setLanguage(safe);          // ton hook
+      await i18n.changeLanguage(safe);  // i18next (au cas où)
+    } catch {}
+  
+    // Reset "first visit" si tu veux vraiment refaire le flow complet
+    try {
+      localStorage.removeItem(FIRST_VISIT_KEY);
+    } catch {}
+  
     goToStep1Instant();
-  }, [resetLanguageStep, goToStep1Instant]);
+  }, [
+    resetLanguageStep,
+    i18n,
+    setLanguage,
+    goToStep1Instant,
+    setSelectedLang,
+    setLangActiveIndex,
+  ]);
+  
 
   const handleResetHint = useCallback(() => {
     try {
@@ -343,7 +358,7 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
         </div>
       </div>
 
-      <ScrollHint visible={showScrollHint && slideIndex === 1} />
+      {/* <ScrollHint visible={showScrollHint && slideIndex === 1} /> */}
     </header>
   );
 }

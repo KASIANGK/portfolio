@@ -6,7 +6,7 @@ export default function OverlayResetButtons({ t, onResetLanguage, onResetHint, o
     <>
       <button type="button" className="homeOverlay__resetBtn" onClick={onResetLanguage}>
         <span className="homeOverlay__resetIcon" aria-hidden="true">↺</span>
-        <span className="homeOverlay__resetText">{t("language.reset")}</span>
+        <span className="homeOverlay__resetText">RESET LANGUAGE</span>
       </button>
 
       <button type="button" className="homeOverlay__resetBtn__Hint" onClick={onResetHint}>
