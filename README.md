@@ -11,6 +11,13 @@
         - pop-up de changement partout 3sec SAUF dans Step1 HomerOverlay
     - Double comportement de la navbar
 
+- Modif :
+    - StepsHomeCity, STEP1 - pas danimation mais affichee directement
+    - bg HomeOverlay - STEP1 et STEP2
+    - 3D / User marche pendant 1.2 sec et puis il court 
+    - StepsHomeCity visuel des tests + STEP 2 - progressbar plus courte 1.2s
+    - FullScreenLoader ETA1 a modif content
+
 - A realiser :
     - MiniMapHUD
     - possibilite dajouter brume sur scene ?
@@ -18,7 +25,10 @@
     - Collisions Blender
     - supprimer les details de la porte "transparente" batiment Blender
     - Markers + message devant la poubelle, devant escaliers.
-    - json i18n dans HomeOverlay, StepsHomeCity et HomeCity
+    - json i18n dans :
+        - HomeOverlay, 
+        - StepsHomeCity 
+        - HomeCity
 
 - Implementation :
     - About Section - 
