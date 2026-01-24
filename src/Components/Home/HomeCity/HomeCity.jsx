@@ -23,6 +23,7 @@ import CityModel from "../City/CityModel";
 import CityMarkers from "../City/CityMarkers";
 import CityNightLights from "../City/CityNightLights";
 import Joystick from "../Player/Joystick";
+import GameNavToast from "./parts/GameNavToast";
 
 import StepsHomeCity from "./parts/StepsHomeCity";
 import ResetStepsHomeCity from "./parts/ResetStepsHomeCity";
@@ -30,8 +31,34 @@ import ResetStepsHomeCity from "./parts/ResetStepsHomeCity";
 const TUTO_KEY = "ag_city_tutorial_done_v1";
 const FullScreenLoader = lazy(() => import("./parts/FullScreenLoader"));
 
+// function OrbitHintProjector({ enabled, world, onScreen }) {
+//   const { camera, size } = useThree();
+
+//   useFrame(() => {
+//     if (!enabled || !world) return;
+
+//     const v = new THREE.Vector3(world.x, world.y, world.z);
+//     v.project(camera);
+
+//     const x = (v.x * 0.5 + 0.5) * size.width;
+//     const y = (-v.y * 0.5 + 0.5) * size.height;
+
+//     const on =
+//       v.z > -1 &&
+//       v.z < 1 &&
+//       x >= 0 &&
+//       x <= size.width &&
+//       y >= 0 &&
+//       y <= size.height;
+
+//     onScreen?.({ x, y, onScreen: on });
+//   });
+
+//   return null;
+// }
 function OrbitHintProjector({ enabled, world, onScreen }) {
   const { camera, size } = useThree();
+  const lastRef = useRef({ x: -99999, y: -99999, onScreen: false });
 
   useFrame(() => {
     if (!enabled || !world) return;
@@ -50,11 +77,38 @@ function OrbitHintProjector({ enabled, world, onScreen }) {
       y >= 0 &&
       y <= size.height;
 
+    const last = lastRef.current;
+
+    // ✅ seuil anti-spam (évite 60 updates/sec)
+    const movedEnough = Math.abs(last.x - x) > 1.25 || Math.abs(last.y - y) > 1.25;
+    const toggled = last.onScreen !== on;
+
+    if (!movedEnough && !toggled) return;
+
+    lastRef.current = { x, y, onScreen: on };
+
+    // ✅ setState mais rarement
     onScreen?.({ x, y, onScreen: on });
   });
 
   return null;
 }
+
+function CameraProbe({ onPos }) {
+  const { camera } = useThree();
+  const last = useRef(new THREE.Vector3(9999, 9999, 9999));
+
+  useFrame(() => {
+    const p = camera.position;
+    // seuil anti-spam (pas 60 updates/sec)
+    if (last.current.distanceToSquared(p) < 0.25 * 0.25) return;
+    last.current.copy(p);
+    onPos?.([p.x, p.y, p.z]);
+  });
+
+  return null;
+}
+
 
 export default function HomeCity() {
   const navigate = useNavigate();
@@ -140,6 +194,7 @@ export default function HomeCity() {
   const visualUrl = `${BASE}models/city_final_draco.glb`;
   const collisionUrl = `${BASE}models/City_collision_2.glb`;
   const lightsUrl = `${BASE}models/city_light.glb`;
+  const cameraPosRef = useRef([0, 0, 0]);
 
   useEffect(() => {
     if (!colliderReady) {
@@ -343,12 +398,73 @@ export default function HomeCity() {
     };
   }, [requestedEnter, uiIntro, isMobile]);
 
+  useEffect(() => {
+    if (shouldShowTutorial) return;
+  
+    setOrbitHintScreen(null);
+  
+    setTutorialControl((prev) => ({
+      ...prev,
+      showOrbitHint: false,
+      orbitHintWorld: null,
+      requestLookCaptureNow: false,
+    }));
+  }, [shouldShowTutorial]);
+  
+
+  // const onTutorialDone = useCallback(() => {
+  //   try {
+  //     localStorage.setItem(TUTO_KEY, "1");
+  //   } catch {}
+  //   setTutorialDone(true);
+
+  //   setTutorialControl({
+  //     lockLook: false,
+  //     lockMove: false,
+  //     showOrbitHint: false,
+  //     orbitHintWorld: null,
+  //     requestLookCaptureNow: false,
+  //     lookCaptureNonce: 0,
+  //   });
+  //   setOrbitHintScreen(null);
+  // }, []);
+
   const onTutorialDone = useCallback(() => {
     try {
       localStorage.setItem(TUTO_KEY, "1");
     } catch {}
+  
+    // ✅ garder l'orbit 1.2s après fermeture
+    const lingerWorld = tutorialControl?.orbitHintWorld ?? null;
+  
     setTutorialDone(true);
-
+  
+    // on laisse un petit ping post-confirmation (sans bloquer)
+    if (lingerWorld) {
+      setTutorialControl({
+        lockLook: false,
+        lockMove: false,
+        showOrbitHint: true,
+        orbitHintWorld: lingerWorld,
+        requestLookCaptureNow: false,
+        lookCaptureNonce: 0,
+      });
+  
+      window.setTimeout(() => {
+        setTutorialControl({
+          lockLook: false,
+          lockMove: false,
+          showOrbitHint: false,
+          orbitHintWorld: null,
+          requestLookCaptureNow: false,
+          lookCaptureNonce: 0,
+        });
+        setOrbitHintScreen(null);
+      }, 1200);
+  
+      return;
+    }
+  
     setTutorialControl({
       lockLook: false,
       lockMove: false,
@@ -358,13 +474,41 @@ export default function HomeCity() {
       lookCaptureNonce: 0,
     });
     setOrbitHintScreen(null);
-  }, []);
+  }, [tutorialControl?.orbitHintWorld]);
+  
 
+  // const pickOrbitWorld = useCallback(() => {
+  //   if (!orbits?.length) return null;
+  //   const o = orbits[0];
+  //   return { x: o.position[0], y: o.position[1], z: o.position[2] };
+  // }, [orbits]);
   const pickOrbitWorld = useCallback(() => {
     if (!orbits?.length) return null;
-    const o = orbits[0];
-    return { x: o.position[0], y: o.position[1], z: o.position[2] };
+  
+    const cam = cameraPosRef.current || [0, 0, 0];
+    const cx = cam[0], cy = cam[1], cz = cam[2];
+  
+    let best = null, bestD2 = Infinity;
+    let second = null, secondD2 = Infinity;
+  
+    for (const o of orbits) {
+      const x = o.position[0], y = o.position[1], z = o.position[2];
+      const dx = x - cx, dy = y - cy, dz = z - cz;
+      const d2 = dx*dx + dy*dy + dz*dz;
+  
+      if (d2 < bestD2) {
+        second = best; secondD2 = bestD2;
+        best = o; bestD2 = d2;
+      } else if (d2 < secondD2) {
+        second = o; secondD2 = d2;
+      }
+    }
+  
+    const chosen = second || best; // ✅ 2e si existe, sinon fallback
+    return chosen ? { x: chosen.position[0], y: chosen.position[1], z: chosen.position[2] } : null;
   }, [orbits]);
+  
+  
 
   useEffect(() => {
     const fn = () => import("./parts/FullScreenLoader").catch(() => {});
@@ -454,6 +598,8 @@ export default function HomeCity() {
             onScreen={setOrbitHintScreen}
           />
 
+          <CameraProbe onPos={(p) => { cameraPosRef.current = p; }} />
+
           <fogExp2 attach="fog" density={0.00105} color={"#1a2455"} />
 
           <ambientLight intensity={0.42} />
@@ -542,6 +688,11 @@ export default function HomeCity() {
           </EffectComposer>
         </Canvas>
       )}
+
+      {requestedEnter && (
+        <GameNavToast show={requestedEnter && gateOpen && tutorialDone} />
+      )}
+
 
       {/* ✅ Tint AU-DESSUS du Canvas, n'intercepte rien */}
       {requestedEnter && <div className="agCityTint" aria-hidden="true" />}
