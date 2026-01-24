@@ -4,7 +4,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import "../style/StepsHomeCity.css";
 import "../style/StepsHintUI.css";
 
-import { HintRow, Keycap, ArrowCluster, MouseTap, TrackpadTap } from "./ui/StepsHintUI";
+import {
+  HintRow,
+  Keycap,
+  ArrowCluster,
+  MouseTap,
+  TrackpadTap,
+  CursorClick,
+  DesktopEtirement,
+} from "./StepsHintUI";
 
 const LS_KEY = "ag_city_tutorial_done_v1";
 
@@ -49,6 +57,10 @@ export default function StepsHomeCity({
 
   // orbit target
   const [orbitWorld, setOrbitWorld] = useState(null);
+
+  // overlays hide states
+  const [hideStretch, setHideStretch] = useState(false); // Step2 captured overlay
+  const [hideMoveOverlay, setHideMoveOverlay] = useState(false); // Step3 overlay
 
   // LOOK phase
   const [lookPhase, setLookPhase] = useState("needCapture"); // needCapture | captured
@@ -124,52 +136,55 @@ export default function StepsHomeCity({
   // -----------------------------------
   // Policy pushed to HomeCity (stable)
   // -----------------------------------
-  const pushPolicy = useCallback((nextStep) => {
-    const s = nextStep ?? stepRef.current;
-    const captured = lookPhaseRef.current === "captured";
+  const pushPolicy = useCallback(
+    (nextStep) => {
+      const s = nextStep ?? stepRef.current;
+      const captured = lookPhaseRef.current === "captured";
 
-    const pointerLocked =
-      !isMobileRef.current &&
-      typeof document !== "undefined" &&
-      document.pointerLockElement != null;
+      const pointerLocked =
+        !isMobileRef.current &&
+        typeof document !== "undefined" &&
+        document.pointerLockElement != null;
 
-    const policy = {
-      lockLook: true,
-      lockMove: true,
-      showOrbitHint: false,
-      orbitHintWorld: null,
-      requestLookCaptureNow: false,
-      lookCaptureNonce: lookCaptureNonceRef.current,
-    };
+      const policy = {
+        lockLook: true,
+        lockMove: true,
+        showOrbitHint: false,
+        orbitHintWorld: null,
+        requestLookCaptureNow: false,
+        lookCaptureNonce: lookCaptureNonceRef.current,
+      };
 
-    if (s === STEP.BOOT) {
-      policy.lockLook = true;
-      policy.lockMove = true;
-    }
+      if (s === STEP.BOOT) {
+        policy.lockLook = true;
+        policy.lockMove = true;
+      }
 
-    if (s === STEP.LOOK) {
-      // before capture: lock look; after capture: allow look (camera) but still lock movement
-      policy.lockLook = !captured;
-      policy.lockMove = true;
+      if (s === STEP.LOOK) {
+        // before capture: lock look; after capture: allow look (camera) but still lock movement
+        policy.lockLook = !captured;
+        policy.lockMove = true;
 
-      // request capture until we have it; then request only if pointerlock not acquired (desktop)
-      policy.requestLookCaptureNow = !captured || (!isMobileRef.current && !pointerLocked);
-    }
+        // request capture until we have it; then request only if pointerlock not acquired (desktop)
+        policy.requestLookCaptureNow = !captured || (!isMobileRef.current && !pointerLocked);
+      }
 
-    if (s === STEP.MOVE) {
-      policy.lockLook = false;
-      policy.lockMove = false;
-    }
+      if (s === STEP.MOVE) {
+        policy.lockLook = false;
+        policy.lockMove = false;
+      }
 
-    if (s === STEP.PORTALS) {
-      policy.lockLook = false;
-      policy.lockMove = true; // ✅ IMPORTANT: blocked until confirm
-      policy.showOrbitHint = true;
-      policy.orbitHintWorld = orbitWorldRef.current;
-    }
+      if (s === STEP.PORTALS) {
+        policy.lockLook = false;
+        policy.lockMove = true;
+        policy.showOrbitHint = true;
+        policy.orbitHintWorld = orbitWorldPicker?.() ?? orbitWorldRef.current ?? null;
+      }
 
-    onControlChangeRef.current?.(policy);
-  }, []);
+      onControlChangeRef.current?.(policy);
+    },
+    [orbitWorldPicker]
+  );
 
   // push on step change
   useEffect(() => {
@@ -195,15 +210,16 @@ export default function StepsHomeCity({
       setLookProg(0);
       mouseDeltaRef.current.dx = 0;
       mouseDeltaRef.current.dy = 0;
+      setHideStretch(false);
     }
 
     if (step === STEP.MOVE) {
       setMoveProg(0);
       arrowsRef.current.clear();
+      setHideMoveOverlay(false);
     }
 
     if (step === STEP.PORTALS) {
-      // pick orbit once on entry
       const w = orbitWorldPicker?.() ?? null;
       setOrbitWorld(w);
     }
@@ -294,7 +310,11 @@ export default function StepsHomeCity({
     if (!enabled) return;
     if (step !== STEP.LOOK) return;
 
-    const captureNow = () => {
+    const captureNow = (e) => {
+      // ✅ ignore clicks on the tutorial UI
+      if (e?.target?.closest?.(".agCitySteps__card")) return;
+      if (e?.target?.closest?.(".agCitySteps")) return;
+
       if (lookPhaseRef.current !== "needCapture") return;
 
       lookPhaseRef.current = "captured";
@@ -304,9 +324,11 @@ export default function StepsHomeCity({
       mouseDeltaRef.current.dx = 0;
       mouseDeltaRef.current.dy = 0;
 
+      // show stretch overlay initially
+      setHideStretch(false);
+
       setLookCaptureNonce((n) => n + 1);
 
-      // re-push policy now
       queueMicrotask(() => pushPolicy(STEP.LOOK));
     };
 
@@ -334,35 +356,43 @@ export default function StepsHomeCity({
 
       const s = stepRef.current;
 
-      if (s === STEP.LOOK) {
-        if (lookPhaseRef.current === "captured") {
-          let active = false;
+      // ----------------------
+      // STEP 2: LOOK
+      // ----------------------
+      if (s === STEP.LOOK && lookPhaseRef.current === "captured") {
+        let active = false;
 
-          if (isMobileRef.current) {
-            const mag = Math.abs(lookInput?.x || 0) + Math.abs(lookInput?.y || 0);
-            active = mag > LOOK_MAG_THRESHOLD;
-          } else {
-            const m = mouseDeltaRef.current;
-            const delta = m.dx + m.dy;
-            active = delta > MOUSE_DELTA_THRESHOLD;
+        if (isMobileRef.current) {
+          const mag = Math.abs(lookInput?.x || 0) + Math.abs(lookInput?.y || 0);
+          active = mag > LOOK_MAG_THRESHOLD;
+        } else {
+          const m = mouseDeltaRef.current;
+          const delta = m.dx + m.dy;
+          active = delta > MOUSE_DELTA_THRESHOLD;
 
-            m.dx *= 0.35;
-            m.dy *= 0.35;
-          }
-
-          setLookProg((p) => {
-            const next = clamp01(p + (active ? dt / LOOK_SECONDS : -dt * 0.7));
-            if (next >= 1) {
-              queueMicrotask(() => {
-                setLookProg(0);
-                setStep(STEP.MOVE);
-              });
-            }
-            return next;
-          });
+          // decay for smoothness
+          m.dx *= 0.35;
+          m.dy *= 0.35;
         }
+
+        // ✅ hide stretch overlay as soon as user actually moves view
+        if (active && !hideStretch) setHideStretch(true);
+
+        setLookProg((p) => {
+          const next = clamp01(p + (active ? dt / LOOK_SECONDS : -dt * 0.7));
+          if (next >= 1) {
+            queueMicrotask(() => {
+              setLookProg(0);
+              setStep(STEP.MOVE);
+            });
+          }
+          return next;
+        });
       }
 
+      // ----------------------
+      // STEP 3: MOVE
+      // ----------------------
       if (s === STEP.MOVE) {
         let active = false;
 
@@ -372,6 +402,9 @@ export default function StepsHomeCity({
         } else {
           active = arrowsRef.current.size > 0;
         }
+
+        // ✅ hide arrow overlay as soon as user starts moving
+        if (active && !hideMoveOverlay) setHideMoveOverlay(true);
 
         setMoveProg((p) => {
           const next = clamp01(p + (active ? dt / MOVE_SECONDS : -dt * 0.7));
@@ -406,21 +439,22 @@ export default function StepsHomeCity({
     const pick = () => {
       const w = orbitWorldPicker?.() ?? null;
       setOrbitWorld(w);
+      orbitWorldRef.current = w; // ✅ sync ref tout de suite
+      return w;
     };
-
-    const showFor2s = () => {
+    
+    const showFor2s = (w) => {
       if (!alive) return;
-
-      // ✅ lockMove true (blocked until confirm)
+    
       onControlChangeRef.current?.({
         lockLook: false,
         lockMove: true,
         showOrbitHint: true,
-        orbitHintWorld: orbitWorldPicker?.() ?? orbitWorldRef.current ?? null,
+        orbitHintWorld: w ?? orbitWorldRef.current ?? null,
         requestLookCaptureNow: false,
         lookCaptureNonce: lookCaptureNonceRef.current,
       });
-
+    
       window.setTimeout(() => {
         if (!alive) return;
         onControlChangeRef.current?.({
@@ -433,13 +467,13 @@ export default function StepsHomeCity({
         });
       }, 2000);
     };
-
-    pick();
-    showFor2s();
-
+    
+    const w0 = pick();
+    showFor2s(w0);
+    
     const id = window.setInterval(() => {
-      pick();
-      showFor2s();
+      const w = pick();
+      showFor2s(w);
     }, 5000);
 
     return () => {
@@ -459,18 +493,17 @@ export default function StepsHomeCity({
         return {
           badge: "CITY://JACK-IN",
           title: "Bienvenue dans la matrice.",
-          desc: "Onboarding rapide. Rendu premium. Ensuite… la ville.",
+          desc: "Promis, ici c'est légal.",
           cta: "JACK IN",
           showProgress: false,
         };
 
       case STEP.LOOK:
-        // step 2: show mouse + trackpad, text explains toggle ON/OFF view
         if (lookPhase !== "captured") {
           return {
             badge: "CALIBRATE://POV",
-            title: "Active la vue (ON/OFF).",
-            desc: "CLICK / TAP PAD → toggle contrôle de caméra.",
+            title: "Déclenche la vue (ON/OFF).",
+            desc: "CLICK / TAP PAD ON THE SCENE",
             cta: null,
             showProgress: false,
             subLock: "En attente de capture…",
@@ -479,8 +512,8 @@ export default function StepsHomeCity({
 
         return {
           badge: "CALIBRATE://POV",
-          title: "Bouge la vue.",
-          desc: isMobile ? "Joystick droit → bouge la caméra (≈2–3s)." : "Souris → bouge la caméra (≈2–3s).",
+          title: "Quelques étirements.",
+          desc: isMobile ? "JOYSTICK DROIT → SCAN LA SCÈNE" : "SCAN LA SCÈNE",
           cta: null,
           showProgress: true,
           progressLabel: "POV_SYNC",
@@ -491,9 +524,7 @@ export default function StepsHomeCity({
         return {
           badge: "CALIBRATE://MOVE",
           title: "Déplacement.",
-          desc: isMobile
-            ? "Joystick gauche → bouge. Validation quand tu avances vraiment."
-            : "Flèches ← ↑ ↓ → uniquement. Validation quand tu bouges vraiment.",
+          desc: isMobile ? "JOYSTICK GAUCHE → AVANCE" : "FLÈCHES ← ↑ ↓ → POUR BOUGER",
           cta: null,
           showProgress: true,
           progressLabel: "MOTOR_LINK",
@@ -504,8 +535,8 @@ export default function StepsHomeCity({
       default:
         return {
           badge: "PORTALS://ORBIT",
-          title: "Repère les orbits roses.",
-          desc: "Je t’en ping un. Approche-toi. Et quand t’es prêt… confirme.",
+          title: "Repère les orbits roses — des portails.",
+          desc: "Je t’en ping un. Après, à toi de jouer.",
           cta: "GOT IT",
           showProgress: false,
         };
@@ -529,29 +560,15 @@ export default function StepsHomeCity({
   }, []);
 
   const hintRow = useMemo(() => {
-    // STEP 1: no icons beside ENTER/SPACE/CLICK
-    if (step === STEP.BOOT) {
-      return (
-        <HintRow>
-          <Keycap label="ENTER" active pressed={pressedKeys.has("Enter")} />
-          <Keycap label="SPACE" active pressed={pressedKeys.has("Space")} />
-          <Keycap label={isMobile ? "TAP" : "CLICK"} active />
-        </HintRow>
-      );
-    }
-
-    // STEP 2: show mouse + trackpad icons, + toggle hint
     if (step === STEP.LOOK && lookPhase !== "captured") {
       return (
         <HintRow>
           <MouseTap active={!isMobile} label="CLICK" />
           <TrackpadTap active={isMobile} label="TAP PAD" />
-          <Keycap label="TOGGLE VIEW" sub="ON / OFF" active />
         </HintRow>
       );
     }
 
-    // STEP 2 (captured): explain moving camera + remind toggle
     if (step === STEP.LOOK && lookPhase === "captured") {
       return (
         <HintRow>
@@ -562,29 +579,55 @@ export default function StepsHomeCity({
       );
     }
 
-    // STEP 3: move
     if (step === STEP.MOVE) {
       return (
         <HintRow>
-          {isMobile ? <Keycap label="JOY LEFT" active /> : <ArrowCluster active pressedSet={pressedKeys} />}
+          {isMobile ? (
+            <Keycap label="JOY LEFT" active />
+          ) : (
+            <Keycap label="USE ARROWS" sub="move" active />
+          )}
         </HintRow>
       );
     }
 
-    // STEP 4: confirm only (movement blocked by policy)
-    return (
-      <HintRow>
-        <Keycap label="ENTER" active pressed={pressedKeys.has("Enter")} />
-        <Keycap label="SPACE" active pressed={pressedKeys.has("Space")} />
-        <Keycap label={isMobile ? "TAP" : "CLICK"} active />
-      </HintRow>
-    );
-  }, [step, isMobile, lookPhase, pressedKeys]);
+    return null;
+  }, [step, isMobile, lookPhase]);
+
+  const noEnterAnim = step === STEP.BOOT;
 
   return (
     <div className="agCitySteps" data-step={step} role="dialog" aria-label="City tutorial" aria-live="polite">
       <div className="agCitySteps__bg" aria-hidden="true" />
 
+      {/* ---------------------------
+          OUTSIDE CARD — Desktop overlays
+      ---------------------------- */}
+      {step === STEP.LOOK && !isMobile && (
+        <>
+          {lookPhase !== "captured" ? (
+            <div className="agCitySteps__cursorOverlay" aria-hidden="true">
+              <CursorClick active label="CLICK THE SCENE" sub="outside the card" />
+            </div>
+          ) : (
+            <DesktopEtirement
+              active
+              label="SCAN THE SCENE"
+              sub="move your mouse / trackpad"
+              className={hideStretch ? "isHidden" : ""}
+            />
+          )}
+        </>
+      )}
+
+      {/* Step 3 (MOVE) overlay: ArrowCluster OUTSIDE card + blue DA */}
+      {step === STEP.MOVE && !isMobile && !hideMoveOverlay && (
+        <div className="agCitySteps__moveOverlay agMoveBlue" aria-hidden="true">
+          <ArrowCluster active pressedSet={pressedKeys} demoPulse />
+        </div>
+      )}
+
+      {/* Matrix rain ONLY step 1 */}
       {step === STEP.BOOT && (
         <div className="agCitySteps__matrixRain" aria-hidden="true">
           {matrixCols.map((c) => (
@@ -608,10 +651,10 @@ export default function StepsHomeCity({
         <motion.div
           key={`${step}-${lookPhase}`}
           className="agCitySteps__card"
-          initial={{ opacity: 0, y: 10, scale: 0.985 }}
+          initial={noEnterAnim ? false : { opacity: 0, y: 10, scale: 0.985 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 8, scale: 0.99 }}
-          transition={{ duration: 0.22, ease: "easeOut" }}
+          transition={noEnterAnim ? { duration: 0 } : { duration: 0.22, ease: "easeOut" }}
         >
           <div className="agCitySteps__sheen" aria-hidden="true" />
 
@@ -620,7 +663,7 @@ export default function StepsHomeCity({
             {content.badge}
           </div>
 
-          <div className="agCitySteps__title">{content.title}</div>
+          <h1 className="agCitySteps__title">{content.title}</h1>
           <div className="agCitySteps__desc">{content.desc}</div>
 
           {content.showProgress ? (
@@ -685,8 +728,3 @@ export default function StepsHomeCity({
     </div>
   );
 }
-
-
-
-
-
