@@ -1,19 +1,51 @@
 {
-    "menu": "MENU",
-    "hint": "Kanaal openen",
-    "language": "Taal",
-    "items": {
-      "home": "Home",
-      "essential": "Essential",
-      "about": "Over",
-      "contact": "Contact",
-      "portfolio": "Portfolio"
+  "menu": "MENU",
+  "chip": "NAV",
+  "language": "Taal",
+
+  "items": {
+    "home": "Home",
+    "essential": "Essentieel",
+    "about": "Over",
+    "contact": "Contact",
+    "portfolio": "Portfolio"
+  },
+
+  "social": {
+    "email": "E-mail",
+    "phone": "Telefoon",
+    "instagram": "Instagram",
+    "twitter": "Twitter"
+  },
+
+  "game": {
+    "button": "GAME",
+    "chip": "GAME HUD",
+
+    "titleCity": "Game HUD openen",
+    "titleGoCity": "Ga naar City",
+
+    "expand": "HUD uitklappen",
+    "collapse": "HUD inklappen",
+
+    "footer": "HUD is {{state}} • klik op « om te verbergen",
+    "footerLocked": "Voltooi de tutorial om HUD te ontgrendelen",
+
+    "stateOpen": "open",
+    "stateCollapsed": "ingeklapt",
+
+    "actions": {
+      "returnHome": "Terug naar Home"
     },
-    "social": {
-      "email": "E-mail",
-      "phone": "Telefoon",
-      "instagram": "Instagram",
-      "twitter": "Twitter"
+
+    "commands": {
+      "title": "Commando’s",
+      "move": "Bewegen",
+      "look": "Kijken",
+      "lookValue": "Muis / Joystick R",
+      "escValue": "Hoofdcontrole loslaten",
+      "confirmValue": "Bevestigen / Doorgaan"
     }
   }
-  
+}
+

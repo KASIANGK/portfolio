@@ -1,19 +1,50 @@
 {
-    "menu": "MENU",
-    "hint": "Open channel",
-    "language": "Language",
-    "items": {
-      "home": "Home",
-      "essential": "Essential",
-      "about": "About",
-      "contact": "Contact",
-      "portfolio": "Portfolio"
+  "menu": "MENU",
+  "chip": "NAV",
+  "language": "Language",
+
+  "items": {
+    "home": "Home",
+    "essential": "Essential",
+    "about": "About",
+    "contact": "Contact",
+    "portfolio": "Portfolio"
+  },
+
+  "social": {
+    "email": "Email",
+    "phone": "Phone",
+    "instagram": "Instagram",
+    "twitter": "Twitter"
+  },
+
+  "game": {
+    "button": "GAME",
+    "chip": "GAME HUD",
+
+    "titleCity": "Open Game HUD",
+    "titleGoCity": "Go to City",
+
+    "expand": "Expand game HUD",
+    "collapse": "Collapse game HUD",
+
+    "footer": "HUD is {{state}} • click « to hide",
+    "footerLocked": "Complete tutorial to unlock HUD",
+
+    "stateOpen": "open",
+    "stateCollapsed": "collapsed",
+
+    "actions": {
+      "returnHome": "Return Home"
     },
-    "social": {
-      "email": "Email",
-      "phone": "Phone",
-      "instagram": "Instagram",
-      "twitter": "Twitter"
+
+    "commands": {
+      "title": "Commands",
+      "move": "Move",
+      "look": "Look",
+      "lookValue": "Mouse / Joystick R",
+      "escValue": "Release head control",
+      "confirmValue": "Confirm / Continue"
     }
   }
-  
+}
