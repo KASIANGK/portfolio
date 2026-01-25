@@ -31,31 +31,6 @@ import ResetStepsHomeCity from "./parts/ResetStepsHomeCity";
 const TUTO_KEY = "ag_city_tutorial_done_v1";
 const FullScreenLoader = lazy(() => import("./parts/FullScreenLoader"));
 
-// function OrbitHintProjector({ enabled, world, onScreen }) {
-//   const { camera, size } = useThree();
-
-//   useFrame(() => {
-//     if (!enabled || !world) return;
-
-//     const v = new THREE.Vector3(world.x, world.y, world.z);
-//     v.project(camera);
-
-//     const x = (v.x * 0.5 + 0.5) * size.width;
-//     const y = (-v.y * 0.5 + 0.5) * size.height;
-
-//     const on =
-//       v.z > -1 &&
-//       v.z < 1 &&
-//       x >= 0 &&
-//       x <= size.width &&
-//       y >= 0 &&
-//       y <= size.height;
-
-//     onScreen?.({ x, y, onScreen: on });
-//   });
-
-//   return null;
-// }
 function OrbitHintProjector({ enabled, world, onScreen }) {
   const { camera, size } = useThree();
   const lastRef = useRef({ x: -99999, y: -99999, onScreen: false });
@@ -118,17 +93,6 @@ export default function HomeCity() {
   const autoEnterCity = !!location.state?.autoEnterCity;
   const openedGameHudOnceRef = useRef(false);
 
-  // useEffect(() => {
-  //   const nav = performance.getEntriesByType?.("navigation")?.[0];
-  //   const type = nav?.type;
-  //   const cameFromExplore =
-  //   !!location.state?.autoEnterCity || !!location.state?.resetCityTutorial;
-
-
-  //   if ((type === "reload" || type === "navigate") && !cameFromExplore) {
-  //     navigate("/", { replace: true });
-  //   }
-  // }, [navigate, location.state]);
 
   useEffect(() => {
     const nav = performance.getEntriesByType?.("navigation")?.[0];
@@ -274,7 +238,7 @@ export default function HomeCity() {
   const resetStepsHomeCity = useCallback(() => {
     // 0) ferme le toast tout de suite (avant navigation)
     openedGameHudOnceRef.current = false;
-    setTutorialDone(false);        // ✅ coupe show du GameNavToast immédiatement
+    setTutorialDone(false);        // ✅ coupe show du NavHUD immédiatement
     setGateOpen(false);            // optionnel mais “hard stop”
     setOrbitHintScreen(null);      // optionnel: clean
   
@@ -461,24 +425,6 @@ export default function HomeCity() {
   }, [shouldShowTutorial]);
   
   
-
-  // const onTutorialDone = useCallback(() => {
-  //   try {
-  //     localStorage.setItem(TUTO_KEY, "1");
-  //   } catch {}
-  //   setTutorialDone(true);
-
-  //   setTutorialControl({
-  //     lockLook: false,
-  //     lockMove: false,
-  //     showOrbitHint: false,
-  //     orbitHintWorld: null,
-  //     requestLookCaptureNow: false,
-  //     lookCaptureNonce: 0,
-  //   });
-  //   setOrbitHintScreen(null);
-  // }, []);
-
   const onTutorialDone = useCallback(() => {
     try {
       localStorage.setItem(TUTO_KEY, "1");
@@ -555,11 +501,6 @@ export default function HomeCity() {
   }, [location.state]);
   
 
-  // const pickOrbitWorld = useCallback(() => {
-  //   if (!orbits?.length) return null;
-  //   const o = orbits[0];
-  //   return { x: o.position[0], y: o.position[1], z: o.position[2] };
-  // }, [orbits]);
   const pickOrbitWorld = useCallback(() => {
     if (!orbits?.length) return null;
   
