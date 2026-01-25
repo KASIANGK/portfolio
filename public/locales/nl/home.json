@@ -3,5 +3,62 @@
     "subLabel": "Ik breek in in de Matrix",
     "eta": "ETA ~{{seconds}}s",
     "calibrating": "Portalen kalibreren… (bijna daar 😇)"
+  },
+  "cityTutorial": {
+    "common": {
+      "waiting": "Wachten…"
+    },
+    "boot": {
+      "badge": "CITY://JACK-IN",
+      "title": "Welkom in de matrix.",
+      "desc": "Maak je geen zorgen — hier is het legaal.",
+      "cta": "JACK IN"
+    },
+    "look": {
+      "badge": "CALIBRATE://POV",
+      "preCapture": {
+        "title": "Activeer zichtbesturing (ON/OFF).",
+        "desc": "KLIK / TAP PAD OP DE SCÈNE",
+        "subLock": "Wachten op capture…"
+      },
+      "captured": {
+        "title": "Even opwarmen.",
+        "descDesktop": "SCAN DE SCÈNE",
+        "descMobile": "RECHTER JOY → SCAN DE SCÈNE",
+        "progressLabel": "POV_SYNC"
+      },
+      "cursorOverlayLabel": "KLIK OP DE SCÈNE",
+      "cursorOverlaySub": "buiten de kaart",
+      "stretchOverlayLabel": "SCAN DE SCÈNE",
+      "stretchOverlaySub": "beweeg je muis / trackpad"
+    },
+    "move": {
+      "badge": "CALIBRATE://MOVE",
+      "title": "Bewegen.",
+      "descDesktop": "PIJLEN ← ↑ ↓ → OM TE BEWEGEN",
+      "descMobile": "LINKER JOY → BEWEGEN",
+      "progressLabel": "MOTOR_LINK",
+      "holdArrowHint": "Houd een pijl ~1,2s ingedrukt"
+    },
+    "portals": {
+      "badge": "PORTALS://ORBIT",
+      "title": "Zoek de roze orbits — dat zijn portals.",
+      "desc": "Ik ping er één. Daarna ben jij aan zet.",
+      "cta": "GOT IT",
+      "arrowLabel": "ORBIT"
+    },
+    "hints": {
+      "click": "KLIK",
+      "tap": "TAP",
+      "tapPad": "TAP PAD",
+      "mouse": "MUIS",
+      "joyRight": "RECHTER JOY",
+      "joyLeft": "LINKER JOY",
+      "moveCamera": "BEWEEG CAMERA",
+      "toggleAnytime": "altijd togglen",
+      "useArrows": "GEBRUIK PIJLEN",
+      "move": "beweeg",
+      "seconds_2_3": "2–3s"
+    }
   }
 }

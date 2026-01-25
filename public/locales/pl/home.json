@@ -3,5 +3,62 @@
     "subLabel": "Włamuję się do Matrixa",
     "eta": "ETA ~{{seconds}}s",
     "calibrating": "Kalibruję portale… (już prawie 😇)"
+  },
+  "cityTutorial": {
+    "common": {
+      "waiting": "Czekam…"
+    },
+    "boot": {
+      "badge": "CITY://JACK-IN",
+      "title": "Witaj w matriksie.",
+      "desc": "Spokojnie — tutaj to legalne.",
+      "cta": "JACK IN"
+    },
+    "look": {
+      "badge": "CALIBRATE://POV",
+      "preCapture": {
+        "title": "Włącz kontrolę widoku (ON/OFF).",
+        "desc": "KLIK / TAP PAD NA SCENĘ",
+        "subLock": "Czekam na przejęcie…"
+      },
+      "captured": {
+        "title": "Szybka rozgrzewka.",
+        "descDesktop": "SKANUJ SCENĘ",
+        "descMobile": "PRAWY JOY → SKANUJ SCENĘ",
+        "progressLabel": "POV_SYNC"
+      },
+      "cursorOverlayLabel": "KLIKNIJ SCENĘ",
+      "cursorOverlaySub": "poza kartą",
+      "stretchOverlayLabel": "SKANUJ SCENĘ",
+      "stretchOverlaySub": "rusz myszą / trackpadem"
+    },
+    "move": {
+      "badge": "CALIBRATE://MOVE",
+      "title": "Ruch.",
+      "descDesktop": "STRZAŁKI ← ↑ ↓ → ABY IŚĆ",
+      "descMobile": "LEWY JOY → RUCH",
+      "progressLabel": "MOTOR_LINK",
+      "holdArrowHint": "Przytrzymaj strzałkę ~1,2s"
+    },
+    "portals": {
+      "badge": "PORTALS://ORBIT",
+      "title": "Wypatrz różowe orbity — to portale.",
+      "desc": "Zaznaczę jeden. Potem Twoja kolej.",
+      "cta": "GOT IT",
+      "arrowLabel": "ORBIT"
+    },
+    "hints": {
+      "click": "KLIK",
+      "tap": "TAP",
+      "tapPad": "TAP PAD",
+      "mouse": "MYSZ",
+      "joyRight": "PRAWY JOY",
+      "joyLeft": "LEWY JOY",
+      "moveCamera": "RUSZ KAMERĄ",
+      "toggleAnytime": "przełączaj zawsze",
+      "useArrows": "UŻYJ STRZAŁEK",
+      "move": "ruch",
+      "seconds_2_3": "2–3s"
+    }
   }
 }

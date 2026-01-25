@@ -3,5 +3,62 @@
     "subLabel": "Breaking into the matrix",
     "eta": "ETA ~{{seconds}}s",
     "calibrating": "Calibrating the portals… hang tight 😇"
+  },
+  "cityTutorial": {
+    "common": {
+      "waiting": "Waiting…"
+    },
+    "boot": {
+      "badge": "CITY://JACK-IN",
+      "title": "Welcome to the matrix.",
+      "desc": "Don’t worry — it’s legal in here.",
+      "cta": "JACK IN"
+    },
+    "look": {
+      "badge": "CALIBRATE://POV",
+      "preCapture": {
+        "title": "Enable view control (ON/OFF).",
+        "desc": "CLICK / TAP PAD ON THE SCENE",
+        "subLock": "Waiting for capture…"
+      },
+      "captured": {
+        "title": "Quick warm-up.",
+        "descDesktop": "SCAN THE SCENE",
+        "descMobile": "RIGHT JOY → SCAN THE SCENE",
+        "progressLabel": "POV_SYNC"
+      },
+      "cursorOverlayLabel": "CLICK THE SCENE",
+      "cursorOverlaySub": "outside the card",
+      "stretchOverlayLabel": "SCAN THE SCENE",
+      "stretchOverlaySub": "move your mouse / trackpad"
+    },
+    "move": {
+      "badge": "CALIBRATE://MOVE",
+      "title": "Movement.",
+      "descDesktop": "ARROWS ← ↑ ↓ → TO MOVE",
+      "descMobile": "LEFT JOY → MOVE",
+      "progressLabel": "MOTOR_LINK",
+      "holdArrowHint": "Hold any arrow for ~1.2s"
+    },
+    "portals": {
+      "badge": "PORTALS://ORBIT",
+      "title": "Spot the pink orbits — they’re portals.",
+      "desc": "I’ll ping one. Then it’s on you.",
+      "cta": "GOT IT",
+      "arrowLabel": "ORBIT"
+    },
+    "hints": {
+      "click": "CLICK",
+      "tap": "TAP",
+      "tapPad": "TAP PAD",
+      "mouse": "MOUSE",
+      "joyRight": "JOY RIGHT",
+      "joyLeft": "JOY LEFT",
+      "moveCamera": "MOVE CAMERA",
+      "toggleAnytime": "toggle anytime",
+      "useArrows": "USE ARROWS",
+      "move": "move",
+      "seconds_2_3": "2–3s"
+    }
   }
 }
