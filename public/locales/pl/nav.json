@@ -1,19 +1,51 @@
 {
-    "menu": "MENU",
-    "hint": "Otwórz kanał",
-    "language": "Język",
-    "items": {
-      "home": "Start",
-      "essential": "Essential",
-      "about": "O mnie",
-      "contact": "Kontakt",
-      "portfolio": "Portfolio"
+  "menu": "MENU",
+  "chip": "NAW",
+  "language": "Język",
+
+  "items": {
+    "home": "Strona główna",
+    "essential": "Podstawy",
+    "about": "O mnie",
+    "contact": "Kontakt",
+    "portfolio": "Portfolio"
+  },
+
+  "social": {
+    "email": "Email",
+    "phone": "Telefon",
+    "instagram": "Instagram",
+    "twitter": "Twitter"
+  },
+
+  "game": {
+    "button": "GAME",
+    "chip": "HUD GRY",
+
+    "titleCity": "Otwórz HUD gry",
+    "titleGoCity": "Przejdź do miasta",
+
+    "expand": "Rozwiń HUD",
+    "collapse": "Zwiń HUD",
+
+    "footer": "HUD jest {{state}} • kliknij « aby ukryć",
+    "footerLocked": "Ukończ samouczek, aby odblokować HUD",
+
+    "stateOpen": "otwarty",
+    "stateCollapsed": "zwinięty",
+
+    "actions": {
+      "returnHome": "Powrót do strony głównej"
     },
-    "social": {
-      "email": "Email",
-      "phone": "Telefon",
-      "instagram": "Instagram",
-      "twitter": "Twitter"
+
+    "commands": {
+      "title": "Sterowanie",
+      "move": "Ruch",
+      "look": "Widok",
+      "lookValue": "Mysz / Joystick P",
+      "escValue": "Zwolnij kontrolę głowy",
+      "confirmValue": "Potwierdź / Kontynuuj"
     }
   }
-  
+}
+

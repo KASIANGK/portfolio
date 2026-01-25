@@ -1,19 +1,50 @@
 {
-    "menu": "MENU",
-    "hint": "Ouvrir le canal",
-    "language": "Langue",
-    "items": {
-      "home": "Accueil",
-      "essential": "Essentiel",
-      "about": "À propos",
-      "contact": "Contact",
-      "portfolio": "Portfolio"
+  "menu": "MENU",
+  "chip": "NAV",
+  "language": "Langue",
+
+  "items": {
+    "home": "Accueil",
+    "essential": "Essentiel",
+    "about": "À propos",
+    "contact": "Contact",
+    "portfolio": "Portfolio"
+  },
+
+  "social": {
+    "email": "Email",
+    "phone": "Téléphone",
+    "instagram": "Instagram",
+    "twitter": "Twitter"
+  },
+
+  "game": {
+    "button": "GAME",
+    "chip": "HUD JEU",
+
+    "titleCity": "Ouvrir le HUD de jeu",
+    "titleGoCity": "Aller dans la ville",
+
+    "expand": "Déplier le HUD",
+    "collapse": "Replier le HUD",
+
+    "footer": "HUD {{state}} • cliquez sur « pour masquer",
+    "footerLocked": "Terminez le tutoriel pour débloquer le HUD",
+
+    "stateOpen": "ouvert",
+    "stateCollapsed": "replié",
+
+    "actions": {
+      "returnHome": "Retour à l’accueil"
     },
-    "social": {
-      "email": "Email",
-      "phone": "Téléphone",
-      "instagram": "Instagram",
-      "twitter": "Twitter"
+
+    "commands": {
+      "title": "Commandes",
+      "move": "Déplacement",
+      "look": "Regard",
+      "lookValue": "Souris / Joystick D",
+      "escValue": "Libérer le contrôle de tête",
+      "confirmValue": "Confirmer / Continuer"
     }
   }
-  
+}
