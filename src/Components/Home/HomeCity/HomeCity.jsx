@@ -116,17 +116,37 @@ export default function HomeCity() {
   const { t } = useTranslation("home");
 
   const autoEnterCity = !!location.state?.autoEnterCity;
+  const openedGameHudOnceRef = useRef(false);
+
+  // useEffect(() => {
+  //   const nav = performance.getEntriesByType?.("navigation")?.[0];
+  //   const type = nav?.type;
+  //   const cameFromExplore =
+  //   !!location.state?.autoEnterCity || !!location.state?.resetCityTutorial;
+
+
+  //   if ((type === "reload" || type === "navigate") && !cameFromExplore) {
+  //     navigate("/", { replace: true });
+  //   }
+  // }, [navigate, location.state]);
 
   useEffect(() => {
     const nav = performance.getEntriesByType?.("navigation")?.[0];
     const type = nav?.type;
-    const cameFromExplore = !!location.state?.autoEnterCity;
-
+  
+    const cameFromExplore =
+      !!location.state?.autoEnterCity || !!location.state?.resetCityTutorial;
+  
     if ((type === "reload" || type === "navigate") && !cameFromExplore) {
+      // ✅ force step 2 sur Home au prochain mount (même après refresh)
+      try {
+        sessionStorage.setItem("ag_home_step_once", "2");
+      } catch {}
+  
       navigate("/", { replace: true });
     }
   }, [navigate, location.state]);
-
+  
   const [tutorialDone, setTutorialDone] = useState(() => {
     try {
       return localStorage.getItem(TUTO_KEY) === "1";
@@ -250,12 +270,25 @@ export default function HomeCity() {
     });
   }, [uiIntro, lockLook, isMobile, requestPointerLock]);
 
+
   const resetStepsHomeCity = useCallback(() => {
+    // 0) ferme le toast tout de suite (avant navigation)
+    openedGameHudOnceRef.current = false;
+    setTutorialDone(false);        // ✅ coupe show du GameNavToast immédiatement
+    setGateOpen(false);            // optionnel mais “hard stop”
+    setOrbitHintScreen(null);      // optionnel: clean
+  
+    // 1) supprime la trace "tutorial done"
     try {
       localStorage.removeItem(TUTO_KEY);
     } catch {}
-    navigate("/", { replace: true, state: { resetCityTutorial: true } });
+    window.dispatchEvent(new Event("ag:resetHomeCityTutorial"));
+
+    // 2) renvoie à Home avec flags
+    navigate("/", { replace: true, state: { resetCityTutorial: true, goHomeStep: 2 } });
   }, [navigate]);
+  
+  
 
   useEffect(() => {
     if (!autoEnterCity) return;
@@ -378,6 +411,17 @@ export default function HomeCity() {
   const shouldShowLoader = requestedEnter && !gateOpen;
 
   useEffect(() => {
+    if (!requestedEnter) return;
+  
+    if (shouldShowLoader) {
+      window.dispatchEvent(new Event("ag:cityLoaderOn"));
+    } else {
+      window.dispatchEvent(new Event("ag:cityLoaderOff"));
+    }
+  }, [requestedEnter, shouldShowLoader]);
+
+  
+  useEffect(() => {
     if (!requestedEnter || uiIntro || !isMobile) return;
 
     const zones = Array.from(document.querySelectorAll("[data-joystick-zone='1']"));
@@ -403,13 +447,19 @@ export default function HomeCity() {
   
     setOrbitHintScreen(null);
   
-    setTutorialControl((prev) => ({
-      ...prev,
-      showOrbitHint: false,
-      orbitHintWorld: null,
-      requestLookCaptureNow: false,
-    }));
+    setTutorialControl((prev) => {
+      // évite un setState inutile
+      if (!prev.showOrbitHint && !prev.orbitHintWorld && !prev.requestLookCaptureNow) return prev;
+  
+      return {
+        ...prev,
+        showOrbitHint: false,
+        orbitHintWorld: null,
+        requestLookCaptureNow: false,
+      };
+    });
   }, [shouldShowTutorial]);
+  
   
 
   // const onTutorialDone = useCallback(() => {
@@ -476,6 +526,34 @@ export default function HomeCity() {
     setOrbitHintScreen(null);
   }, [tutorialControl?.orbitHintWorld]);
   
+  useEffect(() => {
+    if (!location.state?.resetCityTutorial) return;
+  
+    // ✅ reset React state (indispensable, sinon tutorialDone reste true)
+    setTutorialDone(false);
+    openedGameHudOnceRef.current = false;
+  
+    setTutorialControl({
+      lockLook: true,
+      lockMove: true,
+      showOrbitHint: false,
+      orbitHintWorld: null,
+      requestLookCaptureNow: false,
+      lookCaptureNonce: 0,
+    });
+    setOrbitHintScreen(null);
+  
+    // ✅ remet le flow dans un état "tuto possible"
+    setRequestedEnter(true);
+    setGateOpen(false);
+    gateOpeningRef.current = false;
+    setPlayerReady(false);
+    setTeleportNonce((n) => n + 1);
+  
+    // ✅ consomme le state pour éviter re-trigger
+    window.history.replaceState({}, document.title);
+  }, [location.state]);
+  
 
   // const pickOrbitWorld = useCallback(() => {
   //   if (!orbits?.length) return null;
@@ -528,6 +606,43 @@ export default function HomeCity() {
 
   const rootClass = `home-city${shouldShowTutorial ? " isTutorial" : ""}`;
 
+  useEffect(() => {
+    // On veut ouvrir le HUD seulement après la validation du tuto
+    if (!requestedEnter) return;
+    if (!gateOpen) return;
+    if (!tutorialDone) return;
+    if (openedGameHudOnceRef.current) return;
+  
+    openedGameHudOnceRef.current = true;
+  
+    // ✅ attendre 1 frame (voire 2) pour être sûr que StepsHomeCity est unmounted
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        window.dispatchEvent(new Event("ag:openGameHud"));
+      });
+    });
+  }, [requestedEnter, gateOpen, tutorialDone]);
+
+  useEffect(() => {
+    const LS_GAMENAV_TOAST_SEEN = "ag_gamenav_toast_seen_v1";
+  
+    const onConfirmed = () => {
+      let seen = false;
+      try { seen = localStorage.getItem(LS_GAMENAV_TOAST_SEEN) === "1"; } catch {}
+      if (seen) return;
+  
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          window.dispatchEvent(new Event("ag:showGameNavToast"));
+          try { localStorage.setItem(LS_GAMENAV_TOAST_SEEN, "1"); } catch {}
+        });
+      });
+    };
+  
+    window.addEventListener("ag:cityTutorialConfirmed", onConfirmed);
+    return () => window.removeEventListener("ag:cityTutorialConfirmed", onConfirmed);
+  }, []);
+  
   return (
     <div className={rootClass}>
       {/* Loader / Tutorial (layers hautes) */}
@@ -689,9 +804,12 @@ export default function HomeCity() {
         </Canvas>
       )}
 
-      {requestedEnter && (
+      {/* {requestedEnter && (
         <GameNavToast show={requestedEnter && gateOpen && tutorialDone} />
-      )}
+      )} */}
+      {/* always mounted while in city, it will show only on event */}
+      <GameNavToast />
+
 
 
       {/* ✅ Tint AU-DESSUS du Canvas, n'intercepte rien */}

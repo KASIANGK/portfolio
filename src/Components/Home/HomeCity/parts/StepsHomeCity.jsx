@@ -16,6 +16,9 @@ import {
 
 const LS_KEY = "ag_city_tutorial_done_v1";
 
+// ✅ GameNav toast: show only first time, return on reset
+const LS_GAMENAV_TOAST_SEEN = "ag_gamenav_toast_seen_v1";
+
 // timings
 const LOOK_SECONDS = 2.4;
 const MOVE_SECONDS = 1.2;
@@ -37,6 +40,24 @@ const STEP = {
 
 function clamp01(v) {
   return Math.max(0, Math.min(1, v));
+}
+
+function shouldShowGameNavToast() {
+  try {
+    return localStorage.getItem(LS_GAMENAV_TOAST_SEEN) !== "1";
+  } catch {
+    return false;
+  }
+}
+function markGameNavToastSeen() {
+  try {
+    localStorage.setItem(LS_GAMENAV_TOAST_SEEN, "1");
+  } catch {}
+}
+function resetGameNavToastSeen() {
+  try {
+    localStorage.removeItem(LS_GAMENAV_TOAST_SEEN);
+  } catch {}
 }
 
 export default function StepsHomeCity({
@@ -61,6 +82,13 @@ export default function StepsHomeCity({
   // overlays hide states
   const [hideStretch, setHideStretch] = useState(false); // Step2 captured overlay
   const [hideMoveOverlay, setHideMoveOverlay] = useState(false); // Step3 overlay
+
+  // ✅ Step 3 confirmation (A)
+  const [step3Confirmed, setStep3Confirmed] = useState(false);
+  const step3ConfirmedRef = useRef(false);
+  useEffect(() => {
+    step3ConfirmedRef.current = step3Confirmed;
+  }, [step3Confirmed]);
 
   // LOOK phase
   const [lookPhase, setLookPhase] = useState("needCapture"); // needCapture | captured
@@ -90,6 +118,12 @@ export default function StepsHomeCity({
   const [pressedKeys, setPressedKeys] = useState(new Set());
   const pressedRef = useRef(new Set());
 
+  // ✅ open GAME HUD once when reaching STEP.PORTALS (per run)
+  const openedGameHudRef = useRef(false);
+
+  // ---------------------------
+  // Key pressed UI tracking
+  // ---------------------------
   useEffect(() => {
     if (!enabled) return;
 
@@ -217,6 +251,7 @@ export default function StepsHomeCity({
       setMoveProg(0);
       arrowsRef.current.clear();
       setHideMoveOverlay(false);
+      setStep3Confirmed(false); // ✅ reset confirmation when entering move
     }
 
     if (step === STEP.PORTALS) {
@@ -224,6 +259,45 @@ export default function StepsHomeCity({
       setOrbitWorld(w);
     }
   }, [enabled, step, orbitWorldPicker]);
+
+  // -----------------------------------
+  // ✅ Reset StepsHomeCity (closes GameNav + re-enable toast on next run)
+  // Listen to: window.dispatchEvent(new Event("ag:resetStepsHomeCity"))
+  // -----------------------------------
+  useEffect(() => {
+    if (!enabled) return;
+
+    const onReset = () => {
+      // close HUD immediately
+      window.dispatchEvent(new Event("ag:closeGameHud"));
+
+      // allow GameNav toast to show again
+      resetGameNavToastSeen();
+
+      // reset all local tutorial states
+      openedGameHudRef.current = false;
+
+      setStep(STEP.BOOT);
+      setLookPhase("needCapture");
+      setLookProg(0);
+      setMoveProg(0);
+      setOrbitWorld(null);
+
+      setHideStretch(false);
+      setHideMoveOverlay(false);
+      setStep3Confirmed(false);
+
+      arrowsRef.current.clear();
+      mouseDeltaRef.current.dx = 0;
+      mouseDeltaRef.current.dy = 0;
+
+      // also repush policy so HomeCity re-locks correctly
+      queueMicrotask(() => pushPolicy(STEP.BOOT));
+    };
+
+    window.addEventListener("ag:resetStepsHomeCity", onReset);
+    return () => window.removeEventListener("ag:resetStepsHomeCity", onReset);
+  }, [enabled, pushPolicy]);
 
   // -----------------------------------
   // Global keyboard handling (logic)
@@ -242,46 +316,90 @@ export default function StepsHomeCity({
     try {
       localStorage.setItem(LS_KEY, "1");
     } catch {}
+  
+    // ✅ open HUD + show toast exactly at the end (Step 4 confirmation)
+    window.dispatchEvent(new Event("ag:cityTutorialConfirmed"));
+  
+    // if (shouldShowGameNavToast()) {
+    //   window.dispatchEvent(new Event("ag:showGameNavToast"));
+    //   markGameNavToastSeen();
+    // }
+  
     onDone?.();
   }, [onDone]);
 
+  // useEffect(() => {
+  //   if (!enabled) return;
+
+  //   const onKeyDown = (e) => {
+  //     const code = e.code;
+  //     if (ARROWS_ONLY.has(code)) arrowsRef.current.add(code);
+
+  //     if (stepRef.current === STEP.BOOT && (code === "Enter" || code === "Space")) {
+  //       e.preventDefault();
+  //       goNext();
+  //       return;
+  //     }
+
+  //     if (stepRef.current === STEP.PORTALS && (code === "Enter" || code === "Space")) {
+  //       e.preventDefault();
+  //       complete();
+  //       return;
+  //     }
+  //   };
+
+  //   const onKeyUp = (e) => {
+  //     const code = e.code;
+  //     if (ARROWS_ONLY.has(code)) arrowsRef.current.delete(code);
+  //   };
+
+  //   window.addEventListener("keydown", onKeyDown, { passive: false, capture: true });
+  //   window.addEventListener("keyup", onKeyUp, { passive: true, capture: true });
+
+  //   return () => {
+  //     window.removeEventListener("keydown", onKeyDown, true);
+  //     window.removeEventListener("keyup", onKeyUp, true);
+  //   };
+  // }, [enabled, goNext, complete]);
+
   useEffect(() => {
     if (!enabled) return;
-
+  
     const onKeyDown = (e) => {
       const code = e.code;
-
       if (ARROWS_ONLY.has(code)) arrowsRef.current.add(code);
-
-      // BOOT -> next
+  
       if (stepRef.current === STEP.BOOT && (code === "Enter" || code === "Space")) {
         e.preventDefault();
         goNext();
         return;
       }
-
-      // PORTALS -> complete (confirm)
+  
       if (stepRef.current === STEP.PORTALS && (code === "Enter" || code === "Space")) {
         e.preventDefault();
         complete();
         return;
       }
     };
-
+  
     const onKeyUp = (e) => {
       const code = e.code;
       if (ARROWS_ONLY.has(code)) arrowsRef.current.delete(code);
     };
-
-    window.addEventListener("keydown", onKeyDown, { passive: false, capture: true });
-    window.addEventListener("keyup", onKeyUp, { passive: true, capture: true });
-
+  
+    const downOpts = { capture: true, passive: false };
+    const upOpts = { capture: true, passive: true };
+  
+    window.addEventListener("keydown", onKeyDown, downOpts);
+    window.addEventListener("keyup", onKeyUp, upOpts);
+  
     return () => {
-      window.removeEventListener("keydown", onKeyDown, true);
-      window.removeEventListener("keyup", onKeyUp, true);
+      // ✅ même capture flag (et idéalement même signature)
+      window.removeEventListener("keydown", onKeyDown, { capture: true });
+      window.removeEventListener("keyup", onKeyUp, { capture: true });
     };
   }, [enabled, goNext, complete]);
-
+  
   // -----------------------------------
   // Desktop mouse delta tracking (LOOK validation)
   // -----------------------------------
@@ -408,8 +526,12 @@ export default function StepsHomeCity({
 
         setMoveProg((p) => {
           const next = clamp01(p + (active ? dt / MOVE_SECONDS : -dt * 0.7));
+
           if (next >= 1) {
             queueMicrotask(() => {
+              // ✅ A) confirm step 3 and instantly hide ArrowCluster (inside card)
+              setStep3Confirmed(true);
+
               setMoveProg(0);
               setStep(STEP.PORTALS);
             });
@@ -423,7 +545,27 @@ export default function StepsHomeCity({
 
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [enabled, lookInput, moveInput]);
+  }, [enabled, lookInput, moveInput, hideStretch, hideMoveOverlay]);
+
+  // -----------------------------------
+  // ✅ Step 4 enter: open GameHud once + show GameNavToast only first time
+  // -----------------------------------
+  // useEffect(() => {
+  //   if (!enabled) return;
+  //   if (step !== STEP.PORTALS) return;
+  //   if (openedGameHudRef.current) return;
+
+  //   openedGameHudRef.current = true;
+
+  //   // open HUD
+  //   window.dispatchEvent(new Event("ag:openGameHud"));
+
+  //   // show toast only first time
+  //   if (shouldShowGameNavToast()) {
+  //     window.dispatchEvent(new Event("ag:showGameNavToast"));
+  //     markGameNavToastSeen();
+  //   }
+  // }, [enabled, step]);
 
   // -----------------------------------
   // PORTALS: reping orbit while waiting for confirmation
@@ -439,13 +581,13 @@ export default function StepsHomeCity({
     const pick = () => {
       const w = orbitWorldPicker?.() ?? null;
       setOrbitWorld(w);
-      orbitWorldRef.current = w; // ✅ sync ref tout de suite
+      orbitWorldRef.current = w; // ✅ sync ref immediately
       return w;
     };
-    
+
     const showFor2s = (w) => {
       if (!alive) return;
-    
+
       onControlChangeRef.current?.({
         lockLook: false,
         lockMove: true,
@@ -454,7 +596,7 @@ export default function StepsHomeCity({
         requestLookCaptureNow: false,
         lookCaptureNonce: lookCaptureNonceRef.current,
       });
-    
+
       window.setTimeout(() => {
         if (!alive) return;
         onControlChangeRef.current?.({
@@ -467,10 +609,10 @@ export default function StepsHomeCity({
         });
       }, 2000);
     };
-    
+
     const w0 = pick();
     showFor2s(w0);
-    
+
     const id = window.setInterval(() => {
       const w = pick();
       showFor2s(w);
@@ -564,7 +706,7 @@ export default function StepsHomeCity({
       return (
         <HintRow>
           <MouseTap active={!isMobile} label="CLICK" />
-          <TrackpadTap active={isMobile} label="TAP PAD" />
+          <TrackpadTap active={!isMobile} label="TAP PAD" />
         </HintRow>
       );
     }
@@ -574,7 +716,7 @@ export default function StepsHomeCity({
         <HintRow>
           <Keycap label={isMobile ? "JOY RIGHT" : "MOUSE"} active />
           <Keycap label="MOVE CAMERA" sub="2–3s" active />
-          <Keycap label={isMobile ? "TAP PAD" : "CLICK"} sub="toggle anytime" />
+          <Keycap label={isMobile ? "TAP" : "CLICK"} sub="toggle anytime" />
         </HintRow>
       );
     }
@@ -620,13 +762,6 @@ export default function StepsHomeCity({
         </>
       )}
 
-      {/* Step 3 (MOVE) overlay: ArrowCluster OUTSIDE card + blue DA */}
-      {step === STEP.MOVE && !isMobile && !hideMoveOverlay && (
-        <div className="agCitySteps__moveOverlay agMoveBlue" aria-hidden="true">
-          <ArrowCluster active pressedSet={pressedKeys} demoPulse />
-        </div>
-      )}
-
       {/* Matrix rain ONLY step 1 */}
       {step === STEP.BOOT && (
         <div className="agCitySteps__matrixRain" aria-hidden="true">
@@ -665,6 +800,14 @@ export default function StepsHomeCity({
 
           <h1 className="agCitySteps__title">{content.title}</h1>
           <div className="agCitySteps__desc">{content.desc}</div>
+
+          {/* ✅ A) Step 3: ArrowCluster INSIDE card — disappears as soon as step3Confirmed */}
+          {step === STEP.MOVE && !isMobile && !step3Confirmed && (
+            <div className={`agCitySteps__inlineArrows agMoveBlue ${hideMoveOverlay ? "isHidden" : ""}`}>
+              <ArrowCluster active pressedSet={pressedKeys} demoPulse />
+              <div className="agCitySteps__inlineArrowsHint">Hold any arrow for ~1.2s</div>
+            </div>
+          )}
 
           {content.showProgress ? (
             <div className="agCitySteps__progressBlock">

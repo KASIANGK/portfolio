@@ -1,0 +1,23 @@
+/* Les FX ne doivent jamais capter la souris */
+.homeOverlay__fx,
+.homeOverlay__shine,
+.homeOverlay__orb,
+.homeOverlay__grid,
+.homeOverlay__bg,
+.homeOverlay__bg * {
+  pointer-events: none;
+}
+
+/* Le contenu interactif doit être au-dessus */
+.homeOverlay__panel {
+  position: relative;
+}
+
+.homeOverlay__langGrid,
+.homeOverlay__footer,
+.homeOverlay__langBtn,
+.homeOverlay__primaryBtn {
+  position: relative;
+  z-index: 5;
+  pointer-events: auto;
+}
