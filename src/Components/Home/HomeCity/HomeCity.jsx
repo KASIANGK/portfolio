@@ -27,8 +27,12 @@ import GameNavToast from "./parts/GameNavToast";
 
 import StepsHomeCity from "./parts/StepsHomeCity";
 import ResetStepsHomeCity from "./parts/ResetStepsHomeCity";
+import NavHelpHint from "./parts/NavHelpHint";
+
 
 const TUTO_KEY = "ag_city_tutorial_done_v1";
+const NAVHELP_SEEN_KEY = "ag_navhelp_hint_seen_v1";
+
 const FullScreenLoader = lazy(() => import("./parts/FullScreenLoader"));
 
 function OrbitHintProjector({ enabled, world, onScreen }) {
@@ -93,7 +97,28 @@ export default function HomeCity() {
   const autoEnterCity = !!location.state?.autoEnterCity;
   const openedGameHudOnceRef = useRef(false);
 
+  const [navHelpOpen, setNavHelpOpen] = useState(false);
 
+  const hasSeenNavHelp = useCallback(() => {
+    try {
+      return localStorage.getItem(NAVHELP_SEEN_KEY) === "1";
+    } catch {
+      return true; // si localStorage fail, on évite de spam
+    }
+  }, []);
+  
+  const markNavHelpSeen = useCallback(() => {
+    try {
+      localStorage.setItem(NAVHELP_SEEN_KEY, "1");
+    } catch {}
+  }, []);
+  
+  const resetNavHelpSeen = useCallback(() => {
+    try {
+      localStorage.removeItem(NAVHELP_SEEN_KEY);
+    } catch {}
+  }, []);
+  
   useEffect(() => {
     const nav = performance.getEntriesByType?.("navigation")?.[0];
     const type = nav?.type;
@@ -118,6 +143,27 @@ export default function HomeCity() {
       return false;
     }
   });
+
+  useEffect(() => {
+    const onConfirmed = () => {
+      // on ne montre qu'une fois
+      if (hasSeenNavHelp()) return;
+  
+      // marque "seen" tout de suite pour éviter double trigger
+      markNavHelpSeen();
+  
+      // ouvre proprement après 2 frames (comme ton HUD/toast)
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setNavHelpOpen(true);
+        });
+      });
+    };
+  
+    window.addEventListener("ag:cityTutorialConfirmed", onConfirmed);
+    return () => window.removeEventListener("ag:cityTutorialConfirmed", onConfirmed);
+  }, [hasSeenNavHelp, markNavHelpSeen]);
+  
 
   const [tutorialControl, setTutorialControl] = useState({
     lockLook: true,
@@ -241,7 +287,9 @@ export default function HomeCity() {
     setTutorialDone(false);        // ✅ coupe show du NavHUD immédiatement
     setGateOpen(false);            // optionnel mais “hard stop”
     setOrbitHintScreen(null);      // optionnel: clean
-  
+    resetNavHelpSeen();
+    setNavHelpOpen(false);
+
     // 1) supprime la trace "tutorial done"
     try {
       localStorage.removeItem(TUTO_KEY);
@@ -751,7 +799,10 @@ export default function HomeCity() {
       {/* always mounted while in city, it will show only on event */}
       <GameNavToast />
 
-
+      <NavHelpHint
+        open={navHelpOpen}
+        onClose={() => setNavHelpOpen(false)}
+      />
 
       {/* ✅ Tint AU-DESSUS du Canvas, n'intercepte rien */}
       {requestedEnter && <div className="agCityTint" aria-hidden="true" />}

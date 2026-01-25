@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 export default function NavHelpHint({ open, onClose }) {
   useEffect(() => {
     if (!open) return;
-    const t = setTimeout(() => onClose?.(), 8000);
+    const t = setTimeout(() => onClose?.(), 5000);
     return () => clearTimeout(t);
   }, [open, onClose]);
 
@@ -20,7 +20,7 @@ export default function NavHelpHint({ open, onClose }) {
           style={{
             position: "fixed",
             top: 16,
-            right: 16,      // 👈 adapte selon ta Navbar
+            right: 256,      // 👈 adapte selon ta Navbar
             zIndex: 99999,
             width: 280,
             padding: "12px 14px",
