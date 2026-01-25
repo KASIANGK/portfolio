@@ -4,7 +4,8 @@
 
    .homeOverlay__panel {
     position: relative;
-    margin: 0 auto;
+    /* margin: 0 auto; */
+    margin-top: 62px;
     margin-inline: auto;
     width: min(720px, 100%);
     padding: clamp(18px, 3.2vw, 34px);

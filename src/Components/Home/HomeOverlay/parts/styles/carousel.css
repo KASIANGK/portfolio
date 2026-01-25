@@ -56,11 +56,5 @@
     opacity: 1;
   }
   
-  /* panel centré quoi qu'il arrive */
-  .homeOverlay__panel {
-    width: min(720px, 100%);
-    margin: 0 auto;
-  }
-  
 
 
