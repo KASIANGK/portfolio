@@ -349,28 +349,6 @@
   border-color: rgba(255, 0, 170, 0.45);
 }
 
-/* Collapse button (tiny) */
-/* .navHUD__collapseBtn {
-  width: 40px;
-  height: 40px;
-  border-radius: 14px;
-  border: 1px solid rgba(255,255,255,0.10);
-  background: rgba(0,0,0,0.26);
-  backdrop-filter: blur(12px);
-  box-shadow: var(--nav-shadow);
-  color: rgba(255,255,255,0.75);
-  cursor: pointer;
-  transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
-}
-
-.navHUD__collapseBtn:hover {
-  border-color: rgba(255, 0, 170, 0.35);
-  box-shadow:
-    0 0 0 1px rgba(255, 0, 170, 0.14),
-    0 0 18px rgba(255, 0, 170, 0.10),
-    var(--nav-shadow);
-  transform: translateY(-1px);
-} */
 
 /* GAME content */
 .navHUD__gameWrap {
