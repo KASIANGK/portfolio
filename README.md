@@ -35,3 +35,14 @@
         sorte de tableau excel ou premiere ligne horizontale -div avec 4 attributs - WebDev/3D/Graphism/Events et la seconde ligne - div qui adapte le contenu en fonction de lelement preselectionne
     - Projects Menu
     - Contact
+
+
+VERIF PAR PAGE :
+- Header-Step1/HomeOverlay :
+    - auto rafraichir
+    - hint
+    - btn - hover smooth + arrows
+    - style
+    - commmandes btn - space, click, enter
+    - bg
+- Header-Step1/HomeOverlay :

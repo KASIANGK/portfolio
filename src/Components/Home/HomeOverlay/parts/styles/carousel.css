@@ -8,7 +8,8 @@
     width: 100%;
     height: 100%;
     overflow: hidden;
-    touch-action: pan-y;
+    /* touch-action: pan-y; */
+    touch-action: none;
   }
   
   /* track en VW, pas en % */
@@ -40,6 +41,16 @@
     opacity: 0;
     transition: opacity 320ms ease;
   }
+
+  .homeOverlay__track,
+  .homeOverlay__slide {
+    min-height: 0;
+  }
+  .homeOverlay,
+  .homeOverlay__viewport {
+    overscroll-behavior-x: contain;
+  }
+  
   
   .homeOverlay__slide.isActive {
     opacity: 1;

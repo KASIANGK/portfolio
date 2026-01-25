@@ -1,5 +1,5 @@
 // src/Components/LanguageToast/LanguageToast.jsx
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import useOnboarding from "../../hooks/useOnboarding";
 import "./LanguageToast.css";
@@ -11,12 +11,18 @@ const LANG_LABELS = {
   pl: "Polski",
 };
 
-function isNavbarIntentFresh() {
-  if (typeof window === "undefined") return false;
+function getNavbarIntent() {
+  if (typeof window === "undefined") return null;
   const intent = window.__AG_LANG_INTENT__;
-  if (!intent || intent.src !== "navbar") return false;
-  if (typeof intent.at !== "number") return false;
-  return Date.now() - intent.at < 1200; // 1.2s
+  if (!intent || intent.src !== "navbar") return null;
+  if (typeof intent.at !== "number") return null;
+  if (Date.now() - intent.at >= 1200) return null;
+  return intent;
+}
+
+function consumeNavbarIntent() {
+  if (typeof window === "undefined") return;
+  window.__AG_LANG_INTENT__ = null;
 }
 
 function isStep1Visible() {
@@ -32,51 +38,66 @@ export default function LanguageToast() {
   const [closing, setClosing] = useState(false);
   const [lang, setLang] = useState(i18n.resolvedLanguage || i18n.language || "en");
 
+  const suppressRef = useRef(shouldShowLanguageStep);
+  const lastIntentIdRef = useRef(null);
+
   const timerRef = useRef(null);
   const closeRef = useRef(null);
-  const suppressRef = useRef(shouldShowLanguageStep);
 
   useEffect(() => {
     suppressRef.current = shouldShowLanguageStep;
   }, [shouldShowLanguageStep]);
 
+  const clearTimers = useCallback(() => {
+    if (timerRef.current) window.clearTimeout(timerRef.current);
+    if (closeRef.current) window.clearTimeout(closeRef.current);
+    timerRef.current = null;
+    closeRef.current = null;
+  }, []);
+
+  // ✅ Auto-close attaché à "open/lang" (pas au listener)
+  useEffect(() => {
+    if (!open) return;
+
+    clearTimers();
+    setClosing(false);
+
+    timerRef.current = window.setTimeout(() => {
+      setClosing(true);
+      closeRef.current = window.setTimeout(() => {
+        setOpen(false);
+      }, 600);
+    }, 3000);
+
+    return () => {
+      clearTimers();
+    };
+  }, [open, lang, clearTimers]);
+
   useEffect(() => {
     const onLang = (lng) => {
-      // ✅ jamais pendant Step1 (flag UI fiable)
-      if (isStep1Visible()) return;
+      console.log("[LanguageToast] fired", Date.now(), lng);
 
-      // ✅ jamais pendant onboarding (fallback hook)
+      if (isStep1Visible()) return;
       if (suppressRef.current) return;
 
-      // ✅ uniquement si l'intention vient de la navbar
-      if (!isNavbarIntentFresh()) return;
+      const intent = getNavbarIntent();
+      if (!intent) return;
 
-      // ✅ consume intent pour éviter double-trigger
-      window.__AG_LANG_INTENT__ = null;
+      if (intent.id && lastIntentIdRef.current === intent.id) return;
+      if (intent.id) lastIntentIdRef.current = intent.id;
 
-      const next = lng || i18n.resolvedLanguage || i18n.language || "en";
+      consumeNavbarIntent();
+
+      const next = String(lng || i18n.resolvedLanguage || i18n.language || "en").slice(0, 2);
       setLang(next);
-
-      // open toast
-      setClosing(false);
       setOpen(true);
-
-      // clear timers
-      if (timerRef.current) window.clearTimeout(timerRef.current);
-      if (closeRef.current) window.clearTimeout(closeRef.current);
-
-      // visible 2.4s → fade out 0.6s
-      timerRef.current = window.setTimeout(() => {
-        setClosing(true);
-        closeRef.current = window.setTimeout(() => setOpen(false), 600);
-      }, 2400);
     };
 
     i18n.on("languageChanged", onLang);
     return () => {
       i18n.off("languageChanged", onLang);
-      if (timerRef.current) window.clearTimeout(timerRef.current);
-      if (closeRef.current) window.clearTimeout(closeRef.current);
+      console.log("[LanguageToast] cleanup", Date.now());
     };
   }, [i18n]);
 
@@ -95,4 +116,3 @@ export default function LanguageToast() {
     </div>
   );
 }
-

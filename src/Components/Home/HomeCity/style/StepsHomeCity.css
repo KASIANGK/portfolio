@@ -665,10 +665,10 @@
 ========================= */
 .agGameNavToast{
   position: fixed;
-  top: 86px;
+  /* top: 86px;
   right: 18px;
   z-index: 9999;
-  pointer-events: none;
+  pointer-events: none; */
 
   width: 260px;
   padding: 12px 12px;
@@ -1052,4 +1052,32 @@
 @keyframes agToastIn{
   from{ opacity: 0; transform: translateY(-6px) scale(0.99); }
   to{ opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* =========================
+   STEP 3 — ARROWS INSIDE CARD
+========================= */
+.agCitySteps__inlineArrows{
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.03);
+}
+
+.agCitySteps__inlineArrows.isHidden{
+  opacity: 0.0;
+  transform: translateY(6px) scale(0.99);
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.agCitySteps__inlineArrowsHint{
+  font-size: 11px;
+  opacity: 0.75;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
