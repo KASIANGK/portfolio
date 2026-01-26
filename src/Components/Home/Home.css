@@ -155,11 +155,13 @@
 .homeStage{
   opacity: 0;
   transform: translateY(10px);
-  transition: opacity 320ms ease, transform 320ms ease;
+  transition: opacity 520ms ease, transform 520ms ease;
   will-change: opacity, transform;
+  pointer-events:none;
 }
 
 .homePage[data-stage="1"] .homeStage{
   opacity: 1;
   transform: translateY(0);
+  pointer-events:auto; 
 }

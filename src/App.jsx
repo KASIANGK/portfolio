@@ -10,6 +10,7 @@ import Navbar from "./Components/Navbar/Navbar";
 import Footer from "./Components/Footer/Footer";
 import LanguageToast from "./Components/Navbar/LanguageToast";
 import Dandelion from "./Components/Dandlion/Dandlion";
+import About from "./Components/About";
 
 function Layout() {
   const location = useLocation();
