@@ -1,14 +1,85 @@
 // src/Components/Home/HomeOverlay/parts/MenuPreview.jsx
-import React, { useMemo, useRef, useLayoutEffect } from "react";
+import React, { useMemo, useRef, useLayoutEffect, useEffect, useState, useCallback } from "react";
 import gsap from "gsap";
 import { useNavigate } from "react-router-dom";
 import { FaEnvelope, FaPhoneAlt, FaInstagram, FaTwitter } from "react-icons/fa";
+import { whenImageReady } from "../../../../utils/projectsCache";
 
 const clamp01 = (n) => Math.max(0, Math.min(1, n));
+
+const PREVIEW = {
+  explore: "/preview_city.png",
+  about: "/preview_kasia.jpg",
+  projectsFallback: ["/preview_project_1.png", "/preview_project_2.png", "/preview_project_3.png"],
+};
 
 function isDesktopFinePointer() {
   if (typeof window === "undefined") return false;
   return window.matchMedia?.("(pointer: fine) and (hover: hover)")?.matches ?? false;
+}
+
+/**
+ * Navigate to hash section on "/" and scroll smoothly.
+ * Accepts "#projects" or "projects".
+ */
+function goHashNavigate(navigate, hash) {
+  const targetHash = (hash || "").startsWith("#") ? hash : `#${hash}`;
+  const targetUrl = `/${targetHash}`;
+
+  const alreadyHome = window.location?.pathname === "/";
+
+  if (alreadyHome) {
+    if (window.location.hash !== targetHash) {
+      window.history.pushState({}, "", targetUrl);
+    }
+  } else {
+    navigate(targetUrl);
+  }
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      const el = document.querySelector(targetHash);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  });
+}
+
+/* =========================
+   Shared: "always-mounted" img
+========================= */
+
+function AlwaysMountedImg({
+  src,
+  alt,
+  className,
+  width,
+  height,
+  fetchPriority = "high",
+  decoding = "sync",
+  loading = "eager",
+}) {
+  const [broken, setBroken] = useState(false);
+
+  return (
+    <>
+      {!broken ? (
+        <img
+          src={src}
+          alt={alt}
+          className={className}
+          width={width}
+          height={height}
+          loading={loading}
+          decoding={decoding}
+          fetchPriority={fetchPriority}
+          onError={() => setBroken(true)}
+          draggable={false}
+        />
+      ) : (
+        <div className="homeOverlay__previewImgFallback" aria-hidden="true" />
+      )}
+    </>
+  );
 }
 
 /* =========================
@@ -16,14 +87,19 @@ function isDesktopFinePointer() {
 ========================= */
 
 function PreviewExplore() {
+  const src = PREVIEW.explore;
+
   return (
     <div className="homeOverlay__previewMedia">
-      <img
-        src="/preview_city.png"
+      <AlwaysMountedImg
+        src={src}
         alt="City preview"
         className="homeOverlay__previewImg homeOverlay__previewImg--cover"
+        width={560}
+        height={320}
+        fetchPriority="high"
+        decoding="sync"
         loading="eager"
-        decoding="async"
       />
       <div className="homeOverlay__previewCaption">MY INTERACTIVE 3D WORLD</div>
     </div>
@@ -31,14 +107,19 @@ function PreviewExplore() {
 }
 
 function PreviewAbout() {
+  const src = PREVIEW.about;
+
   return (
     <div className="homeOverlay__previewMedia">
-      <img
-        src="/preview_kasia.jpg"
+      <AlwaysMountedImg
+        src={src}
         alt="About preview"
         className="homeOverlay__previewImg homeOverlay__previewImg--cover"
+        width={560}
+        height={320}
+        fetchPriority="high"
+        decoding="sync"
         loading="eager"
-        decoding="async"
       />
       <div className="homeOverlay__previewCaption">KASIA — CREATIVE TECH</div>
     </div>
@@ -47,9 +128,7 @@ function PreviewAbout() {
 
 function PreviewProjects({ active, onOpenPortfolio, slidesFromParent, menuAssetsReady }) {
   const baseSlides = useMemo(() => {
-    return slidesFromParent?.length
-      ? slidesFromParent
-      : ["/preview_project_1.png", "/preview_project_2.png", "/preview_project_3.png"];
+    return slidesFromParent?.length ? slidesFromParent : PREVIEW.projectsFallback;
   }, [slidesFromParent]);
 
   const loopSlides = useMemo(() => [...baseSlides, ...baseSlides], [baseSlides]);
@@ -152,9 +231,12 @@ function PreviewProjects({ active, onOpenPortfolio, slidesFromParent, menuAssets
               <img
                 src={src}
                 alt="Project preview"
-                loading="eager"
-                decoding="async"
-                fetchpriority={idx < 2 ? "high" : "auto"}
+                width="280"
+                height="180"
+                loading={idx < 2 ? "eager" : "lazy"}
+                decoding={idx < 2 ? "sync" : "async"}
+                fetchPriority={idx < 2 ? "high" : "auto"}
+                draggable={false}
               />
             </button>
           ))}
@@ -202,17 +284,20 @@ function PreviewContact() {
   );
 }
 
-/* =========================
-   MENU PREVIEW — INSTANT SWITCH
-   - aucun blur
-   - aucun crossfade
-   - previews persistantes (pas de remount)
-========================= */
-
 export default function MenuPreview({ activeKey, projectSlides, menuAssetsReady }) {
   const navigate = useNavigate();
-
   const show = (key) => (activeKey === key ? "isShown" : "isHidden");
+
+  // ✅ Prewarm once (non-blocking). Helps remove the "first swap" micro-blank.
+  useEffect(() => {
+    whenImageReady(PREVIEW.explore).catch(() => {});
+    whenImageReady(PREVIEW.about).catch(() => {});
+    PREVIEW.projectsFallback.forEach((u) => whenImageReady(u).catch(() => {}));
+  }, []);
+
+  const openProjects = useCallback(() => {
+    goHashNavigate(navigate, "#projects");
+  }, [navigate]);
 
   return (
     <div className="homeOverlay__previewStage" data-preview={activeKey}>
@@ -229,7 +314,7 @@ export default function MenuPreview({ activeKey, projectSlides, menuAssetsReady 
           active={activeKey === "projects"}
           slidesFromParent={projectSlides}
           menuAssetsReady={menuAssetsReady}
-          onOpenPortfolio={() => navigate("/portfolio")}
+          onOpenPortfolio={openProjects}
         />
       </div>
 
@@ -241,5 +326,3 @@ export default function MenuPreview({ activeKey, projectSlides, menuAssetsReady 
     </div>
   );
 }
-
-

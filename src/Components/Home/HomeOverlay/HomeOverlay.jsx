@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import useOnboarding from "../../../hooks/useOnboarding";
+// import { warmDecodeImages } from "../../../utils/warmImages";
 
 import "./parts/styles/Base.css";
 import "./parts/styles/Background.css";
@@ -22,7 +23,46 @@ import OverlayResetButtons from "./parts/OverlayResetButtons";
 import StepLanguage from "./parts/StepLanguage";
 import StepMenu from "./parts/StepMenu";
 
-export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
+const FIRST_VISIT_KEY = "ag_home_first_visit_done_v1";
+const KB_HINT_KEY = "ag_step1_kb_hint_seen_v2";
+const FORCE_STEP_KEY = "ag_home_step_once";
+
+const raf2 = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+function unlockScrollHard() {
+  document.body.style.overflow = "";
+  document.body.style.overscrollBehaviorY = "";
+  document.documentElement.style.overflow = "";
+}
+
+function lockScrollHard() {
+  document.body.style.overflow = "hidden";
+  document.body.style.overscrollBehaviorY = "none";
+  document.documentElement.style.overflow = "hidden";
+}
+
+function safeGetLS(key) {
+  try { return localStorage.getItem(key); } catch { return null; }
+}
+function safeSetLS(key, value) {
+  try { localStorage.setItem(key, value); } catch {}
+}
+function safeRemoveLS(key) {
+  try { localStorage.removeItem(key); } catch {}
+}
+function safeGetSS(key) {
+  try { return sessionStorage.getItem(key); } catch { return null; }
+}
+function safeRemoveSS(key) {
+  try { sessionStorage.removeItem(key); } catch {}
+}
+
+export default function HomeOverlay({
+  onGoAbout,
+  onGoProjects,
+  onGoContact,
+  onStepChange, // ✅ NEW (optional)
+}) {
   const navigate = useNavigate();
   const location = useLocation();
   const { t, i18n } = useTranslation("intro");
@@ -35,149 +75,162 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
     resetLanguageStep,
   } = useOnboarding();
 
-  const FIRST_VISIT_KEY = "ag_home_first_visit_done_v1";
-  const KB_HINT_KEY = "ag_step1_kb_hint_seen_v2";
-  const FORCE_STEP_KEY = "ag_home_step_once"; // sessionStorage
+  /* ---------------------------------
+     Hash navigation helper
+  --------------------------------- */
+  const goHash = useCallback(
+    (hash) => {
+      const targetHash = hash.startsWith("#") ? hash : `#${hash}`;
+      const targetUrl = `/${targetHash}`;
+      const alreadyHome = window.location?.pathname === "/";
 
-  // -----------------------------
-  // First visit (localStorage)
-  // -----------------------------
-  const firstVisit = useMemo(() => {
-    try {
-      return localStorage.getItem(FIRST_VISIT_KEY) !== "1";
-    } catch {
-      return true;
-    }
-  }, []);
+      if (alreadyHome) {
+        if (window.location.hash !== targetHash) {
+          window.history.pushState({}, "", targetUrl);
+        }
+      } else {
+        navigate(targetUrl);
+      }
 
-  // -----------------------------
-  // ✅ Forced step (sessionStorage) read BEFORE first render
-  // -----------------------------
-  const forcedStepOnce = useMemo(() => {
-    try {
-      return sessionStorage.getItem(FORCE_STEP_KEY); // "2" or null
-    } catch {
-      return null;
-    }
-  }, []);
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const el = document.querySelector(targetHash);
+          if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      });
+    },
+    [navigate]
+  );
+
+  /* ---------------------------------
+     Flags
+  --------------------------------- */
+  const hasDoneFirstVisit = useMemo(() => safeGetLS(FIRST_VISIT_KEY) === "1", []);
+  const forcedStepOnce = useMemo(() => safeGetSS(FORCE_STEP_KEY), []);
 
   const forcedStepInitial = forcedStepOnce === "2" ? 2 : null;
   const forcedStepRef = useRef(forcedStepInitial);
 
-  // -----------------------------
-  // Slide state (0 = step1, 1 = step2)
-  // -----------------------------
+  /* ---------------------------------
+     Initial slide
+  --------------------------------- */
   const [slideIndex, setSlideIndex] = useState(() => {
-    if (forcedStepInitial === 2) return 1; // step2 (menu)
-    if (firstVisit) return 0;
+    if (forcedStepInitial === 2) return 1;
+    if (!hasDoneFirstVisit) return 0;
     return shouldShowLanguageStep ? 0 : 1;
   });
 
-  // -----------------------------
-  // Anim control (disable once on forced)
-  // -----------------------------
   const [noAnimOnce, setNoAnimOnce] = useState(() => forcedStepInitial === 2);
-
   const continueBtnRef = useRef(null);
 
-  // -----------------------------
-  // i18n warmup
-  // -----------------------------
+  // keep latest slideIndex in ref (for watchdog)
+  const slideRef = useRef(slideIndex);
+  useEffect(() => { slideRef.current = slideIndex; }, [slideIndex]);
+
+  /* ---------------------------------
+     Notify parent (Home.jsx)
+  --------------------------------- */
+  useEffect(() => {
+    onStepChange?.(slideIndex === 0 ? 1 : 2);
+  }, [slideIndex, onStepChange]);
+
+  /* ---------------------------------
+     Warm i18n
+  --------------------------------- */
   useEffect(() => {
     i18n.loadNamespaces(["intro"]);
     i18n.loadLanguages(LANGS);
   }, [i18n]);
 
-  // -----------------------------
-  // Consume forced flag AFTER mount (UI was already correct)
-  // -----------------------------
+  /* ---------------------------------
+     Consume forced flag AFTER mount
+ --------------------------------- */
   useEffect(() => {
     if (forcedStepOnce !== "2") return;
 
-    try {
-      sessionStorage.removeItem(FORCE_STEP_KEY);
-    } catch {}
+    safeRemoveSS(FORCE_STEP_KEY);
 
     window.setTimeout(() => {
-      const first = document.querySelector(".homeOverlay__menuBtn");
-      first?.focus?.();
+      document.querySelector(".homeOverlay__menuBtn")?.focus?.();
     }, 80);
 
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => setNoAnimOnce(false));
-    });
+    requestAnimationFrame(() => requestAnimationFrame(() => setNoAnimOnce(false)));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // -----------------------------
-  // If onboarding says “show language step”, do it — unless forced step2
-  // -----------------------------
+  /* ---------------------------------
+     If onboarding wants step1 (unless forced step2)
+  --------------------------------- */
   useEffect(() => {
     if (forcedStepRef.current === 2) return;
     if (shouldShowLanguageStep) setSlideIndex(0);
   }, [shouldShowLanguageStep]);
 
-  // -----------------------------
-  // Step1 scroll lock
-  // -----------------------------
+  /* ---------------------------------
+     Scroll lock bulletproof
+     + extra: if we are step2, force unlock again after a tick
+ --------------------------------- */
   useEffect(() => {
-    const body = document.body;
-
     if (slideIndex === 0) {
-      const prevOverflow = body.style.overflow;
-      const prevOverscroll = body.style.overscrollBehaviorY;
-
-      body.style.overflow = "hidden";
-      body.style.overscrollBehaviorY = "none";
-
+      lockScrollHard();
       return () => {
-        body.style.overflow = prevOverflow;
-        body.style.overscrollBehaviorY = prevOverscroll;
+        // cleanup when leaving step1
+        unlockScrollHard();
       };
     }
 
-    body.style.overflow = "";
-    body.style.overscrollBehaviorY = "";
+    // step2: ensure unlocked now + after paint
+    unlockScrollHard();
+    requestAnimationFrame(() => unlockScrollHard());
+    return undefined;
   }, [slideIndex]);
 
-  // -----------------------------
-  // Step1 helpers (instant)
-  // -----------------------------
+  // hard-unlock on unmount
+  useEffect(() => {
+    return () => unlockScrollHard();
+  }, []);
+
+  // ✅ watchdog: if after transitions we are on step2 but scroll still locked -> unlock
+  useEffect(() => {
+    const id = window.setInterval(() => {
+      if (slideRef.current !== 1) return;
+      const b = document.body.style.overflow;
+      const h = document.documentElement.style.overflow;
+      if (b === "hidden" || h === "hidden") unlockScrollHard();
+    }, 350);
+
+    return () => window.clearInterval(id);
+  }, []);
+
+  /* ---------------------------------
+     go step1 instantly
+  --------------------------------- */
   const goToStep1Instant = useCallback(() => {
-    forcedStepRef.current = null; // release forced lock
+    forcedStepRef.current = null;
     setNoAnimOnce(true);
     setSlideIndex(0);
 
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => setNoAnimOnce(false));
-    });
-
+    requestAnimationFrame(() => requestAnimationFrame(() => setNoAnimOnce(false)));
     window.setTimeout(() => continueBtnRef.current?.focus?.(), 80);
   }, []);
 
-  // -----------------------------
-  // ✅ From /city: reset tutorial -> come back to step1
-  // -----------------------------
+  /* ---------------------------------
+     From /city reset tutorial -> go step1
+ --------------------------------- */
   useEffect(() => {
     if (!location.state?.resetCityTutorial) return;
 
-    try {
-      localStorage.removeItem(FIRST_VISIT_KEY);
-    } catch {}
-
-    try {
-      localStorage.removeItem(KB_HINT_KEY);
-    } catch {}
+    safeRemoveLS(FIRST_VISIT_KEY);
+    safeRemoveLS(KB_HINT_KEY);
+    safeRemoveLS("ag_language_chosen");
 
     goToStep1Instant();
-
-    // consume state
     window.history.replaceState({}, document.title);
   }, [location.state, goToStep1Instant]);
 
-  // -----------------------------
-  // ✅ From /city: goHomeStep:2 -> force step2 instantly
-  // -----------------------------
+  /* ---------------------------------
+     From /city -> force step2 instantly
+ --------------------------------- */
   useEffect(() => {
     const s = location.state?.goHomeStep;
     if (s !== 2) return;
@@ -186,21 +239,19 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
     setNoAnimOnce(true);
     setSlideIndex(1);
 
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => setNoAnimOnce(false));
-    });
+    // ✅ unlock immediately (avoid "stuck until refresh")
+    unlockScrollHard();
+    requestAnimationFrame(() => unlockScrollHard());
 
-    window.setTimeout(() => {
-      const first = document.querySelector(".homeOverlay__menuBtn");
-      first?.focus?.();
-    }, 80);
+    requestAnimationFrame(() => requestAnimationFrame(() => setNoAnimOnce(false)));
+    window.setTimeout(() => document.querySelector(".homeOverlay__menuBtn")?.focus?.(), 80);
 
     window.history.replaceState({}, document.title);
   }, [location.state]);
 
-  // -----------------------------
-  // Step1 language init
-  // -----------------------------
+  /* ---------------------------------
+     Language init
+ --------------------------------- */
   const detected = (i18n.resolvedLanguage || i18n.language || "en").slice(0, 2);
   const safeDetected = LANGS.includes(detected) ? detected : "en";
 
@@ -212,11 +263,32 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
   const [langActiveIndex, setLangActiveIndex] = useState(() =>
     Math.max(0, LANGS.indexOf(initialLang))
   );
-
   const [selectedLang, setSelectedLang] = useState(initialLang);
   const [isSwitchingLang, setIsSwitchingLang] = useState(false);
 
-  // keep selector synced if language changes from outside
+  /* ---------------------------------
+     BG prewarm
+ --------------------------------- */
+  const bgTrackRef = useRef(null);
+  const prewarmedRef = useRef(false);
+
+  const prewarmStep2BgOnce = useCallback(() => {
+    if (typeof window === "undefined") return () => {};
+    if (prewarmedRef.current) return () => {};
+    prewarmedRef.current = true;
+
+    const el = bgTrackRef.current;
+    if (!el) return () => {};
+
+    el.classList.add("isPrewarmStep2");
+    return () => {
+      try { el.classList.remove("isPrewarmStep2"); } catch {}
+    };
+  }, []);
+
+  /* ---------------------------------
+     Sync selector if language changes outside
+ --------------------------------- */
   useEffect(() => {
     if (slideIndex !== 0) return;
 
@@ -230,30 +302,16 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
     });
   }, [i18n.resolvedLanguage, i18n.language, slideIndex]);
 
-  // focus continue on step1 entry
   useEffect(() => {
     if (slideIndex !== 0) return;
-
-    const fallback = (i18n.resolvedLanguage || i18n.language || "en").slice(0, 2);
-    const safe = LANGS.includes(fallback) ? fallback : "en";
-    const base = selectedLang || safe;
-
-    setLangActiveIndex(Math.max(0, LANGS.indexOf(base)));
     requestAnimationFrame(() => continueBtnRef.current?.focus?.());
-  }, [slideIndex, i18n, selectedLang]);
+  }, [slideIndex]);
 
-  // -----------------------------
-  // KB hint state
-  // -----------------------------
-  const [showKbHint, setShowKbHint] = useState(() => {
-    try {
-      return localStorage.getItem(KB_HINT_KEY) !== "1";
-    } catch {
-      return true;
-    }
-  });
-
-  const [kbHintPhase, setKbHintPhase] = useState("hidden"); // hidden | visible | hiding
+  /* ---------------------------------
+     KB hint
+ --------------------------------- */
+  const [showKbHint, setShowKbHint] = useState(() => safeGetLS(KB_HINT_KEY) !== "1");
+  const [kbHintPhase, setKbHintPhase] = useState("hidden");
 
   useEffect(() => {
     if (slideIndex !== 0) return;
@@ -265,9 +323,7 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
     if (!showKbHint) return;
 
     setKbHintPhase("hiding");
-    try {
-      localStorage.setItem(KB_HINT_KEY, "1");
-    } catch {}
+    safeSetLS(KB_HINT_KEY, "1");
 
     window.setTimeout(() => {
       setShowKbHint(false);
@@ -275,9 +331,9 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
     }, 320);
   }, [showKbHint]);
 
-  // -----------------------------
-  // Step1 actions
-  // -----------------------------
+  /* ---------------------------------
+     Step1 actions
+ --------------------------------- */
   const handlePickLanguage = useCallback(
     async (code, idx) => {
       if (!LANGS.includes(code)) return;
@@ -286,11 +342,8 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
       if (typeof idx === "number") setLangActiveIndex(idx);
 
       setIsSwitchingLang(true);
-      try {
-        await setLanguage(code);
-      } finally {
-        setIsSwitchingLang(false);
-      }
+      try { await setLanguage(code); }
+      finally { setIsSwitchingLang(false); }
 
       requestAnimationFrame(() => continueBtnRef.current?.focus?.());
     },
@@ -305,26 +358,65 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
     consumeKbHint();
 
     setIsSwitchingLang(true);
-    try {
-      await setLanguage(selectedLang);
-    } finally {
-      setIsSwitchingLang(false);
+    try { await setLanguage(selectedLang); }
+    finally { setIsSwitchingLang(false); }
+
+    if (import.meta.env.DEV) {
+      console.log("[DBG] goToStep2() start", {
+        slideIndex,
+        selectedLang,
+        time: performance.now(),
+      });
+      console.log("[DBG] entries before", performance.getEntriesByName(location.origin + "/home_bg_step2.jpg"));
     }
+    
 
-    try {
-      localStorage.setItem(FIRST_VISIT_KEY, "1");
-    } catch {}
+    // await warmDecodeImages([
+    //   "/home_bg_step2.jpg",
+    //   "/preview_city.png",
+    //   "/preview_kasia.jpg",
+    //   "/preview_project_1.png",
+    //   "/preview_project_2.png",
+    //   "/preview_project_3.png",
+    // ]);
 
+    // if (import.meta.env.DEV) {
+    //   console.log("[DBG] after warmDecodeImages", {
+    //     time: performance.now(),
+    //   });
+    //   console.log("[DBG] entries after", performance.getEntriesByName(location.origin + "/home_bg_step2.jpg"));
+    // }
+    
+
+    // const releasePrewarm = prewarmStep2BgOnce();
+    await raf2();
+
+    // ✅ sync both flags
+    safeSetLS(FIRST_VISIT_KEY, "1");
     completeLanguageStep(selectedLang);
+
+    // ✅ CRITICAL: unlock scroll BEFORE switching slide (and after)
+    unlockScrollHard();
+    requestAnimationFrame(() => unlockScrollHard());
+
     setSlideIndex(1);
 
-    window.setTimeout(() => {
-      const first = document.querySelector(".homeOverlay__menuBtn");
-      first?.focus?.();
-    }, 420);
-  }, [selectedLang, setLanguage, completeLanguageStep, consumeKbHint]);
+    if (import.meta.env.DEV) {
+      requestAnimationFrame(() => {
+        console.log("[DBG] after setSlideIndex paint", {
+          time: performance.now(),
+        });
+      });
+    }
+    
 
-  // Step1 keyboard
+    // window.setTimeout(() => releasePrewarm?.(), 950);
+    window.setTimeout(() => {
+      document.querySelector(".homeOverlay__menuBtn")?.focus?.();
+    }, 420);
+  }, [selectedLang, setLanguage, completeLanguageStep, consumeKbHint, prewarmStep2BgOnce]);
+
+  // step1 keyboard
   useEffect(() => {
     if (slideIndex !== 0) return;
 
@@ -348,33 +440,34 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [
-    slideIndex,
-    langActiveIndex,
-    canContinue,
-    handlePickLanguage,
-    goToStep2,
-    consumeKbHint,
-  ]);
+  }, [slideIndex, langActiveIndex, canContinue, handlePickLanguage, goToStep2, consumeKbHint]);
 
-  // -----------------------------
-  // Step2 menu
-  // -----------------------------
+  // useEffect(() => {
+  //   if (slideIndex !== 0) return;
+  //   warmDecodeImages(["/home_bg_step2.jpg"]).catch(() => {});
+  // }, [slideIndex]);
+
+  /* ---------------------------------
+     Step2 menu
+ --------------------------------- */
   const [menuActiveIndex, setMenuActiveIndex] = useState(0);
 
   const runMenuAction = useCallback(
     (item) => {
       if (!item) return;
 
-      if (item.key === "explore") return navigate("/city", { state: { autoEnterCity: true } });
-      if (item.key === "about") return onGoAbout?.();
-      if (item.key === "projects") return onGoProjects?.();
-      if (item.key === "contact") return onGoContact?.();
+      if (item.key === "explore") {
+        navigate("/city", { state: { autoEnterCity: true } });
+        return;
+      }
+      if (item.key === "about") return goHash("#about");
+      if (item.key === "projects") return goHash("#projects");
+      if (item.key === "contact") return goHash("#contact");
     },
-    [navigate, onGoAbout, onGoProjects, onGoContact]
+    [navigate, goHash]
   );
 
-  // Step2 keyboard
+  // step2 keyboard
   useEffect(() => {
     if (slideIndex !== 1) return;
 
@@ -385,7 +478,6 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
         setMenuActiveIndex((i) => (i + dir + MENU.length) % MENU.length);
         return;
       }
-
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
         runMenuAction(MENU[menuActiveIndex]);
@@ -396,9 +488,9 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [slideIndex, menuActiveIndex, runMenuAction]);
 
-  // -----------------------------
-  // Reset buttons
-  // -----------------------------
+  /* ---------------------------------
+     Reset buttons
+ --------------------------------- */
   const handleResetLanguage = useCallback(async () => {
     if (typeof resetLanguageStep === "function") resetLanguageStep();
 
@@ -408,39 +500,33 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
     setSelectedLang(safe);
     setLangActiveIndex(Math.max(0, LANGS.indexOf(safe)));
 
-    try {
-      await setLanguage(safe);
-      await i18n.changeLanguage(safe);
-    } catch {}
+    try { await setLanguage(safe); await i18n.changeLanguage(safe); } catch {}
 
-    try {
-      localStorage.removeItem(FIRST_VISIT_KEY);
-    } catch {}
-
-    goToStep1Instant();
-  }, [resetLanguageStep, i18n, setLanguage, goToStep1Instant]);
+    // keep first visit key (prod behavior)
+  }, [resetLanguageStep, i18n, setLanguage]);
 
   const handleResetHint = useCallback(() => {
-    try {
-      localStorage.removeItem(KB_HINT_KEY);
-    } catch {}
+    safeRemoveLS(KB_HINT_KEY);
     setShowKbHint(true);
     setKbHintPhase("hidden");
   }, []);
 
   const handleResetFirstStep = useCallback(() => {
-    try {
-      localStorage.removeItem(FIRST_VISIT_KEY);
-    } catch {}
+    safeRemoveLS(FIRST_VISIT_KEY);
+    safeRemoveLS("ag_language_chosen");
+    safeRemoveLS(KB_HINT_KEY);
+
+    // ✅ also unlock just in case
+    unlockScrollHard();
+    requestAnimationFrame(() => unlockScrollHard());
+
     goToStep1Instant();
   }, [goToStep1Instant]);
 
-  // global flag
+  // global flag (css hooks)
   useEffect(() => {
     document.documentElement.dataset.agOnboarding = slideIndex === 0 ? "1" : "0";
-    return () => {
-      document.documentElement.dataset.agOnboarding = "0";
-    };
+    return () => { document.documentElement.dataset.agOnboarding = "0"; };
   }, [slideIndex]);
 
   return (
@@ -449,7 +535,7 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
       data-step={slideIndex === 0 ? "1" : "2"}
       aria-label="Home onboarding header"
     >
-      <OverlayBackground slideIndex={slideIndex} noAnimOnce={noAnimOnce} />
+      <OverlayBackground slideIndex={slideIndex} noAnimOnce={noAnimOnce} bgTrackRef={bgTrackRef} />
 
       <OverlayResetButtons
         t={t}
@@ -485,17 +571,12 @@ export default function HomeOverlay({ onGoAbout, onGoProjects, onGoContact }) {
             menuActiveIndex={menuActiveIndex}
             setMenuActiveIndex={setMenuActiveIndex}
             onRunAction={runMenuAction}
-            onGoAbout={onGoAbout}
-            onGoProjects={onGoProjects}
-            onGoContact={onGoContact}
+            onGoAbout={() => goHash("#about")}
+            onGoProjects={() => goHash("#projects")}
+            onGoContact={() => goHash("#contact")}
           />
         </div>
       </div>
     </header>
   );
 }
-
-
-
-
-

@@ -8,8 +8,8 @@
     width: 100%;
     height: 100%;
     overflow: hidden;
-    /* touch-action: pan-y; */
-    touch-action: none;
+    touch-action: pan-y;
+    /* touch-action: none; */
   }
   
   /* track en VW, pas en % */
@@ -27,7 +27,7 @@
   
   /* slide = 100vw strict */
   .homeOverlay__slide {
-    flex: 0 0 100vw; /* ✅ largeur exacte viewport */
+    flex: 0 0 100vw; 
     width: 100vw;
     height: 100%;
   

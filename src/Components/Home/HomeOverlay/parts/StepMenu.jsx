@@ -1,7 +1,8 @@
 // src/Components/Home/HomeOverlay/parts/StepMenu.jsx
-import React from "react";
+import React, { useCallback, useRef } from "react";
 import MenuPreview from "./MenuPreview";
 import ScrollHint from './ScrollHint'
+import { warmCityOnce } from "../../../../bootstrap/cityWarmup";
 
 export default function StepMenu({
   isActive,
@@ -16,6 +17,18 @@ export default function StepMenu({
 }) {
 
   const activeKey = MENU[menuActiveIndex]?.key;
+
+  const warmedRef = useRef(false);
+
+  const maybeWarmCity = useCallback((itemKey) => {
+    if (itemKey !== "explore") return;
+    if (warmedRef.current) return;
+    warmedRef.current = true;
+
+    // fire & forget
+    warmCityOnce().catch(() => {});
+  }, []);
+
 
   return (
     <section
@@ -46,14 +59,23 @@ export default function StepMenu({
               const btnClass =
                 item.kind === "primary" ? "homeOverlay__primaryBtn" : "homeOverlay__secondaryBtn";
 
+                const onHoverOrFocus = () => {
+                  setMenuActiveIndex(idx);
+                  maybeWarmCity(item.key); // ✅ warmup on hover/focus if explore
+                };
+  
               return (
                 <button
                   key={item.key}
                   type="button"
                   className={`${btnClass} homeOverlay__menuBtn ${isActiveBtn ? "isActive" : ""}`}
-                  onMouseEnter={() => setMenuActiveIndex(idx)}
-                  onFocus={() => setMenuActiveIndex(idx)}
-                  onClick={() => onRunAction(item)}
+                  onMouseEnter={onHoverOrFocus}
+                  onFocus={onHoverOrFocus}                  
+                  onTouchStart={() => maybeWarmCity(item.key)} // ✅ mobile prewarm
+                  onClick={() => {
+                    maybeWarmCity(item.key); // ✅ if user clicks instantly
+                    onRunAction(item);
+                  }}
                 >
                   <span className={`homeOverlay__chev ${isActiveBtn ? "isOn" : ""}`} aria-hidden="true">
                     &gt;

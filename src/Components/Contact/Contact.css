@@ -370,9 +370,7 @@
   .ctc-user-infos{ left: 520px; top: 10px; }
   .ctc-content{ left: 80px; top: 160px; }
 
-  .ctc-panel {
-    position: absolute;
-  }
+
 }
 
 /* =========================================
@@ -424,6 +422,18 @@
   pointer-events: none; /* important: bubble ne bloque pas le drag */
 }
 
+.ctc-grab{
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+@supports (backdrop-filter: blur(1px)){
+  .ctc-grab{
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+}
+
+
 .ctc-grab__hand{
   filter: drop-shadow(0 0 10px rgba(255,0,170,0.20));
 }
@@ -437,4 +447,22 @@
 .ctc-panel.active .ctc-grab{
   opacity: 1;
   transform: translateY(0);
+}
+
+.ctc-title{
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+@supports (backdrop-filter: blur(1px)){
+  html.isReady .ctc-title{
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+}
+
+
+.ctc-panel{
+  will-change: transform;
+  contain: layout paint;
 }

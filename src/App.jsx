@@ -1,43 +1,39 @@
+// src/App.jsx
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { ThemeProvider } from "./ThemeContext";
+
 import Home from "./Components/Home/Home";
 import HomeCity from "./Components/Home/HomeCity/HomeCity";
-import About from "./Components/About/About";
-import Essential from "./Components/Essential/Essential";
-import Navbar from "./Components/Navbar/Navbar";
 import Skills from "./Components/Skills/Skills";
-import Contact from "./Components/Contact/Contact";
-import Dandelion from "./Components/Dandlion/Dandlion";
+import Navbar from "./Components/Navbar/Navbar";
 import Footer from "./Components/Footer/Footer";
-import Portfolio from "./Components/Portfolio/Portfolio";
 import LanguageToast from "./Components/Navbar/LanguageToast";
+import Dandelion from "./Components/Dandlion/Dandlion";
 
 function Layout() {
   const location = useLocation();
   const isHome = location.pathname === "/";
-  const isPortfolio = location.pathname === "/portfolio";
-  const isAbout = location.pathname === "/about";
   const isCity = location.pathname === "/city";
-
-
 
   return (
     <>
       <Navbar />
-      <LanguageToast /> 
+      <LanguageToast />
 
-      {/* ✅ Hide custom cursor on Home (FPS/pointerlock page) */}
-      {!isHome && !isPortfolio && !isAbout && !isCity && <Dandelion />}
+      {/* cursor custom uniquement hors Home/City */}
+      {!isHome && !isCity && <Dandelion />}
 
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/city" element={<HomeCity />} />
-        <Route path="/essential" element={<Essential />} />
+
+        {/* routes “alias” */}
+        <Route path="/essential" element={<Navigate to="/#essential" replace />} />
         <Route path="/skills" element={<Skills />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/portfolio" element={<Portfolio />} />
-        <Route path="/contact" element={<Contact />} />
+        <Route path="/about" element={<Navigate to="/#about" replace />} />
+        <Route path="/portfolio" element={<Navigate to="/#projects" replace />} />
+        <Route path="/contact" element={<Navigate to="/#contact" replace />} />
       </Routes>
 
       <Footer />
@@ -45,7 +41,7 @@ function Layout() {
   );
 }
 
-function App() {
+export default function App() {
   return (
     <ThemeProvider>
       <Router>
@@ -54,5 +50,3 @@ function App() {
     </ThemeProvider>
   );
 }
-
-export default App;

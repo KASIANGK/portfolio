@@ -1,31 +1,40 @@
 // src/utils/projectsCache.js
-
 let _projectsPromise = null;
 let _projectsData = null;
 
-const _imgCache = new Map(); // url -> Promise<void>
+// url -> Promise<void> (dedupe global)
+const _imgCache = new Map();
 
-function _preloadOne(url) {
+/**
+ * Internal: preload + decode a single image once (cached).
+ * Resolves even on error (never blocks the app).
+ */
+function _preloadOne(url, opts = {}) {
   if (!url) return Promise.resolve();
   if (_imgCache.has(url)) return _imgCache.get(url);
 
   const p = new Promise((resolve) => {
     const img = new Image();
-    img.decoding = "async";
-    img.loading = "eager";
 
-    const done = async () => {
-      // decode = réduit le “pop” au moment d’afficher
+    // hints only
+    img.decoding = opts.decoding || "async";
+
+    // NOTE: fetchPriority exists on HTMLImageElement (camelCase)
+    // Some browsers may ignore it, but it's safe.
+    if (opts.fetchPriority) {
       try {
-        if (img.decode) await img.decode();
-      } catch {
-        // decode peut fail sur certains formats/browsers, no-op
-      }
-      resolve();
+        img.fetchPriority = opts.fetchPriority; // "high" | "low" | "auto"
+      } catch {}
+    }
+
+    const done = () => resolve();
+
+    img.onload = () => {
+      if (img.decode) img.decode().then(done).catch(done);
+      else done();
     };
 
-    img.onload = done;
-    img.onerror = () => resolve(); // ne bloque jamais
+    img.onerror = done; // never block
     img.src = url;
   });
 
@@ -33,18 +42,35 @@ function _preloadOne(url) {
   return p;
 }
 
-export function preloadImages(urls = []) {
-  const list = Array.from(new Set((urls || []).filter(Boolean)));
-  return Promise.all(list.map(_preloadOne));
+/** Public: await when an image URL has been preloaded/decoded (once). */
+export function whenImageReady(url) {
+  return _preloadOne(url);
 }
 
-// 1) data cache
+/** Public: preload a list of images once (deduped). */
+export function preloadImagesOnce(urls = [], opts = {}) {
+  const list = Array.from(new Set((urls || []).filter(Boolean)));
+  return Promise.all(list.map((u) => _preloadOne(u, opts)));
+}
+
+/* --------------------------
+   1) Data cache: projects.json
+-------------------------- */
+
+function getJsonCacheMode() {
+  try {
+    return import.meta?.env?.DEV ? "no-store" : "force-cache";
+  } catch {
+    return "force-cache";
+  }
+}
+
 export function getProjects() {
   if (_projectsData) return Promise.resolve(_projectsData);
   if (_projectsPromise) return _projectsPromise;
 
-  _projectsPromise = fetch("/projects.json")
-    .then((r) => r.json())
+  _projectsPromise = fetch("/projects.json", { cache: getJsonCacheMode() })
+    .then((r) => (r.ok ? r.json() : []))
     .then((data) => {
       _projectsData = Array.isArray(data) ? data : [];
       return _projectsData;
@@ -57,12 +83,17 @@ export function getProjects() {
   return _projectsPromise;
 }
 
-// 2) picks images
+/* --------------------------
+   2) Pick images from projects data
+-------------------------- */
+
 export function pickProjectImages(data, max = 10) {
   const urls = [];
+
   for (const p of data || []) {
     const imgs = Array.isArray(p.images) ? p.images.filter(Boolean) : [];
     const cover = p.cover || imgs[0];
+
     if (cover) urls.push(cover);
 
     for (const u of imgs) {
@@ -71,23 +102,33 @@ export function pickProjectImages(data, max = 10) {
     }
     if (urls.length >= max) break;
   }
+
   return urls.slice(0, max);
 }
 
-// 3) previeworgans assets
+/* --------------------------
+   3) Preview organs assets
+-------------------------- */
+
 export function warmPreviewAssets() {
-  return preloadImages([
-    "/preview_city.png",
-    "/preview_kasia.jpg",
-    "/preview_project_1.png",
-    "/preview_project_2.png",
-    "/preview_project_3.png",
-  ]);
+  return preloadImagesOnce(
+    [
+      "/preview_city.png",
+      "/preview_kasia.jpg",
+      "/preview_project_1.png",
+      "/preview_project_2.png",
+      "/preview_project_3.png",
+    ],
+    { fetchPriority: "high" }
+  );
 }
 
-// 4) warm projects images
+/* --------------------------
+   4) Warm some project images
+-------------------------- */
+
 export async function warmProjectImages(max = 12) {
   const data = await getProjects();
   const urls = pickProjectImages(data, max);
-  return preloadImages(urls);
+  return preloadImagesOnce(urls);
 }

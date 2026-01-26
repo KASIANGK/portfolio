@@ -3,7 +3,7 @@
   left: 50%;
   bottom: 26px;
   transform: translateX(-50%);
-  z-index: 5000;
+  z-index: 100000;
   pointer-events: none;
 }
 

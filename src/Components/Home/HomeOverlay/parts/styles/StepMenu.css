@@ -109,17 +109,27 @@
   .homeOverlay__previewLayer{
     position: absolute;
     inset: 0;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition: opacity 120ms ease;
+    will-change: opacity;
+    transform: translateZ(0);
   }
   .homeOverlay__previewLayer--prev{ pointer-events: none; }
   .homeOverlay__previewLayer--next{ pointer-events: auto; }
 
   /* ✅ MenuPreview instant switch (no transition, no blur) */
-.homeOverlay__previewLayer.isHidden {
-  display: none;
-}
-.homeOverlay__previewLayer.isShown {
-  display: block;
-}
+  .homeOverlay__previewLayer.isHidden{
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  .homeOverlay__previewLayer.isShown{
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
 
 /* ✅ icon color on hover works */
 .homeOverlay__iconOnlySvg{

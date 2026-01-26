@@ -18,4 +18,8 @@
   
     overflow: hidden;
   }
+  .homeOverlay{
+    isolation: isolate; /* évite des blend/repaint chelous */
+    background: #050016; /* fallback solide */
+  }
   

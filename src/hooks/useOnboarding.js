@@ -1,3 +1,4 @@
+// src/hooks/useOnboarding.js
 import { useEffect, useMemo, useState, useCallback } from "react";
 import i18n from "../i18n";
 
@@ -42,7 +43,7 @@ export default function useOnboarding() {
     if (i18n.language !== language) {
       i18n.changeLanguage(language).catch(() => {});
     }
-  }, [language]);
+  }, [language, i18n]);
 
   const setLanguage = useCallback(async (lng) => {
     setLanguageState(lng);
