@@ -32,7 +32,6 @@ export default function Contact({ initialContactInfo = null, initialSubjects = n
     () => (hasContactData(initialContactInfo) ? normalizeContact(initialContactInfo) : EMPTY_CONTACT),
     [initialContactInfo]
   );
-
   const initialSubjs = useMemo(() => asArray(initialSubjects), [initialSubjects]);
 
   const [contactInfo, setContactInfo] = useState(() => initialContact);
@@ -48,7 +47,7 @@ export default function Contact({ initialContactInfo = null, initialSubjects = n
   const userNodeRef = useRef(null);
   const contentNodeRef = useRef(null);
 
-  // ✅ reveal guard: listen to ag:revealDone (no polling)
+  // reveal guard
   const [revealReady, setRevealReady] = useState(() => {
     if (typeof window === "undefined") return false;
     return window.__AG_REVEAL_DONE__ === true;
@@ -68,7 +67,7 @@ export default function Contact({ initialContactInfo = null, initialSubjects = n
     return () => window.removeEventListener("ag:revealDone", setReady);
   }, []);
 
-  // ✅ canDrag: only on fine pointer/hover
+  // canDrag only on fine pointer/hover
   const [canDrag, setCanDrag] = useState(() => {
     if (typeof window === "undefined") return false;
     return window.matchMedia?.("(hover: hover) and (pointer: fine)")?.matches ?? false;
@@ -89,16 +88,16 @@ export default function Contact({ initialContactInfo = null, initialSubjects = n
     };
   }, []);
 
-  // ✅ keep state in sync if props change (boot hot-reload / dev)
+  // keep state in sync if props change (dev)
   useEffect(() => {
     if (hasContactData(initialContactInfo)) setContactInfo(normalizeContact(initialContactInfo));
   }, [initialContactInfo]);
 
   useEffect(() => {
-    if (Array.isArray(initialSubjects) && initialSubjects.length) setSubjects(asArray(initialSubjects));
+    if (Array.isArray(initialSubjects)) setSubjects(asArray(initialSubjects));
   }, [initialSubjects]);
 
-  // ✅ Fetch ONLY if missing (should be 0 in prod if boot provides data)
+  // Fetch ONLY if missing
   useEffect(() => {
     const alreadyHaveContact = hasContactData(initialContactInfo) || hasContactData(contactInfo);
     const alreadyHaveSubjects =
@@ -143,7 +142,7 @@ export default function Contact({ initialContactInfo = null, initialSubjects = n
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialContactInfo, initialSubjects]);
 
-  // ✅ auto-fill message
+  // auto-fill message
   useEffect(() => {
     if (!selectedSubject) return;
     const selected = subjects.find((s) => String(s.id) === String(selectedSubject));
@@ -153,6 +152,7 @@ export default function Contact({ initialContactInfo = null, initialSubjects = n
   // ✅ READY signal (once): when we have enough data + painted
   const didReadyRef = useRef(false);
   useEffect(() => {
+    if (typeof window === "undefined") return;
     if (didReadyRef.current) return;
 
     const hasSomeData = subjects?.length > 0 || hasContactData(contactInfo);
@@ -172,28 +172,9 @@ export default function Contact({ initialContactInfo = null, initialSubjects = n
     })();
   }, [subjects?.length, contactInfo]);
 
-  const didReady = useRef(false);
-
-  useEffect(() => {
-    if (didReady.current) return;
-    didReady.current = true;
-
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        window.dispatchEvent(new Event("ag:contactReady"));
-      });
-    });
-  }, []);
-
   const onFocusPanel = useCallback((key) => setActiveDiv(key), []);
-  const onChangeName = useCallback((e) => {
-    const v = e.target.value;
-    setContactInfo((p) => ({ ...p, name: v }));
-  }, []);
-  const onChangeEmail = useCallback((e) => {
-    const v = e.target.value;
-    setContactInfo((p) => ({ ...p, email: v }));
-  }, []);
+  const onChangeName = useCallback((e) => setContactInfo((p) => ({ ...p, name: e.target.value })), []);
+  const onChangeEmail = useCallback((e) => setContactInfo((p) => ({ ...p, email: e.target.value })), []);
   const onChangeSubject = useCallback((e) => setSelectedSubject(e.target.value), []);
   const onChangeMessage = useCallback((e) => setMessage(e.target.value), []);
 
@@ -299,11 +280,7 @@ export default function Contact({ initialContactInfo = null, initialSubjects = n
 
             <label className="ctc-field ctc-field--textarea">
               <span className="ctc-label">Payload</span>
-              <textarea
-                value={message}
-                onChange={onChangeMessage}
-                placeholder="Write your message…"
-              />
+              <textarea value={message} onChange={onChangeMessage} placeholder="Write your message…" />
             </label>
 
             <button className="ctc-send" type="button">

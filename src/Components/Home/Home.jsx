@@ -1,11 +1,5 @@
 // src/Components/Home/Home.jsx
-import React, {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  useCallback,
-} from "react";
+import React, { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 
 import HomeOverlay from "./HomeOverlay/HomeOverlay";
@@ -15,9 +9,10 @@ import "./Home.css";
 
 import Contact from "../Contact/Contact";
 import Essential from "../Essential/Essential";
+import About from "../About";
 
 /* ---------------------------------------
-   Small helpers
+   RAF helpers
 --------------------------------------- */
 const raf = () => new Promise((r) => requestAnimationFrame(r));
 const rafN = async (n = 2) => {
@@ -71,7 +66,7 @@ export default function Home() {
   );
 
   /* ---------------------------------------
-     Overlay step
+     Overlay step (1 = language, 2 = menu)
   --------------------------------------- */
   const [overlayStep, setOverlayStep] = useState(() =>
     shouldShowLanguageStep ? 1 : 2
@@ -89,11 +84,11 @@ export default function Home() {
   }, []);
 
   /* ---------------------------------------
-     HARD GATE: DOM not mounted
-     until boot + overlay OK
+     HARD GATE: sections do NOT mount
+     until boot + step2
   --------------------------------------- */
   const [homeReady, setHomeReady] = useState(() => {
-    if (overlayStep !== 2) return true;
+    if (overlayStep !== 2) return true; // step1: HomeOverlay only, no need to gate
     return typeof window !== "undefined" && window.__AG_BOOT_READY__ === true;
   });
 
@@ -121,11 +116,65 @@ export default function Home() {
   }, [overlayStep]);
 
   /* ---------------------------------------
-     GLOBAL STAGE GATE
-     (hide layout construction)
+     Hash scroll helpers (robust)
+     - queue if section not mounted yet
+  --------------------------------------- */
+  const pendingHashRef = useRef(null);
+
+  const scrollToHash = useCallback(
+    (hash) => {
+      const key = (hash || "").replace("#", "");
+      const map = { projects: projectsRef, contact: contactRef };
+
+      const ref = map[key];
+      if (!ref?.current) return false;
+
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const y = ref.current.getBoundingClientRect().top + window.scrollY - 50;
+          window.scrollTo({ top: y, behavior: "smooth" });
+        });
+      });
+
+      return true;
+    },
+    [] // refs are stable
+  );
+
+  // capture hash intent (even if DOM not mounted yet)
+  useEffect(() => {
+    const hash = (location.hash || "").replace("#", "");
+    if (!hash) return;
+
+    const ok = scrollToHash(`#${hash}`);
+    if (!ok) pendingHashRef.current = `#${hash}`;
+  }, [location.hash, scrollToHash]);
+
+  // flush queued hash once homeReady (DOM mounted)
+  useEffect(() => {
+    if (!homeReady) return;
+    if (!pendingHashRef.current) return;
+
+    const h = pendingHashRef.current;
+    pendingHashRef.current = null;
+
+    scrollToHash(h);
+  }, [homeReady, scrollToHash]);
+
+  /* ---------------------------------------
+     GLOBAL STAGE GATE (anti "sautilles")
+     - DOM mounts, but stays visually hidden
+     - becomes visible only after sections report ready (or timeout)
   --------------------------------------- */
   const [stageVisible, setStageVisible] = useState(false);
   const didStage = useRef(false);
+
+  // reset stage when leaving step2 (ex: reset onboarding)
+  useEffect(() => {
+    if (overlayStep === 2) return;
+    didStage.current = false;
+    setStageVisible(false);
+  }, [overlayStep]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -135,25 +184,25 @@ export default function Home() {
     didStage.current = true;
 
     (async () => {
-      // wait Essential + Contact OR timeout
+      // Wait Essential + Contact "painted" signals (or timeout fallback)
       await Promise.all([
-        waitEventOnce("ag:essentialReady"),
-        waitEventOnce("ag:contactReady"),
+        waitEventOnce("ag:essentialReady", 2800),
+        waitEventOnce("ag:contactReady", 2800),
       ]);
 
-      // let layout / blur / fonts settle
+      // Let layout/backdrop/compositing settle
       await rafN(2);
 
       setStageVisible(true);
 
-      // signal for main.jsx (splash)
+      // Signal for main.jsx (splash): "home is REALLY ready"
       await rafN(2);
       window.dispatchEvent(new Event("ag:homeFirstPaint"));
     })();
   }, [overlayStep, homeReady]);
 
   /* ---------------------------------------
-     Navigation helpers
+     Navigation helpers (used by overlay)
   --------------------------------------- */
   const scrollTo = useCallback((ref) => {
     if (!ref?.current) return;
@@ -167,44 +216,28 @@ export default function Home() {
   }, []);
 
   /* ---------------------------------------
-     Hash navigation
-  --------------------------------------- */
-  useEffect(() => {
-    const hash = (location.hash || "").replace("#", "");
-    if (!hash) return;
-
-    const map = { projects: projectsRef, contact: contactRef };
-    const ref = map[hash];
-    if (!ref?.current) return;
-
-    requestAnimationFrame(() =>
-      requestAnimationFrame(() => {
-        const y =
-          ref.current.getBoundingClientRect().top + window.scrollY - 50;
-        window.scrollTo({ top: y, behavior: "smooth" });
-      })
-    );
-  }, [location.hash]);
-
-  /* ---------------------------------------
      Render
   --------------------------------------- */
   return (
-    <div
-      className="homePage"
-      data-stage={stageVisible ? "1" : "0"}
-    >
+    <div className="homePage" data-stage={stageVisible ? "1" : "0"}>
       <HomeOverlay
         onStepChange={setOverlayStep}
         onGoProjects={() => scrollTo(projectsRef)}
         onGoContact={() => scrollTo(contactRef)}
       />
+      
 
       {overlayStep === 2 && <div className="homePage__afterHeader" />}
 
-      {/* DOM exists but is invisible until stageVisible */}
+      {/* DOM exists, but your CSS must hide .homeStage until data-stage="1" */}
       {overlayStep === 2 && homeReady && (
         <div className="homeStage">
+          <section className="homeSection" id="about">
+            <div className="homeSection__card isReady">
+              <About />
+            </div>
+          </section>
+
           <section ref={projectsRef} className="homeSection" id="projects">
             <div className="homeSection__card isReady">
               <Essential initialItems={essentialData} />

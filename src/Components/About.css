@@ -1,0 +1,164 @@
+/* src/Components/About/About.css */
+
+.aboutSection{
+    width: min(1100px, 92vw);
+    margin: 0 auto;
+    padding: 70px 0;
+  }
+  
+  .aboutTitle{
+    margin: 0 0 18px;
+    font-size: clamp(28px, 4vw, 44px);
+    letter-spacing: -0.03em;
+    color: rgba(245,245,255,0.95);
+  }
+  
+  /* container */
+  .essentials__about{
+    border-radius: 22px;
+    padding: 18px;
+    background: rgba(16, 10, 38, 0.52);
+    border: 1px solid rgba(255,255,255,0.10);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+    overflow: hidden;
+  }
+  
+  /* NAV */
+  .essentials__about__nav{
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  
+  .aboutTab{
+    position: relative;
+    height: 54px;
+    border-radius: 18px;
+    border: 1px solid rgba(255,255,255,0.10);
+    background: rgba(0,0,0,0.26);
+    color: rgba(255,255,255,0.86);
+    cursor: pointer;
+  
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  
+    transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+    outline: none;
+  }
+  
+  .aboutTab:hover,
+  .aboutTab:focus-visible{
+    transform: translateY(-1px);
+    border-color: rgba(255,0,170,0.38);
+    box-shadow: 0 0 0 1px rgba(255,0,170,0.12), 0 0 24px rgba(255,0,170,0.10);
+  }
+  
+  .aboutTab.isActive{
+    border-color: rgba(124,58,237,0.55);
+    box-shadow: 0 0 0 1px rgba(124,58,237,0.16), 0 0 28px rgba(124,58,237,0.12);
+  }
+  
+  /* “notch dot” */
+  .aboutTab__dot{
+    position: absolute;
+    bottom: -14px;
+    left: 50%;
+    transform: translateX(-50%) scale(0.85);
+    width: 46px;
+    height: 46px;
+    border-radius: 999px;
+    background: rgba(255,0,170,0.0);
+    border: 1px solid rgba(255,255,255,0.0);
+    box-shadow: none;
+    transition: transform 220ms ease, background 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+    pointer-events: none;
+  }
+  
+  /* dot visible when “shown” (hoverTab or activeTab) */
+  .aboutTab.isShown .aboutTab__dot{
+    background: rgba(120,255,70,0.95); /* tu peux remplacer par ta couleur */
+    border-color: rgba(255,255,255,0.10);
+    box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+    transform: translateX(-50%) scale(1);
+  }
+  
+  .aboutTab__icon{
+    font-size: 14px;
+    opacity: 0.9;
+  }
+  .aboutTab__label{
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    opacity: 0.9;
+  }
+  
+  /* CONTENT */
+  .essentials__about__content{
+    min-height: 220px;
+  }
+  
+  .aboutCard{
+    border-radius: 18px;
+    padding: 18px;
+    background: rgba(0,0,0,0.20);
+    border: 1px solid rgba(255,255,255,0.10);
+  
+    opacity: 0;
+    transform: translateY(8px);
+    animation: aboutFade 220ms ease forwards;
+  }
+  
+  @keyframes aboutFade{
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  /* reduce motion */
+  @media (prefers-reduced-motion: reduce){
+    .aboutCard{ animation: none; opacity: 1; transform: none; }
+    .aboutTab, .aboutTab__dot{ transition: none; }
+  }
+  
+  .aboutCard__head{
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 12px;
+  }
+  .aboutCard__title{
+    font-size: 16px;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.92);
+  }
+  .aboutCard__chips{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .aboutChip{
+    font-size: 11px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.82);
+  }
+  
+  .aboutCard__list{
+    margin: 0;
+    padding-left: 18px;
+    color: rgba(220,230,255,0.82);
+    line-height: 1.6;
+  }
+  
+  .aboutCard__foot{
+    margin-top: 12px;
+    opacity: 0.7;
+    font-size: 12px;
+  }
+  

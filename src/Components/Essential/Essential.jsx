@@ -18,6 +18,41 @@ const rafN = async (n = 2) => {
   for (let i = 0; i < n; i++) await raf();
 };
 
+// Preload + decode images (best effort)
+async function preloadAndDecodeImages(urls = []) {
+  if (typeof window === "undefined") return;
+
+  const tasks = urls
+    .filter(Boolean)
+    .map((src) => {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.decoding = "async";
+        img.loading = "eager";
+        img.fetchPriority = "high";
+
+        const done = () => resolve({ src, ok: true });
+        const fail = () => resolve({ src, ok: false });
+
+        img.onload = async () => {
+          // decode() is not always supported / may reject; best effort.
+          try {
+            if (img.decode) await img.decode();
+          } catch {}
+          done();
+        };
+
+        img.onerror = fail;
+        img.src = src;
+
+        // safety net (avoid hanging)
+        window.setTimeout(done, 1200);
+      });
+    });
+
+  await Promise.allSettled(tasks);
+}
+
 export default function Essential({ initialItems }) {
   // source of truth: props (quand Home est prêt) sinon fallback window
   const bootItems = useMemo(() => {
@@ -25,36 +60,20 @@ export default function Essential({ initialItems }) {
     return fromProps ?? safeBootEssential();
   }, [initialItems]);
 
-  // ✅ state réactif (dev timing safe)
+  // state réactif (dev timing safe)
   const [items, setItems] = useState(() => bootItems || []);
   useEffect(() => {
-    if (Array.isArray(bootItems) && bootItems.length) setItems(bootItems);
+    if (Array.isArray(bootItems)) setItems(bootItems);
   }, [bootItems]);
-  
-  const didReady = useRef(false);
 
-  useEffect(() => {
-    if (didReady.current) return;
-    if (!items?.length) return;
-    didReady.current = true;
-  
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        window.dispatchEvent(new Event("ag:essentialReady"));
-      });
-    });
-  }, [items?.length]);
-  
   const [visibleDiv, setVisibleDiv] = useState(null);
   const rootRef = useRef(null);
 
-  // ✅ GSAP: never on first reveal, never rerun
-  const didAnimRef = useRef(false);
-
-  // ✅ READY signal (once)
+  // READY signal (once)
   const didReadyRef = useRef(false);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
     if (didReadyRef.current) return;
     if (!items?.length) return;
     if (!rootRef.current) return;
@@ -62,10 +81,14 @@ export default function Essential({ initialItems }) {
     didReadyRef.current = true;
 
     (async () => {
-      // let DOM commit + paint
+      // 1) predecode first 6 images (best effort)
+      const first6 = items.slice(0, 6).map((it) => (it?.image ? `${ASSETS_PREFIX}${it.image}` : ""));
+      await preloadAndDecodeImages(first6);
+
+      // 2) let DOM commit + paint
       await rafN(2);
 
-      // global guard (optional but nice)
+      // 3) dispatch once with global guard
       try {
         if (!window.__AG_ESS_READY__) {
           window.__AG_ESS_READY__ = true;
@@ -73,7 +96,7 @@ export default function Essential({ initialItems }) {
         }
       } catch {}
     })();
-  }, [items?.length]);
+  }, [items]);
 
   const handleToggle = useCallback((id) => {
     setVisibleDiv((prev) => (prev === id ? null : id));
@@ -81,18 +104,18 @@ export default function Essential({ initialItems }) {
 
   const handleMouseLeave = useCallback(() => setVisibleDiv(null), []);
 
+  // GSAP: animate only after global reveal AND only if already near viewport
+  const didAnimRef = useRef(false);
   useEffect(() => {
     if (!items?.length) return;
 
     const allowAnim = typeof window !== "undefined" && window.__AG_REVEAL_DONE__ === true;
     if (!allowAnim) return;
-
     if (didAnimRef.current) return;
 
     const el = rootRef.current;
     if (!el) return;
 
-    // ✅ only animate if already near viewport (prevents “build under my eyes”)
     const rect = el.getBoundingClientRect();
     const inViewNow = rect.top < window.innerHeight * 0.85;
     if (!inViewNow) return;
@@ -164,14 +187,6 @@ export default function Essential({ initialItems }) {
 
             const eager = idx < 6;
             const src = it?.image ? `${ASSETS_PREFIX}${it.image}` : "";
-
-            if (import.meta.env.DEV && eager && src) {
-              window.__AG_DBG_ESS ??= new Set();
-              if (!window.__AG_DBG_ESS.has(src)) {
-                window.__AG_DBG_ESS.add(src);
-                console.log("[DBG][Essential] render eager img:", src);
-              }
-            }
 
             return (
               <div
