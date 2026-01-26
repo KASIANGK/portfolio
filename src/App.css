@@ -1,16 +1,19 @@
 #root {
   width: 100%;
-  min-height: 100vh;  
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  min-height: 100vh;
+  display: block;
   background-color: #0C0222;
   font-family: Arial, sans-serif;
 }
 
-html {
-  color: #0C0222;
+/* évite de styliser TOUS les boutons globalement */
+button { font-family: inherit; }
+
+html, body {
+  margin: 0;
+  padding: 0;
   background-color: #0C0222;
+  overflow-x: hidden;
 }
 
 .custom-canvas {

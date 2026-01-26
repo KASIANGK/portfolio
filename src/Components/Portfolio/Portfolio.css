@@ -182,7 +182,7 @@
   }
   
   @media (max-width: 520px) {
-    :root { --headerH: 190px; } /* a bit taller on mobile */
+    :root { --headerH: 190px; } 
     .portfolio__headerInner { grid-template-columns: 1fr; align-items: start; }
     .portfolio__chip { justify-self: start; max-width: 100%; }
   }
@@ -719,4 +719,10 @@
       justify-content: center;
     }
   }
+  
+
+
+
+
+
   

@@ -1,11 +1,11 @@
-html, body {
+/* html, body {
     margin: 0;
     padding: 0;
     height: 100%;
 }
 
 #root {
-    display: flex;
+    display: block;
     flex-direction: column;
     min-height: 100vh;
 }
@@ -13,7 +13,7 @@ html, body {
 footer {
     margin-top: auto;
     width: 100vw;
-}
+} */
 
 .footer-container {
     background-color: #333; 

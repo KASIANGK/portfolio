@@ -4,11 +4,19 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#050016" />
     <title>Vite + React</title>
+
+    <!-- Critical images: preload BEFORE React -->
+    <link rel="preload" as="image" href="/home_bg_step2.jpg" fetchpriority="high" />
+
+    <link rel="preload" as="image" href="/home_bg.jpg" />
+    <link rel="preload" as="image" href="/preview_city.png" />
+    <link rel="preload" as="image" href="/preview_kasia.jpg" />
   </head>
+
   <body style="background:#050016">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
-
