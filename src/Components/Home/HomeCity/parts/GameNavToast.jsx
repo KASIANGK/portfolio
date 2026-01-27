@@ -1,6 +1,6 @@
 // src/Components/Home/HomeCity/parts/GameNavToast.jsx
 import React, { useEffect, useRef, useState } from "react";
-import "../style/StepsHomeCity.css";
+import "./style/StepsHomeCity.css";
 
 export default function GameNavToast() {
   const [open, setOpen] = useState(false);

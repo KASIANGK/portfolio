@@ -1,7 +1,7 @@
 // src/Components/Home/HomeOverlay/parts/OverlayResetButtons.jsx
 import React from "react";
 
-export default function OverlayResetButtons({ t, onResetLanguage, onResetHint, onResetStep }) {
+export default function OverlayResetButtons({ t, onResetLanguage, onResetHint, onResetStep, onResetSteps }) {
   return (
     <>
       <button type="button" className="homeOverlay__resetBtn" onClick={onResetLanguage}>
@@ -17,6 +17,13 @@ export default function OverlayResetButtons({ t, onResetLanguage, onResetHint, o
       <button type="button" className="homeOverlay__resetBtn__Step" onClick={onResetStep}>
         <span className="homeOverlay__resetIcon" aria-hidden="true">↺</span>
         <span className="homeOverlay__resetText">RESET STEP1</span>
+      </button>
+
+      <button type="button" className="homeOverlay__resetBtn__HomeCity"
+        onClick={onResetSteps}
+      >
+        <span className="homeOverlay__resetIcon" aria-hidden="true">↺</span>
+        <span className="homeOverlay__resetText">RESET STEPS</span>
       </button>
     </>
   );

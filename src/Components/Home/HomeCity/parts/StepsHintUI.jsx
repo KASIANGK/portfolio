@@ -1,6 +1,6 @@
 // src/Components/Home/HomeCity/parts/ui/AgHintUI.jsx
 import React from "react";
-import "../style/StepsHintUI.css";
+import "./style/StepsHintUI.css";
 
 /**
  * Premium “Command Hints” UI (no GIF, no libs).

@@ -99,25 +99,6 @@
     max-width: 70ch;
   }
     
-/* Le layout existe => scroll OK */
-/* .homeSection__card.isLoading {
-  opacity: 0;
-  transform: translateY(6px);
-  pointer-events: none;
-} */
-
-/* Reveal clean */
-/* .homeSection__card.isReady {
-  opacity: 1;
-  transform: none;
-  transition: opacity 180ms ease, transform 180ms ease;
-} */
-
-/* Bonus: évite un flash layout sur certains navigateurs */
-/* .homeSection__card {
-  will-change: opacity, transform;
-} */
-
 
 .homeBackTop{
   position: fixed;
@@ -165,3 +146,54 @@
   transform: translateY(0);
   pointer-events:auto; 
 }
+/* ===============================
+   BACKPLATE FIXED (reveal base)
+   =============================== */
+   .homeBackplate{
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  
+    background: url("/bg_home_fixed.jpg") center / cover no-repeat;
+    transform: translateZ(0);
+    filter: saturate(1.05) contrast(1.05);
+  }
+  
+  /* Le contenu passe au-dessus */
+  .homePage{
+    position: relative;
+    z-index: 1;
+  }
+  
+  /* ===============================
+     REVEAL CAPOT (overlay mask feel)
+     - on simule l’ouverture vers le contenu
+     =============================== */
+  
+  /* Le stage est déjà caché chez toi, on garde. */
+  .homeStage{
+    position: relative;
+    z-index: 2;
+  }
+  
+  /* quand stage ok -> on ouvre la bulle */
+  .homePage[data-stage="1"]::before{
+    clip-path: circle(140% at 50% 60%);
+    opacity: 1;
+  }
+  
+  /* Accessibilité */
+  @media (prefers-reduced-motion: reduce){
+    .homePage::before{
+      transition: none;
+      clip-path: none;
+    }
+  }
+  .homePage::before{
+    pointer-events: none !important;
+  }
+  .homeSection{
+    scroll-margin-top: 70px; /* proche de ton offset */
+  }
+  
