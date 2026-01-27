@@ -1,164 +1,915 @@
 /* src/Components/About/About.css */
 
-.aboutSection{
-    width: min(1100px, 92vw);
+/* =========================
+   ABOUT — Holo Hub (Wheel + Snap Ball + Panels)
+   - left: 2 holo screens (bio + xp timeline)
+   - center: free wheel (no square container)
+   - right: visual holo screen (image changes)
+   - beam: soft spotlight (NOT a harsh rectangle)
+   - micro parallax: panels react to --px/--py set on .aboutX__core
+   ========================= */
+
+   .aboutX{
+    width: min(1200px, 92vw);
     margin: 0 auto;
-    padding: 70px 0;
+    padding: 90px 0 110px;
+    color: rgba(245,245,255,0.92);
   }
   
-  .aboutTitle{
-    margin: 0 0 18px;
-    font-size: clamp(28px, 4vw, 44px);
-    letter-spacing: -0.03em;
-    color: rgba(245,245,255,0.95);
+  /* Header */
+  .aboutX__header{
+    max-width: 74ch;
+    margin-bottom: 18px;
   }
-  
-  /* container */
-  .essentials__about{
-    border-radius: 22px;
-    padding: 18px;
-    background: rgba(16, 10, 38, 0.52);
-    border: 1px solid rgba(255,255,255,0.10);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.45);
-    overflow: hidden;
-  }
-  
-  /* NAV */
-  .essentials__about__nav{
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 10px;
-    margin-bottom: 16px;
-  }
-  
-  .aboutTab{
-    position: relative;
-    height: 54px;
-    border-radius: 18px;
-    border: 1px solid rgba(255,255,255,0.10);
-    background: rgba(0,0,0,0.26);
-    color: rgba(255,255,255,0.86);
-    cursor: pointer;
-  
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-  
-    transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
-    outline: none;
-  }
-  
-  .aboutTab:hover,
-  .aboutTab:focus-visible{
-    transform: translateY(-1px);
-    border-color: rgba(255,0,170,0.38);
-    box-shadow: 0 0 0 1px rgba(255,0,170,0.12), 0 0 24px rgba(255,0,170,0.10);
-  }
-  
-  .aboutTab.isActive{
-    border-color: rgba(124,58,237,0.55);
-    box-shadow: 0 0 0 1px rgba(124,58,237,0.16), 0 0 28px rgba(124,58,237,0.12);
-  }
-  
-  /* “notch dot” */
-  .aboutTab__dot{
-    position: absolute;
-    bottom: -14px;
-    left: 50%;
-    transform: translateX(-50%) scale(0.85);
-    width: 46px;
-    height: 46px;
-    border-radius: 999px;
-    background: rgba(255,0,170,0.0);
-    border: 1px solid rgba(255,255,255,0.0);
-    box-shadow: none;
-    transition: transform 220ms ease, background 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
-    pointer-events: none;
-  }
-  
-  /* dot visible when “shown” (hoverTab or activeTab) */
-  .aboutTab.isShown .aboutTab__dot{
-    background: rgba(120,255,70,0.95); /* tu peux remplacer par ta couleur */
-    border-color: rgba(255,255,255,0.10);
-    box-shadow: 0 18px 40px rgba(0,0,0,0.35);
-    transform: translateX(-50%) scale(1);
-  }
-  
-  .aboutTab__icon{
-    font-size: 14px;
-    opacity: 0.9;
-  }
-  .aboutTab__label{
+  .aboutX__kicker{
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
     font-size: 12px;
-    letter-spacing: 0.16em;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
-    opacity: 0.9;
+    color: rgba(200,255,255,0.70);
+    margin-bottom: 10px;
+  }
+  .aboutX__title{
+    margin: 0 0 10px;
+    font-size: clamp(30px, 4vw, 48px);
+    letter-spacing: -0.02em;
+    text-shadow:
+      0 0 26px rgba(255,0,170,0.14),
+      0 0 26px rgba(0,255,255,0.10);
+  }
+  .aboutX__lead{
+    margin: 0;
+    line-height: 1.65;
+    color: rgba(220,230,255,0.80);
   }
   
-  /* CONTENT */
-  .essentials__about__content{
-    min-height: 220px;
+  /* Top row: right aligned stack strip */
+  .aboutX__topRow{
+    margin-top: 16px;
+    display:flex;
+    align-items:center;
+    gap: 14px;
   }
+  .aboutX__topSpacer{ flex: 1 1 auto; }
   
-  .aboutCard{
-    border-radius: 18px;
-    padding: 18px;
-    background: rgba(0,0,0,0.20);
+  /* -------------------------
+     Reusable holo surfaces
+     ------------------------- */
+  .holoPanel{
+    position: relative;
+    border-radius: 22px;
+    padding: 14px;
+    background: rgba(6, 6, 16, 0.30);
     border: 1px solid rgba(255,255,255,0.10);
   
-    opacity: 0;
-    transform: translateY(8px);
-    animation: aboutFade 220ms ease forwards;
+    backdrop-filter: blur(12px) saturate(140%);
+    -webkit-backdrop-filter: blur(12px) saturate(140%);
+  
+    box-shadow:
+      0 18px 60px rgba(0,0,0,0.45),
+      0 0 0 1px rgba(0,255,255,0.07) inset;
+  
+    overflow: hidden;
+    isolation: isolate;
+  
+    /* organic: tiny curvature illusion */
+    transform: perspective(900px) rotateX(0.35deg) rotateY(-0.35deg);
   }
   
-  @keyframes aboutFade{
-    to { opacity: 1; transform: translateY(0); }
+  /* glow wash */
+  .holoPanel::before{
+    content:"";
+    position:absolute;
+    inset:-2px;
+    pointer-events:none;
+    opacity: .78;
+    background:
+      radial-gradient(900px 560px at 18% 22%, rgba(255,0,170,0.12), transparent 64%),
+      radial-gradient(900px 560px at 78% 32%, rgba(0,255,255,0.10), transparent 62%),
+      radial-gradient(600px 420px at 40% 85%, rgba(120,120,255,0.06), transparent 60%);
+    z-index:0;
   }
   
-  /* reduce motion */
-  @media (prefers-reduced-motion: reduce){
-    .aboutCard{ animation: none; opacity: 1; transform: none; }
-    .aboutTab, .aboutTab__dot{ transition: none; }
+  /* scanlines + micro grid */
+  .holoPanel::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    opacity:.35;
+    background:
+      repeating-linear-gradient(to bottom, rgba(255,255,255,.03) 0 1px, transparent 1px 8px),
+      repeating-linear-gradient(to right, rgba(255,255,255,.012) 0 1px, transparent 1px 14px);
+    mix-blend-mode: soft-light;
+    z-index:0;
   }
   
-  .aboutCard__head{
-    display: flex;
-    align-items: baseline;
+  /* subtle "curved glass edge" highlight */
+  .holoPanel > *{
+    position: relative;
+    z-index: 2;
+  }
+  
+  /* -------------------------
+     Stack strip
+     ------------------------- */
+  .holoStrip{
+    position: relative;
+    height: 35px;
+    border-radius: 999px;
+    padding: 0 12px;
+    display:flex;
+    align-items:center;
     justify-content: space-between;
-    gap: 14px;
-    margin-bottom: 12px;
+    gap: 10px;
+  
+    background: rgba(6, 6, 16, 0.24);
+    border: 1px solid rgba(255,255,255,0.10);
+  
+    backdrop-filter: blur(10px) saturate(140%);
+    -webkit-backdrop-filter: blur(10px) saturate(140%);
+  
+    box-shadow:
+      0 16px 46px rgba(0,0,0,0.32),
+      0 0 0 1px rgba(0,255,255,0.05) inset;
+  
+    overflow:hidden;
+    isolation:isolate;
   }
-  .aboutCard__title{
-    font-size: 16px;
-    letter-spacing: 0.10em;
+  .holoStrip::before{
+    content:"";
+    position:absolute;
+    inset:-1px;
+    opacity:.62;
+    background:
+      radial-gradient(620px 160px at 20% 50%, rgba(255,0,170,0.10), transparent 62%),
+      radial-gradient(620px 160px at 80% 50%, rgba(0,255,255,0.10), transparent 62%);
+    pointer-events:none;
+  }
+  .aboutX__stripLabel{
+    position: relative;
+    z-index: 2;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.92);
+    color: rgba(200,255,255,0.78);
   }
-  .aboutCard__chips{
-    display: flex;
-    flex-wrap: wrap;
+  .aboutX__stripChips{
+    position: relative;
+    z-index: 2;
+    display:flex;
+    gap: 8px;
+    overflow:hidden;
+    white-space:nowrap;
+  }
+  .aboutX__stripChip{
+    font-size: 11px;
+    letter-spacing: .06em;
+    border-radius: 999px;
+    padding: 6px 8px;
+    border: 1px solid rgba(255,255,255,0.10);
+    background: rgba(255,255,255,0.05);
+    color: rgba(245,245,255,0.86);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  }
+  
+  /* -------------------------
+     Main layout
+     ------------------------- */
+  .aboutX__layout{
+    margin-top: 14px;
+    display: grid;
+    grid-template-columns: minmax(340px, 1.25fr) minmax(360px, 420px) minmax(280px, 1fr);
+    gap: 16px;
+    align-items: start;
+  }
+  
+  /* LEFT ZONE wrapper is transparent */
+  .aboutX__leftZone{
+    position: relative;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    display:flex;
+    flex-direction: column;
+    gap: 14px;
+    min-height: 540px;
+  }
+  
+  /* BIO panel (top-left) — slightly skewed/organic */
+  .aboutX__bioPanel{
+    border-radius: 24px 18px 24px 20px;
+    transform: perspective(900px) rotateX(0.55deg) rotateY(-0.65deg);
+  }
+  .aboutX__bioTop{
+    display:flex;
+    flex-direction: column;
     gap: 8px;
   }
-  .aboutChip{
-    font-size: 11px;
-    padding: 6px 10px;
-    border-radius: 999px;
-    border: 1px solid rgba(255,255,255,0.12);
-    background: rgba(255,255,255,0.06);
-    color: rgba(255,255,255,0.82);
+  .aboutX__bioTitle{
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    font-size: 12px;
+    color: rgba(245,245,255,0.92);
+  }
+  .aboutX__bioSub{
+    color: rgba(200,255,255,0.68);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+  }
+  .aboutX__bioText{
+    margin: 10px 0 0;
+    line-height: 1.65;
+    color: rgba(220,230,255,0.82);
+    max-width: 72ch;
   }
   
-  .aboutCard__list{
+  /* XP panel (bottom-left) — larger screen + different shape */
+  .aboutX__xpPanel{
+    margin-top: auto;
+    border-radius: 18px 26px 18px 26px;
+    transform: perspective(900px) rotateX(0.35deg) rotateY(0.35deg);
+  }
+  
+  /* XP header */
+  .aboutX__xpHeader{
+    display:flex;
+    align-items:flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .aboutX__xpTitle{
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-size: 12px;
+    color: rgba(245,245,255,0.88);
+  }
+  
+  /* Buttons */
+  .aboutX__btn{
+    height: 42px;
+    padding: 0 14px;
+    border-radius: 14px;
+    border: 1px solid rgba(0,255,255,0.22);
+    background: rgba(0,0,0,0.18);
+    color: rgba(245,245,255,0.92);
+    text-decoration:none;
+    cursor:pointer;
+  
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    font-size: 12px;
+  
+    transition: transform 140ms ease, box-shadow 160ms ease, border-color 160ms ease;
+  }
+  .aboutX__btn:hover{
+    transform: translateY(-1px);
+    border-color: rgba(0,255,255,0.34);
+    box-shadow: 0 12px 26px rgba(0,0,0,0.40), 0 0 22px rgba(0,255,255,0.10);
+  }
+  .aboutX__btn.isGhost{ border-color: rgba(255,255,255,0.12); }
+  
+  .aboutX__xpActions{
+    display:flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content:flex-end;
+  }
+  
+  /* Stylish arrow rail above the timeline */
+  .aboutX__timelineArrow{
+    height: 18px;
+    margin: 10px 0 8px;
+    position: relative;
+    opacity: .95;
+  }
+  .aboutX__timelineArrow::before{
+    content:"";
+    position:absolute;
+    left: 10px;
+    right: 30px;
+    top: 50%;
+    height: 1px;
+    transform: translateY(-50%);
+    background: linear-gradient(90deg,
+      rgba(0,255,255,0.00),
+      rgba(0,255,255,0.35),
+      rgba(255,0,170,0.28),
+      rgba(120,120,255,0.20),
+      rgba(0,255,255,0.14),
+      rgba(0,255,255,0.00)
+    );
+    filter: blur(0.1px);
+  }
+  .aboutX__timelineArrow::after{
+    content:"";
+    position:absolute;
+    right: 10px;
+    top: 50%;
+    width: 14px;
+    height: 14px;
+    transform: translateY(-50%) rotate(45deg);
+    border-right: 1px solid rgba(0,255,255,0.42);
+    border-top: 1px solid rgba(0,255,255,0.42);
+    box-shadow: 0 0 18px rgba(0,255,255,0.14);
+  }
+  
+  /* Horizontal scroll timeline container */
+  .aboutX__timelineH{
+    display:flex;
+    gap: 12px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 8px 6px 10px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* nice scrollbar (webkit) */
+  .aboutX__timelineH::-webkit-scrollbar{ height: 10px; }
+  .aboutX__timelineH::-webkit-scrollbar-track{
+    background: rgba(255,255,255,0.04);
+    border-radius: 999px;
+  }
+  .aboutX__timelineH::-webkit-scrollbar-thumb{
+    background: linear-gradient(90deg, rgba(0,255,255,0.25), rgba(255,0,170,0.18));
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.10);
+  }
+  .aboutX__timelineH::-webkit-scrollbar-thumb:hover{
+    background: linear-gradient(90deg, rgba(0,255,255,0.35), rgba(255,0,170,0.26));
+  }
+  
+  /* Timeline cards (organic screens) */
+  .aboutX__timeCard{
+    flex: 0 0 auto;
+    width: min(320px, 78vw);
+    scroll-snap-align: start;
+  
+    border-radius: 18px 22px 18px 22px;
+    padding: 10px 12px;
+  
+    background: rgba(0,0,0,0.14);
+    border: 1px solid rgba(255,255,255,0.09);
+  
+    box-shadow:
+      0 16px 38px rgba(0,0,0,0.30),
+      0 0 0 1px rgba(0,255,255,0.04) inset;
+  
+    position: relative;
+    overflow:hidden;
+    isolation:isolate;
+  }
+  .aboutX__timeCard::before{
+    content:"";
+    position:absolute;
+    inset:-2px;
+    opacity:.55;
+    background:
+      radial-gradient(320px 180px at 20% 30%, rgba(0,255,255,0.12), transparent 60%),
+      radial-gradient(320px 180px at 80% 70%, rgba(255,0,170,0.10), transparent 62%);
+    pointer-events:none;
+  }
+  .aboutX__timeCard:nth-child(2n){
+    border-radius: 22px 18px 22px 18px;
+    transform: translateY(2px);
+  }
+  .aboutX__timeCard:nth-child(3n){
+    transform: translateY(-2px);
+  }
+  
+  .aboutX__timeDot{
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    margin-top: 2px;
+    background: rgba(0,255,255,0.86);
+    box-shadow: 0 0 16px rgba(0,255,255,0.22);
+    flex: 0 0 auto;
+  }
+  
+  .aboutX__timeText{
+    margin-top: 8px;
+    color: rgba(220,230,255,0.84);
+    line-height: 1.55;
+  }
+  .aboutX__bold{ font-weight: 850; color: rgba(255,255,255,0.92); }
+  .aboutX__muted{ color: rgba(220,230,255,0.78); }
+  
+  /* -------------------------
+     Center wheel
+     ------------------------- */
+  .aboutX__center{
+    display:flex;
+    flex-direction:column;
+    gap: 12px;
+    align-items:center;
+  }
+  
+  .aboutX__wheelStage{
+    position: relative;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap: 10px;
+    padding-top: 8px;
+  }
+  
+  /* Core: free (no box) */
+  .aboutX__core{
+    --ballAng: -90deg;
+    --ballSpin: 0deg;
+    --beam: 0.20;   /* 0..1 */
+    --px: 0;        /* -1..1 */
+    --py: 0;        /* -1..1 */
+  
+    position: relative;
+    width: 360px;
+    height: 360px;
+    display:grid;
+    place-items:center;
+  
+    background: transparent;
+    border: 0;
+    outline: none;
+  
+    user-select:none;
+    touch-action: pan-y;
+  }
+  
+  /* Ring */
+  .aboutX__ring{
+    position:absolute;
+    width: 300px;
+    height: 300px;
+    border-radius: 999px;
+  
+    border: 1px solid rgba(255,255,255,0.10);
+    box-shadow:
+      0 0 0 1px rgba(0,255,255,0.06) inset,
+      0 0 30px rgba(0,255,255,0.10),
+      0 0 44px rgba(255,0,170,0.08);
+  
+    filter:
+      drop-shadow(0 0 calc(10px + var(--beam) * 18px) rgba(0,255,255,0.10))
+      drop-shadow(0 0 calc(10px + var(--beam) * 16px) rgba(255,0,170,0.08));
+  }
+  
+  /* Ring internal shimmer / “distort” hint when beam passes */
+  .aboutX__ring::before{
+    content:"";
+    position:absolute;
+    inset:-18px;
+    border-radius: 999px;
+    opacity: calc(0.12 + var(--beam) * 0.28);
+    background:
+      conic-gradient(
+        from var(--ballAng),
+        rgba(255,0,170,0.0),
+        rgba(255,0,170,0.18),
+        rgba(0,255,255,0.18),
+        rgba(120,120,255,0.12),
+        rgba(0,255,255,0.0)
+      );
+    filter: blur(10px);
+    pointer-events:none;
+  }
+  
+  /* Beam: soft spotlight wedge, NOT a rectangle diameter
+     We fake it as a thin capsule + big blur halo */
+  .aboutX__beam{
+    position:absolute;
+    width: 380px;
+    height: 54px;
+    border-radius: 999px;
+  
+    opacity: calc(0.06 + var(--beam) * 0.45);
+  
+    /* core light */
+    background:
+      radial-gradient(60px 22px at 50% 50%, rgba(255,255,255,0.18), rgba(255,255,255,0.0) 60%),
+      linear-gradient(90deg,
+        rgba(0,255,255,0.00),
+        rgba(0,255,255,0.25),
+        rgba(255,0,170,0.22),
+        rgba(120,120,255,0.16),
+        rgba(0,255,255,0.18),
+        rgba(0,255,255,0.00)
+      );
+  
+    transform:
+      rotate(var(--ballAng))
+      scaleX(calc(0.78 + var(--beam) * 0.30));
+  
+    filter: blur(8px);
+    pointer-events:none;
+    mix-blend-mode: screen;
+  }
+  
+  /* Nodes around ring */
+  .aboutX__node{
+    position:absolute;
+    width: 64px;
+    height: 64px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(10, 8, 22, 0.16);
+  
+    display:grid;
+    place-items:center;
+    cursor:pointer;
+  
+    transform:
+      rotate(var(--a))
+      translateX(150px)
+      rotate(calc(var(--a) * -1));
+  
+    transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease, background 160ms ease;
+    box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+    overflow:hidden;
+    isolation:isolate;
+  }
+  
+  .aboutX__nodeGlow{
+    position:absolute;
+    inset:-2px;
+    opacity: 0.0;
+    background:
+      radial-gradient(260px 150px at 30% 30%, rgba(255,0,170,0.24), transparent 60%),
+      radial-gradient(260px 150px at 70% 60%, rgba(0,255,255,0.22), transparent 60%);
+    transition: opacity 160ms ease;
+    pointer-events:none;
+  }
+  
+  .aboutX__node:hover .aboutX__nodeGlow,
+  .aboutX__node:focus-visible .aboutX__nodeGlow{
+    opacity: 1;
+  }
+  
+  .aboutX__node:hover,
+  .aboutX__node:focus-visible{
+    border-color: rgba(0,255,255,0.32);
+    outline:none;
+    box-shadow:
+      0 16px 40px rgba(0,0,0,0.38),
+      0 0 30px rgba(0,255,255,0.12);
+  }
+  
+  .aboutX__node.isActive{
+    border-color: rgba(255,0,170,0.30);
+    background: rgba(28, 10, 40, 0.22);
+    box-shadow:
+      0 0 0 1px rgba(255,0,170,0.12) inset,
+      0 0 26px rgba(255,0,170,0.12),
+      0 0 24px rgba(0,255,255,0.10),
+      0 18px 45px rgba(0,0,0,0.42);
+  }
+  
+  /* icon (SVG) */
+  .aboutX__icon{
+    position: relative;
+    z-index: 2;
+    color: rgba(245,245,255,0.92);
+    filter: drop-shadow(0 14px 22px rgba(0,0,0,0.35));
+  }
+  .aboutX__icon svg{
+    display:block;
+    width: 24px;
+    height: 24px;
+  }
+  .aboutX__node:hover .aboutX__icon,
+  .aboutX__node:focus-visible .aboutX__icon{
+    color: rgba(220,255,255,0.96);
+  }
+  .aboutX__node.isActive .aboutX__icon{
+    color: rgba(255,240,255,0.96);
+    text-shadow:
+      0 0 18px rgba(0,255,255,0.18),
+      0 0 18px rgba(255,0,170,0.14);
+  }
+  
+  /* Rolling ball */
+  .aboutX__ball{
+    position:absolute;
+    width: 18px;
+    height: 18px;
+    border-radius: 999px;
+  
+    transform:
+      rotate(var(--ballAng))
+      translateX(150px)
+      rotate(calc(var(--ballAng) * -1))
+      rotate(var(--ballSpin));
+  
+    background: rgba(0,255,255,0.88);
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.16) inset,
+      0 0 22px rgba(0,255,255,0.20),
+      0 0 30px rgba(255,0,170,0.12);
+    z-index: 3;
+  }
+  .aboutX__ballSpec{
+    position:absolute;
+    inset:0;
+    border-radius: 999px;
+    background: radial-gradient(circle at 35% 28%, rgba(255,255,255,0.95), rgba(255,255,255,0.0) 55%);
+    opacity: .9;
+  }
+  
+  /* Center label */
+  .aboutX__centerLabel{
+    position:absolute;
+    text-align:center;
+    pointer-events:none;
+  }
+  .aboutX__centerTop{
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-size: 12px;
+    color: rgba(200,255,255,0.80);
+    text-shadow: 0 0 18px rgba(0,255,255,0.12);
+  }
+  .aboutX__centerSub{
+    margin-top: 8px;
+    font-size: 18px;
+    letter-spacing: -0.02em;
+    color: rgba(245,245,255,0.92);
+    text-shadow:
+      0 0 20px rgba(255,0,170,0.12),
+      0 0 20px rgba(0,255,255,0.10);
+  }
+  
+  /* hint */
+  .aboutX__hint{
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(200, 255, 255, 0.62);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  }
+  
+  /* -------------------------
+     Right visual panel
+     ------------------------- */
+  .aboutX__visual{
+    min-height: 540px;
+  }
+  .aboutX__visualPanel{
+    height: 100%;
+    min-height: 420px;
+    border-radius: 26px 18px 26px 18px;
+    transform: perspective(900px) rotateX(0.25deg) rotateY(0.75deg);
+  }
+  .aboutX__visualWrap{
+    position: relative;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.10);
+    background: rgba(0,0,0,0.18);
+    height: 100%;
+    min-height: 320px;
+  }
+  .aboutX__visualWrap img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display:block;
+    filter: saturate(118%) contrast(110%) brightness(0.96);
+    transform: translateZ(0);
+  }
+  .aboutX__visualCaption{
+    margin-top: 10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap: 10px;
+    color: rgba(220,230,255,0.78);
+  
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+  }
+  .aboutX__visualKicker{ opacity: .92; }
+  .aboutX__visualDot{ opacity: .55; }
+  
+  /* -------------------------
+     Micro parallax (cheap + smooth)
+     Panels respond to vars set on .aboutX__core (--px/--py)
+     We use :has() so no extra JS required.
+     ------------------------- */
+  @supports selector(:has(*)){
+    .aboutX:has(.aboutX__core){
+      --px: 0;
+      --py: 0;
+      --beam: 0.2;
+    }
+  
+    /* Pull vars: we cannot "read" from child to parent in pure CSS,
+       but we can visually move panels based on hover state and keep it subtle.
+       The true micro parallax is already applied via JS setting vars on the core;
+       we mirror those vars by using the same values directly on the panels via inheritance:
+       -> easiest: core and panels share the same scope if they are within the same section.
+    */
+    .aboutX .holoPanel{
+      transform:
+        perspective(900px)
+        rotateX(calc(0.35deg + (var(--py) * -0.6deg)))
+        rotateY(calc(-0.35deg + (var(--px) * 0.6deg)))
+        translate3d(calc(var(--px) * 2px), calc(var(--py) * 2px), 0);
+      transition: transform 140ms ease;
+      will-change: transform;
+    }
+  
+    .aboutX__bioPanel{
+      transform:
+        perspective(900px)
+        rotateX(calc(0.55deg + (var(--py) * -0.7deg)))
+        rotateY(calc(-0.65deg + (var(--px) * 0.7deg)))
+        translate3d(calc(var(--px) * 2.5px), calc(var(--py) * 2.5px), 0);
+    }
+  
+    .aboutX__xpPanel{
+      transform:
+        perspective(900px)
+        rotateX(calc(0.35deg + (var(--py) * -0.6deg)))
+        rotateY(calc(0.35deg + (var(--px) * 0.6deg)))
+        translate3d(calc(var(--px) * 2.2px), calc(var(--py) * 2.2px), 0);
+    }
+  
+    .aboutX__visualPanel{
+      transform:
+        perspective(900px)
+        rotateX(calc(0.25deg + (var(--py) * -0.6deg)))
+        rotateY(calc(0.75deg + (var(--px) * 0.6deg)))
+        translate3d(calc(var(--px) * 2.2px), calc(var(--py) * 2.2px), 0);
+    }
+  }
+  
+  /* -------------------------
+     Modal
+     ------------------------- */
+  .aboutX__modalOverlay{
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display:grid;
+    place-items:center;
+  }
+  .aboutX__modalBackdrop{
+    position:absolute;
+    inset:0;
+    border:0;
+    background: rgba(0,0,0,0.55);
+    cursor:pointer;
+  }
+  .aboutX__modal{
+    position: relative;
+    z-index: 2;
+    width: min(980px, 92vw);
+    max-height: min(82vh, 860px);
+    overflow: auto;
+    border-radius: 22px;
+  
+    background: rgba(6, 6, 16, 0.72);
+    border: 1px solid rgba(255,255,255,0.12);
+    backdrop-filter: blur(14px) saturate(135%);
+    -webkit-backdrop-filter: blur(14px) saturate(135%);
+  
+    box-shadow: 0 24px 70px rgba(0,0,0,0.55);
+    padding: 14px;
+  }
+  
+  .aboutX__modalTop{
+    display:flex;
+    justify-content:space-between;
+    gap: 12px;
+    align-items:center;
+    margin-bottom: 12px;
+  }
+  .aboutX__modalTitle{
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-size: 12px;
+    color: rgba(245,245,255,0.86);
+  }
+  .aboutX__modalBody{
+    display:grid;
+    gap: 14px;
+  }
+  .aboutX__modalBlock{
+    border-radius: 18px;
+    padding: 12px;
+    background: rgba(0,0,0,0.18);
+    border: 1px solid rgba(255,255,255,0.10);
+  }
+  .aboutX__modalKicker{
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(200,255,255,0.72);
+    margin-bottom: 8px;
+  }
+  .aboutX__modalLead{
+    color: rgba(220,230,255,0.82);
+    line-height: 1.65;
+  }
+  .aboutX__modalList{
     margin: 0;
     padding-left: 18px;
     color: rgba(220,230,255,0.82);
-    line-height: 1.6;
+    line-height: 1.65;
+  }
+  .aboutX__modalChips{
+    display:flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .aboutX__chip{
+    border-radius: 999px;
+    padding: 8px 10px;
+    font-size: 12px;
+  
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.06);
+    color: rgba(245,245,255,0.88);
+  
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    letter-spacing: 0.06em;
+  }
+  .aboutX__modalFooter{
+    display:flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content:flex-end;
+    margin-top: 14px;
   }
   
-  .aboutCard__foot{
-    margin-top: 12px;
-    opacity: 0.7;
-    font-size: 12px;
+  /* -------------------------
+     Responsive
+     ------------------------- */
+  @media (max-width: 1080px){
+    .aboutX__layout{
+      grid-template-columns: 1fr;
+    }
+    .aboutX__visual{
+      min-height: 340px;
+    }
+    .aboutX__visualPanel{
+      min-height: 360px;
+    }
+    .aboutX__center{
+      order: -1;
+    }
+    .aboutX__leftZone{
+      min-height: auto;
+    }
+  }
+  
+  @media (max-width: 520px){
+    .aboutX{
+      padding: 70px 0 90px;
+    }
+    .aboutX__core{
+      width: 320px;
+      height: 320px;
+    }
+    .aboutX__ring{
+      width: 270px;
+      height: 270px;
+    }
+    .aboutX__node{
+      width: 58px;
+      height: 58px;
+      transform:
+        rotate(var(--a))
+        translateX(135px)
+        rotate(calc(var(--a) * -1));
+    }
+    .aboutX__ball{
+      transform:
+        rotate(var(--ballAng))
+        translateX(135px)
+        rotate(calc(var(--ballAng) * -1))
+        rotate(var(--ballSpin));
+    }
+  }
+  
+  /* Reduce motion */
+  @media (prefers-reduced-motion: reduce){
+    .aboutX__btn,
+    .aboutX__node,
+    .holoPanel{
+      transition: none !important;
+    }
   }
   

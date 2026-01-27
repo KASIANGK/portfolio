@@ -155,7 +155,7 @@
     z-index: 0;
     pointer-events: none;
   
-    background: url("/bg_home_fixed.jpg") center / cover no-repeat;
+    background: url("/home_bg.jpg") center / cover no-repeat;
     transform: translateZ(0);
     filter: saturate(1.05) contrast(1.05);
   }
