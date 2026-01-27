@@ -5,9 +5,10 @@
 /* Base shared styles */
 .homeOverlay__resetBtn,
 .homeOverlay__resetBtn__Hint,
-.homeOverlay__resetBtn__Step {
+.homeOverlay__resetBtn__Step,
+.homeOverlay__resetBtn__HomeCity {
   position: fixed;
-  right: 16px;
+  left: 16px;
   z-index: 6000;
 
   display: inline-flex;
@@ -31,10 +32,10 @@
 
   transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
 }
-
+.homeOverlay__resetBtn__HomeCity { bottom: 220px;}
 .homeOverlay__resetBtn { bottom: 16px; }
 .homeOverlay__resetBtn__Hint { bottom: 80px; }
-.homeOverlay__resetBtn__Step { bottom: 160px; }
+.homeOverlay__resetBtn__Step { bottom: 150px; }
 
 .homeOverlay__resetBtn:hover,
 .homeOverlay__resetBtn__Hint:hover,

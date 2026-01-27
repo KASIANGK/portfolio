@@ -86,52 +86,6 @@
     transition: none !important;
   }
   
-  /* ✅ PREWARM SANS TOUCHER AU SWIPE */
-  /* .homeOverlay__bgTrack.isPrewarmStep2::after{
-    content:"";
-    position:absolute;
-    inset:0;
-  
-    background-image: url("/home_bg_step2.jpg");
-    background-size: cover;
-    background-position: center;
-  
-    opacity: 0.001;
-    pointer-events: none;
-  
-    transform: translate3d(-200vw, 0, 0); 
-    will-change: transform;
-  } */
-  
-  /* .homeOverlay__bgTrack.isPrewarmStep2::after{
-    content:"";
-    position:absolute;
-    top:0;
-    left:-9999px;
-    width:10px;
-    height:10px;
-  
-    background-image: url("/home_bg_step2.jpg");
-    background-size: cover;
-    background-position: center;
-  
-    opacity: 0.001;
-    pointer-events: none;
-  } */
-  
-  /* .homeOverlay__bgTrack.isPrewarmStep2::after{
-    content:"";
-    position:absolute;
-    inset:0;
-    background-image: url("/home_bg_step2.jpg");
-    background-size: cover;
-    background-position: 50% 50%;
-    opacity: 0.001;
-    pointer-events: none;
-  
-    transform: translate3d(100vw, 0, 0);
-    will-change: transform;
-  } */
   
   .homeOverlay__noise {
     position: absolute;
@@ -171,8 +125,17 @@
   
     opacity: 0.30;
   }
-/*   
-  .homeOverlay__previewMedia .homeOverlay__previewImg { opacity: 1; transition: opacity 160ms ease; }
-  .homeOverlay__previewMedia[data-ready="0"] .homeOverlay__previewImg { opacity: 0.001; }
-  .homeOverlay__previewMedia[data-ready="1"] .homeOverlay__previewImg { opacity: 1; }
-   */
+
+  /* Quand le reveal est fait, l’overlay laisse respirer */
+  html[data-ag-reveal="1"] .homeOverlay{
+    background: transparent;
+  }
+
+  /* Et si tes bgFrame couvrent encore trop, tu peux aussi :
+    (uniquement si tu veux que la backplate prenne le relais)
+  */
+  html[data-ag-reveal="1"] .homeOverlay__bgViewport{
+    transition: opacity 450ms ease;
+  }
+
+  

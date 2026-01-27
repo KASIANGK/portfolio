@@ -11,6 +11,8 @@ import Contact from "../Contact/Contact";
 import Essential from "../Essential/Essential";
 import About from "../About";
 
+import NavbarScrollHomePage from "./NavbarScrollHomePage/NavbarScrollHomePage";
+
 /* ---------------------------------------
    RAF helpers
 --------------------------------------- */
@@ -40,6 +42,8 @@ function waitEventOnce(name, timeoutMs = 2600) {
    Home
 --------------------------------------- */
 export default function Home() {
+  const headerRef = useRef(null); // Welcome (header)
+  const aboutRef = useRef(null);
   const projectsRef = useRef(null);
   const contactRef = useRef(null);
 
@@ -73,22 +77,11 @@ export default function Home() {
   );
 
   /* ---------------------------------------
-     Back-to-top
-  --------------------------------------- */
-  const [showTop, setShowTop] = useState(false);
-  useEffect(() => {
-    const onScroll = () => setShowTop(window.scrollY > 300);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  /* ---------------------------------------
      HARD GATE: sections do NOT mount
      until boot + step2
   --------------------------------------- */
   const [homeReady, setHomeReady] = useState(() => {
-    if (overlayStep !== 2) return true; // step1: HomeOverlay only, no need to gate
+    if (overlayStep !== 2) return true;
     return typeof window !== "undefined" && window.__AG_BOOT_READY__ === true;
   });
 
@@ -116,41 +109,54 @@ export default function Home() {
   }, [overlayStep]);
 
   /* ---------------------------------------
-     Hash scroll helpers (robust)
+     Hash scroll (robust)
      - queue if section not mounted yet
   --------------------------------------- */
   const pendingHashRef = useRef(null);
 
+  const scrollToRef = useCallback((ref) => {
+    if (!ref?.current) return false;
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const y = ref.current.getBoundingClientRect().top + window.scrollY - 60;
+        window.scrollTo({ top: y, behavior: "smooth" });
+      });
+    });
+
+    return true;
+  }, []);
+
+  const scrollToSection = useCallback(
+    (key) => {
+      const map = {
+        welcome: headerRef,
+        about: aboutRef,
+        projects: projectsRef,
+        contact: contactRef,
+      };
+      const ref = map[key];
+      return scrollToRef(ref);
+    },
+    [scrollToRef]
+  );
+
   const scrollToHash = useCallback(
     (hash) => {
       const key = (hash || "").replace("#", "");
-      const map = { projects: projectsRef, contact: contactRef };
-
-      const ref = map[key];
-      if (!ref?.current) return false;
-
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          const y = ref.current.getBoundingClientRect().top + window.scrollY - 50;
-          window.scrollTo({ top: y, behavior: "smooth" });
-        });
-      });
-
-      return true;
+      return scrollToSection(key);
     },
-    [] // refs are stable
+    [scrollToSection]
   );
 
-  // capture hash intent (even if DOM not mounted yet)
   useEffect(() => {
-    const hash = (location.hash || "").replace("#", "");
-    if (!hash) return;
+    const key = (location.hash || "").replace("#", "");
+    if (!key) return;
 
-    const ok = scrollToHash(`#${hash}`);
-    if (!ok) pendingHashRef.current = `#${hash}`;
+    const ok = scrollToHash(`#${key}`);
+    if (!ok) pendingHashRef.current = `#${key}`;
   }, [location.hash, scrollToHash]);
 
-  // flush queued hash once homeReady (DOM mounted)
   useEffect(() => {
     if (!homeReady) return;
     if (!pendingHashRef.current) return;
@@ -163,13 +169,10 @@ export default function Home() {
 
   /* ---------------------------------------
      GLOBAL STAGE GATE (anti "sautilles")
-     - DOM mounts, but stays visually hidden
-     - becomes visible only after sections report ready (or timeout)
   --------------------------------------- */
   const [stageVisible, setStageVisible] = useState(false);
   const didStage = useRef(false);
 
-  // reset stage when leaving step2 (ex: reset onboarding)
   useEffect(() => {
     if (overlayStep === 2) return;
     didStage.current = false;
@@ -184,34 +187,27 @@ export default function Home() {
     didStage.current = true;
 
     (async () => {
-      // Wait Essential + Contact "painted" signals (or timeout fallback)
       await Promise.all([
         waitEventOnce("ag:essentialReady", 2800),
         waitEventOnce("ag:contactReady", 2800),
       ]);
 
-      // Let layout/backdrop/compositing settle
       await rafN(2);
-
       setStageVisible(true);
 
-      // Signal for main.jsx (splash): "home is REALLY ready"
+      // useful for main.jsx splash
       await rafN(2);
       window.dispatchEvent(new Event("ag:homeFirstPaint"));
     })();
   }, [overlayStep, homeReady]);
 
   /* ---------------------------------------
-     Navigation helpers (used by overlay)
+     goTop (used by navbar)
   --------------------------------------- */
-  const scrollTo = useCallback((ref) => {
-    if (!ref?.current) return;
-    const y = ref.current.getBoundingClientRect().top + window.scrollY - 50;
-    window.scrollTo({ top: y, behavior: "smooth" });
-  }, []);
-
   const goTop = useCallback(() => {
-    window.history.pushState({}, "", "/");
+    try {
+      window.history.pushState({}, "", "/");
+    } catch {}
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
@@ -220,19 +216,49 @@ export default function Home() {
   --------------------------------------- */
   return (
     <div className="homePage" data-stage={stageVisible ? "1" : "0"}>
-      <HomeOverlay
-        onStepChange={setOverlayStep}
-        onGoProjects={() => scrollTo(projectsRef)}
-        onGoContact={() => scrollTo(contactRef)}
-      />
+      {/* fixed backplate behind everything */}
+      {/* Navbar scroll (only when step2 + ready) */}
+      {/* {overlayStep === 2 && homeReady && (
+        <NavbarScrollHomePage
+          enabled={overlayStep === 2}
+          onGo={(key) => scrollToSection(key)}
+          onGoTop={goTop}
+          refs={{
+            welcome: headerRef,
+            about: aboutRef,
+            projects: projectsRef,
+            contact: contactRef,
+          }}
+        />
+      )} */}
+      {overlayStep === 2 && homeReady && (
+        <NavbarScrollHomePage
+          enabled
+          refs={{
+            welcome: headerRef,
+            about: aboutRef,
+            projects: projectsRef,
+            contact: contactRef,
+          }}
+        />
+      )}
+
+      <div className="homeBackplate" aria-hidden="true" />
       
+      {/* Welcome (header 100vh) */}
+      <div ref={headerRef}>
+        <HomeOverlay
+          onStepChange={setOverlayStep}
+          onGoProjects={() => scrollToSection("projects")}
+          onGoContact={() => scrollToSection("contact")}
+        />
+      </div>
 
       {overlayStep === 2 && <div className="homePage__afterHeader" />}
 
-      {/* DOM exists, but your CSS must hide .homeStage until data-stage="1" */}
       {overlayStep === 2 && homeReady && (
         <div className="homeStage">
-          <section className="homeSection" id="about">
+          <section ref={aboutRef} className="homeSection" id="about">
             <div className="homeSection__card isReady">
               <About />
             </div>
@@ -254,17 +280,7 @@ export default function Home() {
           </section>
         </div>
       )}
-
-      {overlayStep === 2 && (
-        <button
-          type="button"
-          className={`homeBackTop ${showTop ? "isVisible" : ""}`}
-          onClick={goTop}
-          aria-label="Back to top"
-        >
-          ↑
-        </button>
-      )}
     </div>
   );
 }
+
