@@ -40,6 +40,30 @@
     "stack": {
       "title": "Stack",
       "seeAll": "See all"
-    }    
-  }
+    },
+      "tabs": {
+        "web": "Web Dev",
+        "threeD": "3D Artist",
+        "events": "Events",
+        "all": "All"
+      },
+      "tabTaglines": {
+        "web": "React / Vite / UI systems",
+        "threeD": "Blender / Real-time assets",
+        "events": "Production / Coordination",
+        "all": "Creative Dev — Full profile"
+      },
+      "skills": {
+        "web": ["React", "Vite", "i18n", "Perf", "UI Systems", "Three.js"],
+        "threeD": ["Blender", "Shading", "Optimization", "Real-time", "Art Direction"],
+        "events": ["Production", "Coordination", "Timing", "Stakeholders"],
+        "all": ["Creative Dev", "3D", "Product UX", "Story"]
+      },
+      "pdfHref": "/pdf/kasia_cv.pdf",
+      "downloadPdf": "Download PDF",
+      "close": "Close"
+    }
+    
+    
+  
   
