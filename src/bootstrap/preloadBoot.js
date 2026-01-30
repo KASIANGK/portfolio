@@ -89,6 +89,9 @@ function collectHomeProjectsImages(buckets) {
 let _bootPromise = null;
 
 export function preloadBootOnce() {
+  if (import.meta.env.DEV) {
+    console.debug("[Boot] preloadBootOnce already running");
+  }
   if (_bootPromise) return _bootPromise;
 
   _bootPromise = (async () => {
@@ -171,11 +174,15 @@ export function preloadBootOnce() {
 
     // Stage 2 (idle): rest of portfolio only
     runIdle(() => {
-      const rest = uniq([    
-        ...homeProjectsImages.slice(14),
-        ...portfolioImages.slice(FIRST_PORTFOLIO_PRELOAD)]);
-      preloadImagesOnce(rest).catch(() => {});
+      requestAnimationFrame(() => {
+        const rest = uniq([
+          ...homeProjectsImages.slice(14),
+          ...portfolioImages.slice(FIRST_PORTFOLIO_PRELOAD),
+        ]);
+        preloadImagesOnce(rest).catch(() => {});
+      });
     });
+    
   })();
 
   // update exposed promise now that it's created

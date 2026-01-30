@@ -1,31 +1,96 @@
-/* Les FX ne doivent jamais capter la souris */
-.homeOverlay__fx,
-.homeOverlay__shine,
-.homeOverlay__orb,
-.homeOverlay__grid,
-.homeOverlay__bg,
-.homeOverlay__bg * {
-  pointer-events: none;
-}
-/* isole les layers FX pour éviter qu'ils soient "repeints" en scroll */
-.homeOverlay__bgViewport,
-.homeOverlay__noise,
-.homeOverlay__screenFx {
-  contain: paint;
-  transform: translateZ(0);
-  /* will-change: transform; */
-}
+/* src/Components/Home/HomeOverlay/HomeOverlay.css */
 
-/* Le contenu interactif doit être au-dessus */
-.homeOverlay__panel {
-  position: relative;
-}
+/* ===============================
+   ROOT + STACKING
+   =============================== */
 
-.homeOverlay__langGrid,
-.homeOverlay__footer,
-.homeOverlay__langBtn,
-.homeOverlay__primaryBtn {
-  position: relative;
-  z-index: 5;
-  pointer-events: auto;
-}
+   .homeOverlay,
+   .homeOverlay *{
+     box-sizing: border-box;
+   }
+   
+   .homeOverlay{
+     position: relative;
+     width: 100%;
+   
+     /* 100vh safe */
+     height: 100vh;
+     min-height: 100vh;
+     height: 100svh;
+     min-height: 100svh;
+   
+     overflow: hidden;
+   
+     /* stable fallback */
+     background: #050016;
+   
+     /* isolate compositing */
+     isolation: isolate;
+   }
+   
+   /* ===============================
+      POINTER SAFETY
+      =============================== */
+   
+   /* FX layers never capture input */
+   .homeOverlay__fx,
+   .homeOverlay__shine,
+   .homeOverlay__orb,
+   .homeOverlay__grid,
+   .homeOverlay__bgViewport,
+   .homeOverlay__bgTrack,
+   .homeOverlay__bgFrame,
+   .homeOverlay__bgFrame *{
+     pointer-events: none;
+   }
+   
+   /* interactive must stay above */
+   .homeOverlay__viewport,
+   .homeOverlay__track,
+   .homeOverlay__panel,
+   .homeOverlay__langGrid,
+   .homeOverlay__footer,
+   .homeOverlay__langBtn,
+   .homeOverlay__primaryBtn{
+     pointer-events: auto;
+   }
+   
+   /* ===============================
+      COMPOSITING / PERF
+      =============================== */
+   
+   /* isolate background rendering */
+   .homeOverlay__bgViewport{
+     contain: paint;
+     transform: translateZ(0);
+   }
+   
+   /* carousel transforms should stay on their own layer */
+   .homeOverlay__viewport,
+   .homeOverlay__track{
+     transform: translateZ(0);
+     will-change: transform;
+   }
+   
+   /* panel should not animate filter/backdrop-filter */
+   .homeOverlay__panel,
+   .homeOverlay__panel::before,
+   .homeOverlay__panel::after{
+     transition: opacity 160ms linear;
+   }
+   
+   /* when you later add noise/screenFx, keep them isolated too */
+   .homeOverlay__noise,
+   .homeOverlay__screenFx{
+     contain: paint;
+     transform: translateZ(0);
+   }
+   
+   /* ===============================
+      OPTIONAL: "after reveal" hooks
+      =============================== */
+   
+   html[data-ag-reveal="1"] .homeOverlay{
+     background: transparent;
+   }
+   

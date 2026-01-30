@@ -86,12 +86,12 @@
     /* transform: perspective(900px) rotateX(0.35deg) rotateY(-0.35deg); */
   }
 
-  @supports (backdrop-filter: blur(1px)){
+  /* @supports (backdrop-filter: blur(1px)){
     html.isReady .holoPanel{
       backdrop-filter: blur(12px) saturate(140%);
       -webkit-backdrop-filter: blur(12px) saturate(140%);
     }
-  }
+  } */
 
   /* glow wash */
   .holoPanel::before{
@@ -142,8 +142,8 @@
     background: rgba(6, 6, 16, 0.24);
     border: 1px solid rgba(255,255,255,0.10);
 
-    backdrop-filter: blur(10px) saturate(140%);
-    -webkit-backdrop-filter: blur(10px) saturate(140%);
+    /* backdrop-filter: blur(10px) saturate(140%);
+    -webkit-backdrop-filter: blur(10px) saturate(140%); */
 
     box-shadow:
       0 16px 46px rgba(0,0,0,0.32),
@@ -534,9 +534,9 @@
       0 0 30px rgba(0,255,255,0.10),
       0 0 44px rgba(255,0,170,0.08);
 
-    filter:
+    /* filter:
       drop-shadow(0 0 calc(10px + var(--beam) * 18px) rgba(0,255,255,0.10))
-      drop-shadow(0 0 calc(10px + var(--beam) * 16px) rgba(255,0,170,0.08));
+      drop-shadow(0 0 calc(10px + var(--beam) * 16px) rgba(255,0,170,0.08)); */
   }
   .aboutX__ring::before{
     content:"";
@@ -650,7 +650,7 @@
     position: relative;
     z-index: 2;
     color: rgba(245,245,255,0.92);
-    filter: drop-shadow(0 14px 22px rgba(0,0,0,0.35));
+    /* filter: drop-shadow(0 14px 22px rgba(0,0,0,0.35)); */
   }
   .aboutX__icon svg{
     display:block;
@@ -891,8 +891,8 @@
 
     background: rgba(6, 6, 16, 0.72);
     border: 1px solid rgba(255,255,255,0.12);
-    backdrop-filter: blur(14px) saturate(135%);
-    -webkit-backdrop-filter: blur(14px) saturate(135%);
+    /* backdrop-filter: blur(14px) saturate(135%);
+    -webkit-backdrop-filter: blur(14px) saturate(135%); */
 
     box-shadow: 0 24px 70px rgba(0,0,0,0.55);
     padding: 14px;
