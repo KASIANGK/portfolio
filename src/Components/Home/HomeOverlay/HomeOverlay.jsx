@@ -5,7 +5,6 @@ import { useTranslation } from "react-i18next";
 import useOnboarding from "../../../hooks/useOnboarding";
 import useMountLog from "../../../utils/useMountLog";
 
-import "./parts/styles/Base.css";
 import "./parts/styles/Background.css";
 import "./parts/styles/Reset.css";
 import "./parts/styles/Panel.css";
@@ -498,9 +497,11 @@ export default function HomeOverlay({
     };
   }, [slideIndex]);
 
+  const bgTrackRef = useRef(null);
+
   return (
     <header className="homeOverlay" data-step={slideIndex === 0 ? "1" : "2"} aria-label="Home onboarding header">
-      <OverlayBackground slideIndex={slideIndex} noAnimOnce={noAnimOnce} bgTrackRef={useRef(null)} />
+      <OverlayBackground slideIndex={slideIndex} noAnimOnce={noAnimOnce} bgTrackRef={bgTrackRef} />
 
       <OverlayResetButtons
         t={t}

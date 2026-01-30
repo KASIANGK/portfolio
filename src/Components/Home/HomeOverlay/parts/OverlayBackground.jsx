@@ -15,8 +15,8 @@ export default function OverlayBackground({ slideIndex, noAnimOnce, bgTrackRef }
         </div>
       </div>
 
-      <div className="homeOverlay__noise" aria-hidden="true" />
-      <div className="homeOverlay__screenFx" aria-hidden="true" />
+      {/* <div className="homeOverlay__noise" aria-hidden="true" />
+      <div className="homeOverlay__screenFx" aria-hidden="true" /> */}
     </>
   );
 }

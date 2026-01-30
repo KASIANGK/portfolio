@@ -1,75 +1,20 @@
+/* src/Components/Home/HomeOverlay/parts/styles/Background.css */
+
 /* ===============================
-   BACKGROUND TRACK (no fade, swipe)
+   BACKGROUND TRACK (swipe, no fade)
    =============================== */
-   .homeOverlay__bgFrame {
-    flex: 0 0 100vw;
-    width: 100vw;
-    height: 100%;
-  
-    /* ✅ base fallback */
-    background-color: rgba(5, 0, 22, 0.95);
-  
-    /* ✅ IMPORTANT : comme avant */
-    background-size: auto, auto, auto, auto, var(--imgSize, cover);
-    background-position: center, center, center, center, var(--imgPos, 50% 50%);
-    background-repeat: no-repeat;
-    background-blend-mode: screen, screen, screen, normal, normal;
-  
-    /* filter: saturate(0.98) contrast(1.02); */
 
-    transform: translate3d(0,0,0);
-    will-change: transform;
-    backface-visibility: hidden;
-    /* contain: paint; */
-
-  }
-  
-  /* STEP 1 bg (inchangé, comme avant) */
-  .homeOverlay__bgFrame--step1 {
-    --imgSize: cover;
-    --imgPos: 50% 50%;
-  /* cets a cause de ca que les bg chagent radial et linear grandient, avoir si je px moifier le rendu de base d ela photo */
-    background-image:
-      radial-gradient(800px 500px at 15% 20%, rgba(255, 0, 170, 0.18), transparent 60%),
-      radial-gradient(900px 600px at 80% 70%, rgba(0, 255, 255, 0.12), transparent 65%),
-      radial-gradient(700px 500px at 60% 10%, rgba(120, 70, 255, 0.10), transparent 60%),
-      linear-gradient(180deg, rgba(5, 0, 22, 0.92), rgba(5, 0, 22, 0.75)),
-      url("/home_bg.jpg");
-  }
-  
-  /* STEP 2 bg (anti-zoom via variables) */
-  .homeOverlay__bgFrame--step2 {
-    /* --imgSize: 100% auto; */
-    --imgPos: 50% 50%;
-    --imgSize: cover;
-  
-    background-image:
-      radial-gradient(800px 500px at 15% 20%, rgba(255, 0, 170, 0.14), transparent 60%),
-      radial-gradient(900px 600px at 80% 70%, rgba(0, 255, 255, 0.10), transparent 65%),
-      radial-gradient(700px 500px at 60% 10%, rgba(120, 70, 255, 0.10), transparent 60%),
-      linear-gradient(180deg, rgba(5, 0, 22, 0.90), rgba(5, 0, 22, 0.70)),
-      url("/home_bg_step2.jpg");
-  }
-  
-  .homeOverlay__bgViewport {
+   .homeOverlay__bgViewport{
     position: absolute;
     inset: 0;
     z-index: 0;
     overflow: hidden;
-
-
-  transform: translateZ(0);
-  will-change: transform;
-}
   
-  /* .homeOverlay__bgViewport {
-    contain: paint;
-    background-attachment: scroll;
-  } */
+    transform: translateZ(0);
+    will-change: transform;
+  }
   
-  
-  
-  .homeOverlay__bgTrack {
+  .homeOverlay__bgTrack{
     display: flex;
     width: 200vw;
     height: 100%;
@@ -77,65 +22,52 @@
     transform: translateZ(0);
     will-change: transform;
     transition: transform 900ms cubic-bezier(0.16, 1, 0.3, 1);
-  
-    position: relative; /* ✅ nécessaire pour ::after */
   }
   
-  /* instant reset */
-  .homeOverlay__bgTrack.isInstant {
+  .homeOverlay__bgTrack.isInstant{
     transition: none !important;
   }
   
+  .homeOverlay__bgFrame{
+    flex: 0 0 100vw;
+    width: 100vw;
+    height: 100%;
   
-  .homeOverlay__noise {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    pointer-events: none;
+    /* base fallback */
+    background-color: rgba(5, 0, 22, 0.95);
   
-    background:
-      repeating-linear-gradient(
-        0deg,
-        rgba(255, 255, 255, 0.03),
-        rgba(255, 255, 255, 0.03) 1px,
-        transparent 1px,
-        transparent 6px
-      );
-  
-    opacity: 0.08;
-    mix-blend-mode: soft-light;
+    transform: translate3d(0,0,0);
+    backface-visibility: hidden;
   }
   
-  .homeOverlay__screenFx {
-    position: absolute;
-    inset: -20%;
-    z-index: 2;
-    pointer-events: none;
-    filter: saturate(0.98) contrast(1.02);
-
-    background:
-      radial-gradient(closest-side, transparent 65%, rgba(0,0,0,0.55) 100%),
-      repeating-linear-gradient(
-        180deg,
-        rgba(0, 0, 0, 0.10),
-        rgba(0, 0, 0, 0.10) 2px,
-        transparent 2px,
-        transparent 7px
-      );
+  /* STEP 1 */
+  .homeOverlay__bgFrame--step1{
+    background-image:
+      radial-gradient(800px 500px at 15% 20%, rgba(255, 0, 170, 0.18), transparent 60%),
+      radial-gradient(900px 600px at 80% 70%, rgba(0, 255, 255, 0.12), transparent 65%),
+      radial-gradient(700px 500px at 60% 10%, rgba(120, 70, 255, 0.10), transparent 60%),
+      linear-gradient(180deg, rgba(5, 0, 22, 0.92), rgba(5, 0, 22, 0.75)),
+      url("/home_bg.jpg");
+    background-size: cover;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+  }
   
-    opacity: 0.30;
+  /* STEP 2 */
+  .homeOverlay__bgFrame--step2{
+    background-image:
+      radial-gradient(800px 500px at 15% 20%, rgba(255, 0, 170, 0.14), transparent 60%),
+      radial-gradient(900px 600px at 80% 70%, rgba(0, 255, 255, 0.10), transparent 65%),
+      radial-gradient(700px 500px at 60% 10%, rgba(120, 70, 255, 0.10), transparent 60%),
+      linear-gradient(180deg, rgba(5, 0, 22, 0.90), rgba(5, 0, 22, 0.70)),
+      url("/home_bg_step2.jpg");
+    background-size: cover;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
   }
-
-  /* Quand le reveal est fait, l’overlay laisse respirer */
-  html[data-ag-reveal="1"] .homeOverlay{
-    background: transparent;
-  }
-
-  /* Et si tes bgFrame couvrent encore trop, tu peux aussi :
-    (uniquement si tu veux que la backplate prenne le relais)
-  */
+  
+  /* allow fading viewport if you ever want to hand over to backplate */
   html[data-ag-reveal="1"] .homeOverlay__bgViewport{
     transition: opacity 450ms ease;
   }
-
   
