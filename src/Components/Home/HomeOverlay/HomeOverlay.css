@@ -7,6 +7,14 @@
 .homeOverlay__bg * {
   pointer-events: none;
 }
+/* isole les layers FX pour éviter qu'ils soient "repeints" en scroll */
+.homeOverlay__bgViewport,
+.homeOverlay__noise,
+.homeOverlay__screenFx {
+  contain: paint;
+  transform: translateZ(0);
+  /* will-change: transform; */
+}
 
 /* Le contenu interactif doit être au-dessus */
 .homeOverlay__panel {

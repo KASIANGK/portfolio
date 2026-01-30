@@ -1,5 +1,6 @@
 // src/Components/Home/HomeOverlay/parts/StepLanguage.jsx
 import React from "react";
+import useMountLog from "../../../../utils/useMountLog";
 
 export default function StepLanguage({
   isActive,
@@ -15,6 +16,7 @@ export default function StepLanguage({
   canContinue,
   isSwitchingLang,
 }) {
+  useMountLog("StepLanguage");
   return (
     <section className={`homeOverlay__slide ${isActive ? "isActive" : ""}`} aria-hidden={!isActive}>
       <div className="homeOverlay__panel">

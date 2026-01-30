@@ -1,6 +1,13 @@
 // src/App.jsx
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+  Navigate,
+} from "react-router-dom";
+
 import { ThemeProvider } from "./ThemeContext";
 
 import Home from "./Components/Home/Home";
@@ -10,7 +17,6 @@ import Navbar from "./Components/Navbar/Navbar";
 import Footer from "./Components/Footer/Footer";
 import LanguageToast from "./Components/Navbar/LanguageToast";
 import Dandelion from "./Components/Dandlion/Dandlion";
-import About from "./Components/About";
 
 function Layout() {
   const location = useLocation();
@@ -25,16 +31,21 @@ function Layout() {
       {/* cursor custom uniquement hors Home/City */}
       {!isHome && !isCity && <Dandelion />}
 
+      {/* ✅ No key here (important). Hash changes should NOT remount anything. */}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/city" element={<HomeCity />} />
 
-        {/* routes “alias” */}
-        <Route path="/essential" element={<Navigate to="/#essential" replace />} />
-        <Route path="/skills" element={<Skills />} />
+        {/* routes alias → hash */}
+        <Route path="/projects" element={<Navigate to="/#projects" replace />} />
         <Route path="/about" element={<Navigate to="/#about" replace />} />
         <Route path="/portfolio" element={<Navigate to="/#projects" replace />} />
         <Route path="/contact" element={<Navigate to="/#contact" replace />} />
+
+        <Route path="/skills" element={<Skills />} />
+
+        {/* fallback */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
 
       <Footer />

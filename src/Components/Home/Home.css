@@ -1,44 +1,15 @@
 /* src/Components/Home/Home.css */
 
-.homePage {
-    min-height: 100vh;
-    width: 100%;
-    position: relative;
-  }
-  
-  /* espace sous le header (step2) avant la section About */
-  .homePage__afterHeader {
-    height: 50px;
-  }
-  
-  /* Sections */
-  .homeSection {
-    width: min(1100px, 92vw);
-    margin: 0 auto;
-    padding: 80px 0;
-  }
-  
-  .homeSection h2 {
-    margin: 0 0 12px;
-    color: rgba(245, 245, 255, 0.95);
-    letter-spacing: -0.02em;
-  }
-  
-  .homeSection p {
-    margin: 0;
-    color: rgba(220, 230, 255, 0.78);
-    line-height: 1.65;
-    max-width: 70ch;
-  }
-/* src/Components/Home/Home.css */
+/* ===============================
+   PAGE BASE
+   =============================== */
 
-.homePage {
+   .homePage{
     min-height: 100vh;
     width: 100%;
     position: relative;
     overflow-x: hidden;
   
-    /* ✅ DA globale (même mood que l’overlay) */
     background:
       radial-gradient(900px 600px at 15% 20%, rgba(255, 0, 170, 0.14), transparent 60%),
       radial-gradient(1000px 700px at 85% 70%, rgba(0, 255, 255, 0.10), transparent 65%),
@@ -46,110 +17,13 @@
       linear-gradient(180deg, rgba(5, 0, 22, 0.96), rgba(5, 0, 22, 0.82));
   }
   
-  
-  /* Sections layout */
-  .homeSection {
-    width: min(1100px, 92vw);
-    margin: 0 auto;
-    padding: 70px 0;
+  /* Espace sous le header (step2) avant About */
+  .homePage__afterHeader{
+    height: 50px;
   }
   
-  /* ✅ Card opaque/glass = plus de “sections qui se voient en opacité légère” */
-  .homeSection__card {
-    border-radius: 22px;
-    padding: clamp(18px, 3vw, 28px);
-  
-    background: rgba(16, 10, 38, 0.62);
-    border: 1px solid rgba(255, 255, 255, 0.10);
-  
-    box-shadow:
-      0 20px 60px rgba(0, 0, 0, 0.45),
-      0 0 0 1px rgba(255, 0, 170, 0.06) inset;
-  
-    /* ✅ reduces weird repaint artifacts */
-    isolation: isolate;
-    transform: translateZ(0);
-    backface-visibility: hidden;
-  }
-  /* blur only if supported */
-  @supports ((-webkit-backdrop-filter: blur(12px)) or (backdrop-filter: blur(12px))) {
-    .homeSection__card {
-      background: rgba(16, 10, 38, 0.52);
-      backdrop-filter: blur(12px) saturate(135%);
-      -webkit-backdrop-filter: blur(12px) saturate(135%);
-    }
-  }
-
-  /* ready: no fade (instant) */
-  .homeSection__card.isReady {
-    opacity: 1;
-    transform: translateZ(0);
-  }  
-  
-  .homeSection__card h2 {
-    margin: 0 0 10px;
-    color: rgba(245, 245, 255, 0.95);
-    letter-spacing: -0.02em;
-  }
-  
-  .homeSection__card p {
-    margin: 0;
-    color: rgba(220, 230, 255, 0.78);
-    line-height: 1.65;
-    max-width: 70ch;
-  }
-    
-
-.homeBackTop{
-  position: fixed;
-  right: 18px;
-  bottom: 18px;
-  z-index: 3000;
-
-  width: 48px;
-  height: 48px;
-  border-radius: 999px;
-
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(10px);
-  transition: opacity .22s ease, transform .22s ease;
-
-  /* petit style glass compatible avec ton DA */
-  background: rgba(0,0,0,0.45);
-  border: 1px solid rgba(255,255,255,0.14);
-  color: rgba(255,255,255,0.9);
-  box-shadow: 0 18px 60px rgba(0,0,0,0.45);
-}
-
-.homeBackTop.isVisible{
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateY(0);
-}
-
-.homeBackTop:hover{
-  transform: translateY(-2px);
-  border-color: rgba(255,0,170,0.35);
-}
-/* Stage hidden until we decide it's stable */
-.homeStage{
-  opacity: 0;
-  transform: translateY(10px);
-  transition: opacity 520ms ease, transform 520ms ease;
-  will-change: opacity, transform;
-  pointer-events:none;
-}
-
-.homePage[data-stage="1"] .homeStage{
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events:auto; 
-}
-/* ===============================
-   BACKPLATE FIXED (reveal base)
-   =============================== */
-   .homeBackplate{
+  /* Backplate fixed derrière tout */
+  .homeBackplate{
     position: fixed;
     inset: 0;
     z-index: 0;
@@ -161,39 +35,371 @@
   }
   
   /* Le contenu passe au-dessus */
-  .homePage{
+  .homePage > *{
     position: relative;
     z-index: 1;
   }
   
   /* ===============================
-     REVEAL CAPOT (overlay mask feel)
-     - on simule l’ouverture vers le contenu
+     STAGE
      =============================== */
   
-  /* Le stage est déjà caché chez toi, on garde. */
   .homeStage{
     position: relative;
     z-index: 2;
   }
   
-  /* quand stage ok -> on ouvre la bulle */
-  .homePage[data-stage="1"]::before{
-    clip-path: circle(140% at 50% 60%);
+  /* si step1 => on cache le stage sans casser layout */
+  .homeStage[data-enabled="0"]{
+    display: none;
+  }
+  .homeStage[data-enabled="1"]{
+    display: block;
+  }
+  
+  /* ===============================
+     SECTIONS
+     =============================== */
+  
+  .homeSection{
+    margin: 0 auto;
+    padding: 48px 0;
+    scroll-margin-top: 90px;
+    width: min(1200px, 92vw);
+  
+    /* helpful for perf + avoid jumpy layout
+       (si tu veux tester, tu peux commenter) */
+    content-visibility: auto;
+    contain-intrinsic-size: 900px;
+  }
+  
+  /* ===============================
+     CARD BASE (glass)
+     =============================== */
+  
+  .homeSection__card{
+    position: relative;
+    border-radius: 22px;
+    padding: clamp(18px, 3vw, 28px);
+  
+    background: rgba(16, 10, 38, 0.62);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+  
+    box-shadow:
+      0 20px 60px rgba(0, 0, 0, 0.45),
+      0 0 0 1px rgba(255, 0, 170, 0.06) inset;
+  
+    isolation: isolate;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+
+  }
+  
+  /* blur only if supported */
+  @supports ((-webkit-backdrop-filter: blur(12px)) or (backdrop-filter: blur(12px))){
+    .homeSection__card{
+      background: rgba(16, 10, 38, 0.52);
+      backdrop-filter: blur(10px) saturate(135%);
+      -webkit-backdrop-filter: blur(10px) saturate(135%);
+    }
+  }
+  
+  /* ===============================
+     REVEAL (global)
+     =============================== */
+  
+  .homeSection__card{
+    opacity: 0;
+    transform: translateY(10px);
+    filter: blur(8px);
+    transition: opacity 260ms ease, transform 260ms ease, filter 260ms ease;
+    will-change: opacity, transform, filter;
+  }
+  
+  .homeSection__card.isReady{
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+  
+  /* while loading: keep visible but masked */
+  .homeSection__card.isLoading{
+    opacity: 1;          /* important: no void */
+    transform: none;
+    filter: none;
+  }
+  
+  /* ===============================
+     PREMIUM VEIL (loading only)
+     =============================== */
+  
+  .homeSection__card::before{
+    content:"";
+    position:absolute;
+    inset:-2px;
+    border-radius: inherit;
+    pointer-events:none;
+    opacity: 0;
+    transition: opacity 240ms ease;
+    z-index: 5;
+  
+    background:
+      radial-gradient(700px 420px at 15% 20%, rgba(255,0,170,0.10), transparent 62%),
+      radial-gradient(700px 420px at 85% 40%, rgba(0,255,255,0.10), transparent 62%),
+      repeating-linear-gradient(to bottom, rgba(255,255,255,.03) 0 1px, transparent 1px 8px);
+    mix-blend-mode: soft-light;
+  }
+  
+  .homeSection__card.isLoading::before{
     opacity: 1;
   }
   
-  /* Accessibilité */
-  @media (prefers-reduced-motion: reduce){
-    .homePage::before{
-      transition: none;
-      clip-path: none;
-    }
-  }
-  .homePage::before{
-    pointer-events: none !important;
-  }
-  .homeSection{
-    scroll-margin-top: 70px; /* proche de ton offset */
+  /* small label (optional) */
+  .homeSection__card.isLoading::after{
+    content: "Loading…";
+    position: absolute;
+    left: 16px;
+    top: 14px;
+    z-index: 6;
+  
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.10);
+    background: rgba(0,0,0,0.20);
+  
+    color: rgba(255,255,255,0.72);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    font-size: 11px;
   }
   
+  /* ===============================
+     Reduced motion
+     =============================== */
+  @media (prefers-reduced-motion: reduce){
+    .homeSection__card{
+      transition: none !important;
+      transform: none !important;
+      filter: none !important;
+    }
+  }
+  
+  /* ===============================
+     Perf notes: contain paint ONLY where safe
+     =============================== */
+  
+  /* OK to contain paint on isolated "panels", but
+     avoid putting it on big wrapper cards or img wrappers */
+  .holoPanel,
+  .ctc-panel,
+  .pm2__stack{
+    /* contain: paint; */
+    transform: translateZ(0);
+  }
+  
+
+  /* src/Components/Home/Home.css */
+
+/* ===============================
+   PAGE BASE
+   =============================== */
+
+   .homePage{
+    min-height: 100vh;
+    width: 100%;
+    position: relative;
+    overflow-x: hidden;
+  
+    background:
+      radial-gradient(900px 600px at 15% 20%, rgba(255, 0, 170, 0.14), transparent 60%),
+      radial-gradient(1000px 700px at 85% 70%, rgba(0, 255, 255, 0.10), transparent 65%),
+      radial-gradient(800px 600px at 60% 10%, rgba(120, 70, 255, 0.10), transparent 60%),
+      linear-gradient(180deg, rgba(5, 0, 22, 0.96), rgba(5, 0, 22, 0.82));
+  }
+  
+  /* Espace sous le header (step2) avant About */
+  .homePage__afterHeader{
+    height: 50px;
+  }
+  
+  /* Backplate fixed derrière tout */
+  .homeBackplate{
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  
+    background: url("/home_bg.jpg") center / cover no-repeat;
+    transform: translateZ(0);
+    filter: saturate(1.05) contrast(1.05);
+  }
+  
+  /* Le contenu passe au-dessus */
+  .homePage > *{
+    position: relative;
+    z-index: 1;
+  }
+  
+  /* ===============================
+     STAGE
+     =============================== */
+  
+  .homeStage{
+    position: relative;
+    z-index: 2;
+  }
+  
+  /* si step1 => on cache le stage sans casser layout */
+  .homeStage[data-enabled="0"]{
+    display: none;
+  }
+  .homeStage[data-enabled="1"]{
+    display: block;
+  }
+  
+  /* ===============================
+     SECTIONS
+     =============================== */
+  
+  .homeSection{
+    margin: 0 auto;
+    padding: 48px 0;
+    scroll-margin-top: 90px;
+    width: min(1200px, 92vw);
+  
+    /* helpful for perf + avoid jumpy layout
+       (si tu veux tester, tu peux commenter) */
+    content-visibility: auto;
+    contain-intrinsic-size: 900px;
+  }
+  
+  /* ===============================
+     CARD BASE (glass)
+     =============================== */
+  
+  .homeSection__card{
+    position: relative;
+    border-radius: 22px;
+    padding: clamp(18px, 3vw, 28px);
+  
+    background: rgba(16, 10, 38, 0.62);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+  
+    box-shadow:
+      0 20px 60px rgba(0, 0, 0, 0.45),
+      0 0 0 1px rgba(255, 0, 170, 0.06) inset;
+  
+    isolation: isolate;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+
+  }
+  
+  /* blur only if supported */
+  @supports ((-webkit-backdrop-filter: blur(12px)) or (backdrop-filter: blur(12px))){
+    .homeSection__card{
+      background: rgba(16, 10, 38, 0.52);
+      backdrop-filter: blur(10px) saturate(135%);
+      -webkit-backdrop-filter: blur(10px) saturate(135%);
+    }
+  }
+  
+  /* ===============================
+     REVEAL (global)
+     =============================== */
+  
+  .homeSection__card{
+    opacity: 0;
+    transform: translateY(10px);
+    filter: blur(8px);
+    transition: opacity 260ms ease, transform 260ms ease, filter 260ms ease;
+    will-change: opacity, transform, filter;
+  }
+  
+  .homeSection__card.isReady{
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+  
+  /* while loading: keep visible but masked */
+  .homeSection__card.isLoading{
+    opacity: 1;          /* important: no void */
+    transform: none;
+    filter: none;
+  }
+  
+  /* ===============================
+     PREMIUM VEIL (loading only)
+     =============================== */
+  
+  .homeSection__card::before{
+    content:"";
+    position:absolute;
+    inset:-2px;
+    border-radius: inherit;
+    pointer-events:none;
+    opacity: 0;
+    transition: opacity 240ms ease;
+    z-index: 5;
+  
+    background:
+      radial-gradient(700px 420px at 15% 20%, rgba(255,0,170,0.10), transparent 62%),
+      radial-gradient(700px 420px at 85% 40%, rgba(0,255,255,0.10), transparent 62%),
+      repeating-linear-gradient(to bottom, rgba(255,255,255,.03) 0 1px, transparent 1px 8px);
+    mix-blend-mode: soft-light;
+  }
+  
+  .homeSection__card.isLoading::before{
+    opacity: 1;
+  }
+  
+  /* small label (optional) */
+  .homeSection__card.isLoading::after{
+    content: "Loading…";
+    position: absolute;
+    left: 16px;
+    top: 14px;
+    z-index: 6;
+  
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.10);
+    background: rgba(0,0,0,0.20);
+  
+    color: rgba(255,255,255,0.72);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    font-size: 11px;
+  }
+  
+  /* ===============================
+     Reduced motion
+     =============================== */
+  @media (prefers-reduced-motion: reduce){
+    .homeSection__card{
+      transition: none !important;
+      transform: none !important;
+      filter: none !important;
+    }
+  }
+  
+  /* ===============================
+     Perf notes: contain paint ONLY where safe
+     =============================== */
+  
+  /* OK to contain paint on isolated "panels", but
+     avoid putting it on big wrapper cards or img wrappers */
+  .holoPanel,
+  .ctc-panel,
+  .pm2__stack{
+    contain: paint;
+    transform: translateZ(0);
+  }
+  /* Pas de blur sur sections sensibles */
+#projects .homeSection__card,
+#contact .homeSection__card{
+  filter: none !important;
+}

@@ -3,6 +3,26 @@ import i18n from "../i18n";
 import { preloadImagesOnce } from "../utils/projectsCache";
 
 const ASSETS_PREFIX = "/assets/";
+// productcache.js (ou preloadAssets.js)
+
+export const ABOUT_PRELOAD = [
+  "/projects.json",
+  "/cv.pdf",
+
+  // i18n (exemples)
+  "/i18n/fr.json",
+  "/i18n/en.json",
+
+  // thumbs / assets
+  "/preview_city.png",
+  "/preview_kasia.jpg",
+];
+
+export const PROJECTS_PRELOAD = [
+  "/projects.json",
+  "/preview_city.png",
+  "/home_bg.jpg",
+];
 
 export const HOMEOVERLAY_ASSETS = [
   "/home_bg.jpg",
@@ -50,16 +70,21 @@ function collectPortfolioImages(projects) {
   return uniq(urls);
 }
 
-/** Essential assets from /essential.json (items: {id, image}) */
-function collectEssentialAssets(essentialData) {
-  const list = Array.isArray(essentialData) ? essentialData : [];
-  return uniq(
-    list
-      .map((it) => it?.image)
-      .filter(Boolean)
-      .map((img) => `${ASSETS_PREFIX}${img}`)
-  );
+function collectHomeProjectsImages(buckets) {
+  if (Array.isArray(buckets)) return collectPortfolioImages(buckets);
+  if (!buckets || typeof buckets !== "object") return [];
+
+  const flat = []
+    .concat(
+      Array.isArray(buckets.all) ? buckets.all : [],
+      Array.isArray(buckets.web) ? buckets.web : [],
+      Array.isArray(buckets.threeD) ? buckets.threeD : [],
+      Array.isArray(buckets.events) ? buckets.events : []
+    );
+
+  return collectPortfolioImages(flat);
 }
+
 
 let _bootPromise = null;
 
@@ -75,40 +100,69 @@ export function preloadBootOnce() {
     await i18n.loadLanguages(["en", "fr", "pl", "nl"]);
 
     // 2) JSON blocking
-    const [projects, contactMessages, subjects, essential] = await Promise.all([
+    const [projects, projectsHome, contactMessages, subjects] = await Promise.all([
       fetchJson("/projects.json"),
+      fetchJson("/projects_home.json"),
       fetchJson("/messages.json"),
       fetchJson("/subjects.json"),
-      fetchJson("/essential.json"),
     ]);
-
+    
+    const safeProjectsHome =
+    projectsHome && typeof projectsHome === "object"
+      ? {
+          web: Array.isArray(projectsHome.web) ? projectsHome.web : [],
+          threeD: Array.isArray(projectsHome.threeD) ? projectsHome.threeD : [],
+          events: Array.isArray(projectsHome.events) ? projectsHome.events : [],
+          all: Array.isArray(projectsHome.all) ? projectsHome.all : [],
+        }
+      : { web: [], threeD: [], events: [], all: [] };
+  
     const safeProjects = Array.isArray(projects) ? projects : [];
     const safeSubjects = Array.isArray(subjects) ? subjects : [];
     const safeContactMessages = Array.isArray(contactMessages) ? contactMessages : [];
-    const safeEssential = Array.isArray(essential) ? essential : [];
 
     // 3) images to preload
     const portfolioImages = collectPortfolioImages(safeProjects);
-    const essentialAssets = collectEssentialAssets(safeEssential);
+    const homeProjectsImages = collectHomeProjectsImages(safeProjectsHome);
 
     // Stage 1 (blocking) — overlay + first portfolio + ALL essential
     const FIRST_PORTFOLIO_PRELOAD = 18;
 
     const stage1 = uniq([
       ...HOMEOVERLAY_ASSETS,
+      ...homeProjectsImages.slice(0, 14),
       ...portfolioImages.slice(0, FIRST_PORTFOLIO_PRELOAD),
-      ...essentialAssets,
+      "/assets/about_web.jpg",
+      "/assets/about_3d.jpg",
+      "/assets/about_angels.jpg",
+      "/assets/about_all.jpg",
     ]);
 
     // One single preload pipeline (deduped)
     await preloadImagesOnce(stage1, { fetchPriority: "high", decoding: "async" });
+    try {
+      window.__AG_ABOUT_READY__ = true;
+      window.dispatchEvent(new Event("ag:aboutReady"));
 
+    } catch {}
+    try {
+      window.__AG_CTC_READY__ = true;
+      window.dispatchEvent(new Event("ag:contactReady"));
+    } catch {}
+    try {
+      window.__AG_PRJ_READY__ = true;
+      window.dispatchEvent(new Event("ag:projectsReady"));
+    } catch {}
+
+
+    
     // 4) stash data
     window.__AG_BOOT__ = {
+      projectsHome: safeProjectsHome,
+
       projects: safeProjects,
       contactInfo: safeContactMessages?.[0] || { name: "", email: "" },
       subjects: safeSubjects,
-      essential: safeEssential,
       messages: safeContactMessages,
     };
 
@@ -117,7 +171,9 @@ export function preloadBootOnce() {
 
     // Stage 2 (idle): rest of portfolio only
     runIdle(() => {
-      const rest = uniq(portfolioImages.slice(FIRST_PORTFOLIO_PRELOAD));
+      const rest = uniq([    
+        ...homeProjectsImages.slice(14),
+        ...portfolioImages.slice(FIRST_PORTFOLIO_PRELOAD)]);
       preloadImagesOnce(rest).catch(() => {});
     });
   })();

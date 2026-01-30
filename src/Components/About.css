@@ -5,17 +5,25 @@
    - left: 2 holo screens (bio + xp timeline)
    - center: free wheel (no square container)
    - right: visual holo screen (image changes)
-   - beam: soft spotlight (NOT a harsh rectangle)
+   - timeline: thick rail + arrow + progress (CSS var --p on .aboutX__xpPanel)
    - micro parallax: panels react to --px/--py set on .aboutX__core
    ========================= */
 
    .aboutX{
-    width: min(1200px, 92vw);
+    /* width: min(1200px, 92vw); */
     margin: 0 auto;
     padding: 90px 0 110px;
     color: rgba(245,245,255,0.92);
+    width: 95%;
   }
-  
+  /* évite que le wheel/blur relance des repaints agressifs */
+  /* .aboutX__core,
+  .holoPanel {
+    contain: paint;
+    transform: translateZ(0);
+  } */
+
+
   /* Header */
   .aboutX__header{
     max-width: 74ch;
@@ -42,16 +50,17 @@
     line-height: 1.65;
     color: rgba(220,230,255,0.80);
   }
-  
+
   /* Top row: right aligned stack strip */
   .aboutX__topRow{
     margin-top: 16px;
     display:flex;
     align-items:center;
     gap: 14px;
+    max-width: 250px;
   }
   .aboutX__topSpacer{ flex: 1 1 auto; }
-  
+
   /* -------------------------
      Reusable holo surfaces
      ------------------------- */
@@ -61,21 +70,29 @@
     padding: 14px;
     background: rgba(6, 6, 16, 0.30);
     border: 1px solid rgba(255,255,255,0.10);
-  
-    backdrop-filter: blur(12px) saturate(140%);
-    -webkit-backdrop-filter: blur(12px) saturate(140%);
-  
+
+    backdrop-filter: none; 
+    -webkit-backdrop-filter: none;
+
     box-shadow:
       0 18px 60px rgba(0,0,0,0.45),
       0 0 0 1px rgba(0,255,255,0.07) inset;
-  
+
     overflow: hidden;
     isolation: isolate;
-  
-    /* organic: tiny curvature illusion */
-    transform: perspective(900px) rotateX(0.35deg) rotateY(-0.35deg);
+    contain: paint; 
+    transform: none;
+
+    /* transform: perspective(900px) rotateX(0.35deg) rotateY(-0.35deg); */
   }
-  
+
+  @supports (backdrop-filter: blur(1px)){
+    html.isReady .holoPanel{
+      backdrop-filter: blur(12px) saturate(140%);
+      -webkit-backdrop-filter: blur(12px) saturate(140%);
+    }
+  }
+
   /* glow wash */
   .holoPanel::before{
     content:"";
@@ -89,7 +106,7 @@
       radial-gradient(600px 420px at 40% 85%, rgba(120,120,255,0.06), transparent 60%);
     z-index:0;
   }
-  
+
   /* scanlines + micro grid */
   .holoPanel::after{
     content:"";
@@ -103,36 +120,35 @@
     mix-blend-mode: soft-light;
     z-index:0;
   }
-  
-  /* subtle "curved glass edge" highlight */
+
   .holoPanel > *{
     position: relative;
     z-index: 2;
   }
-  
+
   /* -------------------------
      Stack strip
      ------------------------- */
   .holoStrip{
     position: relative;
-    height: 35px;
-    border-radius: 999px;
+    height: 325px;
+    border-radius: 45px;
     padding: 0 12px;
     display:flex;
     align-items:center;
     justify-content: space-between;
     gap: 10px;
-  
+
     background: rgba(6, 6, 16, 0.24);
     border: 1px solid rgba(255,255,255,0.10);
-  
+
     backdrop-filter: blur(10px) saturate(140%);
     -webkit-backdrop-filter: blur(10px) saturate(140%);
-  
+
     box-shadow:
       0 16px 46px rgba(0,0,0,0.32),
       0 0 0 1px rgba(0,255,255,0.05) inset;
-  
+
     overflow:hidden;
     isolation:isolate;
   }
@@ -173,34 +189,33 @@
     color: rgba(245,245,255,0.86);
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   }
-  
+
   /* -------------------------
      Main layout
      ------------------------- */
   .aboutX__layout{
     margin-top: 14px;
-    display: grid;
-    grid-template-columns: minmax(340px, 1.25fr) minmax(360px, 420px) minmax(280px, 1fr);
+    display: flex;
+    flex-wrap: wrap;
     gap: 16px;
-    align-items: start;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
   }
-  
-  /* LEFT ZONE wrapper is transparent */
+
+  /* LEFT ZONE */
   .aboutX__leftZone{
-    position: relative;
-    background: transparent;
-    border: 0;
-    padding: 0;
+    /* flex: 1 1 420px; */
+    min-width: 320px;
     display:flex;
-    flex-direction: column;
+    flex-direction:column;
     gap: 14px;
-    min-height: 540px;
   }
-  
-  /* BIO panel (top-left) — slightly skewed/organic */
+
+  /* BIO panel */
   .aboutX__bioPanel{
     border-radius: 24px 18px 24px 20px;
-    transform: perspective(900px) rotateX(0.55deg) rotateY(-0.65deg);
+    max-width: 350px;
   }
   .aboutX__bioTop{
     display:flex;
@@ -226,14 +241,16 @@
     color: rgba(220,230,255,0.82);
     max-width: 72ch;
   }
-  
-  /* XP panel (bottom-left) — larger screen + different shape */
+
+  /* XP panel */
   .aboutX__xpPanel{
     margin-top: auto;
     border-radius: 18px 26px 18px 26px;
-    transform: perspective(900px) rotateX(0.35deg) rotateY(0.35deg);
+    max-width: 400px;
+    /* progress default */
+    --p: 0;
   }
-  
+
   /* XP header */
   .aboutX__xpHeader{
     display:flex;
@@ -249,7 +266,7 @@
     font-size: 12px;
     color: rgba(245,245,255,0.88);
   }
-  
+
   /* Buttons */
   .aboutX__btn{
     height: 42px;
@@ -260,12 +277,12 @@
     color: rgba(245,245,255,0.92);
     text-decoration:none;
     cursor:pointer;
-  
+
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
     letter-spacing: 0.10em;
     text-transform: uppercase;
     font-size: 12px;
-  
+
     transition: transform 140ms ease, box-shadow 160ms ease, border-color 160ms ease;
   }
   .aboutX__btn:hover{
@@ -274,94 +291,146 @@
     box-shadow: 0 12px 26px rgba(0,0,0,0.40), 0 0 22px rgba(0,255,255,0.10);
   }
   .aboutX__btn.isGhost{ border-color: rgba(255,255,255,0.12); }
-  
+
   .aboutX__xpActions{
     display:flex;
     gap: 10px;
     flex-wrap: wrap;
     justify-content:flex-end;
   }
-  
-  /* Stylish arrow rail above the timeline */
-  .aboutX__timelineArrow{
-    height: 18px;
-    margin: 10px 0 8px;
+
+  /* ===== Timeline (NEW structure) ===== */
+  .aboutX__timelineArea{
     position: relative;
-    opacity: .95;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
   }
-  .aboutX__timelineArrow::before{
+
+  /* thick rail */
+  .aboutX__timelineRail{
+    position: relative;
+    height: 16px;
+    border-radius: 999px;
+    overflow: hidden;
+    z-index: 2;
+
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.10);
+    box-shadow:
+      0 14px 28px rgba(0,0,0,0.25),
+      0 0 0 1px rgba(0,255,255,0.05) inset;
+  }
+
+  /* Glow wash behind rail */
+  .aboutX__timelineRail::before{
     content:"";
     position:absolute;
-    left: 10px;
-    right: 30px;
-    top: 50%;
-    height: 1px;
-    transform: translateY(-50%);
-    background: linear-gradient(90deg,
-      rgba(0,255,255,0.00),
-      rgba(0,255,255,0.35),
-      rgba(255,0,170,0.28),
-      rgba(120,120,255,0.20),
-      rgba(0,255,255,0.14),
-      rgba(0,255,255,0.00)
-    );
-    filter: blur(0.1px);
+    inset:-40px;
+    background:
+      radial-gradient(200px 120px at 15% 50%, rgba(0,255,255,0.22), transparent 60%),
+      radial-gradient(200px 120px at 55% 50%, rgba(255,0,170,0.18), transparent 60%),
+      radial-gradient(200px 120px at 85% 50%, rgba(0,255,255,0.16), transparent 60%);
+    filter: blur(10px);
+    opacity: .85;
+    pointer-events:none;
   }
-  .aboutX__timelineArrow::after{
+
+  /* Arrow tip (right) */
+  .aboutX__timelineRail::after{
     content:"";
     position:absolute;
     right: 10px;
     top: 50%;
-    width: 14px;
-    height: 14px;
+    width: 10px;
+    height: 10px;
     transform: translateY(-50%) rotate(45deg);
-    border-right: 1px solid rgba(0,255,255,0.42);
-    border-top: 1px solid rgba(0,255,255,0.42);
-    box-shadow: 0 0 18px rgba(0,255,255,0.14);
+    border-right: 2px solid rgba(0,255,255,0.55);
+    border-top: 2px solid rgba(0,255,255,0.55);
+    box-shadow: 0 0 16px rgba(0,255,255,0.16);
+    pointer-events:none;
   }
-  
-  /* Horizontal scroll timeline container */
+
+  /* Progress fill based on --p (0..1) */
+  .aboutX__timelineProg{
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: calc(var(--p) * 100%);
+    border-radius: 999px;
+
+    background: linear-gradient(90deg,
+      rgba(0,255,255,0.22),
+      rgba(0,255,255,0.34),
+      rgba(255,0,170,0.24),
+      rgba(120,120,255,0.18),
+      rgba(0,255,255,0.20)
+    );
+
+    box-shadow:
+      0 0 22px rgba(0,255,255,0.12),
+      0 0 18px rgba(255,0,170,0.08);
+    transform: translateZ(0);
+  }
+
+  /* Progress head dot to feel “alive” */
+  .aboutX__timelineProg::after{
+    content:"";
+    position:absolute;
+    right: 6px;
+    top: 50%;
+    width: 12px;
+    height: 12px;
+    transform: translateY(-50%);
+    border-radius: 999px;
+    background: rgba(0,255,255,0.9);
+    box-shadow: 0 0 18px rgba(0,255,255,0.20), 0 0 26px rgba(255,0,170,0.10);
+    opacity: clamp(0, var(--p), 1);
+  }
+
+  /* Horizontal scroll timeline */
   .aboutX__timelineH{
     display:flex;
     gap: 12px;
+
     overflow-x: auto;
     overflow-y: hidden;
-    padding: 8px 6px 10px;
+
+    padding: 4px 6px 10px;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
+
+    /* critical shrink */
+    min-width: 0;
+    max-width: 100%;
+
+    /* keep it from “pushing” parent */
+    overscroll-behavior-x: contain;
+
+    scrollbar-width: none;
   }
-  
-  /* nice scrollbar (webkit) */
-  .aboutX__timelineH::-webkit-scrollbar{ height: 10px; }
-  .aboutX__timelineH::-webkit-scrollbar-track{
-    background: rgba(255,255,255,0.04);
-    border-radius: 999px;
+  .aboutX__timelineH::-webkit-scrollbar{
+    height: 0;
   }
-  .aboutX__timelineH::-webkit-scrollbar-thumb{
-    background: linear-gradient(90deg, rgba(0,255,255,0.25), rgba(255,0,170,0.18));
-    border-radius: 999px;
-    border: 1px solid rgba(255,255,255,0.10);
-  }
-  .aboutX__timelineH::-webkit-scrollbar-thumb:hover{
-    background: linear-gradient(90deg, rgba(0,255,255,0.35), rgba(255,0,170,0.26));
-  }
-  
-  /* Timeline cards (organic screens) */
+
+  /* Timeline cards */
   .aboutX__timeCard{
     flex: 0 0 auto;
-    width: min(320px, 78vw);
+    width: min(320px, 78vw); /* <-- responsive: prevents overflow madness */
     scroll-snap-align: start;
-  
+
     border-radius: 18px 22px 18px 22px;
     padding: 10px 12px;
-  
+
     background: rgba(0,0,0,0.14);
     border: 1px solid rgba(255,255,255,0.09);
-  
+
     box-shadow:
       0 16px 38px rgba(0,0,0,0.30),
       0 0 0 1px rgba(0,255,255,0.04) inset;
-  
+
     position: relative;
     overflow:hidden;
     isolation:isolate;
@@ -383,7 +452,7 @@
   .aboutX__timeCard:nth-child(3n){
     transform: translateY(-2px);
   }
-  
+
   .aboutX__timeDot{
     width: 10px;
     height: 10px;
@@ -393,7 +462,7 @@
     box-shadow: 0 0 16px rgba(0,255,255,0.22);
     flex: 0 0 auto;
   }
-  
+
   .aboutX__timeText{
     margin-top: 8px;
     color: rgba(220,230,255,0.84);
@@ -401,17 +470,22 @@
   }
   .aboutX__bold{ font-weight: 850; color: rgba(255,255,255,0.92); }
   .aboutX__muted{ color: rgba(220,230,255,0.78); }
-  
+
   /* -------------------------
      Center wheel
      ------------------------- */
   .aboutX__center{
+    /* flex: 0 1 420px; */
+    min-width: 340px;
     display:flex;
-    flex-direction:column;
+    flex-direction:row;
     gap: 12px;
     align-items:center;
+    justify-content: center;
+    overflow: visible;
+    flex-wrap: wrap;
   }
-  
+
   .aboutX__wheelStage{
     position: relative;
     display:flex;
@@ -419,49 +493,51 @@
     align-items:center;
     gap: 10px;
     padding-top: 8px;
+    overflow: visible;
   }
-  
-  /* Core: free (no box) */
+
+  /* Core */
   .aboutX__core{
     --ballAng: -90deg;
     --ballSpin: 0deg;
-    --beam: 0.20;   /* 0..1 */
-    --px: 0;        /* -1..1 */
-    --py: 0;        /* -1..1 */
-  
+    --beam: 0.20;
+    --px: 0;
+    --py: 0;
+
     position: relative;
     width: 360px;
     height: 360px;
     display:grid;
     place-items:center;
-  
+
     background: transparent;
     border: 0;
     outline: none;
-  
+
     user-select:none;
     touch-action: pan-y;
+    overflow: visible;
+    contain:  paint; 
+    transform: none;
   }
-  
+
   /* Ring */
   .aboutX__ring{
     position:absolute;
     width: 300px;
     height: 300px;
     border-radius: 999px;
-  
+
     border: 1px solid rgba(255,255,255,0.10);
     box-shadow:
       0 0 0 1px rgba(0,255,255,0.06) inset,
       0 0 30px rgba(0,255,255,0.10),
       0 0 44px rgba(255,0,170,0.08);
-  
+
     filter:
       drop-shadow(0 0 calc(10px + var(--beam) * 18px) rgba(0,255,255,0.10))
       drop-shadow(0 0 calc(10px + var(--beam) * 16px) rgba(255,0,170,0.08));
   }
-  
-  /* Ring internal shimmer / “distort” hint when beam passes */
   .aboutX__ring::before{
     content:"";
     position:absolute;
@@ -480,18 +556,16 @@
     filter: blur(10px);
     pointer-events:none;
   }
-  
-  /* Beam: soft spotlight wedge, NOT a rectangle diameter
-     We fake it as a thin capsule + big blur halo */
+
+  /* Beam */
   .aboutX__beam{
     position:absolute;
     width: 380px;
     height: 54px;
     border-radius: 999px;
-  
+
     opacity: calc(0.06 + var(--beam) * 0.45);
-  
-    /* core light */
+
     background:
       radial-gradient(60px 22px at 50% 50%, rgba(255,255,255,0.18), rgba(255,255,255,0.0) 60%),
       linear-gradient(90deg,
@@ -502,17 +576,17 @@
         rgba(0,255,255,0.18),
         rgba(0,255,255,0.00)
       );
-  
+
     transform:
       rotate(var(--ballAng))
       scaleX(calc(0.78 + var(--beam) * 0.30));
-  
+
     filter: blur(8px);
     pointer-events:none;
     mix-blend-mode: screen;
   }
-  
-  /* Nodes around ring */
+
+  /* Nodes */
   .aboutX__node{
     position:absolute;
     width: 64px;
@@ -520,22 +594,22 @@
     border-radius: 20px;
     border: 1px solid rgba(255,255,255,0.12);
     background: rgba(10, 8, 22, 0.16);
-  
+
     display:grid;
     place-items:center;
     cursor:pointer;
-  
+
     transform:
       rotate(var(--a))
       translateX(150px)
       rotate(calc(var(--a) * -1));
-  
+
     transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease, background 160ms ease;
     box-shadow: 0 18px 40px rgba(0,0,0,0.35);
     overflow:hidden;
     isolation:isolate;
   }
-  
+
   .aboutX__nodeGlow{
     position:absolute;
     inset:-2px;
@@ -546,12 +620,12 @@
     transition: opacity 160ms ease;
     pointer-events:none;
   }
-  
+
   .aboutX__node:hover .aboutX__nodeGlow,
   .aboutX__node:focus-visible .aboutX__nodeGlow{
     opacity: 1;
   }
-  
+
   .aboutX__node:hover,
   .aboutX__node:focus-visible{
     border-color: rgba(0,255,255,0.32);
@@ -560,7 +634,7 @@
       0 16px 40px rgba(0,0,0,0.38),
       0 0 30px rgba(0,255,255,0.12);
   }
-  
+
   .aboutX__node.isActive{
     border-color: rgba(255,0,170,0.30);
     background: rgba(28, 10, 40, 0.22);
@@ -570,8 +644,8 @@
       0 0 24px rgba(0,255,255,0.10),
       0 18px 45px rgba(0,0,0,0.42);
   }
-  
-  /* icon (SVG) */
+
+  /* icon */
   .aboutX__icon{
     position: relative;
     z-index: 2;
@@ -593,20 +667,20 @@
       0 0 18px rgba(0,255,255,0.18),
       0 0 18px rgba(255,0,170,0.14);
   }
-  
+
   /* Rolling ball */
   .aboutX__ball{
     position:absolute;
     width: 18px;
     height: 18px;
     border-radius: 999px;
-  
+
     transform:
       rotate(var(--ballAng))
       translateX(150px)
       rotate(calc(var(--ballAng) * -1))
       rotate(var(--ballSpin));
-  
+
     background: rgba(0,255,255,0.88);
     box-shadow:
       0 0 0 1px rgba(255,255,255,0.16) inset,
@@ -621,7 +695,7 @@
     background: radial-gradient(circle at 35% 28%, rgba(255,255,255,0.95), rgba(255,255,255,0.0) 55%);
     opacity: .9;
   }
-  
+
   /* Center label */
   .aboutX__centerLabel{
     position:absolute;
@@ -645,7 +719,7 @@
       0 0 20px rgba(255,0,170,0.12),
       0 0 20px rgba(0,255,255,0.10);
   }
-  
+
   /* hint */
   .aboutX__hint{
     font-size: 12px;
@@ -654,80 +728,117 @@
     color: rgba(200, 255, 255, 0.62);
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   }
-  
+
   /* -------------------------
      Right visual panel
      ------------------------- */
-  .aboutX__visual{
-    min-height: 540px;
+/* -------------------------
+   RIGHT — Skills console
+------------------------- */
+
+.aboutX__skillsZone{
+  min-width: 280px;
+  max-width: 340px;
+  display:flex;
+  flex-direction:column;
+  gap: 14px;
+}
+
+/* Panel */
+.aboutX__skillsPanel{
+  height: 360px; /* hauteur fixe = maîtrise visuelle */
+  display:flex;
+  flex-direction:column;
+}
+
+/* Header */
+.aboutX__skillsHeader{
+  margin-bottom: 8px;
+}
+.aboutX__skillsTitle{
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(245,245,255,0.9);
+}
+.aboutX__skillsSub{
+  margin-top: 4px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: rgba(200,255,255,0.7);
+}
+
+/* Scrollable list */
+.aboutX__skillsList{
+  margin-top: 10px;
+  display:flex;
+  flex-direction:column;
+  gap: 8px;
+
+  overflow-y: auto;
+  padding-right: 4px;
+
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0,255,255,0.35) transparent;
+}
+
+.aboutX__skillsList::-webkit-scrollbar{
+  width: 6px;
+}
+.aboutX__skillsList::-webkit-scrollbar-thumb{
+  background: linear-gradient(
+    180deg,
+    rgba(0,255,255,0.35),
+    rgba(255,0,170,0.25)
+  );
+  border-radius: 999px;
+}
+
+/* Skill item */
+.aboutX__skillItem{
+  padding: 8px 10px;
+  border-radius: 10px;
+
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: rgba(245,245,255,0.88);
+
+  transition: background 120ms ease, transform 120ms ease;
+}
+
+  .aboutX__skillItem:hover{
+    background: rgba(0,255,255,0.08);
+    transform: translateX(2px);
   }
-  .aboutX__visualPanel{
-    height: 100%;
-    min-height: 420px;
-    border-radius: 26px 18px 26px 18px;
-    transform: perspective(900px) rotateX(0.25deg) rotateY(0.75deg);
-  }
-  .aboutX__visualWrap{
-    position: relative;
-    border-radius: 18px;
-    overflow: hidden;
-    border: 1px solid rgba(255,255,255,0.10);
-    background: rgba(0,0,0,0.18);
-    height: 100%;
-    min-height: 320px;
-  }
-  .aboutX__visualWrap img{
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display:block;
-    filter: saturate(118%) contrast(110%) brightness(0.96);
-    transform: translateZ(0);
-  }
-  .aboutX__visualCaption{
-    margin-top: 10px;
+
+  /* CTA buttons */
+  .aboutX__skillsActions{
     display:flex;
-    align-items:center;
-    justify-content:center;
+    flex-direction:column;
     gap: 10px;
-    color: rgba(220,230,255,0.78);
-  
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-    font-size: 11px;
-    letter-spacing: 0.10em;
-    text-transform: uppercase;
   }
-  .aboutX__visualKicker{ opacity: .92; }
-  .aboutX__visualDot{ opacity: .55; }
-  
+
+
   /* -------------------------
-     Micro parallax (cheap + smooth)
-     Panels respond to vars set on .aboutX__core (--px/--py)
-     We use :has() so no extra JS required.
+     Micro parallax
      ------------------------- */
   @supports selector(:has(*)){
-    .aboutX:has(.aboutX__core){
-      --px: 0;
-      --py: 0;
-      --beam: 0.2;
-    }
-  
-    /* Pull vars: we cannot "read" from child to parent in pure CSS,
-       but we can visually move panels based on hover state and keep it subtle.
-       The true micro parallax is already applied via JS setting vars on the core;
-       we mirror those vars by using the same values directly on the panels via inheritance:
-       -> easiest: core and panels share the same scope if they are within the same section.
-    */
     .aboutX .holoPanel{
-      transform:
+      /* transform:
         perspective(900px)
         rotateX(calc(0.35deg + (var(--py) * -0.6deg)))
         rotateY(calc(-0.35deg + (var(--px) * 0.6deg)))
-        translate3d(calc(var(--px) * 2px), calc(var(--py) * 2px), 0);
+        translate3d(calc(var(--px) * 2px), calc(var(--py) * 2px), 0); */
       transition: transform 140ms ease;
-      will-change: transform;
+      will-change: auto;
     }
-  
+
+    .aboutX .holoPanel.isHot{ will-change: transform; }
+
     .aboutX__bioPanel{
       transform:
         perspective(900px)
@@ -735,7 +846,7 @@
         rotateY(calc(-0.65deg + (var(--px) * 0.7deg)))
         translate3d(calc(var(--px) * 2.5px), calc(var(--py) * 2.5px), 0);
     }
-  
+
     .aboutX__xpPanel{
       transform:
         perspective(900px)
@@ -743,16 +854,16 @@
         rotateY(calc(0.35deg + (var(--px) * 0.6deg)))
         translate3d(calc(var(--px) * 2.2px), calc(var(--py) * 2.2px), 0);
     }
-  
-    .aboutX__visualPanel{
+
+    /* .aboutX__visualPanel{
       transform:
         perspective(900px)
         rotateX(calc(0.25deg + (var(--py) * -0.6deg)))
         rotateY(calc(0.75deg + (var(--px) * 0.6deg)))
         translate3d(calc(var(--px) * 2.2px), calc(var(--py) * 2.2px), 0);
-    }
+    } */
   }
-  
+
   /* -------------------------
      Modal
      ------------------------- */
@@ -777,16 +888,16 @@
     max-height: min(82vh, 860px);
     overflow: auto;
     border-radius: 22px;
-  
+
     background: rgba(6, 6, 16, 0.72);
     border: 1px solid rgba(255,255,255,0.12);
     backdrop-filter: blur(14px) saturate(135%);
     -webkit-backdrop-filter: blur(14px) saturate(135%);
-  
+
     box-shadow: 0 24px 70px rgba(0,0,0,0.55);
     padding: 14px;
   }
-  
+
   .aboutX__modalTop{
     display:flex;
     justify-content:space-between;
@@ -838,11 +949,11 @@
     border-radius: 999px;
     padding: 8px 10px;
     font-size: 12px;
-  
+
     border: 1px solid rgba(255,255,255,0.12);
     background: rgba(255,255,255,0.06);
     color: rgba(245,245,255,0.88);
-  
+
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
     letter-spacing: 0.06em;
   }
@@ -853,28 +964,39 @@
     justify-content:flex-end;
     margin-top: 14px;
   }
-  
+
   /* -------------------------
      Responsive
      ------------------------- */
   @media (max-width: 1080px){
-    .aboutX__layout{
-      grid-template-columns: 1fr;
-    }
-    .aboutX__visual{
+    /* .aboutX__visual{
       min-height: 340px;
     }
     .aboutX__visualPanel{
       min-height: 360px;
-    }
+    } */
     .aboutX__center{
       order: -1;
+      /* flex: 1 1 100%; */
+      min-width: 0;
+      width: 100%;
     }
-    .aboutX__leftZone{
-      min-height: auto;
+
+    .aboutX__center,
+    .aboutX__wheelStage{
+      width: 100%;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
     }
+
+    .aboutX__layout{ overflow: visible; }
+    .aboutX__leftZone{ min-height: auto; }
   }
-  
+  @media (max-width: 800px){
+    .aboutX__leftZone{ min-height: auto; flex-direction: row;}
+  }
+
   @media (max-width: 520px){
     .aboutX{
       padding: 70px 0 90px;
@@ -903,7 +1025,7 @@
         rotate(var(--ballSpin));
     }
   }
-  
+
   /* Reduce motion */
   @media (prefers-reduced-motion: reduce){
     .aboutX__btn,
@@ -912,4 +1034,15 @@
       transition: none !important;
     }
   }
-  
+
+  /* Empêche les enfants scrollables de pousser le parent */
+  .aboutX__xpPanel,
+  .aboutX__bioPanel,
+  .aboutX__visualPanel{
+    min-width: 0;
+  }
+
+  /* Le scroller horizontal doit pouvoir shrink */
+  .aboutX__timelineH{
+    min-width: 0;
+  }

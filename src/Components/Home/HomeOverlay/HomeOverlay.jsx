@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import useOnboarding from "../../../hooks/useOnboarding";
-// import { warmDecodeImages } from "../../../utils/warmImages";
+import useMountLog from "../../../utils/useMountLog";
 
 import "./parts/styles/Base.css";
 import "./parts/styles/Background.css";
@@ -27,7 +27,8 @@ const FIRST_VISIT_KEY = "ag_home_first_visit_done_v1";
 const KB_HINT_KEY = "ag_step1_kb_hint_seen_v2";
 const FORCE_STEP_KEY = "ag_home_step_once";
 
-const raf2 = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+const raf2 = () =>
+  new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
 
 function unlockScrollHard() {
   document.body.style.overflow = "";
@@ -42,27 +43,43 @@ function lockScrollHard() {
 }
 
 function safeGetLS(key) {
-  try { return localStorage.getItem(key); } catch { return null; }
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
 }
 function safeSetLS(key, value) {
-  try { localStorage.setItem(key, value); } catch {}
+  try {
+    localStorage.setItem(key, value);
+  } catch {}
 }
 function safeRemoveLS(key) {
-  try { localStorage.removeItem(key); } catch {}
+  try {
+    localStorage.removeItem(key);
+  } catch {}
 }
 function safeGetSS(key) {
-  try { return sessionStorage.getItem(key); } catch { return null; }
+  try {
+    return sessionStorage.getItem(key);
+  } catch {
+    return null;
+  }
 }
 function safeRemoveSS(key) {
-  try { sessionStorage.removeItem(key); } catch {}
+  try {
+    sessionStorage.removeItem(key);
+  } catch {}
 }
 
 export default function HomeOverlay({
   onGoAbout,
   onGoProjects,
   onGoContact,
-  onStepChange, // ✅ NEW (optional)
+  onStepChange,
 }) {
+  useMountLog("HomeOverlay");
+
   const navigate = useNavigate();
   const location = useLocation();
   const { t, i18n } = useTranslation("intro");
@@ -105,7 +122,10 @@ export default function HomeOverlay({
   /* ---------------------------------
      Flags
   --------------------------------- */
-  const hasDoneFirstVisit = useMemo(() => safeGetLS(FIRST_VISIT_KEY) === "1", []);
+  const hasDoneFirstVisit = useMemo(
+    () => safeGetLS(FIRST_VISIT_KEY) === "1",
+    []
+  );
   const forcedStepOnce = useMemo(() => safeGetSS(FORCE_STEP_KEY), []);
 
   const forcedStepInitial = forcedStepOnce === "2" ? 2 : null;
@@ -125,26 +145,26 @@ export default function HomeOverlay({
 
   // keep latest slideIndex in ref (for watchdog)
   const slideRef = useRef(slideIndex);
-  useEffect(() => { slideRef.current = slideIndex; }, [slideIndex]);
+  useEffect(() => {
+    slideRef.current = slideIndex;
+  }, [slideIndex]);
 
-  /* ---------------------------------
-     Notify parent (Home.jsx)
-  --------------------------------- */
   useEffect(() => {
     onStepChange?.(slideIndex === 0 ? 1 : 2);
   }, [slideIndex, onStepChange]);
 
   /* ---------------------------------
-     Warm i18n
+     OPTION A — Warm i18n more aggressively
+     - intro + step2 related namespaces
   --------------------------------- */
   useEffect(() => {
-    i18n.loadNamespaces(["intro"]);
     i18n.loadLanguages(LANGS);
+    i18n.loadNamespaces(["intro", "about", "projects", "contact"]);
   }, [i18n]);
 
   /* ---------------------------------
      Consume forced flag AFTER mount
- --------------------------------- */
+  --------------------------------- */
   useEffect(() => {
     if (forcedStepOnce !== "2") return;
 
@@ -154,7 +174,9 @@ export default function HomeOverlay({
       document.querySelector(".homeOverlay__menuBtn")?.focus?.();
     }, 80);
 
-    requestAnimationFrame(() => requestAnimationFrame(() => setNoAnimOnce(false)));
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => setNoAnimOnce(false))
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -168,29 +190,22 @@ export default function HomeOverlay({
 
   /* ---------------------------------
      Scroll lock bulletproof
-     + extra: if we are step2, force unlock again after a tick
- --------------------------------- */
+  --------------------------------- */
   useEffect(() => {
     if (slideIndex === 0) {
       lockScrollHard();
-      return () => {
-        // cleanup when leaving step1
-        unlockScrollHard();
-      };
+      return () => unlockScrollHard();
     }
 
-    // step2: ensure unlocked now + after paint
     unlockScrollHard();
     requestAnimationFrame(() => unlockScrollHard());
     return undefined;
   }, [slideIndex]);
 
-  // hard-unlock on unmount
   useEffect(() => {
     return () => unlockScrollHard();
   }, []);
 
-  // ✅ watchdog: if after transitions we are on step2 but scroll still locked -> unlock
   useEffect(() => {
     const id = window.setInterval(() => {
       if (slideRef.current !== 1) return;
@@ -210,13 +225,15 @@ export default function HomeOverlay({
     setNoAnimOnce(true);
     setSlideIndex(0);
 
-    requestAnimationFrame(() => requestAnimationFrame(() => setNoAnimOnce(false)));
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => setNoAnimOnce(false))
+    );
     window.setTimeout(() => continueBtnRef.current?.focus?.(), 80);
   }, []);
 
   /* ---------------------------------
      From /city reset tutorial -> go step1
- --------------------------------- */
+  --------------------------------- */
   useEffect(() => {
     if (!location.state?.resetCityTutorial) return;
 
@@ -230,7 +247,7 @@ export default function HomeOverlay({
 
   /* ---------------------------------
      From /city -> force step2 instantly
- --------------------------------- */
+  --------------------------------- */
   useEffect(() => {
     const s = location.state?.goHomeStep;
     if (s !== 2) return;
@@ -239,19 +256,22 @@ export default function HomeOverlay({
     setNoAnimOnce(true);
     setSlideIndex(1);
 
-    // ✅ unlock immediately (avoid "stuck until refresh")
     unlockScrollHard();
     requestAnimationFrame(() => unlockScrollHard());
 
-    requestAnimationFrame(() => requestAnimationFrame(() => setNoAnimOnce(false)));
-    window.setTimeout(() => document.querySelector(".homeOverlay__menuBtn")?.focus?.(), 80);
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => setNoAnimOnce(false))
+    );
+    window.setTimeout(() => {
+      document.querySelector(".homeOverlay__menuBtn")?.focus?.();
+    }, 80);
 
     window.history.replaceState({}, document.title);
   }, [location.state]);
 
   /* ---------------------------------
      Language init
- --------------------------------- */
+  --------------------------------- */
   const detected = (i18n.resolvedLanguage || i18n.language || "en").slice(0, 2);
   const safeDetected = LANGS.includes(detected) ? detected : "en";
 
@@ -267,28 +287,8 @@ export default function HomeOverlay({
   const [isSwitchingLang, setIsSwitchingLang] = useState(false);
 
   /* ---------------------------------
-     BG prewarm
- --------------------------------- */
-  const bgTrackRef = useRef(null);
-  const prewarmedRef = useRef(false);
-
-  const prewarmStep2BgOnce = useCallback(() => {
-    if (typeof window === "undefined") return () => {};
-    if (prewarmedRef.current) return () => {};
-    prewarmedRef.current = true;
-
-    const el = bgTrackRef.current;
-    if (!el) return () => {};
-
-    el.classList.add("isPrewarmStep2");
-    return () => {
-      try { el.classList.remove("isPrewarmStep2"); } catch {}
-    };
-  }, []);
-
-  /* ---------------------------------
      Sync selector if language changes outside
- --------------------------------- */
+  --------------------------------- */
   useEffect(() => {
     if (slideIndex !== 0) return;
 
@@ -309,8 +309,10 @@ export default function HomeOverlay({
 
   /* ---------------------------------
      KB hint
- --------------------------------- */
-  const [showKbHint, setShowKbHint] = useState(() => safeGetLS(KB_HINT_KEY) !== "1");
+  --------------------------------- */
+  const [showKbHint, setShowKbHint] = useState(
+    () => safeGetLS(KB_HINT_KEY) !== "1"
+  );
   const [kbHintPhase, setKbHintPhase] = useState("hidden");
 
   useEffect(() => {
@@ -333,7 +335,7 @@ export default function HomeOverlay({
 
   /* ---------------------------------
      Step1 actions
- --------------------------------- */
+  --------------------------------- */
   const handlePickLanguage = useCallback(
     async (code, idx) => {
       if (!LANGS.includes(code)) return;
@@ -342,8 +344,11 @@ export default function HomeOverlay({
       if (typeof idx === "number") setLangActiveIndex(idx);
 
       setIsSwitchingLang(true);
-      try { await setLanguage(code); }
-      finally { setIsSwitchingLang(false); }
+      try {
+        await setLanguage(code);
+      } finally {
+        setIsSwitchingLang(false);
+      }
 
       requestAnimationFrame(() => continueBtnRef.current?.focus?.());
     },
@@ -357,64 +362,31 @@ export default function HomeOverlay({
 
     consumeKbHint();
 
-    setIsSwitchingLang(true);
-    try { await setLanguage(selectedLang); }
-    finally { setIsSwitchingLang(false); }
-
-    if (import.meta.env.DEV) {
-      console.log("[DBG] goToStep2() start", {
-        slideIndex,
-        selectedLang,
-        time: performance.now(),
-      });
-      console.log("[DBG] entries before", performance.getEntriesByName(location.origin + "/home_bg_step2.jpg"));
+    // ✅ do not re-await setLanguage if we already are on that language
+    const current = (i18n.resolvedLanguage || i18n.language || "en").slice(0, 2);
+    if (current !== selectedLang) {
+      setIsSwitchingLang(true);
+      try {
+        await setLanguage(selectedLang);
+      } finally {
+        setIsSwitchingLang(false);
+      }
     }
-    
 
-    // await warmDecodeImages([
-    //   "/home_bg_step2.jpg",
-    //   "/preview_city.png",
-    //   "/preview_kasia.jpg",
-    //   "/preview_project_1.png",
-    //   "/preview_project_2.png",
-    //   "/preview_project_3.png",
-    // ]);
-
-    // if (import.meta.env.DEV) {
-    //   console.log("[DBG] after warmDecodeImages", {
-    //     time: performance.now(),
-    //   });
-    //   console.log("[DBG] entries after", performance.getEntriesByName(location.origin + "/home_bg_step2.jpg"));
-    // }
-    
-
-    // const releasePrewarm = prewarmStep2BgOnce();
     await raf2();
 
-    // ✅ sync both flags
     safeSetLS(FIRST_VISIT_KEY, "1");
     completeLanguageStep(selectedLang);
 
-    // ✅ CRITICAL: unlock scroll BEFORE switching slide (and after)
     unlockScrollHard();
     requestAnimationFrame(() => unlockScrollHard());
 
     setSlideIndex(1);
 
-    if (import.meta.env.DEV) {
-      requestAnimationFrame(() => {
-        console.log("[DBG] after setSlideIndex paint", {
-          time: performance.now(),
-        });
-      });
-    }
-    
-
-    // window.setTimeout(() => releasePrewarm?.(), 950);
     window.setTimeout(() => {
       document.querySelector(".homeOverlay__menuBtn")?.focus?.();
     }, 420);
-  }, [selectedLang, setLanguage, completeLanguageStep, consumeKbHint, prewarmStep2BgOnce]);
+  }, [selectedLang, i18n, setLanguage, completeLanguageStep, consumeKbHint]);
 
   // step1 keyboard
   useEffect(() => {
@@ -442,14 +414,9 @@ export default function HomeOverlay({
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [slideIndex, langActiveIndex, canContinue, handlePickLanguage, goToStep2, consumeKbHint]);
 
-  // useEffect(() => {
-  //   if (slideIndex !== 0) return;
-  //   warmDecodeImages(["/home_bg_step2.jpg"]).catch(() => {});
-  // }, [slideIndex]);
-
   /* ---------------------------------
      Step2 menu
- --------------------------------- */
+  --------------------------------- */
   const [menuActiveIndex, setMenuActiveIndex] = useState(0);
 
   const runMenuAction = useCallback(
@@ -490,7 +457,7 @@ export default function HomeOverlay({
 
   /* ---------------------------------
      Reset buttons
- --------------------------------- */
+  --------------------------------- */
   const handleResetLanguage = useCallback(async () => {
     if (typeof resetLanguageStep === "function") resetLanguageStep();
 
@@ -500,9 +467,10 @@ export default function HomeOverlay({
     setSelectedLang(safe);
     setLangActiveIndex(Math.max(0, LANGS.indexOf(safe)));
 
-    try { await setLanguage(safe); await i18n.changeLanguage(safe); } catch {}
-
-    // keep first visit key (prod behavior)
+    try {
+      await setLanguage(safe);
+      await i18n.changeLanguage(safe);
+    } catch {}
   }, [resetLanguageStep, i18n, setLanguage]);
 
   const handleResetHint = useCallback(() => {
@@ -516,7 +484,6 @@ export default function HomeOverlay({
     safeRemoveLS("ag_language_chosen");
     safeRemoveLS(KB_HINT_KEY);
 
-    // ✅ also unlock just in case
     unlockScrollHard();
     requestAnimationFrame(() => unlockScrollHard());
 
@@ -526,16 +493,14 @@ export default function HomeOverlay({
   // global flag (css hooks)
   useEffect(() => {
     document.documentElement.dataset.agOnboarding = slideIndex === 0 ? "1" : "0";
-    return () => { document.documentElement.dataset.agOnboarding = "0"; };
+    return () => {
+      document.documentElement.dataset.agOnboarding = "0";
+    };
   }, [slideIndex]);
 
   return (
-    <header
-      className="homeOverlay"
-      data-step={slideIndex === 0 ? "1" : "2"}
-      aria-label="Home onboarding header"
-    >
-      <OverlayBackground slideIndex={slideIndex} noAnimOnce={noAnimOnce} bgTrackRef={bgTrackRef} />
+    <header className="homeOverlay" data-step={slideIndex === 0 ? "1" : "2"} aria-label="Home onboarding header">
+      <OverlayBackground slideIndex={slideIndex} noAnimOnce={noAnimOnce} bgTrackRef={useRef(null)} />
 
       <OverlayResetButtons
         t={t}
