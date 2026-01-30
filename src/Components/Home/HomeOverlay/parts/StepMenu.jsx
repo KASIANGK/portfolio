@@ -3,6 +3,7 @@ import React, { useCallback, useRef } from "react";
 import MenuPreview from "./MenuPreview";
 import ScrollHint from './ScrollHint'
 import { warmCityOnce } from "../../../../bootstrap/cityWarmup";
+import useMountLog from "../../../../utils/useMountLog";
 
 export default function StepMenu({
   isActive,
@@ -15,6 +16,7 @@ export default function StepMenu({
   menuAssetsReady,
   onGoAbout,
 }) {
+  useMountLog("StepMenu");
 
   const activeKey = MENU[menuActiveIndex]?.key;
 
