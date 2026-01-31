@@ -17,12 +17,6 @@
     transform 120ms ease,
     box-shadow 160ms ease;
 
-  /* transition:
-    transform 160ms ease,
-    box-shadow 160ms ease,
-    border-color 160ms ease,
-    background 160ms ease; */
-
   text-align: left;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   letter-spacing: 0.02em;

@@ -8,10 +8,56 @@
     --muted2: rgba(255,255,255,0.55);
     --glowA: rgba(255,0,170,0.22);
     --glowB: rgba(80,130,255,0.22);
+    --card-w: 160px;
+    --card-h: 175px;
+    --fan-scale: 1;
   
     width: 100%;
+    padding-top: 2%;
+    isolation: isolate; 
   }
+  .pm2::before{
+    content:"";
+    position:absolute;
+    inset: -40px -24px;
+    z-index: 0;
+    pointer-events:none;
+    opacity: 0.85;
   
+    /* cyber gradient aura */
+    background:
+      radial-gradient(520px 260px at 20% 35%, rgba(255,0,170,0.22), transparent 62%),
+      radial-gradient(520px 260px at 80% 55%, rgba(80,130,255,0.20), transparent 64%),
+      radial-gradient(700px 320px at 50% 110%, rgba(255,0,170,0.10), transparent 62%);
+  
+    filter: blur(14px);
+    transform: translateZ(0);
+  }
+  .pm2::after{
+    content:"";
+    position:absolute;
+    inset: -18px -14px;
+    z-index: 1;
+    pointer-events:none;
+    border-radius: 28px;
+
+    /* a thin neon-ish edge */
+    background:
+      linear-gradient(90deg,
+        rgba(255,0,170,0.18),
+        rgba(80,130,255,0.14)
+      );
+
+    /* keep only edges (fake ring) */
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+
+    padding: 1px; /* thickness */
+    opacity: 0.55;
+  }
   .pm2__row{
     display: flex;
     gap: 18px;
@@ -33,31 +79,30 @@
     width: 100%;
 
   }
-  
+  .pm2__row,
+  .pm2__left,
+  .pm2__right,
+  .pm2__stack,
+  .pm2__panel{
+    position: relative;
+    z-index: 2;
+  }
   .pm2__stack{
     position: relative;
     perspective: 1000px;
     transform-style: preserve-3d;
-    /* min-height: 520px; */
-    border-radius: 22px;
-    border: 1px solid var(--stroke);
-    background: radial-gradient(circle at 30% 20%, rgba(255,0,170,0.08), transparent 55%),
-                radial-gradient(circle at 70% 60%, rgba(80,130,255,0.10), transparent 58%),
-                rgba(10, 7, 22, 0.35);
+    border-top-right-radius: 22px;
+    border-top-left-radius: 22px;
     overflow: visible;
-    /* padding: 18px; */
-    isolation: isolate;
-
-    box-shadow: 0 18px 60px rgba(0,0,0,0.45);
   }
   
   @media (min-width: 920px){
-    .pm2__stack{ min-height: 420px; }
+    .pm2__stack{ min-height: 290px; }
   }
   
   /* Loaded subtle fade */
   .pm2__stack{ opacity: 1; }
-  .pm2__stack.isLoaded{ animation: pm2Fade 240ms ease both; }
+  .pm2__stack.isLoaded{ margin-right: 25px; animation: pm2Fade 240ms ease both; }
   @keyframes pm2Fade{
     from{ opacity: 0.88; }
     to{ opacity: 1;}
@@ -84,9 +129,7 @@
     transition:
       transform 180ms cubic-bezier(.16,1,.3,1),
       box-shadow 180ms ease;
-    /* will-change: transform; */
     transform-origin: 50% 110%;
-    /* filter: saturate(1.02) contrast(1.02); */
     opacity: 1;
     background: none;
 
@@ -115,8 +158,8 @@
   .pm2__card--poster{
     position: absolute;
     padding: 0;
-    width: min(140px, 62vw);
-    height: 150px;
+    width: min(var(--card-w), 68vw);
+    height: var(--card-h);
     border-radius: 0;
     overflow: hidden;
   
@@ -150,7 +193,6 @@
     pointer-events:none;
     /* paper/warp/grain */
     background: transparent;
-    /* mix-blend-mode: multiply; */
     opacity: 0.22;
   }
   
@@ -183,34 +225,16 @@
   /* 🔹 hovered OR locked = top visual */
 .pm2__card.isTop{
   z-index: 9990;
-  /* box-shadow:
-    0 30px 80px rgba(0,0,0,.55),
-    0 0 0 1px rgba(0,255,255,.12) inset; */
   will-change: transform;
 }
   /* 🔥 locked = priorité max */
 .pm2__card.isLocked{
   z-index: 9999;
-  /* box-shadow:
-    0 40px 110px rgba(0,0,0,.65),
-    0 0 0 1px rgba(255,0,170,.22) inset,
-    0 0 32px rgba(255,0,170,.25); */
   will-change: transform;
 }
 
 .pm2__card--poster.isPinned{
-  z-index: 9000; /* en dessous d'un isLocked si tu veux */
-  /* box-shadow:
-    0 26px 70px rgba(0,0,0,0.70),
-    0 0 0 1px rgba(255,255,255,0.20),
-    0 0 22px rgba(255,0,170,0.18),
-    0 0 30px rgba(80,130,255,0.14);
-
-  transform:
-    translateX(-50%)
-    translate3d(calc(var(--x) * 0.88), calc(var(--y) * 0.88), 0)
-    rotate(calc(var(--rot) * 0.85))
-    scale(calc(var(--s) * 1.03)); */
+  z-index: 9000; 
   will-change: transform;
 }
 
@@ -248,19 +272,12 @@
     border-radius: 0;
     overflow: hidden;
     border: none;
-    /* border: 1px solid rgba(255,255,255,0.10); */
-    /* background: rgba(0,0,0,0.18); */
     opacity: 1;
     position: relative;
     inset: 0;
     background: transparent;
     z-index: 0;
-    /* contain: paint; */
   }
-  
-  /* @media (min-width: 920px){
-    .pm2__imgWrap{ height: 150px; }
-  } */
   
   .pm2__imgWrap img{
     width: 100%;
@@ -270,7 +287,7 @@
     opacity: 1;
     transform: translateZ(0);
     backface-visibility: hidden;
-    /* transform: scale(1.02); */
+    object-fit: cover;
   }
   
   .pm2__imgFallback{
@@ -343,109 +360,145 @@
   .pm2__panel{
     position: sticky;
     top: 90px;
-    border-radius: 22px;
-    border: 1px solid var(--stroke);
-    background: var(--glass);
-    /* backdrop-filter: blur(14px); */
-    box-shadow: 0 18px 60px rgba(0,0,0,0.45);
-    padding: 18px;
+    border-top-right-radius: 22px;
+    border-top-left-radius: 22px;
     overflow: hidden;
     contain: none;
     isolation: isolate;
     transform: translateZ(0); /* ✅ */
     backface-visibility: hidden;
-  }
-  
-  .pm2__panelFx{
-    position: absolute;
-    inset: -80px -60px auto auto;
-    width: 260px;
-    height: 260px;
-    background: radial-gradient(circle at 35% 35%, rgba(255,0,170,0.20), transparent 60%),
-                radial-gradient(circle at 70% 65%, rgba(80,130,255,0.18), transparent 62%);
-    /* filter: blur(12px); */
-    opacity: 0.85;
-    pointer-events: none;
-    contain: paint;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    margin-top: -25px;
+    align-items: center;
   }
   
   .pm2__title{
     position: relative;
     margin: 0;
-    color: var(--txt);
-    font-size: 22px;
-    letter-spacing: 0.02em;
+    font-size: clamp(26px, 4vw, 44px);
+    line-height: 1.05;
+    color: rgba(245, 245, 255, 0.95);
+    letter-spacing: -0.02em;
+    text-shadow: 0 0 26px rgba(255, 0, 170, 0.16), 0 0 30px rgba(0, 255, 255, 0.10);
+    z-index: 2;
   }
   
   .pm2__subtitle{
     position: relative;
     margin: 10px 0 0 0;
-    color: rgba(255,255,255,0.68);
-    font-size: 13px;
     line-height: 1.4;
+    color: rgba(220, 230, 255, 0.75);
+    font-size: 15px;
+    line-height: 1.45;
+    max-width: 44ch;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    opacity: 0.95;
+    position: relative;
+    z-index: 2;
   }
   
   /* Tabs row like icons */
   .pm2__tabs{
     position: relative;
     margin-top: 14px;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
+    display: flex;
+    gap: 25px;
   }
   
   .pm2__tab{
     border-radius: 16px;
     border: 1px solid rgba(255,255,255,0.12);
     background: rgba(255,255,255,0.04);
-    padding: 12px 10px;
-    display: grid;
+    padding: 0px 5px;
+    display: flex;
+    flex-direction: column;
     place-items: center;
-    gap: 6px;
     cursor: pointer;
     transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
     color: rgba(255,255,255,0.82);
+    min-width: 90px;
+    position: relative;
+    overflow: hidden;
+    /* backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px); */
   }
-  
+  /* Tabs: scanline + neon edge */
+.pm2__tab::before{
+  content:"";
+  position:absolute;
+  inset:-2px;
+  border-radius: inherit;
+  pointer-events:none;
+  opacity: 0;
+  transition: opacity 220ms ease;
+  background:
+    radial-gradient(220px 140px at 50% 20%, rgba(255,0,170,0.20), transparent 60%),
+    radial-gradient(220px 140px at 50% 90%, rgba(80,130,255,0.18), transparent 62%);
+}
+
+.pm2__tab::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius: inherit;
+  pointer-events:none;
+  opacity: 0;
+  transition: opacity 220ms ease;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(255,255,255,0.06) 0 1px,
+      transparent 1px 9px
+    );
+  transform: translateY(-12%);
+}
+
+/* hover */
+.pm2__tab:hover::before{ opacity: .9; }
+.pm2__tab:hover::after{
+  opacity: .22;
+  animation: pm2TabScan 1.15s linear infinite;
+}
+
+@keyframes pm2TabScan{
+  from { transform: translateY(-12%); }
+  to   { transform: translateY(12%); }
+}
   .pm2__tab:hover{
     transform: translateY(-1px);
     border-color: rgba(255,255,255,0.18);
-    box-shadow: 0 0 18px rgba(255,0,170,0.14), 0 0 26px rgba(80,130,255,0.12);
+    box-shadow:
+    0 28px 80px rgba(0,0,0,0.74),
+    0 0 0 1px rgba(255,255,255,0.22),
+    0 0 18px rgba(255,0,170,0.18),
+    0 0 28px rgba(80,130,255,0.14),
+    0 0 60px rgba(255,0,170,0.10);
   }
   
   .pm2__tab.isActive{
-    border-color: rgba(255,0,170,0.22);
-    background: rgba(255,0,170,0.06);
-    box-shadow: 0 0 22px rgba(255,0,170,0.18), 0 0 30px rgba(80,130,255,0.14);
+    border-color: rgba(255,0,170,0.28);
+    background: rgba(255,0,170,0.07);
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.06) inset,
+      0 0 26px rgba(255,0,170,0.18),
+      0 0 34px rgba(80,130,255,0.14);
   }
-  
-  .pm2__tabIcon{
-    font-size: 16px;
-    line-height: 1;
+  /* When pinned/top: slight glow (still no move) */
+  .pm2__card.isTop{
+    filter: drop-shadow(0 0 14px rgba(255,0,170,0.12))
+            drop-shadow(0 0 18px rgba(80,130,255,0.10));
   }
   .pm2__tabLabel{
     font-size: 11px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.72);
+    margin-top: -3px;
+    padding-bottom: 10px;
   }
   
-  .pm2__hint{
-    position: relative;
-    margin-top: 14px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: rgba(255,255,255,0.64);
-    font-size: 12px;
-  }
-  .pm2__hintDot{
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: rgba(255,0,170,0.65);
-    box-shadow: 0 0 14px rgba(255,0,170,0.45), 0 0 20px rgba(80,130,255,0.25);
-  }
 /* mini previews row */
 .pm2__miniRow{
     margin-top: 10px;
@@ -491,16 +544,8 @@
   z-index: 50;
   pointer-events: none;
   overflow: hidden;
-
-  /* Light mask only (Home already veils the whole card) */
   background: rgba(5,0,22,0.22);
-
-  /* 🚫 avoid backdrop-filter here (expensive + blocky combined with Home blur) */
-  /* backdrop-filter: blur(10px) saturate(130%); */
-  /* -webkit-backdrop-filter: blur(10px) saturate(130%); */
-
   box-shadow: 0 0 0 1px rgba(255,255,255,0.06) inset;
-
   opacity: 1;
   transition: opacity 260ms ease;
 }
@@ -541,4 +586,95 @@
 /* fade out when loaded */
 .pm2__stack.isLoaded .pm2__veil{
   opacity: 0;
+}
+
+.pm2__tabIcon{
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+}
+
+.pm2__tabIconImg{
+  width: 42px;
+  height: 42px;
+  display: block;
+  opacity: 0.9;
+  filter: drop-shadow(0 0 10px rgba(255,0,170,0.12));
+}
+
+.pm2__tab.isActive .pm2__tabIconImg{
+  opacity: 1;
+  filter: drop-shadow(0 0 14px rgba(255,0,170,0.24));
+}
+
+@media (max-width: 1200px){
+  .pm2{
+    --card-w: 150px;
+    --card-h: 165px;
+    --fan-scale: 0.96;
+  }
+}
+@media (max-width: 1024px){
+  .pm2{
+    --card-w: 138px;
+    --card-h: 155px;
+    --fan-scale: 0.88;
+  }
+
+  .pm2__card--poster{
+    transform:
+      translateX(-50%)
+      translate3d(
+        calc(var(--x) * var(--fan-scale)),
+        calc((var(--y) + var(--liftY, 0px)) * var(--fan-scale)),
+        calc(var(--tz) * var(--fan-scale))
+      )
+      rotateZ(var(--rot))
+      rotateX(var(--rx))
+      rotateY(var(--ry))
+      scale(calc(var(--s) * var(--liftS, 1)));
+  }
+}
+@media (max-width: 768px){
+  .pm2{
+    --card-w: 120px;
+    --card-h: 140px;
+    --fan-scale: 0.72;
+  }
+
+  .pm2__stack{
+    min-height: 220px;
+  }
+  .pm2__card--poster{
+    transform-origin: 50% 70%;
+}
+.pm2__panel {
+  margin-top: 0;
+}
+}
+
+@media (max-width: 742px){
+  .pm2{
+    --card-w: 120px;
+    --card-h: 140px;
+    --fan-scale: 0.72;
+  }
+
+  .pm2__stack{
+    min-height: 220px;
+  }
+
+  .pm2__card--poster{
+    transform-origin: 50% 70%;
+  }
+  .pm2::before{
+    inset: -26px -14px;
+    filter: blur(10px);
+    opacity: 0.75;
+  }
+  .pm2::after{
+    inset: -12px -10px;
+    opacity: 0.45;
+  }
 }
