@@ -398,8 +398,8 @@ function About() {
   return (
     <section className="aboutX" id="about" aria-label={t("title", { defaultValue: "ABOUT" })}>
       <header className="aboutX__header">
-        <div className="aboutX__kicker">{bioKicker}</div>
-        <h2 className="aboutX__title">{t("title", { defaultValue: "ABOUT" })}</h2>
+        {/* <div className="aboutX__kicker">{bioKicker}</div> */}
+        <h2 className="aboutX__title">{t("title", { defaultValue: "About" })}</h2>
         <p className="aboutX__lead">{bioLead}</p>
       </header>
 
