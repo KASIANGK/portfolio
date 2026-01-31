@@ -4,12 +4,19 @@ import { useTranslation } from "react-i18next";
 import "./About.css";
 import useMountLog from "../utils/useMountLog";
 
+// const TABS = [
+//   { key: "web", labelFallback: "Web", angleDeg: -90 },
+//   { key: "threeD", labelFallback: "3D", angleDeg: 0 },
+//   { key: "angels", labelFallback: "Angels", angleDeg: 90 },
+//   { key: "all", labelFallback: "All", angleDeg: 180 },
+// ];
 const TABS = [
-  { key: "web", labelFallback: "Web", angleDeg: -90 },
-  { key: "threeD", labelFallback: "3D", angleDeg: 0 },
-  { key: "angels", labelFallback: "Angels", angleDeg: 90 },
-  { key: "all", labelFallback: "All", angleDeg: 180 },
+  { key: "web", labelFallback: "Web", angleDeg: -90, iconSrc: "/icons/web.svg" },
+  { key: "threeD", labelFallback: "3D", angleDeg: 0, iconSrc: "/icons/threed.svg" },
+  { key: "angels", labelFallback: "Events", angleDeg: 90 }, // keep svg for now
+  { key: "all", labelFallback: "All", angleDeg: 180, iconSrc: "/icons/all.svg" },
 ];
+
 
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const mod = (n, m) => ((n % m) + m) % m;
@@ -32,53 +39,95 @@ function nearestTabFromAngle(deg) {
   return best;
 }
 
+// function TabIcon({ tabKey }) {
+//   const common = { width: 22, height: 22, viewBox: "0 0 24 24", fill: "none" };
+//   switch (tabKey) {
+//     case "web":
+//       return (
+//         <svg {...common} aria-hidden="true">
+//           <path d="M4 7h16M4 12h16M4 17h10" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+//           <path d="M7 7l2 10" stroke="currentColor" strokeWidth="1.2" opacity=".6" />
+//         </svg>
+//       );
+//     case "threeD":
+//       return (
+//         <svg {...common} aria-hidden="true">
+//           <path d="M12 3l8 5v8l-8 5-8-5V8l8-5Z" stroke="currentColor" strokeWidth="1.6" opacity=".9" />
+//           <path d="M12 3v18M4 8l8 5 8-5" stroke="currentColor" strokeWidth="1.1" opacity=".6" />
+//         </svg>
+//       );
+//     case "angels":
+//       return (
+//         <svg {...common} aria-hidden="true">
+//           <path
+//             d="M12 6c3.4 0 6.2 1.4 8 3.6-1.8 2.2-4.6 3.6-8 3.6s-6.2-1.4-8-3.6C5.8 7.4 8.6 6 12 6Z"
+//             stroke="currentColor"
+//             strokeWidth="1.6"
+//           />
+//           <path d="M12 9.2a1.8 1.8 0 1 0 0 3.6 1.8 1.8 0 0 0 0-3.6Z" fill="currentColor" opacity=".8" />
+//           <path
+//             d="M6.2 4.6c.9 1.4 2 2.2 3.4 2.6M17.8 4.6c-.9 1.4-2 2.2-3.4 2.6"
+//             stroke="currentColor"
+//             strokeWidth="1.1"
+//             opacity=".7"
+//             strokeLinecap="round"
+//           />
+//         </svg>
+//       );
+//     default:
+//       return (
+//         <svg {...common} aria-hidden="true">
+//           <path
+//             d="M12 2l2.7 6.4 6.9.6-5.2 4.4 1.6 6.7-6-3.6-6 3.6 1.6-6.7L2.4 9l6.9-.6L12 2Z"
+//             stroke="currentColor"
+//             strokeWidth="1.4"
+//           />
+//         </svg>
+//       );
+//   }
+// }
 function TabIcon({ tabKey }) {
-  const common = { width: 22, height: 22, viewBox: "0 0 24 24", fill: "none" };
-  switch (tabKey) {
-    case "web":
-      return (
-        <svg {...common} aria-hidden="true">
-          <path d="M4 7h16M4 12h16M4 17h10" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-          <path d="M7 7l2 10" stroke="currentColor" strokeWidth="1.2" opacity=".6" />
-        </svg>
-      );
-    case "threeD":
-      return (
-        <svg {...common} aria-hidden="true">
-          <path d="M12 3l8 5v8l-8 5-8-5V8l8-5Z" stroke="currentColor" strokeWidth="1.6" opacity=".9" />
-          <path d="M12 3v18M4 8l8 5 8-5" stroke="currentColor" strokeWidth="1.1" opacity=".6" />
-        </svg>
-      );
-    case "angels":
-      return (
-        <svg {...common} aria-hidden="true">
-          <path
-            d="M12 6c3.4 0 6.2 1.4 8 3.6-1.8 2.2-4.6 3.6-8 3.6s-6.2-1.4-8-3.6C5.8 7.4 8.6 6 12 6Z"
-            stroke="currentColor"
-            strokeWidth="1.6"
-          />
-          <path d="M12 9.2a1.8 1.8 0 1 0 0 3.6 1.8 1.8 0 0 0 0-3.6Z" fill="currentColor" opacity=".8" />
-          <path
-            d="M6.2 4.6c.9 1.4 2 2.2 3.4 2.6M17.8 4.6c-.9 1.4-2 2.2-3.4 2.6"
-            stroke="currentColor"
-            strokeWidth="1.1"
-            opacity=".7"
-            strokeLinecap="round"
-          />
-        </svg>
-      );
-    default:
-      return (
-        <svg {...common} aria-hidden="true">
-          <path
-            d="M12 2l2.7 6.4 6.9.6-5.2 4.4 1.6 6.7-6-3.6-6 3.6 1.6-6.7L2.4 9l6.9-.6L12 2Z"
-            stroke="currentColor"
-            strokeWidth="1.4"
-          />
-        </svg>
-      );
+  const t = TABS.find((x) => x.key === tabKey);
+
+  // ✅ reuse Projects icons when available
+  if (t?.iconSrc && (tabKey === "web" || tabKey === "threeD" || tabKey === "all")) {
+    return (
+      <img
+        src={t.iconSrc}
+        alt=""
+        draggable="false"
+        loading="lazy"
+        decoding="async"
+        className="aboutX__iconImg"
+      />
+    );
   }
+
+  // fallback: your existing svg (angels / events)
+  const common = { viewBox: "0 0 24 24", fill: "none" };
+  if (tabKey === "angels") {
+    return (
+      <svg {...common} aria-hidden="true">
+        <path
+          d="M12 6c3.4 0 6.2 1.4 8 3.6-1.8 2.2-4.6 3.6-8 3.6s-6.2-1.4-8-3.6C5.8 7.4 8.6 6 12 6Z"
+          stroke="currentColor"
+          strokeWidth="1.6"
+        />
+        <path d="M12 9.2a1.8 1.8 0 1 0 0 3.6 1.8 1.8 0 0 0 0-3.6Z" fill="currentColor" opacity=".85" />
+        <path
+          d="M6.2 4.6c.9 1.4 2 2.2 3.4 2.6M17.8 4.6c-.9 1.4-2 2.2-3.4 2.6"
+          stroke="currentColor"
+          strokeWidth="1.1"
+          opacity=".75"
+          strokeLinecap="round"
+        />
+      </svg>
+    );
+  }
+
+  return null;
 }
+
 
 function About() {
   useMountLog("About");
