@@ -701,7 +701,12 @@ function About() {
             >
               {/* 3 contours + distortion (photo 1 vibe) */}
               <div className="aboutX__ringOuter" aria-hidden="true" />
-              <div className="aboutX__ringMid" aria-hidden="true" />
+              <div className="aboutX__ringOuter" aria-hidden="true" />
+              <div className="aboutX__ticks" aria-hidden="true" />     {/* ✅ ticks overlay */}
+              <div className="aboutX__ringWide" aria-hidden="true" />  {/* ✅ ring large (2e contour) */}
+
+              <div className="aboutX__ringMid" aria-hidden="true" />   {/* tu peux le garder mais on va le repenser */}
+              <div className="aboutX__ringInner" aria-hidden="true" /> {/* ✅ 3e contour sombre -> blanc au scar */}
               <div className="aboutX__distort" aria-hidden="true" />
               <div className="aboutX__hole" aria-hidden="true" />
 
