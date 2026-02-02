@@ -4,6 +4,7 @@
 
 /* Base shared styles */
 .homeOverlay__resetBtn,
+.homeOverlay__resetBtn__Canvas,
 .homeOverlay__resetBtn__Hint,
 .homeOverlay__resetBtn__Step,
 .homeOverlay__resetBtn__HomeCity {
@@ -36,6 +37,9 @@
 .homeOverlay__resetBtn { bottom: 16px; }
 .homeOverlay__resetBtn__Hint { bottom: 80px; }
 .homeOverlay__resetBtn__Step { bottom: 150px; }
+.homeOverlay__resetBtn__Canvas {
+  bottom: 280px;
+}
 
 .homeOverlay__resetBtn:hover,
 .homeOverlay__resetBtn__Hint:hover,

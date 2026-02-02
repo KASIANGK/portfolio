@@ -1,22 +1,19 @@
-// src/Components/About/About.jsx
+// // src/Components/About/About.jsx
 import { useCallback, useEffect, useMemo, useRef, useState, memo } from "react";
 import { useTranslation } from "react-i18next";
 import "./About.css";
 import useMountLog from "../utils/useMountLog";
+import LegacyModel from "./About/Model/LegacyModel";
 
-// const TABS = [
-//   { key: "web", labelFallback: "Web", angleDeg: -90 },
-//   { key: "threeD", labelFallback: "3D", angleDeg: 0 },
-//   { key: "angels", labelFallback: "Angels", angleDeg: 90 },
-//   { key: "all", labelFallback: "All", angleDeg: 180 },
-// ];
+import { Canvas, useThree } from "@react-three/fiber";
+import { OrbitControls } from "@react-three/drei";
+
 const TABS = [
   { key: "web", labelFallback: "Web", angleDeg: -90, iconSrc: "/icons/web.svg" },
   { key: "threeD", labelFallback: "3D", angleDeg: 0, iconSrc: "/icons/threed.svg" },
-  { key: "angels", labelFallback: "Events", angleDeg: 90 }, // keep svg for now
+  { key: "angels", labelFallback: "Events", angleDeg: 90 },
   { key: "all", labelFallback: "All", angleDeg: 180, iconSrc: "/icons/all.svg" },
 ];
-
 
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const mod = (n, m) => ((n % m) + m) % m;
@@ -39,61 +36,13 @@ function nearestTabFromAngle(deg) {
   return best;
 }
 
-// function TabIcon({ tabKey }) {
-//   const common = { width: 22, height: 22, viewBox: "0 0 24 24", fill: "none" };
-//   switch (tabKey) {
-//     case "web":
-//       return (
-//         <svg {...common} aria-hidden="true">
-//           <path d="M4 7h16M4 12h16M4 17h10" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-//           <path d="M7 7l2 10" stroke="currentColor" strokeWidth="1.2" opacity=".6" />
-//         </svg>
-//       );
-//     case "threeD":
-//       return (
-//         <svg {...common} aria-hidden="true">
-//           <path d="M12 3l8 5v8l-8 5-8-5V8l8-5Z" stroke="currentColor" strokeWidth="1.6" opacity=".9" />
-//           <path d="M12 3v18M4 8l8 5 8-5" stroke="currentColor" strokeWidth="1.1" opacity=".6" />
-//         </svg>
-//       );
-//     case "angels":
-//       return (
-//         <svg {...common} aria-hidden="true">
-//           <path
-//             d="M12 6c3.4 0 6.2 1.4 8 3.6-1.8 2.2-4.6 3.6-8 3.6s-6.2-1.4-8-3.6C5.8 7.4 8.6 6 12 6Z"
-//             stroke="currentColor"
-//             strokeWidth="1.6"
-//           />
-//           <path d="M12 9.2a1.8 1.8 0 1 0 0 3.6 1.8 1.8 0 0 0 0-3.6Z" fill="currentColor" opacity=".8" />
-//           <path
-//             d="M6.2 4.6c.9 1.4 2 2.2 3.4 2.6M17.8 4.6c-.9 1.4-2 2.2-3.4 2.6"
-//             stroke="currentColor"
-//             strokeWidth="1.1"
-//             opacity=".7"
-//             strokeLinecap="round"
-//           />
-//         </svg>
-//       );
-//     default:
-//       return (
-//         <svg {...common} aria-hidden="true">
-//           <path
-//             d="M12 2l2.7 6.4 6.9.6-5.2 4.4 1.6 6.7-6-3.6-6 3.6 1.6-6.7L2.4 9l6.9-.6L12 2Z"
-//             stroke="currentColor"
-//             strokeWidth="1.4"
-//           />
-//         </svg>
-//       );
-//   }
-// }
 function TabIcon({ tabKey }) {
-  const t = TABS.find((x) => x.key === tabKey);
+  const tab = TABS.find((x) => x.key === tabKey);
 
-  // ✅ reuse Projects icons when available
-  if (t?.iconSrc && (tabKey === "web" || tabKey === "threeD" || tabKey === "all")) {
+  if (tab?.iconSrc && (tabKey === "web" || tabKey === "threeD" || tabKey === "all")) {
     return (
       <img
-        src={t.iconSrc}
+        src={tab.iconSrc}
         alt=""
         draggable="false"
         loading="lazy"
@@ -103,7 +52,6 @@ function TabIcon({ tabKey }) {
     );
   }
 
-  // fallback: your existing svg (angels / events)
   const common = { viewBox: "0 0 24 24", fill: "none" };
   if (tabKey === "angels") {
     return (
@@ -113,7 +61,11 @@ function TabIcon({ tabKey }) {
           stroke="currentColor"
           strokeWidth="1.6"
         />
-        <path d="M12 9.2a1.8 1.8 0 1 0 0 3.6 1.8 1.8 0 0 0 0-3.6Z" fill="currentColor" opacity=".85" />
+        <path
+          d="M12 9.2a1.8 1.8 0 1 0 0 3.6 1.8 1.8 0 0 0 0-3.6Z"
+          fill="currentColor"
+          opacity=".85"
+        />
         <path
           d="M6.2 4.6c.9 1.4 2 2.2 3.4 2.6M17.8 4.6c-.9 1.4-2 2.2-3.4 2.6"
           stroke="currentColor"
@@ -128,30 +80,142 @@ function TabIcon({ tabKey }) {
   return null;
 }
 
+/**
+ * frameloop="demand" => on invalide uniquement quand nécessaire
+ */
+function InvalidateOnActive({ active, mousePosition }) {
+  const invalidate = useThree((s) => s.invalidate);
+
+  useEffect(() => {
+    if (!active) return;
+    invalidate();
+  }, [active, mousePosition, invalidate]);
+
+  return null;
+}
 
 function About() {
   useMountLog("About");
   const { t } = useTranslation("about");
 
+  // ---------- hint key ----------
+  const LS_HINT_3D = "ag_about_hint_3d_v1";
+
+  const sectionRef = useRef(null);
+
+  // committed (click / wheel)
   const [activeKey, setActiveKey] = useState("web");
-  const [hoverKey, setHoverKey] = useState(null);
+  // preview (hover persisted; does NOT reset on leave)
+  const [previewKey, setPreviewKey] = useState(null);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const displayKey = hoverKey ?? activeKey;
+  // dropdowns
+  const [skillsOpen, setSkillsOpen] = useState(false);
+  const [skillsExpanded, setSkillsExpanded] = useState(false);
 
+  // Visual open/close (GPU friendly)
+  const [visualOpen, setVisualOpen] = useState(false);
+  const userClosedRef = useRef(false);
+
+  // hover/preview wins over active
+  const displayKey = previewKey ?? activeKey;
+
+  // Wheel hover (for hole rim highlight)
+  const [isWheelHover, setIsWheelHover] = useState(false);
+
+  // R3F pointer tracking
+  const [isCanvasHover, setIsCanvasHover] = useState(false);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const canvasWrapRef = useRef(null);
+
+  // Cursor orb (local px)
+  const [cursorXY, setCursorXY] = useState({ x: 0, y: 0 });
+  const rafCursorRef = useRef(0);
+  const lastCursorRef = useRef({ x: 0, y: 0 });
+
+  const setCursorSmooth = useCallback((x, y) => {
+    lastCursorRef.current = { x, y };
+    if (rafCursorRef.current) return;
+    rafCursorRef.current = requestAnimationFrame(() => {
+      rafCursorRef.current = 0;
+      setCursorXY(lastCursorRef.current);
+    });
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (rafCursorRef.current) cancelAnimationFrame(rafCursorRef.current);
+    };
+  }, []);
+
+  const handleCanvasPointerMove = useCallback(
+    (e) => {
+      const el = canvasWrapRef.current;
+      if (!el) return;
+
+      const rect = el.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      const nx = (x / rect.width) * 2 - 1;
+      const ny = -((y / rect.height) * 2 - 1);
+      setMousePosition({ x: nx, y: ny });
+
+      setCursorSmooth(x, y);
+    },
+    [setCursorSmooth]
+  );
+
+  // ---- Hint "Play with me" once ----
+  const [canvasHintOn, setCanvasHintOn] = useState(false);
+  const [hintDone, setHintDone] = useState(() => {
+    try {
+      return localStorage.getItem(LS_HINT_3D) === "1";
+    } catch {
+      return false;
+    }
+  });
+  const hintTimerRef = useRef(null);
+
+  const show3DHintOnce = useCallback(() => {
+    if (hintDone) return;
+    setCanvasHintOn(true);
+
+    if (hintTimerRef.current) window.clearTimeout(hintTimerRef.current);
+    hintTimerRef.current = window.setTimeout(() => {
+      setCanvasHintOn(false);
+      try {
+        localStorage.setItem(LS_HINT_3D, "1");
+      } catch {}
+      setHintDone(true);
+    }, 3000);
+  }, [hintDone]);
+
+  useEffect(() => {
+    const is3DCanvasVisible = visualOpen && displayKey === "threeD";
+    if (is3DCanvasVisible) show3DHintOnce();
+
+    return () => {
+      if (hintTimerRef.current) window.clearTimeout(hintTimerRef.current);
+    };
+  }, [visualOpen, displayKey, show3DHintOnce]);
+
+  // ---- refs / wheel anim ----
   const coreRef = useRef(null);
   const xpPanelRef = useRef(null);
   const timelineRef = useRef(null);
 
-  // wheel anim state (refs = no rerender)
-  const ballAngleRef = useRef(TABS.find((x) => x.key === activeKey)?.angleDeg ?? -90);
-  const ballAngleTargetRef = useRef(ballAngleRef.current);
-  const beamRef = useRef(0);
-  const beamTargetRef = useRef(0);
+  // (on garde les noms, mais maintenant c’est l’aiguille)
+  const needleAngleRef = useRef(TABS.find((x) => x.key === activeKey)?.angleDeg ?? -90);
+  const needleAngleTargetRef = useRef(needleAngleRef.current);
+
+  const glowRef = useRef(0.18);
+  const glowTargetRef = useRef(0.18);
+
   const parXRef = useRef(0);
   const parYRef = useRef(0);
 
-  // timeline progress
   const timelineProgRef = useRef(0);
   const timelineProgTargetRef = useRef(0);
 
@@ -215,6 +279,17 @@ function About() {
 
   const pdfHref = t("pdfHref", { defaultValue: "/pdf/kasia_cv.pdf" });
 
+  const visualByTab = useMemo(() => {
+    return {
+      web: { type: "image", src: "/about/web_preview.png", alt: "Web preview" },
+      all: { type: "image", src: "/about/all_preview.png", alt: "All preview" },
+      angels: { type: "video", src: "/about/events_preview.mp4" },
+      threeD: { type: "canvas" },
+    };
+  }, []);
+
+  const visual = visualByTab[displayKey] || { type: "image", src: "/about/all_preview.png" };
+
   // lock scroll when modal open
   useEffect(() => {
     if (!isModalOpen) return;
@@ -227,14 +302,14 @@ function About() {
 
   const closeModal = useCallback(() => setIsModalOpen(false), []);
 
-  // snap ball target on active change
+  // snap needle target on active change + glow pulse
   useEffect(() => {
     const tab = TABS.find((x) => x.key === activeKey) || TABS[0];
-    ballAngleTargetRef.current = tab.angleDeg;
-    beamTargetRef.current = 0.8;
+    needleAngleTargetRef.current = tab.angleDeg;
 
+    glowTargetRef.current = 0.95;
     const to = window.setTimeout(() => {
-      beamTargetRef.current = 0.25;
+      glowTargetRef.current = 0.22;
     }, 120);
 
     return () => window.clearTimeout(to);
@@ -259,7 +334,7 @@ function About() {
     };
   }, [computeTimelineTarget, displayKey]);
 
-  // ---- RAF start/stop (real) ----
+  // RAF start/stop for wheel visuals
   const reduceMotionRef = useRef(false);
   useEffect(() => {
     reduceMotionRef.current = !!window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
@@ -280,26 +355,22 @@ function About() {
 
     const tick = () => {
       rafIdRef.current = 0;
-
-      // ✅ stop net si pas visible
       if (!isInViewRef.current) return;
 
       const core = coreRef.current;
       if (core) {
-        const a = ballAngleRef.current;
-        const at = ballAngleTargetRef.current;
+        const a = needleAngleRef.current;
+        const at = needleAngleTargetRef.current;
         const delta = ((at - a + 540) % 360) - 180;
-        ballAngleRef.current = a + delta * 0.12;
+        needleAngleRef.current = a + delta * 0.12;
 
-        const spin = ((ballAngleRef.current + 360) % 360) * 1.8;
+        const g = glowRef.current;
+        const gt = glowTargetRef.current;
+        glowRef.current = g + (gt - g) * 0.10;
+        glowTargetRef.current = clamp(glowTargetRef.current * 0.985, 0, 0.35);
 
-        const b = beamRef.current;
-        const bt = beamTargetRef.current;
-        beamRef.current = b + (bt - b) * 0.10;
-
-        core.style.setProperty("--ballAng", `${ballAngleRef.current}deg`);
-        core.style.setProperty("--ballSpin", `${spin}deg`);
-        core.style.setProperty("--beam", `${beamRef.current}`);
+        core.style.setProperty("--needleAng", `${needleAngleRef.current}deg`);
+        core.style.setProperty("--glow", `${glowRef.current}`);
         core.style.setProperty("--px", `${parXRef.current}`);
         core.style.setProperty("--py", `${parYRef.current}`);
       }
@@ -311,31 +382,39 @@ function About() {
       const xp = xpPanelRef.current;
       if (xp) xp.style.setProperty("--p", `${timelineProgRef.current}`);
 
-      beamTargetRef.current = clamp(beamTargetRef.current * 0.985, 0, 0.35);
-
       rafIdRef.current = requestAnimationFrame(tick);
     };
 
     rafIdRef.current = requestAnimationFrame(tick);
   }, []);
 
-  // observer controls RAF
+  // Intersection observer:
+  // - starts/stops wheel animations
+  // - auto open/close visual
   useEffect(() => {
-    const el = coreRef.current;
+    const el = sectionRef.current;
     if (!el) return;
 
     const io = new IntersectionObserver(
       ([entry]) => {
-        isInViewRef.current = !!entry?.isIntersecting;
+        const inView = !!entry?.isIntersecting;
+        isInViewRef.current = inView;
 
-        if (isInViewRef.current) start();
-        else stop();
+        if (inView) {
+          start();
+          if (!userClosedRef.current) setVisualOpen(true);
+        } else {
+          stop();
+          setVisualOpen(false);
+          setIsCanvasHover(false);
+          setMousePosition({ x: 0, y: 0 });
+          setIsWheelHover(false);
+        }
       },
       { threshold: 0.08 }
     );
 
     io.observe(el);
-    // start initially (if visible)
     start();
 
     return () => {
@@ -344,31 +423,59 @@ function About() {
     };
   }, [start, stop]);
 
+  // const updateFromPointer = useCallback((clientX, clientY) => {
+  //   const el = coreRef.current;
+  //   if (!el) return;
+
+  //   const r = el.getBoundingClientRect();
+  //   const cx = r.left + r.width / 2;
+  //   const cy = r.top + r.height / 2;
+
+  //   const deg = angleFromPointer(cx, cy, clientX, clientY);
+  //   const near = nearestTabFromAngle(deg);
+
+  //   needleAngleTargetRef.current = near.angleDeg;
+
+  //   const dist = Math.abs(((deg - near.angleDeg + 540) % 360) - 180);
+  //   const intensity = clamp(1 - dist / 55, 0, 1);
+  //   glowTargetRef.current = Math.max(glowTargetRef.current, 0.18 + intensity * 0.85);
+
+  //   const nx = clamp((clientX - cx) / (r.width / 2), -1, 1);
+  //   const ny = clamp((clientY - cy) / (r.height / 2), -1, 1);
+  //   parXRef.current = nx;
+  //   parYRef.current = ny;
+
+  //   // preview persists even after leaving wheel
+  //   setPreviewKey(near.key);
+  // }, []);
+
   const updateFromPointer = useCallback((clientX, clientY) => {
     const el = coreRef.current;
     if (!el) return;
-
+  
     const r = el.getBoundingClientRect();
     const cx = r.left + r.width / 2;
     const cy = r.top + r.height / 2;
-
+  
     const deg = angleFromPointer(cx, cy, clientX, clientY);
     const near = nearestTabFromAngle(deg);
-
-    ballAngleTargetRef.current = near.angleDeg;
-
+  
+    // ✅ 1:1 avec la souris
+    needleAngleTargetRef.current = deg;
+  
     const dist = Math.abs(((deg - near.angleDeg + 540) % 360) - 180);
     const intensity = clamp(1 - dist / 55, 0, 1);
-    beamTargetRef.current = Math.max(beamTargetRef.current, 0.18 + intensity * 0.85);
-
+    glowTargetRef.current = Math.max(glowTargetRef.current, 0.18 + intensity * 0.85);
+  
     const nx = clamp((clientX - cx) / (r.width / 2), -1, 1);
     const ny = clamp((clientY - cy) / (r.height / 2), -1, 1);
     parXRef.current = nx;
     parYRef.current = ny;
-
-    setHoverKey(near.key);
+  
+    setPreviewKey(near.key);
   }, []);
 
+  
   const onPointerMove = useCallback(
     (e) => {
       if (!coreRef.current) return;
@@ -378,10 +485,14 @@ function About() {
   );
 
   const onPointerLeave = useCallback(() => {
-    setHoverKey(null);
-    beamTargetRef.current = 0.18;
+    glowTargetRef.current = 0.18;
     parXRef.current = 0;
     parYRef.current = 0;
+    setIsWheelHover(false);
+  }, []);
+
+  const onPointerEnter = useCallback(() => {
+    setIsWheelHover(true);
   }, []);
 
   const onPointerDown = useCallback(
@@ -396,7 +507,9 @@ function About() {
       const cy = r.top + r.height / 2;
       const deg = angleFromPointer(cx, cy, e.clientX, e.clientY);
       const near = nearestTabFromAngle(deg);
+
       setActiveKey(near.key);
+      setPreviewKey(null);
     },
     [updateFromPointer]
   );
@@ -417,44 +530,60 @@ function About() {
       const idx = TABS.findIndex((x) => x.key === activeKey);
       const next = TABS[mod(idx + dir, TABS.length)];
       setActiveKey(next.key);
-      setHoverKey(null);
+      setPreviewKey(null);
     },
     [activeKey]
   );
 
   const onNodeEnter = useCallback((key) => {
-    setHoverKey(key);
+    setPreviewKey(key);
     const tab = TABS.find((x) => x.key === key) || TABS[0];
-    ballAngleTargetRef.current = tab.angleDeg;
-    beamTargetRef.current = Math.max(beamTargetRef.current, 0.85);
+    needleAngleTargetRef.current = tab.angleDeg;
+    glowTargetRef.current = Math.max(glowTargetRef.current, 0.85);
   }, []);
 
   const onNodeClick = useCallback((key) => {
     setActiveKey(key);
-    setHoverKey(null);
+    setPreviewKey(null);
     const tab = TABS.find((x) => x.key === key) || TABS[0];
-    ballAngleTargetRef.current = tab.angleDeg;
-    beamTargetRef.current = 0.9;
+    needleAngleTargetRef.current = tab.angleDeg;
+    glowTargetRef.current = 0.9;
   }, []);
 
   const onTimelineScroll = useCallback(() => {
     computeTimelineTarget();
   }, [computeTimelineTarget]);
 
-  const ctaViewAll = t("sections.seeMore", { defaultValue: "View all" });
   const ctaDownload = t("downloadPdf", { defaultValue: "Download PDF" });
 
+  // Skills logic
+  const skillsFull = skillsByTab[displayKey] || [];
+  const skillsMax4 = skillsFull.slice(0, 4);
+  const hasMoreSkills = skillsFull.length > 4;
+  const skillsShown = skillsExpanded ? skillsFull : skillsMax4;
+
+  const toggleVisual = useCallback(() => {
+    setVisualOpen((v) => {
+      const next = !v;
+      userClosedRef.current = !next;
+      return next;
+    });
+
+    setIsCanvasHover(false);
+    setMousePosition({ x: 0, y: 0 });
+  }, []);
+
   return (
-    <section className="aboutX" id="about" aria-label={t("title", { defaultValue: "ABOUT" })}>
+    <section className="aboutX" id="about" ref={sectionRef} aria-label={t("title", { defaultValue: "ABOUT" })}>
       <header className="aboutX__header">
-        {/* <div className="aboutX__kicker">{bioKicker}</div> */}
         <h2 className="aboutX__title">{t("title", { defaultValue: "About" })}</h2>
         <p className="aboutX__lead">{bioLead}</p>
       </header>
 
       <div className="aboutX__layout">
+        {/* LEFT */}
         <div className="aboutX__leftZone">
-          <div className="holoPanel aboutX__bioPanel">
+          <div className="holoPanel holoPanel--cornerCyber aboutX__bioPanel">
             <div className="aboutX__bioTop">
               <div className="aboutX__bioTitle">{bioTitle}</div>
               <div className="aboutX__bioSub">{taglines?.[displayKey] ?? ""}</div>
@@ -462,59 +591,122 @@ function About() {
             <p className="aboutX__bioText">{bioLead}</p>
           </div>
 
-          <div className="holoPanel aboutX__xpPanel" ref={xpPanelRef}>
-            <div className="aboutX__xpHeader">
-              <div className="aboutX__xpTitle">{expTitle}</div>
-              <div className="aboutX__xpActions">
-                <button type="button" className="aboutX__btn" onClick={() => setIsModalOpen(true)}>
-                  {ctaViewAll}
-                </button>
-                <a className="aboutX__btn isGhost" href={pdfHref} download>
-                  {ctaDownload}
-                </a>
+          <div className="aboutX__xpSkillsPanel">
+            <div className="holoPanel aboutX__xpPanel" ref={xpPanelRef}>
+              <div className="aboutX__xpHeader">
+                <div className="aboutX__xpTitle">{expTitle}</div>
+              </div>
+
+              <div className="aboutX__timelineArea">
+                <div className="aboutX__timelineRail" aria-hidden="true">
+                  <div className="aboutX__timelineProg" aria-hidden="true" />
+                </div>
+
+                <div
+                  className="aboutX__timelineH"
+                  ref={timelineRef}
+                  onScroll={onTimelineScroll}
+                  role="list"
+                  aria-label="Experience timeline"
+                >
+                  {expItems.map((it, i) => (
+                    <div className="aboutX__timeCard" key={`${it.key}-${i}`} role="listitem">
+                      <div className="aboutX__timeDot" aria-hidden="true" />
+                      <div className="aboutX__timeText">
+                        <span className="aboutX__bold">{it.bold}</span>{" "}
+                        <span className="aboutX__muted">{it.text}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
 
-            <div className="aboutX__timelineArea">
-              <div className="aboutX__timelineRail" aria-hidden="true">
-                <div className="aboutX__timelineProg" aria-hidden="true" />
+            <div className="holoPanel aboutX__skillsPanel">
+              <div className="aboutX__skillsTop">
+                <div className="aboutX__skillsHeader">
+                  <div className="aboutX__skillsTitle">{t("skills.title", { defaultValue: "Skills" })}</div>
+                  <div className="aboutX__skillsSub">{tabLabel(displayKey)}</div>
+                </div>
+
+                {!skillsOpen ? (
+                  <button
+                    type="button"
+                    className="aboutX__btn isSmall"
+                    aria-pressed={false}
+                    onClick={() => {
+                      setSkillsOpen(true);
+                      setSkillsExpanded(false);
+                    }}
+                  >
+                    {t("skills.more", { defaultValue: "See more" })}
+                  </button>
+                ) : (
+                  <div className="aboutX__skillsControls">
+                    {hasMoreSkills && (
+                      <button
+                        type="button"
+                        className="aboutX__btn isSmall"
+                        aria-pressed={skillsExpanded}
+                        onClick={() => setSkillsExpanded((v) => !v)}
+                      >
+                        {skillsExpanded
+                          ? t("skills.less", { defaultValue: "See less" })
+                          : t("skills.moreAll", { defaultValue: "See all" })}
+                      </button>
+                    )}
+
+                    <button
+                      type="button"
+                      className="aboutX__btn isSmall isGhost"
+                      aria-pressed={true}
+                      onClick={() => {
+                        setSkillsOpen(false);
+                        setSkillsExpanded(false);
+                      }}
+                    >
+                      {t("skills.close", { defaultValue: "Close" })}
+                    </button>
+                  </div>
+                )}
               </div>
 
-              <div
-                className="aboutX__timelineH"
-                ref={timelineRef}
-                onScroll={onTimelineScroll}
-                role="list"
-                aria-label="Experience timeline"
-              >
-                {expItems.map((it, i) => (
-                  <div className="aboutX__timeCard" key={`${it.key}-${i}`} role="listitem">
-                    <div className="aboutX__timeDot" aria-hidden="true" />
-                    <div className="aboutX__timeText">
-                      <span className="aboutX__bold">{it.bold}</span>{" "}
-                      <span className="aboutX__muted">{it.text}</span>
+              {skillsOpen && (
+                <div className={`aboutX__skillsList ${skillsExpanded ? "isExpanded" : ""}`} role="list">
+                  {skillsShown.map((skill) => (
+                    <div key={skill} className="aboutX__skillItem" role="listitem">
+                      {skill}
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
 
+        {/* CENTER + RIGHT */}
         <div className="aboutX__center">
           <div className="aboutX__wheelStage">
             <div
-              className="aboutX__core"
+              className={`aboutX__core ${isWheelHover ? "isHover" : ""}`}
               ref={coreRef}
               role="application"
               aria-label="About wheel"
+              onPointerEnter={onPointerEnter}
               onPointerMove={onPointerMove}
               onPointerLeave={onPointerLeave}
               onPointerDown={onPointerDown}
               onPointerUp={onPointerUp}
               onWheel={onWheel}
             >
-              <div className="aboutX__ring" aria-hidden="true" />
+              {/* 3 contours + distortion (photo 1 vibe) */}
+              <div className="aboutX__ringOuter" aria-hidden="true" />
+              <div className="aboutX__ringMid" aria-hidden="true" />
+              <div className="aboutX__distort" aria-hidden="true" />
+              <div className="aboutX__hole" aria-hidden="true" />
+
+              {/* Needle */}
+              <div className="aboutX__needle" aria-hidden="true" />
 
               {TABS.map((tab) => {
                 const isActive = tab.key === activeKey;
@@ -527,7 +719,6 @@ function About() {
                     style={{ "--a": `${tab.angleDeg}deg` }}
                     onMouseEnter={() => onNodeEnter(tab.key)}
                     onFocus={() => onNodeEnter(tab.key)}
-                    onBlur={() => setHoverKey(null)}
                     onClick={() => onNodeClick(tab.key)}
                     aria-label={tabLabel(tab.key)}
                   >
@@ -535,13 +726,11 @@ function About() {
                     <span className="aboutX__icon" aria-hidden="true">
                       <TabIcon tabKey={tab.key} />
                     </span>
+                    <span className="aboutX__nodeLabel">{tabLabel(tab.key)}</span>
                   </button>
                 );
               })}
-
-              <div className="aboutX__ball" aria-hidden="true">
-                <div className="aboutX__ballSpec" />
-              </div>
+              <div className="aboutX__scar" aria-hidden="true" />
 
               <div className="aboutX__centerLabel" aria-hidden="true">
                 <div className="aboutX__centerTop">{t("title", { defaultValue: "ABOUT" })}</div>
@@ -551,38 +740,124 @@ function About() {
 
             <div className="aboutX__hint">{t("playHint", { defaultValue: "Play with me" })}</div>
           </div>
-        </div>
 
-        <div className="aboutX__skillsZone">
-          <div className="holoPanel aboutX__skillsPanel">
-            <div className="aboutX__skillsHeader">
-              <div className="aboutX__skillsTitle">{t("skills.title", { defaultValue: "Skills" })}</div>
-              <div className="aboutX__skillsSub">{tabLabel(displayKey)}</div>
+          <div className="aboutX__rightZone">
+            <div className="aboutX__actions">
+              <a className="aboutX__btn" href="/#projects">
+                {t("buttons.portfolio", { defaultValue: "View portfolio" })}
+              </a>
+              <a className="aboutX__btn isGhost" href="/#cv">
+                {t("buttons.cv", { defaultValue: "View full CV" })}
+              </a>
+              <a className="aboutX__btn isGhost" href={pdfHref} download>
+                {ctaDownload}
+              </a>
             </div>
 
-            <div className="aboutX__skillsList" role="list">
-              {(skillsByTab[displayKey] || []).map((skill) => (
-                <div key={skill} className="aboutX__skillItem" role="listitem">
-                  {skill}
+            <div className="holoPanel holoPanel--cornerCyber aboutX__visualPanel">
+              <div className="aboutX__visualTop">
+                <div className="aboutX__visualHeader">
+                  <div className="aboutX__visualTitle">{t("visual.title", { defaultValue: "Visual" })}</div>
+                  <div className="aboutX__visualSub">{tabLabel(displayKey)}</div>
                 </div>
-              ))}
-            </div>
-          </div>
 
-          <div className="aboutX__skillsActions">
-            <a className="aboutX__btn" href="/#projects">
-              {t("buttons.portfolio", { defaultValue: "View Projects" })}
-            </a>
-            <a className="aboutX__btn isGhost" href="/#cv">
-              {t("buttons.cv", { defaultValue: "View Full CV" })}
-            </a>
-            <a className="aboutX__btn isGhost" href={pdfHref} download>
-              {ctaDownload}
-            </a>
+                <button
+                  type="button"
+                  className="aboutX__btn isSmall"
+                  aria-pressed={visualOpen}
+                  onClick={toggleVisual}
+                >
+                  {visualOpen ? t("visual.close", { defaultValue: "Close" }) : t("visual.open", { defaultValue: "Open" })}
+                </button>
+              </div>
+
+              {visualOpen && (
+                <div className="aboutX__visualBody">
+                  {visual.type === "canvas" && displayKey === "threeD" && (
+                    <div
+                      className="aboutX__canvasWrap aboutX__visualFxBR"
+                      ref={canvasWrapRef}
+                      onPointerEnter={(e) => {
+                        setIsCanvasHover(true);
+                        handleCanvasPointerMove(e);
+                      }}
+                      onPointerLeave={() => {
+                        setIsCanvasHover(false);
+                        setMousePosition({ x: 0, y: 0 });
+                      }}
+                      onPointerMove={(e) => {
+                        if (!isCanvasHover) return;
+                        handleCanvasPointerMove(e);
+                      }}
+                    >
+                      {isCanvasHover && (
+                        <div
+                          className="aboutX__cursorOrb"
+                          style={{ left: `${cursorXY.x}px`, top: `${cursorXY.y}px` }}
+                          aria-hidden="true"
+                        />
+                      )}
+
+                      {canvasHintOn && (
+                        <div className="aboutX__canvasHint" aria-hidden="true">
+                          {t("playHint", { defaultValue: "Play with me" })}
+                        </div>
+                      )}
+
+                      <Canvas
+                        frameloop={isCanvasHover ? "always" : "demand"}
+                        dpr={isCanvasHover ? [1, 2] : 1}
+                        camera={{ position: [0, 0.2, 5.2], fov: 45 }}
+                        gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
+                      >
+                        <InvalidateOnActive active={isCanvasHover} mousePosition={mousePosition} />
+
+                        <ambientLight intensity={0.8} />
+                        <directionalLight position={[3, 4, 6]} intensity={1.0} />
+                        <pointLight position={[2.2, 0.8, 2.5]} intensity={0.55} color="#ff00aa" />
+                        <pointLight position={[-2.2, -0.4, 2.8]} intensity={0.35} color="#7c3aed" />
+
+                        <LegacyModel mousePosition={mousePosition} isActive={isCanvasHover} />
+                        <OrbitControls enableZoom={false} enablePan={false} rotateSpeed={0.6} />
+                      </Canvas>
+                    </div>
+                  )}
+
+                  {visual.type === "image" && (
+                    <div className="aboutX__mediaWrap aboutX__visualFxBR">
+                      <img
+                        className="aboutX__media"
+                        src={visual.src}
+                        alt={visual.alt || ""}
+                        loading="lazy"
+                        decoding="async"
+                        draggable="false"
+                      />
+                    </div>
+                  )}
+
+                  {visual.type === "video" && (
+                    <div className="aboutX__mediaWrap aboutX__visualFxBR">
+                      <video
+                        className="aboutX__media"
+                        src={visual.src}
+                        muted
+                        loop
+                        playsInline
+                        autoPlay
+                        preload="metadata"
+                        controls={false}
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
+      {/* Modal (kept) */}
       {isModalOpen && (
         <div
           className="aboutX__modalOverlay"
@@ -593,7 +868,6 @@ function About() {
           }}
         >
           <button className="aboutX__modalBackdrop" aria-label="Close" onClick={closeModal} />
-
           <div className="aboutX__modal">
             <div className="aboutX__modalTop">
               <div className="aboutX__modalTitle">
