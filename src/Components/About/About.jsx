@@ -103,21 +103,29 @@ function About() {
   const closeCv = useCallback(() => setIsCvOpen(false), []);
   // + en haut du composant About()
   const skillsScrollRef = useRef(null);
+  const skillsWrapRef = useRef(null);
   const [skillsAtBottom, setSkillsAtBottom] = useState(false);
   const [skillsScrollable, setSkillsScrollable] = useState(false);
 
   const updateSkillsScrollState = useCallback(() => {
     const el = skillsScrollRef.current;
-    if (!el) return;
-
+    const wrap = skillsWrapRef.current;
+    if (!el || !wrap) return;
+  
     const max = el.scrollHeight - el.clientHeight;
     const scrollable = max > 2;
-
-    // petit epsilon pour éviter le “flicker” sur trackpad
     const atBottom = scrollable && el.scrollTop >= max - 2;
-
+  
     setSkillsScrollable(scrollable);
     setSkillsAtBottom(atBottom);
+  
+    // --- CSS vars pour UI custom ---
+    const p = scrollable ? el.scrollTop / max : 0;          // 0..1
+    const viewRatio = el.clientHeight / Math.max(el.scrollHeight, 1);
+    const thumb = clamp(viewRatio, 0.18, 0.85);             // taille thumb (min/max)
+  
+    wrap.style.setProperty("--sp", String(p));
+    wrap.style.setProperty("--sth", String(thumb));
   }, []);
 
 
@@ -645,11 +653,11 @@ function About() {
 
               {/* ✅ wrapper non-scroll */}
               <div
+                ref={skillsWrapRef}
                 className={`aboutX__skillsScrollWrap ${
                   skillsScrollable ? "isScrollable" : ""
                 } ${skillsAtBottom ? "isAtBottom" : ""}`}
               >
-                {/* ✅ inner scrollable */}
                 <div
                   ref={skillsScrollRef}
                   className="aboutX__skillsScroll"
@@ -663,7 +671,7 @@ function About() {
                   ))}
                 </div>
 
-                {/* ✅ overlay fixed en bas */}
+                {/* ton hint fade/chevron peut rester si tu veux */}
                 {skillsScrollable && (
                   <div className="aboutX__skillsScrollHint" aria-hidden="true">
                     <div className="aboutX__skillsFade" />
@@ -671,6 +679,7 @@ function About() {
                   </div>
                 )}
               </div>
+
             </div>
 
 
