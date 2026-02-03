@@ -1270,6 +1270,9 @@
     height: 170px;
     min-height: 0;
   }
+  .aboutX__skillsScrollWrap {
+    height: 170px !important;
+  }
 }
 
 @media (max-width: 1244px) and (min-width: 981px){
@@ -1336,11 +1339,11 @@
     width: 100%;
   }
 
-  .aboutX__skillsList{
+  /* .aboutX__skillsList{
     flex: 1 1 auto;
     min-height: 0;
     overflow-y: auto; 
-  }
+  } */
 
   /* B) wheel légèrement plus grand */
   .aboutX__core{
@@ -1385,10 +1388,10 @@
     --skillsH: 120px;
   }
 
-  .aboutX__skillsList{
+  /* .aboutX__skillsList{
     flex: 1 1 auto;
     overflow-y: auto;
-  }
+  } */
 
   /* B) wheel un peu plus grand pour équilibrer */
   .aboutX__core{
@@ -1432,10 +1435,10 @@
     --xpH: 250px;
     --skillsH: 250px;
   }
-  .aboutX__skillsList{
+  /* .aboutX__skillsList{
     flex: 1 1 auto;
     overflow-y: auto;
-  }
+  } */
 
   .aboutX__center{
     width: 88vw;
@@ -1452,10 +1455,6 @@
 
   .aboutX__center {
     flex-direction: row;
-  }
-
-  .aboutX__skillsList--inPanel{
-    max-height: calc(var(--skillsH) - 56px);
   }
 
   .aboutX__rightZone {
@@ -1491,30 +1490,60 @@
   border: 1px solid rgba(0,255,255,0.14);
   background: rgba(0,255,255,0.04);
 }
-.aboutX__skillsList{
+/* .aboutX__skillsList{
   position: relative;
   overflow-y: auto;
   padding-right: 4px;
+} */
+
+/* wrapper non-scroll */
+.aboutX__skillsScrollWrap{
+  position: relative;
+  margin-top: 10px;
+  height: calc(var(--skillsH) - 56px); /* header inclus */
+  min-height: 0;
+}
+
+/* inner scrollable */
+.aboutX__skillsScroll{
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  overflow-y: auto;
+  padding-right: 6px;
+
+  scrollbar-width: none;
+}
+.aboutX__skillsScroll::-webkit-scrollbar{ width: 0; height: 0; }
+
+/* overlay fixé en bas du wrapper */
+.aboutX__skillsScrollHint{
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 40px;
+  pointer-events: none;
+  z-index: 6;
 }
 
 /* fade bottom */
-.aboutX__skillsList::after{
-  content:"";
+.aboutX__skillsFade{
   position:absolute;
   left:0;
   right:0;
   bottom:0;
   height: 34px;
-  pointer-events:none;
   background: linear-gradient(to bottom,
     rgba(10,8,22,0.00),
     rgba(10,8,22,0.72)
   );
 }
 
-/* small chevron */
-.aboutX__skillsList::before{
-  content:"";
+/* chevron */
+.aboutX__skillsChevron{
   position:absolute;
   left:50%;
   bottom: 10px;
@@ -1524,18 +1553,28 @@
   border-right: 2px solid rgba(0,255,255,0.55);
   border-bottom: 2px solid rgba(0,255,255,0.55);
   opacity: .75;
-  pointer-events:none;
   filter: drop-shadow(0 0 10px rgba(0,255,255,0.18));
   animation: aboutScrollNudge 1.35s ease-in-out infinite;
 }
+
+/* ✅ uniquement quand on est au bout: on cache la flèche */
+.aboutX__skillsScrollWrap.isAtBottom .aboutX__skillsChevron{
+  opacity: 0;
+  transform: translateX(-50%) translateY(4px) rotate(45deg);
+  animation: none;
+}
+
+/* (optionnel) si tu veux aussi réduire le fade en bas quand atBottom */
+.aboutX__skillsScrollWrap.isAtBottom .aboutX__skillsFade{
+  opacity: .55;
+  transition: opacity 180ms ease;
+}
+
 
 @keyframes aboutScrollNudge{
   0%,100% { transform: translateX(-50%) translateY(0) rotate(45deg); opacity: .55; }
   50%     { transform: translateX(-50%) translateY(4px) rotate(45deg); opacity: .95; }
 }
-.aboutX__skillsList--inPanel{
-  margin-top: 10px;
-  overflow-y: auto;
-}
+
 
 

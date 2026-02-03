@@ -101,6 +101,24 @@ function About() {
   const [isCvOpen, setIsCvOpen] = useState(false);
   const openCv = useCallback(() => setIsCvOpen(true), []);
   const closeCv = useCallback(() => setIsCvOpen(false), []);
+  // + en haut du composant About()
+  const skillsScrollRef = useRef(null);
+  const [skillsAtBottom, setSkillsAtBottom] = useState(false);
+  const [skillsScrollable, setSkillsScrollable] = useState(false);
+
+  const updateSkillsScrollState = useCallback(() => {
+    const el = skillsScrollRef.current;
+    if (!el) return;
+
+    const max = el.scrollHeight - el.clientHeight;
+    const scrollable = max > 2;
+
+    // petit epsilon pour éviter le “flicker” sur trackpad
+    const atBottom = scrollable && el.scrollTop >= max - 2;
+
+    setSkillsScrollable(scrollable);
+    setSkillsAtBottom(atBottom);
+  }, []);
 
 
   // ---------- hint key ----------
@@ -288,7 +306,7 @@ function About() {
 
   const visualByTab = useMemo(() => {
     return {
-      web: { type: "image", src: "/about/web_preview.png", alt: "Web preview" },
+      web: { type: "video", src: "/assets/about/pasta-timer.mov"},
       all: { type: "image", src: "/about/all_preview.png", alt: "All preview" },
       angels: { type: "video", src: "/assets/about/video-emotion.mov" },
       threeD: { type: "canvas" },
@@ -554,6 +572,16 @@ function About() {
     setMousePosition({ x: 0, y: 0 });
   }, []);
 
+  useEffect(() => {
+    // recalcul quand on change d’onglet (liste de skills change)
+    // + quand on resize
+    const raf = requestAnimationFrame(updateSkillsScrollState);
+    window.addEventListener("resize", updateSkillsScrollState);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize", updateSkillsScrollState);
+    };
+  }, [updateSkillsScrollState, displayKey, skillsFull.length]);
   
   return (
     <section className="aboutX" id="about" ref={sectionRef} aria-label={t("title", { defaultValue: "ABOUT" })}>
@@ -615,14 +643,36 @@ function About() {
                 </div>
               </div>
 
-                <div className="aboutX__skillsList aboutX__skillsList--inPanel" role="list">
+              {/* ✅ wrapper non-scroll */}
+              <div
+                className={`aboutX__skillsScrollWrap ${
+                  skillsScrollable ? "isScrollable" : ""
+                } ${skillsAtBottom ? "isAtBottom" : ""}`}
+              >
+                {/* ✅ inner scrollable */}
+                <div
+                  ref={skillsScrollRef}
+                  className="aboutX__skillsScroll"
+                  role="list"
+                  onScroll={updateSkillsScrollState}
+                >
                   {skillsFull.map((skill) => (
                     <div key={skill} className="aboutX__skillItem" role="listitem">
                       {skill}
                     </div>
                   ))}
                 </div>
+
+                {/* ✅ overlay fixed en bas */}
+                {skillsScrollable && (
+                  <div className="aboutX__skillsScrollHint" aria-hidden="true">
+                    <div className="aboutX__skillsFade" />
+                    <div className="aboutX__skillsChevron" />
+                  </div>
+                )}
+              </div>
             </div>
+
 
 
           </div>
