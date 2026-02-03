@@ -37,7 +37,6 @@
 
 .homeSection #about{
   position: relative;
-  /* margin-bottom: 12%; */
   isolation: isolate;
   display: flex;
   overflow: hidden;
