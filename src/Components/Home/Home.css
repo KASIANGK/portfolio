@@ -51,7 +51,8 @@
      =============================== */
   .homeSection{
     margin: 0 auto;
-    padding: 48px 0;
+    padding-top: 10%;
+    /* padding: 48px 0; */
     scroll-margin-top: 90px;
     width: min(1200px, 92vw);
   
@@ -66,7 +67,7 @@
   .homeSection__card{
     position: relative;
     border-radius: 22px;
-    padding: clamp(18px, 3vw, 28px);
+    /* padding: clamp(18px, 3vw, 28px); */
   
     background: rgba(16, 10, 38, 0.62);
     border: 1px solid rgba(255, 255, 255, 0.10);

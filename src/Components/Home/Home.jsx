@@ -8,7 +8,7 @@ import useBoot from "../../hooks/useBoot";
 import "./Home.css";
 
 import Contact from "../Contact/Contact";
-import About from "../About";
+import About from "../About/About";
 import NavbarScrollHomePage from "./NavbarScrollHomePage/NavbarScrollHomePage";
 import ProjectsMasonryMessy from "../Projects/ProjectsMasonryMessy";
 
