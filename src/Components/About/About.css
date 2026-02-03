@@ -1306,7 +1306,7 @@
     width: min(92vw, 360px);
     min-width: 0;
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
   }
 
   .aboutX__wheelStage {
@@ -1451,14 +1451,26 @@
   }
 
   .aboutX__center {
-    flex-direction: column;
+    flex-direction: row;
   }
 
   .aboutX__skillsList--inPanel{
     max-height: calc(var(--skillsH) - 56px);
   }
+
+  .aboutX__rightZone {
+    flex-direction: column-reverse;
+  }
 }
 
+@media (max-width: 500px) {
+  .aboutX__rightZone {
+    flex-direction: column-reverse;
+  }
+  .aboutX__center {
+    flex-direction: column;
+  }
+}
 @media (prefers-reduced-motion: reduce){
   .aboutX__btn,
   .aboutX__node,

@@ -290,7 +290,7 @@ function About() {
     return {
       web: { type: "image", src: "/about/web_preview.png", alt: "Web preview" },
       all: { type: "image", src: "/about/all_preview.png", alt: "All preview" },
-      angels: { type: "video", src: "/about/events_preview.mp4" },
+      angels: { type: "video", src: "/assets/about/video-emotion.mov" },
       threeD: { type: "canvas" },
     };
   }, []);
