@@ -1,69 +1,165 @@
 {
-    "title": "About",
-    "playHint": "Speel met mij",
-    "skillsLink": "SKILLS",
-    "aboutVisualAlt": "About visual",
-    "bio": {
-      "kicker": "Profiel",
-      "title": "KASIA — FULLSTACK WEB DEV & 3D CREATOR",
-      "lead": "Ik bouw interactieve ervaringen die aanvoelen als een universum: clean engineering met een cinematografische skin — UI-systemen, animaties en 3D-werelden.",
-      "pills": {
-        "location": "Brussel",
-        "stack": "React / Three.js",
-        "tool": "Blender"
-      }
+  "title": "About",
+  "playHint": "Speel met mij",
+  "skillsLink": "SKILLS",
+  "aboutVisualAlt": "About visual",
+
+  "bio": {
+    "kicker": "PROFIEL",
+
+    "web": {
+      "title": "Web Developer",
+      "lead": "Waar code en design samenwerken voor heldere, duurzame interfaces. Systemen die logisch blijven voor users én voor onderhoud.",
+      "timeline": "2023–2025 · Fullstack Coach (Molengeek) → 2025–2026 · Developer (Urban Tech)"
     },
-    "sections": {
-      "exp": {
-        "title": "Ervaring",
-        "items": {
-          "urbanTech": { "bold": "Urban Tech", "text": "— 5 maanden stage (2024), webprojecten & product delivery." },
-          "sideGeek": { "bold": "SideGeek / samenwerkingen", "text": "— features, UI, integraties." },
-          "visual": { "bold": "Visuele / 3D achtergrond", "text": "— design-first aanpak, sterke visuals." },
-          "urbanTechh": { "bold": "Urban Tech", "text": "— 5-miesięczny staż (2024), projekty webowe i delivery produktu." },
-          "sideGeekk": { "bold": "SideGeek / współprace", "text": "— funkcje, UI, integracje." },
-          "visuall": { "bold": "Tło wizualne / 3D", "text": "— podejście design-first, mocne wizuale." }
+
+    "threeD": {
+      "title": "3D & Creative Tech",
+      "lead": "3D die interactie en verhaal ondersteunt — niet alleen effect. Real-time assets die netjes werken op het web.",
+      "timeline": "2023 · 3D modeling & video design (Tarmac)"
+    },
+
+    "events": {
+      "title": "Creative Direction & Events",
+      "lead": "Ideeën die echt worden in ruimte en tijd. Strakke uitvoering, met de juiste vibe.",
+      "timeline": "2018–2020 · Styling & creative direction (Bloody Louis) → 2021 · Art direction & events (Emotion)"
+    },
+
+    "all": {
+      "title": "Creative Technologist",
+      "lead": "Een kruispunt van dev, visuals en production. Doel: ervaringen die coherent, leesbaar en levend aanvoelen.",
+      "timeline": "2015–2018 · Visual Merch (MMFG) → 2018–2020 · Visual Merch (Swarovski) → 2020–2023 · Visual Merch (Pinko) → 2023–2025 · Fullstack Coach (Molengeek) → 2025–2026 · Dev (Urban Tech) · + 2023 · 3D (Tarmac) · + 2018–2021 · Events (Bloody Louis / Emotion)",
+      "educationLine": "Opleiding: 2023–2024 Fullstack (Molengeek) · 2023 3D (Blender/Tuto) · 2017 Grafisch design (Domestika) · 2018 Styling (Reggio Emilia)"
+    },
+
+    "pills": {
+      "location": "Brussel",
+      "stack": "React / Three.js",
+      "tool": "Blender"
+    }
+  },
+
+  "sections": {
+    "exp": {
+      "title": "Ervaring",
+      "items": [
+        {
+          "id": "urbanTech",
+          "bold": "Urban Tech",
+          "meta": "Developer",
+          "year":"2025–2026",
+          "text": "Production-ready apps voor echte klanten.",
+          "note": "Concreet werk."
+        },
+        {
+          "id": "molengeek",
+          "bold": "Molengeek",
+          "meta": "Fullstack Coach",
+          "year":"2023–2025",
+          "text": "Coaching en webprojecten in echte omstandigheden.",
+          "note": "Leren + shippen."
+        },
+        {
+          "id": "tarmac",
+          "bold": "Tarmac",
+          "meta": "3D / video",
+          "year":"2023",
+          "text": "3D assets en video content met focus op verhaal en impact.",
+          "note": "Mooi, maar ook nuttig."
+        },
+        {
+          "id": "pinko",
+          "bold": "Pinko",
+          "meta": "Visual Merchandiser",
+          "year":"2020–2023",
+          "text": "Brand storytelling en boutique scenografie.",
+          "note": "Visueel dat beweegt."
+        },
+        {
+          "id": "emotion",
+          "bold": "Emotion",
+          "meta": "Art direction / events",
+          "year":"2021",
+          "text": "Visual identity, strategie en event experience.",
+          "note": "Van visie naar uitvoering."
+        },
+        {
+          "id": "bloodyLouis",
+          "bold": "Bloody Louis",
+          "meta": "Events",
+          "year":"2018–2020",
+          "text": "Scenografie, visuals, productie en logistiek.",
+          "note": "Details + timing."
+        },
+        {
+          "id": "swarovski",
+          "bold": "Swarovski",
+          "meta": "Visual Merchandiser",
+          "year":"2018–2020",
+          "text": "Luxury retail visuals en uitvoering met details.",
+          "note": "Ritme + rigor."
+        },
+        {
+          "id": "mmfg",
+          "bold": "MMFG",
+          "meta": "Visual Merchandiser",
+          "year":"2015–2018",
+          "text": "Productpresentatie, merkconsistentie, customer experience.",
+          "note": "Precisie."
         }
-      },
-      "stack": { "title": "Stack" },
-      "highlights": {
-        "title": "Highlights",
-        "text": "Ik hou van premium systemen: glass UI, neon accenten, smooth motion en interacties die mensen willen laten ontdekken."
-      },
-      "seeMore": "Meer zien",
-      "seeLess": "Minder zien"
+      ]
     },
-    "buttons": {
-      "portfolio": "Bekijk Portfolio",
-      "contact": "Contact"
+
+    "education": {
+      "title": "Opleiding",
+      "items": [
+        { "year": "2023–2024", "label": "Fullstack Development", "place": "Molengeek", "note": "Moderne webbasis." },
+        { "year": "2023", "label": "3D Modeling & Animation", "place": "Blender / Tuto.com", "note": "Real-time assets." },
+        { "year": "2017", "label": "Grafisch design", "place": "Domestika", "note": "Compositie en visuele cultuur." },
+        { "year": "2018", "label": "Styling", "place": "Reggio Emilia", "note": "Product en materiaal." }
+      ]
     },
-    "stack": {
-      "title": "Stack",
-      "seeAll": "Alles bekijken"
-    } ,
-    
-      "tabs": {
-        "web": "Web Dev",
-        "threeD": "3D Artist",
-        "events": "Events",
-        "all": "All"
-      },
-      "tabTaglines": {
-        "web": "React / Vite / UI systems",
-        "threeD": "Blender / Real-time assets",
-        "events": "Production / Coordination",
-        "all": "Creative Dev — Full profile"
-      },
-      "skills": {
-        "web": ["React", "Vite", "i18n", "Perf", "UI Systems", "Three.js"],
-        "threeD": ["Blender", "Shading", "Optimization", "Real-time", "Art Direction"],
-        "events": ["Production", "Coordination", "Timing", "Stakeholders"],
-        "all": ["Creative Dev", "3D", "Product UX", "Story"]
-      },
-      "pdfHref": "/pdf/kasia_cv.pdf",
-      "downloadPdf": "Download PDF",
-      "close": "Close"
-    
-       
-  }
-  
+
+    "highlights": {
+      "title": "Highlights",
+      "text": "Ik hou van premium systems: glass UI, neon accents, smooth motion en interactions die je willen laten ontdekken."
+    },
+
+    "seeMore": "Meer",
+    "seeLess": "Minder"
+  },
+
+  "buttons": {
+    "portfolio": "Portfolio",
+    "cv": "Volledige CV",
+    "contact": "Contact"
+  },
+
+  "skills": {
+    "title": "Skills",
+    "seeAll": "Alles",
+
+    "tabs": { "web": "Web Dev", "threeD": "3D Artist", "events": "Events", "all": "All" },
+
+    "tabTaglines": {
+      "web": "React / Vite / UI systems",
+      "threeD": "Blender / Real-time assets",
+      "events": "Direction / production / coordination",
+      "all": "Creative Dev — full profile"
+    },
+
+    "lists": {
+      "web": ["React", "Next.js", "Nuxt", "Vue.js", "TypeScript", "HTML", "CSS", "SASS", "Tailwind", "REST APIs"],
+      "threeD": ["Blender", "3D Modeling", "Shading", "Optimization", "Real-time assets", "Three.js / R3F"],
+      "events": ["Creative direction", "Production", "Coordination", "Scenography", "Stakeholders", "Timing"],
+      "all": ["Creative Dev", "Fullstack", "3D", "Product UX", "Design systems", "Story"]
+    }
+  },
+
+  "pdfHref": "/pdf/kasia_cv.pdf",
+  "downloadPdf": "Download PDF",
+  "close": "Close",
+
+  "visual": { "title": "Visual", "open": "Open", "close": "Close" }
+}
+

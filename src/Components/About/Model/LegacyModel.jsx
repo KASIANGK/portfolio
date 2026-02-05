@@ -54,7 +54,7 @@ export default function LegacyModel({ mousePosition, isActive }) {
 
   return (
     <group ref={groupRef} position={[0, 0, 0]}>
-      <primitive object={model} scale={0.55} />
+      <primitive object={model} scale={0.28} />
     </group>
   );
 }

@@ -12,7 +12,7 @@ import { OrbitControls } from "@react-three/drei";
 const TABS = [
   { key: "web", labelFallback: "Web", angleDeg: -90, iconSrc: "/icons/web.svg" },
   { key: "threeD", labelFallback: "3D", angleDeg: 0, iconSrc: "/icons/threed.svg" },
-  { key: "angels", labelFallback: "Events", angleDeg: 90 },
+  { key: "events", labelFallback: "Events", angleDeg: 90 }, // ✅ was "angels"
   { key: "all", labelFallback: "All", angleDeg: 180, iconSrc: "/icons/all.svg" },
 ];
 
@@ -54,7 +54,7 @@ function TabIcon({ tabKey }) {
   }
 
   const common = { viewBox: "0 0 24 24", fill: "none" };
-  if (tabKey === "angels") {
+  if (tabKey === "events") {
     return (
       <svg {...common} aria-hidden="true">
         <path
@@ -77,6 +77,7 @@ function TabIcon({ tabKey }) {
       </svg>
     );
   }
+  
 
   return null;
 }
@@ -198,7 +199,61 @@ function About() {
     [setCursorSmooth]
   );
 
-  // ---- Hint "Play with me" once ----
+  const [videoStarted, setVideoStarted] = useState(false);
+  const videoRef = useRef(null);
+  const [videoReady, setVideoReady] = useState(false); // user a déjà “armé” la vidéo
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(false); 
+
+  useEffect(() => {
+    setVideoReady(false);
+    setIsPlaying(false);
+    // garde isMuted si tu veux conserver la pref user entre tabs
+    if (videoRef.current) {
+      videoRef.current.pause();
+      videoRef.current.currentTime = 0;
+    }
+  }, [displayKey, visualOpen]);
+
+  const playVideo = useCallback(async () => {
+    const v = videoRef.current;
+    if (!v) return;
+  
+    try {
+      // ✅ si l’utilisateur veut du son : muted = false
+      v.muted = isMuted;
+      const p = v.play?.();
+      if (p && typeof p.then === "function") await p;
+      setIsPlaying(true);
+    } catch {
+      // Si play échoue (policy), on force muted puis play
+      try {
+        v.muted = true;
+        await v.play?.();
+        setIsMuted(true);
+        setIsPlaying(true);
+      } catch {}
+    }
+  }, [isMuted]);
+  
+  const pauseVideo = useCallback(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    v.pause();
+    setIsPlaying(false);
+  }, []);
+
+  const togglePlay = useCallback(async () => {
+    const v = videoRef.current;
+    if (!v) return;
+  
+    if (!videoReady) setVideoReady(true);
+  
+    if (v.paused || !isPlaying) await playVideo();
+    else pauseVideo();
+  }, [videoReady, isPlaying, playVideo, pauseVideo]);
+  
+  
   // ---- Hint "Play with me" (every time 3D visual appears, 3s) ----
   const [canvasHintOn, setCanvasHintOn] = useState(false);
   const hintTimerRef = useRef(null);
@@ -255,71 +310,92 @@ function About() {
   const wheelCooldownRef = useRef(0);
 
   const bioKicker = t("bio.kicker", { defaultValue: "Profile" });
-  const bioTitle = t("bio.title", { defaultValue: "KASIA — FULLSTACK WEB DEV & 3D CREATOR" });
-  const bioLead = t("bio.lead", {
-    defaultValue:
-      "I build interactive experiences that feel like a universe: clean engineering with a cinematic skin — UI systems, animations, and 3D worlds.",
+  const bioTimeline = t(`bio.${displayKey}.timeline`, { defaultValue: "" });
+  const bioEduLine = t(`bio.${displayKey}.educationLine`, { defaultValue: "" }); // sera rempli surtout pour all
+  
+  const bioTitle = t(`bio.${displayKey}.title`, {
+    defaultValue: displayKey === "threeD" ? "3D & Creative Tech"
+      : displayKey === "events" ? "Creative Direction & Events"
+      : displayKey === "web" ? "Web Developer"
+      : "Creative Technologist",
   });
+  
+  const bioLead = t(`bio.${displayKey}.lead`, {
+    defaultValue:
+      "Where code and design collaborate — clear, durable systems.",
+  });
+  
 
   const expTitle = t("sections.exp.title", { defaultValue: "Experience" });
 
   const expItems = useMemo(() => {
-    const obj = t("sections.exp.items", { returnObjects: true });
-    if (!obj || typeof obj !== "object") return [];
-    const entries = Object.keys(obj).map((k) => ({ key: k, ...(obj[k] || {}) }));
-
+    const arr = t("sections.exp.items", { returnObjects: true });
+    if (!Array.isArray(arr)) return [];
+  
     const seen = new Set();
-    const cleaned = [];
-    for (const it of entries) {
-      const bold = it?.bold ?? "";
-      const text = it?.text ?? "";
-      const sig = `${bold}__${text}`;
-      if (!bold && !text) continue;
-      if (seen.has(sig)) continue;
-      seen.add(sig);
-      cleaned.push({ bold, text, key: it.key });
-    }
-    return cleaned;
+    return arr
+      .map((it, idx) => ({
+        key: it?.id ?? String(idx),
+        bold: it?.bold ?? "",
+        meta: it?.meta ?? "",
+        year: it?.year ?? "",
+        text: it?.text ?? "",
+        note: it?.note ?? "",
+      }))
+      .filter((it) => {
+        const sig = `${it.bold}__${it.meta}__${it.year}__${it.text}`;
+        if (!it.bold && !it.text) return false;
+        if (seen.has(sig)) return false;
+        seen.add(sig);
+        return true;
+      });
   }, [t]);
+  
 
   const tabLabel = useCallback(
     (key) => {
       const fallback = TABS.find((x) => x.key === key)?.labelFallback ?? key;
-      return t(`tabs.${key}`, { defaultValue: fallback });
+      return t(`skills.tabs.${key}`, { defaultValue: fallback });
     },
     [t]
   );
+  
 
   const taglines = useMemo(() => {
     return {
-      web: t("tabTaglines.web", { defaultValue: "UI systems • Performance • Clean React architecture" }),
-      threeD: t("tabTaglines.threeD", { defaultValue: "Blender • Real-time 3D • Cinematic UX" }),
-      angels: t("tabTaglines.angels", { defaultValue: "Angels Gang • Cyberpunk product universe • Lightwear" }),
-      all: t("tabTaglines.all", { defaultValue: "Full-stack • 3D • Creative engineering" }),
+      web: t("skills.tabTaglines.web", { defaultValue: "React / Vite / UI systems" }),
+      threeD: t("skills.tabTaglines.threeD", { defaultValue: "Blender / Real-time assets" }),
+      events: t("skills.tabTaglines.events", { defaultValue: "Direction / production / coordination" }),
+      all: t("skills.tabTaglines.all", { defaultValue: "Creative Dev — full profile" }),
     };
   }, [t]);
+  
+  
 
   const skillsByTab = useMemo(() => {
-    const fromJson = (k) => t(`skills.${k}`, { returnObjects: true });
+    const fromJson = (k) => t(`skills.lists.${k}`, { returnObjects: true });
     const pick = (k, fallback) => (Array.isArray(fromJson(k)) ? fromJson(k) : fallback);
+  
     return {
-      web: pick("web", ["React", "Vite", "i18n", "Perf", "UI Systems", "GSAP/Framer"]),
-      threeD: pick("threeD", ["Blender", "Shading", "Optimization", "Three.js", "R3F", "PostFX"]),
-      angels: pick("angels", ["Brand system", "Interactive UX", "Hardware vibes", "Visual identity", "Story"]),
-      all: pick("all", ["Creative Dev", "3D", "Product UX", "Systems", "Motion", "Design"]),
+      web: pick("web", ["React", "Next.js", "TypeScript", "HTML", "CSS", "REST APIs"]),
+      threeD: pick("threeD", ["Blender", "Three.js / R3F", "Optimization", "Shading"]),
+      events: pick("events", ["Direction", "Production", "Coordination", "Timing"]),
+      all: pick("all", ["Fullstack", "3D", "Design systems", "Product UX"]),
     };
   }, [t]);
+  
 
   const pdfHref = t("pdfHref", { defaultValue: "/pdf/kasia_cv.pdf" });
 
   const visualByTab = useMemo(() => {
     return {
-      web: { type: "video", src: "/assets/about/pasta-timer.mov"},
-      all: { type: "image", src: "/about/all_preview.png", alt: "All preview" },
-      angels: { type: "video", src: "/assets/about/video-emotion.mov" },
+      web: { type: "video", src: "/assets/about/pasta-timer.mov" },
+      all: { type: "image", src: "/assets/color.png", alt: "All preview" },
+      events: { type: "video", src: "/assets/about/video-emotion.mov" }, // ✅ was angels
       threeD: { type: "canvas" },
     };
   }, []);
+  
 
   const visual = visualByTab[displayKey] || { type: "image", src: "/about/all_preview.png" };
 
@@ -594,8 +670,7 @@ function About() {
   return (
     <section className="aboutX" ref={sectionRef} aria-label={t("title", { defaultValue: "ABOUT" })}>
       <header className="aboutX__header">
-        <h2 className="aboutX__title">{t("title", { defaultValue: "About" })}</h2>
-        <p className="aboutX__lead">{bioLead}</p>
+        <h2 className="aboutX__title">{t("title", { defaultValue: "About" })} - {bioTitle}</h2>
       </header>
 
       <div className="aboutX__layout">
@@ -603,10 +678,11 @@ function About() {
         <div className="aboutX__leftZone">
           <div className="holoPanel holoPanel--cornerCyber aboutX__bioPanel">
             <div className="aboutX__bioTop">
-              <div className="aboutX__bioTitle">{bioTitle}</div>
-              <div className="aboutX__bioSub">{taglines?.[displayKey] ?? ""}</div>
-            </div>
-            <p className="aboutX__bioText">{bioLead}</p>
+            <div className="aboutX__bioKicker">{bioKicker}</div>
+            <div className="aboutX__bioTitle">{bioTitle}</div>
+          </div>
+          <p className="aboutX__bioText">{bioLead}</p>
+
           </div>
 
           <div className="aboutX__xpSkillsPanel">
@@ -630,11 +706,19 @@ function About() {
                 >
                   {expItems.map((it, i) => (
                     <div className="aboutX__timeCard" key={`${it.key}-${i}`} role="listitem">
+                      <div className="aboutX__timeCardHead">
                       <div className="aboutX__timeDot" aria-hidden="true" />
-                      <div className="aboutX__timeText">
-                        <span className="aboutX__bold">{it.bold}</span>{" "}
-                        <span className="aboutX__muted">{it.text}</span>
+                        <div className="aboutX__timeYear">      
+                          {it.year && <span className="aboutX__mutedYear">{it.year} </span>}                 
+                          {it.bold && <span className="aboutX__muted"> - {it.bold}</span>}
+                        </div>
                       </div>
+                      <div className="aboutX__timeText">
+                        <span className="aboutX__bold">{it.meta}</span>{" "}
+                        {/* {it.bold && <span className="aboutX__muted">{it.bold}</span>} */}
+                        {it.text && <span className="aboutX__muted__content"> - {it.text}</span>}
+                      </div>
+
                     </div>
                   ))}
                 </div>
@@ -745,8 +829,6 @@ function About() {
                 <div className="aboutX__centerSub">{tabLabel(displayKey)}</div>
               </div>
             </div>
-
-            {/* <div className="aboutX__hint">{t("playHint", { defaultValue: "Play with me" })}</div> */}
           </div>
 
           <div className="aboutX__rightZone">
@@ -762,105 +844,154 @@ function About() {
                 {ctaDownload}
               </a>
             </div>
+            <div className="aboutX__visualSlot">
+              <div className={`holoPanel holoPanel--cornerCyber aboutX__visualPanel ${visualOpen ? "isOpen" : ""}`}>
+                <div className="aboutX__visualTop">
+                  <div className="aboutX__visualHeader">
+                    <div className="aboutX__visualTitle">{t("visual.title", { defaultValue: "Visual" })}</div>
+                    <div className="aboutX__visualSub">{tabLabel(displayKey)}</div>
+                  </div>
 
-            <div className="holoPanel holoPanel--cornerCyber aboutX__visualPanel">
-              <div className="aboutX__visualTop">
-                <div className="aboutX__visualHeader">
-                  <div className="aboutX__visualTitle">{t("visual.title", { defaultValue: "Visual" })}</div>
-                  <div className="aboutX__visualSub">{tabLabel(displayKey)}</div>
+                  <button
+                    type="button"
+                    className="aboutX__btn isSmall"
+                    aria-pressed={visualOpen}
+                    onClick={toggleVisual}
+                  >
+                    {visualOpen ? t("visual.close", { defaultValue: "Close" }) : t("visual.open", { defaultValue: "Open" })}
+                  </button>
                 </div>
 
-                <button
-                  type="button"
-                  className="aboutX__btn isSmall"
-                  aria-pressed={visualOpen}
-                  onClick={toggleVisual}
-                >
-                  {visualOpen ? t("visual.close", { defaultValue: "Close" }) : t("visual.open", { defaultValue: "Open" })}
-                </button>
-              </div>
-
-              {visualOpen && (
                 <div className="aboutX__visualBody">
-                  {visual.type === "canvas" && displayKey === "threeD" && (
-                    <div
-                      className="aboutX__canvasWrap aboutX__visualFxBR"
-                      ref={canvasWrapRef}
-                      onPointerEnter={(e) => {
-                        setIsCanvasHover(true);
-                        handleCanvasPointerMove(e);
-                      }}
-                      onPointerLeave={() => {
-                        setIsCanvasHover(false);
-                        setMousePosition({ x: 0, y: 0 });
-                      }}
-                      onPointerMove={(e) => {
-                        if (!isCanvasHover) return;
-                        handleCanvasPointerMove(e);
-                      }}
-                    >
-                      {isCanvasHover && (
-                        <div
-                          className="aboutX__cursorOrb"
-                          style={{ left: `${cursorXY.x}px`, top: `${cursorXY.y}px` }}
-                          aria-hidden="true"
-                        />
-                      )}
-
-                      {canvasHintOn && (
-                        <div className={`aboutX__canvasHint ${canvasHintOn ? "isOn" : ""}`}>
-                          {t("playHint", { defaultValue: "Play with me" })}
-                        </div>
-                      )}
-
-                      <Canvas
-                        frameloop={isCanvasHover ? "always" : "demand"}
-                        dpr={isCanvasHover ? [1, 2] : 1}
-                        camera={{ position: [0, 0.2, 5.2], fov: 45 }}
-                        gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
+                  <div className="aboutX__visualBodyInner" aria-hidden={!visualOpen}>
+                    {visual.type === "canvas" && displayKey === "threeD" && (
+                      <div
+                        className="aboutX__canvasWrap aboutX__visualFxBR"
+                        ref={canvasWrapRef}
+                        onPointerEnter={(e) => {
+                          setIsCanvasHover(true);
+                          handleCanvasPointerMove(e);
+                        }}
+                        onPointerLeave={() => {
+                          setIsCanvasHover(false);
+                          setMousePosition({ x: 0, y: 0 });
+                        }}
+                        onPointerMove={(e) => {
+                          if (!isCanvasHover) return;
+                          handleCanvasPointerMove(e);
+                        }}
                       >
-                        <InvalidateOnActive active={isCanvasHover} mousePosition={mousePosition} />
+                        {isCanvasHover && (
+                          <div
+                            className="aboutX__cursorOrb"
+                            style={{ left: `${cursorXY.x}px`, top: `${cursorXY.y}px` }}
+                            aria-hidden="true"
+                          />
+                        )}
 
-                        <ambientLight intensity={0.8} />
-                        <directionalLight position={[3, 4, 6]} intensity={1.0} />
-                        <pointLight position={[2.2, 0.8, 2.5]} intensity={0.55} color="#ff00aa" />
-                        <pointLight position={[-2.2, -0.4, 2.8]} intensity={0.35} color="#7c3aed" />
+                        {canvasHintOn && (
+                          <div className={`aboutX__canvasHint ${canvasHintOn ? "isOn" : ""}`}>
+                            {t("playHint", { defaultValue: "Play with me" })}
+                          </div>
+                        )}
 
-                        <LegacyModel mousePosition={mousePosition} isActive={isCanvasHover} />
-                        <OrbitControls enableZoom={false} enablePan={false} rotateSpeed={0.6} />
-                      </Canvas>
-                    </div>
-                  )}
+                        <Canvas
+                          frameloop={isCanvasHover ? "always" : "demand"}
+                          dpr={isCanvasHover ? [1, 2] : 1}
+                          camera={{ position: [0, 0.2, 5.2], fov: 45 }}
+                          gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
+                        >
+                          <InvalidateOnActive active={isCanvasHover} mousePosition={mousePosition} />
 
-                  {visual.type === "image" && (
-                    <div className="aboutX__mediaWrap aboutX__visualFxBR">
-                      <img
-                        className="aboutX__media"
-                        src={visual.src}
-                        alt={visual.alt || ""}
-                        loading="lazy"
-                        decoding="async"
-                        draggable="false"
-                      />
-                    </div>
-                  )}
+                          <ambientLight intensity={0.8} />
+                          <directionalLight position={[3, 4, 6]} intensity={1.0} />
+                          <pointLight position={[2.2, 0.8, 2.5]} intensity={0.55} color="#ff00aa" />
+                          <pointLight position={[-2.2, -0.4, 2.8]} intensity={0.35} color="#7c3aed" />
 
-                  {visual.type === "video" && (
-                    <div className="aboutX__mediaWrap aboutX__visualFxBR">
-                      <video
-                        className="aboutX__media"
-                        src={visual.src}
-                        muted
-                        loop
-                        playsInline
-                        autoPlay
-                        preload="metadata"
-                        controls={false}
-                      />
-                    </div>
-                  )}
+                          <LegacyModel mousePosition={mousePosition} isActive={isCanvasHover} />
+                          <OrbitControls enableZoom={false} enablePan={false} rotateSpeed={0.6} />
+                        </Canvas>
+                      </div>
+                    )}
+                    {visual.type === "video" && (
+                      <div className="aboutX__mediaWrap aboutX__visualFxBR">
+                        {/* ✅ click zone : toggle play/pause */}
+                        <button
+                          type="button"
+                          className="aboutX__videoHit"
+                          onClick={togglePlay}
+                          aria-label={isPlaying ? "Pause video" : "Play video"}
+                        />
+
+                        {/* overlay “PLAY” tant que pas lancé */}
+                        {!videoReady && (
+                          <div className="aboutX__videoOverlay" aria-hidden="true">
+                            <span className="aboutX__videoPlayIcon" />
+                            <span className="aboutX__videoPlayText">PLAY</span>
+                          </div>
+                        )}
+
+                        {/* overlay “PAUSED” si user a déjà lancé mais pause */}
+                        {videoReady && !isPlaying && (
+                          <div className="aboutX__videoOverlay isPaused" aria-hidden="true">
+                            <span className="aboutX__videoPlayIcon" />
+                            <span className="aboutX__videoPlayText">PAUSED</span>
+                          </div>
+                        )}
+
+                        {/* bouton mute */}
+                        {videoReady && (
+                          <button
+                            type="button"
+                            className="aboutX__videoMute"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              const next = !isMuted;
+                              setIsMuted(next);
+                              if (videoRef.current) videoRef.current.muted = next;
+                            }}
+                            aria-pressed={isMuted}
+                            aria-label={isMuted ? "Unmute" : "Mute"}
+                          >
+                            {isMuted ? "MUTE" : "SOUND"}
+                          </button>
+                        )}
+
+                        <video
+                          ref={videoRef}
+                          className="aboutX__media"
+                          src={visual.src}
+                          playsInline
+                          preload="metadata"
+                          controls={false}
+                          loop={false}
+                          muted={isMuted}
+                          autoPlay={false}
+                          onPlay={() => setIsPlaying(true)}
+                          onPause={() => setIsPlaying(false)}
+                          onEnded={() => {
+                            setIsPlaying(false);
+                            // ✅ à toi : soit tu reset à 0 pour “Replay”
+                            if (videoRef.current) videoRef.current.currentTime = 0;
+                          }}
+                        />
+                      </div>
+                    )}
+                    {visual.type === "image" && (
+                      <div className="aboutX__mediaWrap aboutX__visualFxBR">
+                        <img
+                          className="aboutX__media"
+                          src={visual.src}
+                          alt={visual.alt || ""}
+                          loading="lazy"
+                          decoding="async"
+                          draggable="false"
+                        />
+                      </div>
+                    )}
+                  </div>
                 </div>
-              )}
+              </div>
             </div>
           </div>
         </div>

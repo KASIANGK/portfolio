@@ -33,61 +33,60 @@
   --bioH: auto;
   --xpH: 240px;
   --skillsH: 240px;
-}
+  font-family: "Plus Jakarta Sans", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-size: 14px;
 
-/* .homeSection #about{
   position: relative;
   isolation: isolate;
-  display: flex;
-  overflow: visible;
-  border-radius: 25px;
-  justify-content: center;
-  background: transparent;
+}
 
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  margin-top: -5%;
-} */
-/* ✅ background full-bleed, sans changer la taille du container */
-/* .homeSection #about::before{
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-
-  left: 50%;
-  width: 100vw;
-  transform: translateX(-50%);
-
+.aboutX::before{
+  content:"";
+  border-radius: 15px;
+  position:absolute;
+  inset: 0;
   z-index: -1;
-  pointer-events: none; */
+  pointer-events:none;
 
-  /* ton background original */
-  /* background:
-    radial-gradient(
-      1200px 600px at 50% -10%,
-      rgba(255,0,170,0.14),
+  background:
+    radial-gradient(900px 520px at 18% 18%,
+      rgba(255,0,170,0.42),
       transparent 60%
     ),
-    radial-gradient(
-      900px 500px at 80% 40%,
-      rgba(124,58,237,0.12),
-      transparent 55%
+    radial-gradient(900px 520px at 82% 65%,
+      rgba(0,255,255,0.08),
+      transparent 62%
     ),
-    image-set(
-      url("/assets/about_office.jpg") 1x
-    ),
-    #050016; */
+    linear-gradient(180deg,
+      rgba(10,8,22,0.15),
+      rgba(10,8,22,0.35)
+    );
+  opacity: 1;
+}
 
-  /* background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+/* grain ultra subtil (option) */
+.aboutX::after{
+  content:"";
+  position:absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events:none;
+  opacity: 0.07;
+  background:
+    repeating-linear-gradient(0deg, rgba(255,255,255,0.08) 0 1px, transparent 1px 11px);
+  /* mix-blend-mode: soft-light; */
+  border-radius: 15px;
+}
 
-  border-radius: 25px;
-} */
 /* Header */
-.aboutX__header{ margin-bottom: 18px; }
+.aboutX__header{
+  align-self: stretch;   /* prend la largeur du parent */
+  width: 90vw;           /* match ton layout */
+  margin-left: 3%;
+  margin-right: auto;
+  text-align: left; 
+}
+
 .aboutX__title{
   margin: 0 0 10px;
   font-size: clamp(26px, 4vw, 44px);
@@ -98,23 +97,15 @@
     0 0 26px rgba(255, 0, 170, 0.16),
     0 0 30px rgba(0, 255, 255, 0.10);
 }
-.aboutX__lead{
-  margin: 0;
-  line-height: 1.65;
-  color: var(--muted);
-}
 
 /* =========================
-   HOLO PANEL — photo2 vibe
-   - 2 edge glows (left pink / right cyan) using inset shadows (GPU-friendly)
-   - subtle corner accents (bottom-left + top-right)
-   - micro noise (light)
+   HOLO PANEL — 
 ========================= */
 .holoPanel{
   position: relative;
   border-radius: var(--r);
   padding: 16px;
-  background: rgba(10, 8, 22, 0.34);
+  background: rgba(10, 8, 22, 0.671);
   border: 1px solid rgba(255,255,255,0.10);
 
   /* 2 glowing edges (cheap & clean) */
@@ -209,14 +200,18 @@
   align-self: flex-start;
 }
 
-.aboutX__bioTop{ display:flex; flex-direction: column; gap: 8px; }
+.aboutX__bioTop{ 
+  display:flex; flex-direction: column; gap: 8px; 
+}
 .aboutX__bioTitle{
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-family: "Plus Jakarta Sans", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   letter-spacing: 0.10em;
   text-transform: uppercase;
-  font-size: 12px;
-  color: rgba(245,245,255,0.92);
+  font-size: 17px;
+  color: rgba(245, 251, 255, 0.92);
+  font-weight: bolder;
 }
+
 .aboutX__bioSub{
   color: rgba(200,255,255,0.68);
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
@@ -375,6 +370,11 @@
   overflow:hidden;
   isolation:isolate;
 }
+.aboutX__timeCardHead{
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+}
 .aboutX__timeDot{
   width: 10px;
   height: 10px;
@@ -383,9 +383,14 @@
   background: rgba(0,255,255,0.86);
   box-shadow: 0 0 16px rgba(0,255,255,0.22);
 }
+.aboutX__timeYear {
+  width: fit-content;
+}
 .aboutX__timeText{ margin-top: 8px; color: rgba(220,230,255,0.84); line-height: 1.55; }
 .aboutX__bold{ font-weight: 850; color: rgba(255,255,255,0.92); }
-.aboutX__muted{ color: rgba(220,230,255,0.78); }
+.aboutX__muted{ color: rgba(220,230,255,0.78); font-style: italic;font-size: 15px;}
+.aboutX__muted__content{ color: rgba(220,230,255,0.78);}
+.aboutX__mutedYear{font-weight: bold;}
 
 /* Skills */
 .aboutX__skillsPanel{
@@ -397,10 +402,6 @@
 
 /* ✅ Quand expanded : on laisse “déborder” sans changer la hauteur du panel */
 .aboutX__skillsPanel.isExpanded{
-  overflow: visible !important;
-}
-
-.aboutX__skillsPanel.isExpanded {
   overflow: visible !important;
 }
 
@@ -445,7 +446,7 @@
   border-radius: 10px;
   background: rgba(255,255,255,0.04);
   border: 1px solid rgba(255,255,255,0.08);
-  font-size: 12px;
+  font-size: 14px;
   letter-spacing: 0.06em;
   color: rgba(245,245,255,0.88);
   transition: background 120ms ease, transform 120ms ease;
@@ -474,7 +475,7 @@
   flex-direction:column;
   min-height: 70px;
   max-width: 300px;
-  background-color: rgb(10 8 22 / 91%);
+  background-color: rgba(10, 8, 22, 0.722);
 }
 .aboutX__visualTop{
   display:flex;
@@ -546,12 +547,7 @@
 }
 
 /* =========================
-   WHEEL — photo1 vibe (NOT donut)
-   3 contours:
-   1) hole rim gradient (black -> white on hover)
-   2) mid ring relief + ticks
-   3) outer thin contour
-   + distortion/color shift linked to needle
+   WHEEL 
 ========================= */
 .aboutX__wheelStage{
   position: relative;
@@ -698,7 +694,7 @@
     #000 calc(100% - 11px)
   );
 
-  filter: drop-shadow(0 0 6px rgba(255,255,255,0.08));
+  /* filter: drop-shadow(0 0 6px rgba(255,255,255,0.08)); */
 }
 
 
@@ -910,10 +906,7 @@
 }
 
 /* =========================
-   SCAR / CUT — photo1 exact vibe
-   - white wedge that "cuts" the ring
-   - subtle violet/magenta fringe
-   - no blur: only gradients + masks (GPU friendly)
+   SCAR / CUT 
 ========================= */
 
 .aboutX__scar{
@@ -960,8 +953,10 @@
 /* Nodes */
 .aboutX__node{
   position:absolute;
-  width: var(--node);
-  height: var(--node);
+  width: 45px;
+  height: 45px;
+  /* width: var(--node);
+  height: var(--node); */
   border-radius: 999px;
   background:
     radial-gradient(120% 140% at 30% 25%, rgba(255,255,255,0.10), rgba(255,255,255,0.03)),
@@ -970,6 +965,7 @@
   display:flex;
   justify-content: center;
   place-items:center;
+  align-items: center;
   cursor:pointer;
   
   transform:
@@ -1028,9 +1024,9 @@
   width: var(--icon);
   height: var(--icon);
   opacity: 0.95;
-  filter:
+  /* filter:
     drop-shadow(0 0 10px rgba(255,0,170,0.12))
-    drop-shadow(0 0 10px rgba(0,255,255,0.08));
+    drop-shadow(0 0 10px rgba(0,255,255,0.08)); */
 }
 
 .aboutX__iconImg{ opacity: 0.92; }
@@ -1093,7 +1089,7 @@
 .aboutX__btn{
   border-radius: 14px;
   border: 1px solid rgba(255, 0, 170, 0.28);
-  background: rgba(255, 0, 170, 0.10);
+  background: rgba(255, 0, 170, 0.438);
   color: rgba(245, 245, 255, 0.92);
   padding: 14px 14px;
   cursor: pointer;
@@ -1104,7 +1100,7 @@
   text-align: left;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   letter-spacing: 0.04em;
-  font-size: 12px;
+  font-size: 14px;
   position: relative;
   overflow: hidden;
   z-index: 2;
@@ -1117,7 +1113,7 @@
 .aboutX__btn.isSmall{
   padding: 10px 12px;
   min-height: 36px;
-  font-size: 11px;
+  /* font-size: 11px; */
 }
 .aboutX__btn:hover{
   transform: translateY(-1px);
@@ -1149,7 +1145,7 @@
   outline-offset: 2px;
 }
 .aboutX__btn.isGhost{
-  background: rgba(10, 8, 22, 0.40);
+  background: rgba(10, 8, 22, 0.621);
   border-color: rgba(255, 0, 170, 0.18);
 }
 .aboutX__btn:active{
@@ -1324,11 +1320,26 @@
     height: 170px;
     min-height: 0;
     left: 370px;
-    top: -80px;
+    top: 0px;
     background-color: rgba(10, 8, 22, 0.788);
   }
   .aboutX__skillsScrollWrap {
     height: 170px !important;
+  }
+  /* inner scrollable */
+  .aboutX__skillsScroll{
+    height: 100%;
+    display: flex;
+    flex-direction: row !important;
+    gap: 8px;
+
+    overflow-y: auto;
+    /* padding-right: 6px; */
+    padding-right: 8px; /* place pour la vBar */
+    scrollbar-width: auto;
+  }
+  .aboutX__skillItem {
+    margin-bottom: 20px;
   }
 }
 
@@ -1396,12 +1407,6 @@
     width: 100%;
   }
 
-  /* .aboutX__skillsList{
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow-y: auto; 
-  } */
-
   /* B) wheel légèrement plus grand */
   .aboutX__core{
     --wheel: clamp(285px, 28vw, 365px); /* ~+5-7% */
@@ -1409,58 +1414,12 @@
 
 }
 
-/* @media (min-width: 772px) and (max-width: 980px){
-  .aboutX__layout{
-    flex-direction: column;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 18px;
-  }
-  
-  .aboutX__leftZone{
-    display:flex;
-    flex-direction: row;
-    gap: 25px;
-    width: 88vw;
-    justify-content: center;
-  }
-
-  .aboutX__bioPanel{
-    width: 38vw;          
-    max-width: 420px;
-  }
-  .aboutX__skillsPanel{
-    width: 100%;
-    height: 200px;
-  }
-
-  .aboutX__skillsScrollWrap {
-    height: 170px !important;
-  }
-
-  .aboutX__xpSkillsPanel{
-    flex-direction: column;
-    align-items: stretch;
-    gap: 25px;
-  }
-  .aboutX__xpPanel{
-    width: 100%;
-  }
-  .aboutX{
-    --skillsH: 120px;
-  }
-
-  .aboutX__core{
-    --wheel: clamp(290px, 38vw, 390px);
-  }
-} */
 @media (max-width: 980px){
 /* @media (max-width: 771px){ */
   .aboutX__layout{
     flex-direction: column;
     align-items: center;
   }
-
   .aboutX__leftZone{ width: 88vw; justify-content: center;}
   .aboutX__bioPanel{
     width: 100%;
@@ -1491,10 +1450,6 @@
     --xpH: 250px;
     --skillsH: 250px;
   }
-  /* .aboutX__skillsList{
-    flex: 1 1 auto;
-    overflow-y: auto;
-  } */
 
   .aboutX__center{
     width: 88vw;
@@ -1546,11 +1501,6 @@
   border: 1px solid rgba(0,255,255,0.14);
   background: rgba(0,255,255,0.04);
 }
-/* .aboutX__skillsList{
-  position: relative;
-  overflow-y: auto;
-  padding-right: 4px;
-} */
 
 /* wrapper non-scroll */
 .aboutX__skillsScrollWrap{
@@ -1571,8 +1521,6 @@
   /* padding-right: 6px; */
   padding-right: 8px; /* place pour la vBar */
   scrollbar-width: auto;
-
-  /* scrollbar-width: none; */
 }
 /* ✅ remet le scrollbar WebKit (Chrome/Safari) */
 .aboutX__skillsScroll::-webkit-scrollbar{
@@ -1626,7 +1574,7 @@
   border-right: 2px solid rgba(0,255,255,0.55);
   border-bottom: 2px solid rgba(0,255,255,0.55);
   opacity: .75;
-  filter: drop-shadow(0 0 10px rgba(0,255,255,0.18));
+  /* filter: drop-shadow(0 0 10px rgba(0,255,255,0.18)); */
   animation: aboutScrollNudge 1.35s ease-in-out infinite;
 }
 
@@ -1647,4 +1595,175 @@
 @keyframes aboutScrollNudge{
   0%,100% { transform: translateX(-50%) translateY(0) rotate(45deg); opacity: .55; }
   50%     { transform: translateX(-50%) translateY(4px) rotate(45deg); opacity: .95; }
+}
+
+
+.aboutX__videoPlayIcon{
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,0,170,0.32);
+  background: rgba(255,0,170,0.10);
+  box-shadow:
+    0 18px 45px rgba(0,0,0,0.45),
+    0 0 26px rgba(255,0,170,0.16),
+    0 0 22px rgba(0,255,255,0.10);
+  position: relative;
+}
+.aboutX__videoPlayIcon::after{
+  content:"";
+  position:absolute;
+  left: 52%;
+  top: 50%;
+  transform: translate(-40%, -50%);
+  width: 0;
+  height: 0;
+  border-left: 14px solid rgba(245,245,255,0.90);
+  border-top: 9px solid transparent;
+  border-bottom: 9px solid transparent;
+  filter: drop-shadow(0 0 10px rgba(0,255,255,0.10));
+}
+
+.aboutX__videoPlayText{
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  letter-spacing: .22em;
+  font-size: 12px;
+  text-transform: uppercase;
+  opacity: .9;
+}
+.aboutX__videoHit{
+  position:absolute;
+  inset:0;
+  z-index: 6;
+  border:0;
+  background: transparent;
+  cursor:pointer;
+}
+
+/* overlay play/paused */
+.aboutX__videoOverlay{
+  position:absolute;
+  inset:0;
+  z-index: 5;
+  display:grid;
+  place-items:center;
+  gap: 10px;
+  /* cursor:pointer; */
+  pointer-events:none;
+  background:
+  radial-gradient(900px 420px at 50% 40%,
+    rgba(0,255,255,0.06),
+    rgba(255,0,170,0.05),
+    rgba(0,0,0,0.0)
+  ),
+  linear-gradient(180deg,
+    rgba(0,0,0,0.62),
+    rgba(0,0,0,0.52)
+  );
+  /* border: 0;
+  color: rgba(245,245,255,0.92); */
+    /* ✅ option premium (si tu acceptes le blur) */
+    backdrop-filter: blur(2px) saturate(1.15);
+    -webkit-backdrop-filter: blur(2px) saturate(1.15);
+}
+.aboutX__videoOverlay.isPaused{
+  background:
+    linear-gradient(180deg,
+      rgba(0,0,0,0.70),
+      rgba(0,0,0,0.58)
+    );
+}
+
+/* mute btn bottom-right */
+.aboutX__videoMute{
+  position:absolute;
+  right: 10px;
+  bottom: 10px;
+  z-index: 7;
+  border-radius: 999px;
+  padding: 8px 10px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(10,8,22,0.42);
+  color: rgba(245,245,255,0.88);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  letter-spacing: .14em;
+  font-size: 10px;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+}
+.aboutX__videoMute:hover{
+  border-color: rgba(0,255,255,0.24);
+}
+.aboutX__bioKicker {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-size: 12px;
+  color: rgba(245,245,255,0.88);
+}
+
+
+/* hauteur réservée du media (tu peux adapter par breakpoint si besoin) */
+.aboutX__visualPanel{
+  --visualH: 340px; /* reserve space => pas de jump */
+  display: grid;
+  grid-template-rows: auto var(--visualH);
+}
+
+/* la zone body a toujours la même hauteur */
+.aboutX__visualBody{
+  margin-top: 10px;
+  height: var(--visualH);
+  min-height: var(--visualH);
+  overflow: hidden;
+  position: relative;
+}
+
+/* ce qui s’anime (pas la hauteur !) */
+.aboutX__visualBodyInner{
+  height: 100%;
+  opacity: 0;
+  transform: translateY(6px) scale(0.99);
+  filter: saturate(0.95);
+  pointer-events: none;
+  transition:
+    opacity 260ms ease,
+    transform 360ms cubic-bezier(.16,1,.3,1),
+    filter 360ms ease;
+  margin-top: -5px;
+}
+
+/* open state */
+.aboutX__visualPanel.isOpen .aboutX__visualBodyInner{
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: saturate(1);
+  pointer-events: auto;
+}
+
+
+/* Slot fixe -> évite tout jump */
+.aboutX__visualSlot{
+  --visualH: 340px;
+  --visualClosedH: 30px;
+
+  /* header (auto) + body (visuel) + spacing */
+  /* ajuste si tu veux: là je réserve visuel + top */
+  min-height: calc(var(--visualH) + 64px); /* 64px ≈ top zone, à ajuster */
+}
+
+/* Panel = hauteur réelle variable (30px fermé / full ouvert) */
+.aboutX__visualPanel{
+  --visualH: 340px;
+  --visualClosedH: 30px;
+
+  height: var(--visualClosedH);
+  overflow: hidden;
+
+  transition: height 520ms cubic-bezier(.16,1,.3,1);
+}
+
+/* Open -> hauteur complète */
+.aboutX__visualPanel.isOpen{
+  height: calc(var(--visualH) + 64px); /* top + body */
 }

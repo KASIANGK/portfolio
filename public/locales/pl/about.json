@@ -1,69 +1,164 @@
 {
-    "title": "About",
-    "playHint": "Pobaw się ze mną",
-    "skillsLink": "SKILLS",
-    "aboutVisualAlt": "Wizual About",
-    "bio": {
-      "kicker": "Profil",
-      "title": "KASIA — FULLSTACK WEB DEV & 3D CREATOR",
-      "lead": "Tworzę interaktywne doświadczenia jak mini-wszechświat: czysta inżynieria + filmowa skóra — systemy UI, animacje i światy 3D.",
-      "pills": {
-        "location": "Bruksela",
-        "stack": "React / Three.js",
-        "tool": "Blender"
-      }
+  "title": "About",
+  "playHint": "Pobaw się ze mną",
+  "skillsLink": "SKILLS",
+  "aboutVisualAlt": "Wizual About",
+
+  "bio": {
+    "kicker": "PROFIL",
+
+    "web": {
+      "title": "Web Developer",
+      "lead": "Tam, gdzie kod i design pracują razem, żeby budować jasne i trwałe interfejsy. Systemy, które da się zrozumieć, używać i utrzymywać bez bólu.",
+      "timeline": "2023–2025 · Coach Fullstack (Molengeek) → 2025–2026 · Developer (Urban Tech)"
     },
-    "sections": {
-      "exp": {
-        "title": "Doświadczenie",
-        "items": {
-          "urbanTech": { "bold": "Urban Tech", "text": "— 5-miesięczny staż (2024), projekty webowe i delivery produktu." },
-          "sideGeek": { "bold": "SideGeek / współprace", "text": "— funkcje, UI, integracje." },
-          "visual": { "bold": "Tło wizualne / 3D", "text": "— podejście design-first, mocne wizuale." },
-          "urbanTechh": { "bold": "Urban Tech", "text": "— 5-miesięczny staż (2024), projekty webowe i delivery produktu." },
-          "sideGeekk": { "bold": "SideGeek / współprace", "text": "— funkcje, UI, integracje." },
-          "visuall": { "bold": "Tło wizualne / 3D", "text": "— podejście design-first, mocne wizuale." }
+
+    "threeD": {
+      "title": "3D & Creative Tech",
+      "lead": "Kiedy 3D wspiera interakcję i opowieść, a nie sam „efekt”. Real-time assety zrobione tak, żeby działały czysto w webie.",
+      "timeline": "2023 · Modelowanie 3D & koncepcja wideo (Tarmac)"
+    },
+
+    "events": {
+      "title": "Creative Direction & Events",
+      "lead": "Pomysły, które materializują się w przestrzeni i czasie. Konkretna realizacja, ale vibe zostaje.",
+      "timeline": "2018–2020 · Styling & creative direction (Bloody Louis) → 2021 · Direction artystyczna & eventy (Emotion)"
+    },
+
+    "all": {
+      "title": "Creative Technologist",
+      "lead": "Miejsce spotkania devu, wizualu i produkcji. Cel: doświadczenia spójne, czytelne i „żywe”.",
+      "timeline": "2015–2018 · Visual Merch (MMFG) → 2018–2020 · Visual Merch (Swarovski) → 2020–2023 · Visual Merch (Pinko) → 2023–2025 · Coach Fullstack (Molengeek) → 2025–2026 · Dev (Urban Tech) · + 2023 · 3D (Tarmac) · + 2018–2021 · Eventy (Bloody Louis / Emotion)",
+      "educationLine": "Edukacja: 2023–2024 Fullstack (Molengeek) · 2023 3D (Blender/Tuto) · 2017 Grafika (Domestika) · 2018 Stylizm (Reggio Emilia)"
+    },
+
+    "pills": {
+      "location": "Bruksela",
+      "stack": "React / Three.js",
+      "tool": "Blender"
+    }
+  },
+
+  "sections": {
+    "exp": {
+      "title": "Doświadczenie",
+      "items": [
+        {
+          "id": "urbanTech",
+          "bold": "Urban Tech",
+          "meta": "Developer",
+          "year":"2025–2026",
+          "text": "Aplikacje gotowe na produkcję dla prawdziwych klientów.",
+          "note": "Konkret."
+        },
+        {
+          "id": "molengeek",
+          "bold": "Molengeek",
+          "meta": "Coach Fullstack",
+          "year":"2023–2025",
+          "text": "Coaching i budowanie projektów webowych w realnych warunkach.",
+          "note": "Uczyć i dowozić."
+        },
+        {
+          "id": "tarmac",
+          "bold": "Tarmac",
+          "meta": "3D / wideo",
+          "year":"2023",
+          "text": "Assety 3D i treści wideo z naciskiem na narrację i impact.",
+          "note": "Ładnie, ale po coś."
+        },
+        {
+          "id": "pinko",
+          "bold": "Pinko",
+          "meta": "Visual Merchandiser",
+          "year":"2020–2023",
+          "text": "Storytelling marki, scenografia butików i prezentacja produktu.",
+          "note": "Wizual, który pracuje."
+        },
+        {
+          "id": "emotion",
+          "bold": "Emotion",
+          "meta": "Direction artystyczna / eventy",
+          "year":"2021",
+          "text": "Identyfikacja wizualna, strategia, komunikacja i doświadczenie eventowe.",
+          "note": "Wizja → realizacja → efekt."
+        },
+        {
+          "id": "bloodyLouis",
+          "bold": "Bloody Louis",
+          "meta": "Eventy",
+          "year":"2018–2020",
+          "text": "Scenografia, produkcja, wizuale i logistyka.",
+          "note": "Detale + timing."
+        },
+        {
+          "id": "swarovski",
+          "bold": "Swarovski",
+          "meta": "Visual Merchandiser",
+          "year":"2018–2020",
+          "text": "Luxury retail, standardy i detale w wykonaniu.",
+          "note": "Rygor + rytm."
+        },
+        {
+          "id": "mmfg",
+          "bold": "MMFG",
+          "meta": "Visual Merchandiser",
+          "year":"2015–2018",
+          "text": "Ekspozycja produktu, spójność marki, customer experience.",
+          "note": "Oko uczy się precyzji."
         }
-      },
-      "stack": { "title": "Stack" },
-      "highlights": {
-        "title": "Highlights",
-        "text": "Lubię systemy premium: glass UI, neonowe akcenty, płynny ruch i interakcje, które chce się odkrywać."
-      },
-      "seeMore": "Zobacz więcej",
-      "seeLess": "Zobacz mniej"
+      ]
     },
-    "buttons": {
-      "portfolio": "Zobacz Portfolio",
-      "contact": "Kontakt"
+
+    "education": {
+      "title": "Edukacja",
+      "items": [
+        { "year": "2023–2024", "label": "Fullstack Development", "place": "Molengeek", "note": "Nowoczesny web w praktyce." },
+        { "year": "2023", "label": "3D Modeling & Animation", "place": "Blender / Tuto.com", "note": "Real-time assety i optymalizacja." },
+        { "year": "2017", "label": "Grafika", "place": "Domestika", "note": "Kompozycja i kultura wizualna." },
+        { "year": "2018", "label": "Stylizm", "place": "Reggio Emilia", "note": "Produkt, materiał, intencja." }
+      ]
     },
-    "stack": {
-      "title": "Stack",
-      "seeAll": "Zobacz wszystko"
-    } ,
-    
-      "tabs": {
-        "web": "Web Dev",
-        "threeD": "3D Artist",
-        "events": "Events",
-        "all": "All"
-      },
-      "tabTaglines": {
-        "web": "React / Vite / UI systems",
-        "threeD": "Blender / Real-time assets",
-        "events": "Production / Coordination",
-        "all": "Creative Dev — Full profile"
-      },
-      "skills": {
-        "web": ["React", "Vite", "i18n", "Perf", "UI Systems", "Three.js"],
-        "threeD": ["Blender", "Shading", "Optimization", "Real-time", "Art Direction"],
-        "events": ["Production", "Coordination", "Timing", "Stakeholders"],
-        "all": ["Creative Dev", "3D", "Product UX", "Story"]
-      },
-      "pdfHref": "/pdf/kasia_cv.pdf",
-      "downloadPdf": "Download PDF",
-      "close": "Close"
-    
-       
-  }
-  
+
+    "highlights": {
+      "title": "Highlights",
+      "text": "Lubię premium systemy: glass UI, neonowe akcenty, płynny motion i interakcje, które chce się eksplorować."
+    },
+
+    "seeMore": "Więcej",
+    "seeLess": "Mniej"
+  },
+
+  "buttons": {
+    "portfolio": "Portfolio",
+    "cv": "Pełne CV",
+    "contact": "Kontakt"
+  },
+
+  "skills": {
+    "title": "Skills",
+    "seeAll": "Zobacz wszystko",
+
+    "tabs": { "web": "Web Dev", "threeD": "3D Artist", "events": "Events", "all": "All" },
+
+    "tabTaglines": {
+      "web": "React / Vite / UI systems",
+      "threeD": "Blender / Real-time assets",
+      "events": "Direction / production / coordination",
+      "all": "Creative Dev — full profile"
+    },
+
+    "lists": {
+      "web": ["React", "Next.js", "Nuxt", "Vue.js", "TypeScript", "HTML", "CSS", "SASS", "Tailwind", "REST APIs"],
+      "threeD": ["Blender", "3D Modeling", "Shading", "Optimization", "Real-time assets", "Three.js / R3F"],
+      "events": ["Creative direction", "Production", "Coordination", "Scenography", "Stakeholders", "Timing"],
+      "all": ["Creative Dev", "Fullstack", "3D", "Product UX", "Design systems", "Story"]
+    }
+  },
+
+  "pdfHref": "/pdf/kasia_cv.pdf",
+  "downloadPdf": "Download PDF",
+  "close": "Close",
+
+  "visual": { "title": "Visual", "open": "Open", "close": "Close" }
+}
