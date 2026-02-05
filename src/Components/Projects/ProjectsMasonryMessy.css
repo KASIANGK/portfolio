@@ -156,6 +156,7 @@
 
 
   .pm2__card--poster{
+    -webkit-tap-highlight-color: transparent;
     position: absolute;
     padding: 0;
     width: min(var(--card-w), 68vw);
@@ -220,7 +221,10 @@
       0 0 22px rgba(255,0,170,0.20),
       0 0 30px rgba(80,130,255,0.16);
   }
-  
+  .pm2__card--poster:focus-visible{
+    outline: 2px solid rgba(255,0,170,0.35);
+    outline-offset: 6px;
+  }
 
   /* 🔹 hovered OR locked = top visual */
 .pm2__card.isTop{
@@ -410,7 +414,7 @@
   .pm2__tab{
     border-radius: 16px;
     border: 1px solid rgba(255,255,255,0.12);
-    background: rgba(255,255,255,0.04);
+    background: rgba(92, 26, 140, 0.62);
     padding: 0px 5px;
     display: flex;
     flex-direction: column;
@@ -434,7 +438,7 @@
   opacity: 0;
   transition: opacity 220ms ease;
   background:
-    radial-gradient(220px 140px at 50% 20%, rgba(255,0,170,0.20), transparent 60%),
+    radial-gradient(220px 140px at 50% 20%, rgba(255, 0, 170, 0.377), transparent 60%),
     radial-gradient(220px 140px at 50% 90%, rgba(80,130,255,0.18), transparent 62%);
 }
 
@@ -478,8 +482,8 @@
   }
   
   .pm2__tab.isActive{
-    border-color: rgba(255,0,170,0.28);
-    background: rgba(255,0,170,0.07);
+    border-color: rgba(255, 0, 170, 0.343);
+    background: rgba(159, 26, 115, 0.546);
     box-shadow:
       0 0 0 1px rgba(255,255,255,0.06) inset,
       0 0 26px rgba(255,0,170,0.18),
@@ -494,11 +498,18 @@
     font-size: 11px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.72);
+    color: rgba(255, 255, 255, 0.817);
     margin-top: -3px;
     padding-bottom: 10px;
   }
   
+  .pm2__optionCard {
+    display: flex;
+    flex-direction: column;
+    background: #6855a3;
+    background: linear-gradient(0deg,rgba(98, 63, 129, 0.82) 0%, rgba(56, 12, 12, 0) 100%);    padding: 10px;
+    border-radius: 15px;
+  }
 /* mini previews row */
 .pm2__miniRow{
     margin-top: 10px;
@@ -677,4 +688,7 @@
     inset: -12px -10px;
     opacity: 0.45;
   }
+}
+@media (max-width: 425px) {
+  .pm2__stack.isLoaded{ margin-right: 80px;}
 }

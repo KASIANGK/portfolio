@@ -1,0 +1,8 @@
+{
+    "title": "Projets",
+    "subtitle": "Choisis une voie. Ou prends tout.",
+    "tabs": { "all": "Tout", "web": "Web", "threeD": "3D" },
+    "emptyTitle": "Aucun projet ici",
+    "emptySub": "Essaie un autre onglet ✦"
+  }
+  

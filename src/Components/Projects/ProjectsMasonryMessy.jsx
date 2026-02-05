@@ -1,27 +1,25 @@
 // src/Components/Projects/ProjectsMasonryMessy.jsx
 import { useEffect, useMemo, useState, useCallback, useRef, memo } from "react";
+import { useTranslation } from "react-i18next";
 import "./ProjectsMasonryMessy.css";
 import useBoot from "../../hooks/useBoot";
 import useMountLog from "../../utils/useMountLog";
 
 const TABS = [
-  { key: "all", label: "All", iconSrc: "/icons/all.svg" },
-  { key: "web", label: "Web", iconSrc: "/icons/web.svg" },
-  { key: "3d", label: "3D", iconSrc: "/icons/threed.svg" },
+  { key: "all", i18nKey: "tabs.all", iconSrc: "/icons/all.svg" },
+  { key: "web", i18nKey: "tabs.web", iconSrc: "/icons/web.svg" },
+  { key: "3d", i18nKey: "tabs.threeD", iconSrc: "/icons/threed.svg" },
 ];
 
-
-const FAN7 = [
-  { x: -330, y: 26, r: -10, s: 0.94, rx: 1.2, ry: -3.8, tz: -24 },
-  { x: -215, y: 18, r: -5,  s: 0.97, rx: 0.9, ry: -2.6, tz: -14 },
-  { x: -75,  y: 10, r: -2,  s: 1.0,  rx: 0.6, ry: -1.2, tz:  4 },
-  { x: 60,   y: 8,  r:  1,  s: 1.02, rx: 0.5, ry:  0.8, tz: 14 },
-  { x: 170,  y: 14, r:  4,  s: 1.0,  rx: 0.7, ry:  2.0, tz:  8 },
-  { x: 270,  y: 22, r:  8,  s: 0.97, rx: 1.0, ry:  3.4, tz: -8 },
-  { x: 365,  y: 30, r: 12,  s: 0.94, rx: 1.4, ry:  4.8, tz: -18 },
+/* 6 cards layout (was FAN7) */
+const FAN6 = [
+  { x: -290, y: 22, r: -9, s: 0.95, rx: 1.1, ry: -3.4, tz: -22 },
+  { x: -175, y: 16, r: -4, s: 0.98, rx: 0.8, ry: -2.2, tz: -12 },
+  { x: -40, y: 10, r: -1, s: 1.0, rx: 0.6, ry: -0.9, tz: 6 },
+  { x: 110, y: 10, r: 2, s: 1.02, rx: 0.6, ry: 1.2, tz: 14 },
+  { x: 235, y: 18, r: 6, s: 0.98, rx: 0.9, ry: 2.8, tz: -4 },
+  { x: 330, y: 26, r: 10, s: 0.95, rx: 1.2, ry: 4.2, tz: -16 },
 ];
-
-
 
 const EMPTY = Object.freeze({ web: [], threeD: [], all: [] });
 
@@ -63,7 +61,12 @@ function pickCoverImage(p, categoryHint) {
   if (isImagesObject(img)) {
     // if you want to be strict:
     // if (categoryHint && categoryHint !== "web") return "";
-    return pickFirst(img.laptop) || pickFirst(img.tablet) || pickFirst(img.mobile) || "";
+    return (
+      pickFirst(img.laptop) ||
+      pickFirst(img.tablet) ||
+      pickFirst(img.mobile) ||
+      ""
+    );
   }
 
   // ✅ old format array
@@ -127,12 +130,17 @@ function useIsMobile(breakpoint = 742) {
 }
 
 function ProjectsMasonryMessy({
-  title = "Projects",
-  subtitle = "Pick a lane. Or pick them all.",
+  title,
+  subtitle,
   jsonUrl = "/projects_home.json",
   onItemClick,
 }) {
   useMountLog("ProjectsMasonryMessy");
+
+  const { t } = useTranslation("projects");
+
+  const uiTitle = title ?? t("title");
+  const uiSubtitle = subtitle ?? t("subtitle");
 
   const boot = useBoot();
 
@@ -165,9 +173,7 @@ function ProjectsMasonryMessy({
     const b = boot?.projectsHome;
     if (!b) return false;
     const total =
-      (b.web?.length || 0) +
-      (b.threeD?.length || 0) +
-      (b.all?.length || 0);
+      (b.web?.length || 0) + (b.threeD?.length || 0) + (b.all?.length || 0);
     return total > 0;
   }, [boot]);
 
@@ -231,13 +237,20 @@ function ProjectsMasonryMessy({
     return Array.isArray(data?.[key]) ? data[key] : [];
   }, [data, active]);
 
-  const normalized = useMemo(() => normalizeBucket(currentList, active), [currentList, active]);
-  const stack = useMemo(() => normalized.slice(0, isCompact ? 4 : 7), [normalized, isCompact]);
+  const normalized = useMemo(
+    () => normalizeBucket(currentList, active),
+    [currentList, active]
+  );
 
-  
+  // ✅ 6 cards on desktop (was 7)
+  const stack = useMemo(
+    () => normalized.slice(0, isCompact ? 4 : 6),
+    [normalized, isCompact]
+  );
+
   /* ------------------------------
      3) Decode ONCE before loaded=true
-     - decode 7 covers from ALL bucket
+     - decode 6 covers from ALL bucket
      - supports new web images format
   ------------------------------ */
   const didDecodeOnceRef = useRef(false);
@@ -249,7 +262,7 @@ function ProjectsMasonryMessy({
     const total =
       (data?.all?.length || 0) +
       (data?.web?.length || 0) +
-      (data?.threeD?.length || 0) ;
+      (data?.threeD?.length || 0);
     if (!total) {
       didDecodeOnceRef.current = true;
       setLoaded(true);
@@ -262,13 +275,14 @@ function ProjectsMasonryMessy({
       return;
     }
 
-    const first = (Array.isArray(data?.all) ? data.all : []).slice(0, 7);
+    // ✅ 6 items (was 7)
+    const first = (Array.isArray(data?.all) ? data.all : []).slice(0, 6);
 
     // ✅ uses laptop[0] when needed
     const imgs = first
       .map((p) => pickCoverImage(p, inferCategory(p)))
       .filter(Boolean)
-      .slice(0, 7);
+      .slice(0, 6);
 
     didDecodeOnceRef.current = true;
 
@@ -276,7 +290,9 @@ function ProjectsMasonryMessy({
 
     (async () => {
       try {
-        await Promise.all(imgs.map((src, i) => decodeImage(src, i < 2 ? "high" : "auto")));
+        await Promise.all(
+          imgs.map((src, i) => decodeImage(src, i < 2 ? "high" : "auto"))
+        );
       } catch {
         // best effort
       }
@@ -321,7 +337,7 @@ function ProjectsMasonryMessy({
             )}
 
             {stack.map((it, idx) => {
-              const p = FAN7[idx] || FAN7[FAN7.length - 1];
+              const p = FAN6[idx] || FAN6[FAN6.length - 1];
 
               const seed = hash01(it.id || it.title || idx);
               const seed2 = hash01((it.title || "") + "_b");
@@ -329,21 +345,22 @@ function ProjectsMasonryMessy({
               let x = p.x + (seed - 0.5) * 22;
               let y = p.y + (seed2 - 0.5) * 16;
               let rot = p.r + (seed - 0.5) * 4.2;
-              let scale = Math.max(0.88, Math.min(1.06, p.s + (seed2 - 0.5) * 0.03));
+              let scale = Math.max(
+                0.88,
+                Math.min(1.06, p.s + (seed2 - 0.5) * 0.03)
+              );
 
-              // if (idx === 0) y -= 28; 
               if (isCompact) {
                 if (idx === 0) x += 220;
                 if (idx === 1) x += 180;
                 if (idx === 2) x += 190;
                 if (idx === 3) {
-                  x += 180;  
-                  y += 40;    
+                  x += 180;
+                  y += 40;
                 }
                 y -= 6;
                 rot *= 0.92;
               }
-              
 
               let z = 100 - Math.round(Math.abs(p.x) / 6);
 
@@ -361,23 +378,20 @@ function ProjectsMasonryMessy({
               const ry = p.ry + (seed - 0.5) * 1.3;
               const tz = p.tz + (seed2 - 0.5) * 10;
 
-
-              if (idx === 1) y += 10
+              if (idx === 1) y += 10;
               if (idx === 2) {
                 y += 10;
-                x -= 45; 
-                rot += 4; 
-             }
-             if (idx === 3) {
-              y -= 4;
-              x -= 20;
-            }
-            if (idx === 4) {
-              x -= 20;
-            }
-            if (idx === 5) 
-              rot -= 6;
-    
+                x -= 45;
+                rot += 4;
+              }
+              if (idx === 3) {
+                y -= 4;
+                x -= 20;
+              }
+              if (idx === 4) {
+                x -= 20;
+              }
+              if (idx === 5) rot -= 6;
 
               const isTop = topIdx === idx;
               const isLocked = lockedIdx === idx; // kept if you re-add locking later
@@ -448,8 +462,8 @@ function ProjectsMasonryMessy({
 
             {!stack.length && loaded ? (
               <div className="pm2__empty">
-                <div className="pm2__emptyTitle">No items here</div>
-                <div className="pm2__emptySub">Try another tab ✦</div>
+                <div className="pm2__emptyTitle">{t("emptyTitle")}</div>
+                <div className="pm2__emptySub">{t("emptySub")}</div>
               </div>
             ) : null}
           </div>
@@ -457,28 +471,37 @@ function ProjectsMasonryMessy({
           {/* RIGHT : title + tabs */}
           <aside className="pm2__right" aria-label="Projects controls">
             <div className="pm2__panel">
-              <h2 className="pm2__title">{title}</h2>
-              <p className="pm2__subtitle">{subtitle}</p>
+              <h2 className="pm2__title">{uiTitle}</h2>
+              <div className="pm2__optionCard">
+                {/* <p className="pm2__subtitle">{uiSubtitle}</p> */}
 
-              <div className="pm2__tabs" role="tablist" aria-label="Project categories">
-                {TABS.map((t) => {
-                  const isOn = active === t.key;
-                  return (
-                    <button
-                      key={t.key}
-                      role="tab"
-                      aria-selected={isOn}
-                      className={`pm2__tab ${isOn ? "isActive" : ""}`}
-                      type="button"
-                      onClick={() => setActive(t.key)}
-                    >
-                      <span className="pm2__tabIcon" aria-hidden="true">
-                        <img className="pm2__tabIconImg" src={t.iconSrc} alt="" draggable="false" />
-                      </span>
-                      <span className="pm2__tabLabel">{t.label}</span>
-                    </button>
-                  );
-                })}
+                <div className="pm2__tabs" role="tablist" aria-label="Project categories">
+                  {TABS.map((tab) => {
+                    const isOn = active === tab.key;
+                    return (
+                      <button
+                        key={tab.key}
+                        role="tab"
+                        aria-selected={isOn}
+                        className={`pm2__tab ${isOn ? "isActive" : ""}`}
+                        type="button"
+                        onClick={() => setActive(tab.key)}
+                      >
+                        <span className="pm2__tabIcon" aria-hidden="true">
+                          <img
+                            className="pm2__tabIconImg"
+                            src={tab.iconSrc}
+                            alt=""
+                            draggable="false"
+                          />
+                        </span>
+                        <span className="pm2__tabLabel">{t(tab.i18nKey)}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+                <p className="pm2__subtitle">{uiSubtitle}</p>
+
               </div>
             </div>
           </aside>
@@ -489,5 +512,3 @@ function ProjectsMasonryMessy({
 }
 
 export default memo(ProjectsMasonryMessy);
-
-

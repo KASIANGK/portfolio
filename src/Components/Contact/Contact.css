@@ -1,531 +1,334 @@
-/* Contact.css */
+/* src/Components/Contact/Contact.css */
+
+/* =========
+   CONTACT v2
+   - same layout as your reference
+   - left: identity + phone + email + icons
+   - right: form lines + glow
+   - big headline
+   - button reuses .aboutX__btn (paste yours or keep global)
+========= */
+
 :root{
-    --bg: #070916;
-    --borderSoft: rgba(255,255,255,0.10);
-    --border: rgba(255,255,255,0.14);
-    --hot: rgba(255,0,170,0.28);
-  
-    --text: rgba(255,255,255,0.92);
-    --muted: rgba(255,255,255,0.65);
-  
-    --pink: rgba(255, 0, 170, 0.95);
-    --violet: rgba(124, 58, 237, 0.95);
-    --orange: rgba(255, 122, 0, 0.95);
-  
-    --radius: 22px;
-    --shadow: 0 18px 60px rgba(0,0,0,0.45);
-    --container: min(1120px, 100%);
-    /* --container: min(1080px, 100%); */
-  }
-  
-  *{ box-sizing: border-box; }
-  
-  .ctc-page{
-    min-height: 100svh;
-    width: 100%;
-    padding: clamp(16px, 2.5vw, 28px) clamp(14px, 2vw, 22px) 64px;
-    background:
-      radial-gradient(1200px 800px at 15% 10%, rgba(255, 0, 170, 0.10), transparent 60%),
-      radial-gradient(900px 700px at 80% 25%, rgba(124, 58, 237, 0.14), transparent 55%),
-      radial-gradient(1000px 700px at 50% 90%, rgba(255, 122, 0, 0.08), transparent 55%),
-      var(--bg);
-    color: var(--text);
-    overflow-x: hidden;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    isolation: isolate;
-    contain: none; 
-  }
-  
-  /* header like Portfolio */
-  .ctc-title{
-    width: var(--container);
-    margin: 0 auto;
-    padding: clamp(14px, 2.6vw, 22px) 0 clamp(12px, 2vw, 16px);
-    margin-bottom: clamp(18px, 2.6vw, 26px);
-  
-    position: sticky;
-    top: 0;
-    z-index: 10;
-  
-    /* backdrop-filter: blur(12px); */
-    background:
-      radial-gradient(900px 520px at 18% 25%, rgba(255,0,170,0.14), transparent 60%),
-      radial-gradient(900px 520px at 78% 35%, rgba(124,58,237,0.16), transparent 55%),
-      linear-gradient(to bottom, rgba(7,9,22,0.82) 0%, rgba(7,9,22,0.56) 70%, rgba(7,9,22,0.00) 100%);
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-    /* contain: paint; */
-    transform: none;
-    backface-visibility: visible;
-    /* will-change: transform; */
-    will-change: auto;
-  }
-  .ctc-title{ transform: translateZ(0); }
+  --ctc2-bg0: #060616;
+  --ctc2-bg1: #07081a;
 
-  
-  .ctc-title h2{
-    margin: 0;
-    font-size: clamp(40px, 6vw, 92px);
-    letter-spacing: 0.10em;
-    line-height: 0.92;
-    font-weight: 950;
-    text-transform: uppercase;
-    font-family: "Oswald", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-    text-shadow: 0 0 22px rgba(255, 0, 170, 0.15);
-  }
-  
-  .ctc-subline{
-    margin-top: 10px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: rgba(255,255,255,0.72);
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    font-size: 10px;
-  }
-  
-  .ctc-dot{
-    width: 7px;
-    height: 7px;
-    border-radius: 999px;
-    background: rgba(255,255,255,0.25);
-    box-shadow:
-      0 0 12px rgba(255,0,170,0.18),
-      0 0 18px rgba(124,58,237,0.16);
-  }
-  
-  /* main layout */
-  .contact-container{
-    width: var(--container);
-    margin: 0 auto;
-    position: relative;
-    display: grid;
-    place-items: center;
-    padding-top: 18px;
-    padding-bottom: 28px;
-    overflow: clip;
-    min-height: 400px;
-    isolation: isolate;
-    /* contain: layout paint; */
-    isolation: isolate;
-    contain: none;
-  }
-  
-  /* The panels are stacked / offset (like your original) */
-  .ctc-panel{
-    width: min(520px, 92vw);
-    border-radius: var(--radius);
-    border: 1px solid var(--borderSoft);
-    background: rgba(0,0,0,0.34);
-    /* backdrop-filter: blur(12px); */
-    box-shadow: var(--shadow);
-    position: relative;
-    overflow: hidden;
-    /* cursor: url("/assets/cursor.png") 32 32, pointer; */
-    transition: transform 220ms ease, border-color 160ms ease, z-index 220ms ease;
-    will-change: auto;
-    transform: translateZ(0);
-    backface-visibility: hidden;
-    contain: paint;
-  }
-  
-  /* “terminal glass” HUD overlay */
-  .ctc-panel__hud{
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background:
-      repeating-linear-gradient(
-        to bottom,
-        rgba(255,255,255,0.028),
-        rgba(255,255,255,0.028) 1px,
-        transparent 1px,
-        transparent 4px
-      ),
-      radial-gradient(900px 420px at 20% 20%, rgba(255,0,170,0.10), transparent 60%),
-      radial-gradient(700px 380px at 80% 30%, rgba(124,58,237,0.12), transparent 55%),
-      linear-gradient(180deg, rgba(0,0,0,0.00) 0%, rgba(0,0,0,0.32) 100%);
-    opacity: 1;
-  }
-  
-  /* HUD lines */
-  .ctc-panel::before{
-    content:"";
-    position: absolute;
-    left: 18px;
-    right: 18px;
-    top: 12px;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255,0,170,0.55), rgba(124,58,237,0.55), transparent);
-    opacity: 0.7;
-    pointer-events: none;
-  }
-  
-  .ctc-panel:hover{
-    border-color: var(--hot);
-    transform: translateZ(0);
-  }
-  
-  /* z-index behavior (same idea as you had) */
-  .ctc-panel{ z-index: 1; }
-  .ctc-panel.active{ z-index: 1000; }
+  --ctc2-text: rgba(255,255,255,0.92);
+  --ctc2-muted: rgba(255,255,255,0.62);
 
-  .ctc-panel.active,
-  .ctc-panel:hover{ transform: translateZ(0); }
-  
-  /* offsets to recreate your “two cards overlapped” vibe */
-  .ctc-user-infos{
-    min-height: 320px;
-    width: min(560px, 94vw);
-    padding: 18px 18px 16px;
-    /* transform: translateX(-22px); */
-    transform: translateX(0);
+  --ctc2-border: rgba(255,255,255,0.16);
 
-  }
-  .ctc-content{
-    /* min-height: 520px; */
-    width: min(560px, 94vw);
-    padding: 18px 18px 16px;
-    margin-top: -56px;
-    transform: translateX(0);
-    /* transform: translateX(22px); */
-    /* cursor: url("/assets/sn.cur.png"), auto; */
-  }
-  
-  .ctc-panel__header{
-    position: relative;
-    z-index: 2;
-    margin-bottom: 14px;
-    cursor: grab;
-    user-select: none;
-  }
-
-  .ctc-panel__header:active{
-    cursor: grabbing;
-  }
-  
-  .ctc-kicker{
-    font-size: 10px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.70);
-  }
-  
-  .ctc-headline{
-    margin-top: 6px;
-    font-weight: 950;
-    letter-spacing: 0.10em;
-    text-transform: uppercase;
-    font-size: 16px;
-    color: rgba(255,255,255,0.92);
-  }
-  
-  /* fields */
-  .ctc-field{
-    position: relative;
-    z-index: 2;
-    display: grid;
-    gap: 8px;
-    margin: 12px 0;
-  }
-  
-  .ctc-label{
-    font-size: 10px;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.72);
-  }
-  
-  .ctc-panel input,
-  .ctc-panel select,
-  .ctc-panel textarea{
-    width: 100%;
-    border-radius: 14px;
-    border: 1px solid rgba(255,255,255,0.14);
-    background: rgba(0,0,0,0.45);
-    color: rgba(255,255,255,0.92);
-    padding: 12px 12px;
-    outline: none;
-    transition: border-color 160ms ease, transform 160ms ease, filter 160ms ease;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  }
-  
-  .ctc-panel input::placeholder,
-  .ctc-panel textarea::placeholder{
-    color: rgba(255,255,255,0.40);
-  }
-  
-  .ctc-panel input:focus,
-  .ctc-panel select:focus,
-  .ctc-panel textarea:focus{
-    border-color: rgba(255,0,170,0.35);
-    /* filter: drop-shadow(0 0 10px rgba(255,0,170,0.10)); */
-    box-shadow:
-    0 0 12px rgba(255,0,170,0.18),
-    0 0 18px rgba(124,58,237,0.16);
-    transform: translateY(-1px);
-  }
-  
-  .ctc-field--textarea textarea{
-    min-height: 220px;
-    resize: vertical;
-    line-height: 1.5;
-  }
-  
-  /* Send button (terminal neon key) */
-  .ctc-send{
-    position: relative;
-    z-index: 2;
-    margin-top: 10px;
-    width: 100%;
-    height: 46px;
-    border-radius: 16px;
-    border: 1px solid rgba(255,0,170,0.28);
-    background: rgba(255,255,255,0.08);
-    color: rgba(255,255,255,0.94);
-    font-weight: 950;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    cursor: pointer;
-    overflow: hidden;
-    transition: transform 140ms ease, filter 140ms ease, border-color 140ms ease;
-  }
-  
-  .ctc-send__glow{
-    position: absolute;
-    inset: -2px;
-    background:
-      radial-gradient(600px 220px at 30% 40%, rgba(255,0,170,0.24), transparent 60%),
-      radial-gradient(600px 220px at 70% 60%, rgba(124,58,237,0.22), transparent 60%),
-      linear-gradient(90deg, rgba(255,122,0,0.10), rgba(255,0,170,0.10));
-    opacity: 0;
-    transition: opacity 160ms ease;
-  }
-  
-  .ctc-send:hover{
-    transform: translateY(-1px);
-    filter: brightness(1.05);
-    border-color: rgba(255,0,170,0.40);
-  }
-  .ctc-send:hover .ctc-send__glow{ opacity: 1; }
-  
-  /* .ctc-hint{
-    position: relative;
-    z-index: 2;
-    margin-top: 12px;
-    font-size: 11px;
-    color: rgba(255,255,255,0.55);
-  }  */
-  
-  /* responsive: stack nicely */
-  @media (max-width: 720px){
-    .ctc-user-infos,
-    .ctc-content{
-      transform: none;
-      margin-top: 12px;
-    }
-    .ctc-content{ min-height: 520px; }
-  }
-
-  /* =========================================
-   LAYOUT SPACING — Laptop & Tablet
-========================================= */
-
-
-  /* ================================
-   Laptop: Identity left + Message right
-   Still the "overlap / offset" vibe (not a boring 2-column)
-================================ */
-@media (min-width: 1024px) {
-  .contact-container{
-    grid-template-columns: 1fr !important;
-    place-items: center;
-    gap: 0;
-    position: relative;
-    padding-top: 28px;
-    padding-bottom: 36px;
-    min-height: 720px;
-  }
-
-  /* Base width (tweak if needed) */
-  .ctc-user-infos,
-  .ctc-content{
-    width: min(560px, 44vw);
-    margin-top: 0;
-    transform: none;
-    position: relative;
-  }
-  /* positions de départ (servent juste de “spawn”) */
-  .ctc-user-infos{ left: 520px; top: 10px; }
-  .ctc-content{ left: 80px; top: 160px; }
-
+  --ctc2-pink: rgba(255, 0, 170, 0.95);
+  --ctc2-cyan: rgba(0, 255, 255, 0.90);
+  --ctc2-violet: rgba(124, 58, 237, 0.95);
 }
 
+*{ box-sizing: border-box; }
 
-@media (min-width: 1440px) {
-  .contact-container{
-    grid-template-columns: 1fr !important;
-    place-items: center;
-    gap: 0;
-    position: relative;
-    padding-top: 28px;
-    padding-bottom: 36px;
-    min-height: 720px;
-  }
+.ctc2{
+  min-height: 100svh;
+  width: 100%;
+  color: var(--ctc2-text);
 
-  /* Base width (tweak if needed) */
-  .ctc-user-infos,
-  .ctc-content{
-    width: min(560px, 44vw);
-    margin-top: 0;
-    transform: none;
-    position: relative;
-  }
-  /* positions de départ (servent juste de “spawn”) */
-  .ctc-user-infos{ left: 520px; top: 10px; }
-  .ctc-content{ left: 80px; top: 160px; }
+  /* lighter / breathable but still cyber */
 
-
+  padding: clamp(22px, 3vw, 40px) clamp(16px, 2.2vw, 26px) 84px;
 }
 
-/* =========================================
-   CYBERPUNK HOVER
-========================================= */
+.ctc2__wrap{
+  width: min(1120px, 100%);
+  margin: 0 auto;
+}
 
-.ctc-user-infos:hover,
-.ctc-content:hover {
-  border-color: rgba(255, 0, 170, 0.65);
-  box-shadow:
-    0 0 0 1px rgba(255, 0, 170, 0.35),
-    0 0 25px rgba(255, 0, 170, 0.25),
-    0 0 60px rgba(124, 58, 237, 0.15);
-  transform: translateY(-2px);
+/* Big headline like your ref */
+.ctc2__hero{
+  padding-top: clamp(8px, 1.4vw, 18px);
+  padding-bottom: clamp(18px, 2.4vw, 26px);
 }
-.ctc-user-infos.active,
-.ctc-content.active {
-  z-index: 1000;
-  border-color: rgba(255, 0, 170, 0.9);
-  box-shadow:
-    0 0 0 1px rgba(255, 0, 170, 0.5),
-    0 0 40px rgba(255, 0, 170, 0.4),
-    0 0 90px rgba(124, 58, 237, 0.25);
-}
-  
-/* =========================
-   Grab bubble (replaces "Click this panel...")
-========================= */
-.ctc-grab{
-  position: absolute;
-  top: 12px;
-  right: 14px;
-  z-index: 3;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.14);
-  background: rgba(0,0,0,0.45);
-  /* backdrop-filter: blur(10px); */
-  font-size: 11px;
-  letter-spacing: 0.12em;
+
+.ctc2__big{
+  margin: 0;
+  font-weight: 950;
+  line-height: 0.95;
+  letter-spacing: 0.02em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.78);
-  opacity: 0.0;
-  transform: translateY(-4px);
-  transition: opacity 160ms ease, transform 160ms ease;
-  pointer-events: none; /* important: bubble ne bloque pas le drag */
+
+  /* bold UI headline */
+  font-family: "Plus Jakarta Sans", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-size: clamp(44px, 6.6vw, 110px);
+
+  text-shadow: 0 0 22px rgba(255,0,170,0.14);
 }
 
-/* .ctc-grab{
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-}
-@supports (backdrop-filter: blur(1px)){
-  .ctc-grab{
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-  }
-} */
-
-
-.ctc-grab__hand{
-  /* filter: drop-shadow(0 0 10px rgba(255,0,170,0.20)); */
-  box-shadow:
-  0 0 12px rgba(255,0,170,0.18),
-  0 0 18px rgba(124,58,237,0.16);
+/* grid: left info / right form */
+.ctc2__grid{
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  gap: clamp(26px, 4vw, 70px);
+  align-items: start;
+  margin-top: clamp(8px, 1.2vw, 14px);
 }
 
-.ctc-panel:hover .ctc-grab{
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Si tu veux: montrer aussi quand la card est active */
-.ctc-panel.active .ctc-grab{
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.ctc-title{
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-}
-
-@supports (backdrop-filter: blur(1px)){
-  html.isReady .ctc-title{
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+@media (max-width: 920px){
+  .ctc2__grid{
+    grid-template-columns: 1fr;
+    gap: 22px;
   }
 }
 
-
-
-
-
-/* Avoid hover transforms during violent scroll (can cause repaints) */
-@media (hover: hover) and (pointer: fine){
-  .ctc-panel:hover{
-    transform: translateZ(0); /* keep GPU layer, no Y move */
-  }
-  .ctc-user-infos:hover,
-  .ctc-content:hover{
-    transform: translateZ(0);
-  }
+/* Left block */
+.ctc2__leftBlock{
+  padding-top: 12px;
 }
 
-/* Desktop: actually place them in absolute coords (more stable for Draggable) */
-@media (min-width: 1024px){
-  .ctc-user-infos,
-  .ctc-content{
-    position: absolute;
-  }
-
-  /* keep your spawn positions */
-  .ctc-user-infos{ left: 520px; top: 10px; }
-  .ctc-content{ left: 80px; top: 160px; }
+.ctc2__name{
+  font-family: "Plus Jakarta Sans", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: 0.02em;
+  margin-bottom: 16px;
 }
 
-/* If overflow: clip not supported, fallback */
-@supports not (overflow: clip){
-  .contact-container{ overflow: hidden; }
-}
+.ctc2__link{
+  display: block;
+  width: 100%;
+  text-align: left;
+  margin: 0 0 10px;
 
-/* Tous les enfants héritent => pas de switch cursor => moins de recalc */
-.ctc-page *{
-  cursor: inherit;
-}
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(0,0,0,0.16);
+  border-radius: 14px;
 
-/* Exceptions : inputs/textarea doivent rester "text" */
-.ctc-page input,
-.ctc-page textarea{
-  cursor: text;
-}
-
-.ctc-page select,
-.ctc-page button,
-.ctc-page a{
+  padding: 12px 12px;
+  color: rgba(255,255,255,0.86);
   cursor: pointer;
+
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  letter-spacing: 0.04em;
+  font-size: 13px;
+
+  transition: border-color 160ms ease, box-shadow 180ms ease, transform 120ms ease;
 }
+
+@media (hover:hover) and (pointer:fine){
+  .ctc2__link:hover{
+    transform: translateY(-1px);
+    border-color: rgba(0, 255, 255, 0.18);
+    box-shadow:
+      0 12px 26px rgba(0, 0, 0, 0.35),
+      0 0 22px rgba(0, 255, 255, 0.10),
+      0 0 22px rgba(255, 0, 170, 0.10);
+  }
+}
+
+.ctc2__icons{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.ctc2__iconBtn{
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(0,0,0,0.18);
+  color: rgba(255,255,255,0.88);
+  text-decoration: none;
+
+  transform: translateZ(0);
+  transition: transform 160ms ease, border-color 160ms ease, box-shadow 180ms ease, filter 160ms ease;
+}
+
+.ctc2__iconSvg{
+  width: 18px;
+  height: 18px;
+  color: currentColor;
+  filter: drop-shadow(0 10px 16px rgba(0,0,0,0.35));
+  transition: transform 160ms ease, filter 160ms ease;
+}
+
+@media (hover:hover) and (pointer:fine){
+  .ctc2__iconBtn:hover{
+    transform: translateY(-1px) translateZ(0);
+    border-color: rgba(255,0,170,0.28);
+    box-shadow:
+      0 0 0 1px rgba(255,0,170,0.16),
+      0 0 26px rgba(255,0,170,0.14),
+      0 0 40px rgba(124,58,237,0.16);
+  }
+  .ctc2__iconBtn:hover .ctc2__iconSvg{
+    transform: scale(1.10);
+    filter: drop-shadow(0 0 10px rgba(255,0,170,0.55));
+  }
+}
+
+.ctc2__hint{
+  margin-top: 16px;
+  color: rgba(255,255,255,0.55);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+}
+
+/* Right form */
+.ctc2__form{
+  padding-top: 8px;
+}
+
+/* Two columns for name */
+.ctc2__row2{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+@media (max-width: 620px){
+  .ctc2__row2{ grid-template-columns: 1fr; }
+}
+
+.ctc2__field{
+  display: grid;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.ctc2__fieldFull{
+  width: 100%;
+}
+
+.ctc2__label{
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-size: 11px;
+  color: rgba(255,255,255,0.70);
+}
+
+/* INPUTS — line vibe + glow side */
+.ctc2__input,
+.ctc2__select,
+.ctc2__textarea{
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid rgba(255,255,255,0.22);
+  border-radius: 0;
+
+  background: transparent;
+  color: rgba(255,255,255,0.92);
+
+  padding: 12px 6px;
+  outline: none;
+
+  /* content font: Jakarta */
+  font-family: "Plus Jakarta Sans", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-size: 14px;
+
+  transition: border-color 180ms ease, box-shadow 220ms ease;
+}
+
+.ctc2__select{
+  appearance: none;
+}
+
+/* textarea */
+.ctc2__textarea{
+  min-height: 120px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+/* Glow (like your refs): slightly off-center blob */
+.ctc2__input:focus,
+.ctc2__select:focus,
+.ctc2__textarea:focus{
+  border-bottom-color: rgba(255,0,170,0.55);
+  box-shadow:
+    0 10px 28px rgba(0,0,0,0.22),
+    22px 0 46px rgba(255, 0, 170, 0.12),
+    0 0 70px rgba(124, 58, 237, 0.14);
+}
+
+/* optional: subtle idle glow on hover (desktop only) */
+@media (hover:hover) and (pointer:fine){
+  .ctc2__input:hover,
+  .ctc2__select:hover,
+  .ctc2__textarea:hover{
+    border-bottom-color: rgba(0,255,255,0.22);
+  }
+}
+
+.ctc2__actions{
+  display: flex;
+  gap: 12px;
+  margin-top: 18px;
+  align-items: center;
+}
+
+/* If you didn't import the about css, you can optionally paste your .aboutX__btn here.
+   Otherwise: leave it and it will reuse your existing button style. */
+
+/* GPU friendly: avoid big transforms on scroll */
+@media (hover:hover) and (pointer:fine){
+  .ctc2__iconBtn:hover,
+  .ctc2__link:hover{
+    will-change: transform;
+  }
+}
+/* ===============================
+   DEBUG VISIBILITY PATCH (TEMP)
+   colle en bas de Contact.css
+   =============================== */
+
+   .ctc2{
+    position: relative;
+    isolation: isolate;
+  }
+  
+  .ctc2__wrap,
+  .ctc2__hero,
+  .ctc2__grid,
+  .ctc2__left,
+  .ctc2__right,
+  .ctc2__leftBlock,
+  .ctc2__form{
+    position: relative;
+    z-index: 2;
+  }
+  
+  .ctc2__big,
+  .ctc2__name,
+  .ctc2__hint,
+  .ctc2__label{
+    color: rgba(255,255,255,0.92) !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    filter: none !important;
+    mix-blend-mode: normal !important;
+  }
+  
+  .ctc2__link{
+    color: rgba(255,255,255,0.86) !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    filter: none !important;
+    mix-blend-mode: normal !important;
+  }
+  
+  /* si un pseudo-layer te masque tout */
+  .ctc2::before,
+  .ctc2::after,
+  .ctc2__wrap::before,
+  .ctc2__wrap::after{
+    pointer-events: none;
+  }
+  
+  /* au cas où un parent met un opacity */
+  .ctc2 *{
+    text-rendering: geometricPrecision;
+  }
+  
+  

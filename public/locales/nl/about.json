@@ -9,25 +9,25 @@
 
     "web": {
       "title": "Web Developer",
-      "lead": "Waar code en design samenwerken voor heldere, duurzame interfaces. Systemen die logisch blijven voor users én voor onderhoud.",
+      "lead": "Waar code en design samenkomen in bruikbare interfaces.",
       "timeline": "2023–2025 · Fullstack Coach (Molengeek) → 2025–2026 · Developer (Urban Tech)"
     },
 
     "threeD": {
       "title": "3D & Creative Tech",
-      "lead": "3D die interactie en verhaal ondersteunt — niet alleen effect. Real-time assets die netjes werken op het web.",
+      "lead": "3D ontworpen voor interactie, niet alleen voor effect.",
       "timeline": "2023 · 3D modeling & video design (Tarmac)"
     },
 
     "events": {
-      "title": "Creative Direction & Events",
-      "lead": "Ideeën die echt worden in ruimte en tijd. Strakke uitvoering, met de juiste vibe.",
+      "title": "Creative Events",
+      "lead": "Ideeën die vorm krijgen, van concept tot beleving.",
       "timeline": "2018–2020 · Styling & creative direction (Bloody Louis) → 2021 · Art direction & events (Emotion)"
     },
 
     "all": {
       "title": "Creative Technologist",
-      "lead": "Een kruispunt van dev, visuals en production. Doel: ervaringen die coherent, leesbaar en levend aanvoelen.",
+      "lead": "Een kruispunt van dev, visuals en productie.",
       "timeline": "2015–2018 · Visual Merch (MMFG) → 2018–2020 · Visual Merch (Swarovski) → 2020–2023 · Visual Merch (Pinko) → 2023–2025 · Fullstack Coach (Molengeek) → 2025–2026 · Dev (Urban Tech) · + 2023 · 3D (Tarmac) · + 2018–2021 · Events (Bloody Louis / Emotion)",
       "educationLine": "Opleiding: 2023–2024 Fullstack (Molengeek) · 2023 3D (Blender/Tuto) · 2017 Grafisch design (Domestika) · 2018 Styling (Reggio Emilia)"
     },

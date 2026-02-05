@@ -1,172 +1,126 @@
 // src/Components/Contact/Contact.jsx
-import { useEffect, useMemo, useState, useCallback, useRef, memo } from "react";
-import Draggable from "react-draggable";
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import "./Contact.css";
 import useMountLog from "../../utils/useMountLog";
 
-const DRAG_CANCEL = "input, textarea, select, button, a";
-const EMPTY_CONTACT = { name: "", email: "" };
+const EMAIL_PUBLIC = "ngk.kasia@gmail.com";
+const PHONE_PUBLIC = "0472845612";
 
-function asArray(v) {
-  return Array.isArray(v) ? v : [];
-}
-function normalizeContact(v) {
-  if (!v) return EMPTY_CONTACT;
-  const name = String(v.name || "").trim();
-  const email = String(v.email || "").trim();
-  return { name, email };
-}
-function hasContactData(v) {
-  return !!(v && (String(v.name || "").trim() || String(v.email || "").trim()));
-}
-function sameContact(a, b) {
-  const A = normalizeContact(a);
-  const B = normalizeContact(b);
-  return A.name === B.name && A.email === B.email;
-}
-function sameSubjects(a, b) {
-  const A = asArray(a);
-  const B = asArray(b);
-  if (A.length !== B.length) return false;
-  for (let i = 0; i < A.length; i++) {
-    if (String(A[i]?.id) !== String(B[i]?.id)) return false;
-    if (String(A[i]?.title) !== String(B[i]?.title)) return false;
-    if (String(A[i]?.message) !== String(B[i]?.message)) return false;
-  }
-  return true;
-}
+// Subjects (clean + pro)
+const SUBJECTS = [
+  { id: "3d-animation", label: "3D Animation" },
+  { id: "3d-modeling", label: "3D Modeling" },
+  { id: "web-app", label: "Web / App" },
+  { id: "visual", label: "Visual / Creative" },
+  { id: "support", label: "Support / Help" },
+  { id: "collab", label: "Collaboration" },
+  { id: "work", label: "Work Opportunity" },
+  { id: "other", label: "Other" },
+];
+
+const SOCIALS = [
+  // ✅ remplace les href par tes vrais liens
+  { id: "instagram", label: "Instagram", href: "#", Icon: IconInstagram },
+  { id: "tiktok", label: "TikTok", href: "#", Icon: IconTikTok },
+  { id: "github", label: "GitHub", href: "#", Icon: IconGitHub },
+  { id: "linkedin", label: "LinkedIn", href: "#", Icon: IconLinkedIn },
+];
 
 const raf = () => new Promise((r) => requestAnimationFrame(r));
 const rafN = async (n = 2) => {
   for (let i = 0; i < n; i++) await raf();
 };
 
-function Contact({ initialContactInfo = null, initialSubjects = null }) {
+// =======================
+// Inline SVG icons (always render)
+// =======================
+function IconInstagram(props) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...props}>
+      <path
+        fill="currentColor"
+        d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm10 2H7a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3Zm-5 4.2A3.8 3.8 0 1 1 8.2 12 3.8 3.8 0 0 1 12 8.2Zm0 2A1.8 1.8 0 1 0 13.8 12 1.8 1.8 0 0 0 12 10.2ZM17.6 6.8a.9.9 0 1 1-.9-.9.9.9 0 0 1 .9.9Z"
+      />
+    </svg>
+  );
+}
+
+function IconTikTok(props) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...props}>
+      <path
+        fill="currentColor"
+        d="M16.5 2h-2.8v12.2a3.2 3.2 0 1 1-2.7-3.2V8.2a6 6 0 1 0 5.5 6V8.8c1.1 1 2.6 1.6 4.2 1.6V7.7c-1.7 0-3.2-.7-4.2-1.8-.7-.8-1.1-2-1.1-3.3Z"
+      />
+    </svg>
+  );
+}
+
+function IconGitHub(props) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...props}>
+      <path
+        fill="currentColor"
+        d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.18-3.37-1.18-.45-1.14-1.1-1.44-1.1-1.44-.9-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.56-1.11-4.56-4.95 0-1.09.39-1.98 1.02-2.68-.1-.25-.44-1.27.1-2.64 0 0 .84-.27 2.75 1.02A9.6 9.6 0 0 1 12 6.8c.85 0 1.71.11 2.51.33 1.9-1.29 2.74-1.02 2.74-1.02.55 1.37.21 2.39.1 2.64.64.7 1.02 1.59 1.02 2.68 0 3.85-2.34 4.69-4.57 4.94.36.32.68.94.68 1.9v2.82c0 .27.18.58.69.48A10 10 0 0 0 12 2Z"
+      />
+    </svg>
+  );
+}
+
+function IconLinkedIn(props) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...props}>
+      <path
+        fill="currentColor"
+        d="M6.94 6.5A2.19 2.19 0 1 1 7 2.12a2.19 2.19 0 0 1-.06 4.38ZM5.5 21.5h3V9h-3v12.5ZM10.5 9h2.88v1.71h.04c.4-.76 1.38-1.56 2.84-1.56 3.04 0 3.6 2 3.6 4.6v7.75h-3v-6.88c0-1.64-.03-3.74-2.28-3.74-2.28 0-2.63 1.78-2.63 3.62v7h-3V9Z"
+      />
+    </svg>
+  );
+}
+
+function IconMail(props) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...props}>
+      <path
+        fill="currentColor"
+        d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 4-8 5L4 8V6l8 5 8-5v2Z"
+      />
+    </svg>
+  );
+}
+
+function IconPhone(props) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...props}>
+      <path
+        fill="currentColor"
+        d="M6.6 10.8c1.5 3 3.9 5.4 6.9 6.9l2.3-2.3c.3-.3.8-.4 1.2-.3 1.3.4 2.7.6 4.1.6.7 0 1.2.5 1.2 1.2V20c0 .7-.5 1.2-1.2 1.2C10.4 21.2 2.8 13.6 2.8 4.9c0-.7.5-1.2 1.2-1.2H6c.7 0 1.2.5 1.2 1.2 0 1.4.2 2.8.6 4.1.1.4 0 .9-.3 1.2l-2.9 2.6Z"
+      />
+    </svg>
+  );
+}
+
+function Contact() {
   useMountLog("Contact");
 
-  const didFetchRef = useRef(false);
   const didReadyRef = useRef(false);
 
-  const initialContact = useMemo(
-    () => (hasContactData(initialContactInfo) ? normalizeContact(initialContactInfo) : EMPTY_CONTACT),
-    [initialContactInfo]
-  );
-  const initialSubjs = useMemo(() => asArray(initialSubjects), [initialSubjects]);
-
-  const [contactInfo, setContactInfo] = useState(() => initialContact);
-  const [subjects, setSubjects] = useState(() => initialSubjs);
-
-  const [selectedSubject, setSelectedSubject] = useState("");
+  const [first, setFirst] = useState("Kasia");
+  const [last, setLast] = useState("Nagorka");
+  const [email, setEmail] = useState("");
+  const [subject, setSubject] = useState(SUBJECTS[0]?.id || "");
   const [message, setMessage] = useState("");
-  const [activeDiv, setActiveDiv] = useState("userInfos");
+  const [sent, setSent] = useState(false);
 
-  const title = useMemo(() => "CONTACT ME", []);
+  const subjectLabel = useMemo(
+    () => SUBJECTS.find((s) => s.id === subject)?.label || "Contact",
+    [subject]
+  );
 
-  const containerRef = useRef(null);
-  const userNodeRef = useRef(null);
-  const contentNodeRef = useRef(null);
-
-  // canDrag only on fine pointer/hover
-  const [canDrag, setCanDrag] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return window.matchMedia?.("(hover: hover) and (pointer: fine)")?.matches ?? false;
-  });
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const mql = window.matchMedia("(hover: hover) and (pointer: fine)");
-    const onChange = () => setCanDrag(!!mql.matches);
-
-    if (mql.addEventListener) mql.addEventListener("change", onChange);
-    else mql.addListener?.(onChange);
-
-    return () => {
-      if (mql.removeEventListener) mql.removeEventListener("change", onChange);
-      else mql.removeListener?.(onChange);
-    };
-  }, []);
-
-  // keep state in sync if props change (dev)
-  useEffect(() => {
-    if (!hasContactData(initialContactInfo)) return;
-    setContactInfo((prev) => (sameContact(prev, initialContactInfo) ? prev : normalizeContact(initialContactInfo)));
-  }, [initialContactInfo]);
-
-  useEffect(() => {
-    if (!Array.isArray(initialSubjects)) return;
-    setSubjects((prev) => (sameSubjects(prev, initialSubjects) ? prev : asArray(initialSubjects)));
-  }, [initialSubjects]);
-
-  // Fetch ONLY if missing (once)
-  useEffect(() => {
-    if (didFetchRef.current) return;
-
-    const alreadyHaveContact = hasContactData(initialContactInfo) || hasContactData(contactInfo);
-    const alreadyHaveSubjects =
-      (Array.isArray(initialSubjects) && initialSubjects.length) ||
-      (Array.isArray(subjects) && subjects.length);
-
-    if (alreadyHaveContact && alreadyHaveSubjects) return;
-
-    didFetchRef.current = true;
-
-    const ac = new AbortController();
-
-    (async () => {
-      try {
-        const tasks = [];
-
-        if (!alreadyHaveContact) {
-          tasks.push(
-            fetch("/messages.json", { signal: ac.signal, cache: "force-cache" })
-              .then((r) => r.json())
-              .then((data) => {
-                const first = Array.isArray(data) ? data[0] : null;
-                if (!first) return;
-                setContactInfo((prev) => (sameContact(prev, first) ? prev : normalizeContact(first)));
-              })
-          );
-        }
-
-        if (!alreadyHaveSubjects) {
-          tasks.push(
-            fetch("/subjects.json", { signal: ac.signal, cache: "force-cache" })
-              .then((r) => r.json())
-              .then((data) => {
-                const next = Array.isArray(data) ? data : [];
-                setSubjects((prev) => (sameSubjects(prev, next) ? prev : next));
-              })
-          );
-        }
-
-        await Promise.all(tasks);
-      } catch (err) {
-        if (err?.name === "AbortError") return;
-        console.error("Contact fetch error:", err);
-      }
-    })();
-
-    return () => ac.abort();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // auto-fill message
-  useEffect(() => {
-    if (!selectedSubject) return;
-    const selected = subjects.find((s) => String(s.id) === String(selectedSubject));
-    setMessage(selected?.message || "");
-  }, [selectedSubject, subjects]);
-
-  // ✅ READY signal (once): slightly later (3 RAF) => reduces "reveal too early"
+  // READY event (same ecosystem as other sections)
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (didReadyRef.current) return;
-
-    const hasSomeData = (subjects?.length || 0) > 0 || hasContactData(contactInfo);
-    if (!hasSomeData) return;
-    if (!containerRef.current) return;
-
     didReadyRef.current = true;
 
     (async () => {
@@ -178,468 +132,180 @@ function Contact({ initialContactInfo = null, initialSubjects = null }) {
         }
       } catch {}
     })();
-  }, [subjects?.length, contactInfo]);
+  }, []);
 
-  const onFocusPanel = useCallback((key) => setActiveDiv(key), []);
-  const onChangeName = useCallback((e) => setContactInfo((p) => ({ ...p, name: e.target.value })), []);
-  const onChangeEmail = useCallback((e) => setContactInfo((p) => ({ ...p, email: e.target.value })), []);
-  const onChangeSubject = useCallback((e) => setSelectedSubject(e.target.value), []);
-  const onChangeMessage = useCallback((e) => setMessage(e.target.value), []);
+  const onCopy = useCallback(async (txt) => {
+    try {
+      await navigator.clipboard.writeText(txt);
+    } catch {}
+  }, []);
+
+  // ✅ No backend: mailto with clean body
+  const onSend = useCallback(
+    (e) => {
+      e?.preventDefault?.();
+
+      const fullName = `${String(first || "").trim()} ${String(last || "").trim()}`.trim() || "—";
+
+      const body = [
+        `From: ${fullName}`,
+        email ? `Reply-to: ${email}` : "",
+        `Subject: ${subjectLabel}`,
+        "",
+        String(message || ""),
+        "",
+        "—",
+        "Sent from Kasia's portfolio",
+      ]
+        .filter(Boolean)
+        .join("\n");
+
+      const mailto = `mailto:${EMAIL_PUBLIC}?subject=${encodeURIComponent(
+        `[${subjectLabel}] Contact form`
+      )}&body=${encodeURIComponent(body)}`;
+
+      window.location.href = mailto;
+      setSent(true);
+      setTimeout(() => setSent(false), 2400);
+    },
+    [first, last, email, subjectLabel, message]
+  );
 
   return (
-    <div className="ctc-page">
-      <div className="ctc-title">
-        <h2>{title}</h2>
-        <div className="ctc-subline">
-          <span className="ctc-dot" />
-          <span>Promis, je reponds vite!</span>
-          <span className="ctc-dot" />
+    <section className="ctc2" aria-label="Contact">
+      <div className="ctc2__wrap">
+        {/* BIG TITLE */}
+        <header className="ctc2__hero">
+          <h2 className="ctc2__big">LET'S BUILD SOMETHING THAT MATTERS</h2>
+        </header>
+
+        <div className="ctc2__grid">
+          {/* LEFT INFO */}
+          <aside className="ctc2__left" aria-label="Contact info">
+            <div className="ctc2__leftBlock">
+              <div className="ctc2__name">Kasia Nagorka</div>
+
+              <button className="ctc2__link" type="button" onClick={() => onCopy(PHONE_PUBLIC)}>
+                {PHONE_PUBLIC}
+              </button>
+
+              <button className="ctc2__link" type="button" onClick={() => onCopy(EMAIL_PUBLIC)}>
+                {EMAIL_PUBLIC}
+              </button>
+
+              <div className="ctc2__icons" aria-label="Social links">
+                <a className="ctc2__iconBtn" href={`mailto:${EMAIL_PUBLIC}`} aria-label="Email">
+                  <IconMail className="ctc2__iconSvg" />
+                </a>
+
+                <a className="ctc2__iconBtn" href={`tel:${PHONE_PUBLIC}`} aria-label="Phone">
+                  <IconPhone className="ctc2__iconSvg" />
+                </a>
+
+                {SOCIALS.map(({ id, label, href, Icon }) => (
+                  <a
+                    key={id}
+                    className="ctc2__iconBtn"
+                    href={href}
+                    aria-label={label}
+                    onClick={(e) => {
+                      if (href === "#") e.preventDefault();
+                    }}
+                  >
+                    <Icon className="ctc2__iconSvg" />
+                  </a>
+                ))}
+              </div>
+
+              <div className="ctc2__hint">
+                Tip: click phone/email to copy.
+              </div>
+            </div>
+          </aside>
+
+          {/* RIGHT FORM */}
+          <div className="ctc2__right" aria-label="Contact form">
+            <form className="ctc2__form" onSubmit={onSend}>
+              <div className="ctc2__row2">
+                <label className="ctc2__field">
+                  <span className="ctc2__label">FIRST NAME</span>
+                  <input
+                    className="ctc2__input"
+                    value={first}
+                    onChange={(e) => setFirst(e.target.value)}
+                    placeholder="Kasia"
+                    autoComplete="given-name"
+                  />
+                </label>
+
+                <label className="ctc2__field">
+                  <span className="ctc2__label">LAST NAME</span>
+                  <input
+                    className="ctc2__input"
+                    value={last}
+                    onChange={(e) => setLast(e.target.value)}
+                    placeholder="Nagorka"
+                    autoComplete="family-name"
+                  />
+                </label>
+              </div>
+
+              <label className="ctc2__field ctc2__fieldFull">
+                <span className="ctc2__label">EMAIL</span>
+                <input
+                  className="ctc2__input"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@email.com"
+                  autoComplete="email"
+                />
+              </label>
+
+              <label className="ctc2__field ctc2__fieldFull">
+                <span className="ctc2__label">SUBJECT</span>
+                <select
+                  className="ctc2__select"
+                  value={subject}
+                  onChange={(e) => setSubject(e.target.value)}
+                >
+                  {SUBJECTS.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label className="ctc2__field ctc2__fieldFull">
+                <span className="ctc2__label">MESSAGE</span>
+                <textarea
+                  className="ctc2__textarea"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="Tell me what you want to build…"
+                />
+              </label>
+
+              <div className="ctc2__actions">
+                <button className="aboutX__btn" type="submit">
+                  {sent ? "SENT ✓" : "SEND"}
+                </button>
+
+                <button
+                  className="aboutX__btn isGhost"
+                  type="button"
+                  onClick={() => setMessage("")}
+                >
+                  CLEAR
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
-
-      <div className="contact-container" ref={containerRef}>
-        {/* USER INFOS */}
-        <Draggable
-          nodeRef={userNodeRef}
-          bounds="parent"
-          cancel={DRAG_CANCEL}
-          disabled={!canDrag}
-          onStart={() => onFocusPanel("userInfos")}
-        >
-          <div
-            ref={userNodeRef}
-            className={`ctc-panel ctc-user-infos ${activeDiv === "userInfos" ? "active" : ""}`}
-            onMouseDown={() => onFocusPanel("userInfos")}
-            role="group"
-          >
-            <div className="ctc-grab" aria-hidden="true">
-              <span className="ctc-grab__hand">✋</span>
-              <span className="ctc-grab__txt">grab me</span>
-            </div>
-
-            <div className="ctc-panel__hud" aria-hidden="true" />
-
-            <div className="ctc-panel__header">
-              <div className="ctc-kicker">identity</div>
-              <div className="ctc-headline">User infos</div>
-            </div>
-
-            <label className="ctc-field">
-              <span className="ctc-label">Name</span>
-              <input
-                type="text"
-                placeholder="Kasia"
-                value={contactInfo.name || ""}
-                onChange={onChangeName}
-                autoComplete="name"
-              />
-            </label>
-
-            <label className="ctc-field">
-              <span className="ctc-label">Email</span>
-              <input
-                type="email"
-                placeholder="kasia@angels.city"
-                value={contactInfo.email || ""}
-                onChange={onChangeEmail}
-                autoComplete="email"
-              />
-            </label>
-          </div>
-        </Draggable>
-
-        {/* CONTENT */}
-        <Draggable
-          nodeRef={contentNodeRef}
-          bounds="parent"
-          cancel={DRAG_CANCEL}
-          disabled={!canDrag}
-          onStart={() => onFocusPanel("content")}
-        >
-          <div
-            ref={contentNodeRef}
-            className={`ctc-panel ctc-content ${activeDiv === "content" ? "active" : ""}`}
-            onMouseDown={() => onFocusPanel("content")}
-            role="group"
-          >
-            <div className="ctc-panel__hud" aria-hidden="true" />
-
-            <div className="ctc-grab" aria-hidden="true">
-              <span className="ctc-grab__hand">✋</span>
-              <span className="ctc-grab__txt">grab me</span>
-            </div>
-
-            <div className="ctc-panel__header">
-              <div className="ctc-kicker">message</div>
-              <div className="ctc-headline">Compose</div>
-            </div>
-
-            <label className="ctc-field">
-              <span className="ctc-label">Subject</span>
-              <select onChange={onChangeSubject} value={selectedSubject}>
-                <option value="">Select subject</option>
-                {subjects.map((subject) => (
-                  <option key={subject.id} value={subject.id}>
-                    {subject.title}
-                  </option>
-                ))}
-              </select>
-            </label>
-
-            <label className="ctc-field ctc-field--textarea">
-              <span className="ctc-label">Payload</span>
-              <textarea value={message} onChange={onChangeMessage} placeholder="Write your message…" />
-            </label>
-
-            <button className="ctc-send" type="button">
-              <span className="ctc-send__glow" aria-hidden="true" />
-              Send
-            </button>
-          </div>
-        </Draggable>
-      </div>
-    </div>
+    </section>
   );
 }
 
 export default memo(Contact);
-
-
-
-
-
-
-
-
-//ok
-// // src/Components/Contact/Contact.jsx
-// import { useEffect, useMemo, useState, useCallback, useRef, memo } from "react";
-// import Draggable from "react-draggable";
-// import "./Contact.css";
-// import useMountLog from "../../utils/useMountLog";
-
-// const DRAG_CANCEL = "input, textarea, select, button, a";
-// const EMPTY_CONTACT = { name: "", email: "" };
-
-// function asArray(v) {
-//   return Array.isArray(v) ? v : [];
-// }
-// function normalizeContact(v) {
-//   if (!v) return EMPTY_CONTACT;
-//   const name = String(v.name || "").trim();
-//   const email = String(v.email || "").trim();
-//   return { name, email };
-// }
-// function hasContactData(v) {
-//   return !!(v && (String(v.name || "").trim() || String(v.email || "").trim()));
-// }
-// function sameContact(a, b) {
-//   const A = normalizeContact(a);
-//   const B = normalizeContact(b);
-//   return A.name === B.name && A.email === B.email;
-// }
-// function sameSubjects(a, b) {
-//   const A = asArray(a);
-//   const B = asArray(b);
-//   if (A.length !== B.length) return false;
-//   for (let i = 0; i < A.length; i++) {
-//     if (String(A[i]?.id) !== String(B[i]?.id)) return false;
-//     if (String(A[i]?.title) !== String(B[i]?.title)) return false;
-//     if (String(A[i]?.message) !== String(B[i]?.message)) return false;
-//   }
-//   return true;
-// }
-
-// const raf = () => new Promise((r) => requestAnimationFrame(r));
-// const rafN = async (n = 2) => {
-//   for (let i = 0; i < n; i++) await raf();
-// };
-
-// function Contact({ initialContactInfo = null, initialSubjects = null }) {
-//   useMountLog("Contact");
-
-//   // ✅ MUST be inside component
-//   const didFetchRef = useRef(false);
-//   const didReadyRef = useRef(false);
-
-//   // ---- initial from props (boot) ----
-//   const initialContact = useMemo(
-//     () => (hasContactData(initialContactInfo) ? normalizeContact(initialContactInfo) : EMPTY_CONTACT),
-//     [initialContactInfo]
-//   );
-//   const initialSubjs = useMemo(() => asArray(initialSubjects), [initialSubjects]);
-
-//   const [contactInfo, setContactInfo] = useState(() => initialContact);
-//   const [subjects, setSubjects] = useState(() => initialSubjs);
-
-//   const [selectedSubject, setSelectedSubject] = useState("");
-//   const [message, setMessage] = useState("");
-//   const [activeDiv, setActiveDiv] = useState("userInfos");
-
-//   const title = useMemo(() => "CONTACT ME", []);
-
-//   const containerRef = useRef(null);
-//   const userNodeRef = useRef(null);
-//   const contentNodeRef = useRef(null);
-
-//   // reveal guard
-//   const [revealReady, setRevealReady] = useState(() => {
-//     if (typeof window === "undefined") return false;
-//     return window.__AG_REVEAL_DONE__ === true;
-//   });
-
-//   useEffect(() => {
-//     if (typeof window === "undefined") return;
-
-//     const setReady = () => setRevealReady(true);
-
-//     if (window.__AG_REVEAL_DONE__ === true) {
-//       setReady();
-//       return;
-//     }
-
-//     window.addEventListener("ag:revealDone", setReady, { once: true });
-//     return () => window.removeEventListener("ag:revealDone", setReady);
-//   }, []);
-
-//   // canDrag only on fine pointer/hover
-//   const [canDrag, setCanDrag] = useState(() => {
-//     if (typeof window === "undefined") return false;
-//     return window.matchMedia?.("(hover: hover) and (pointer: fine)")?.matches ?? false;
-//   });
-
-//   useEffect(() => {
-//     if (typeof window === "undefined") return;
-
-//     const mql = window.matchMedia("(hover: hover) and (pointer: fine)");
-//     const onChange = () => setCanDrag(!!mql.matches);
-
-//     if (mql.addEventListener) mql.addEventListener("change", onChange);
-//     else mql.addListener?.(onChange);
-
-//     return () => {
-//       if (mql.removeEventListener) mql.removeEventListener("change", onChange);
-//       else mql.removeListener?.(onChange);
-//     };
-//   }, []);
-
-//   // keep state in sync if props change (dev)
-//   useEffect(() => {
-//     if (!hasContactData(initialContactInfo)) return;
-//     setContactInfo((prev) => (sameContact(prev, initialContactInfo) ? prev : normalizeContact(initialContactInfo)));
-//   }, [initialContactInfo]);
-
-//   useEffect(() => {
-//     if (!Array.isArray(initialSubjects)) return;
-//     setSubjects((prev) => (sameSubjects(prev, initialSubjects) ? prev : asArray(initialSubjects)));
-//   }, [initialSubjects]);
-
-//   // Fetch ONLY if missing (once)
-//   useEffect(() => {
-//     if (didFetchRef.current) return;
-
-//     const alreadyHaveContact = hasContactData(initialContactInfo) || hasContactData(contactInfo);
-//     const alreadyHaveSubjects =
-//       (Array.isArray(initialSubjects) && initialSubjects.length) ||
-//       (Array.isArray(subjects) && subjects.length);
-
-//     if (alreadyHaveContact && alreadyHaveSubjects) return;
-
-//     didFetchRef.current = true; // ✅ lock
-
-//     const ac = new AbortController();
-
-//     (async () => {
-//       try {
-//         const tasks = [];
-
-//         if (!alreadyHaveContact) {
-//           tasks.push(
-//             fetch("/messages.json", { signal: ac.signal, cache: "force-cache" })
-//               .then((r) => r.json())
-//               .then((data) => {
-//                 const first = Array.isArray(data) ? data[0] : null;
-//                 if (!first) return;
-//                 setContactInfo((prev) => (sameContact(prev, first) ? prev : normalizeContact(first)));
-//               })
-//           );
-//         }
-
-//         if (!alreadyHaveSubjects) {
-//           tasks.push(
-//             fetch("/subjects.json", { signal: ac.signal, cache: "force-cache" })
-//               .then((r) => r.json())
-//               .then((data) => {
-//                 const next = Array.isArray(data) ? data : [];
-//                 setSubjects((prev) => (sameSubjects(prev, next) ? prev : next));
-//               })
-//           );
-//         }
-
-//         await Promise.all(tasks);
-//       } catch (err) {
-//         if (err?.name === "AbortError") return;
-//         console.error("Contact fetch error:", err);
-//       }
-//     })();
-
-//     return () => ac.abort();
-//     // eslint-disable-next-line react-hooks/exhaustive-deps
-//   }, []);
-
-//   // auto-fill message
-//   useEffect(() => {
-//     if (!selectedSubject) return;
-//     const selected = subjects.find((s) => String(s.id) === String(selectedSubject));
-//     setMessage(selected?.message || "");
-//   }, [selectedSubject, subjects]);
-
-//   // ✅ READY signal (once): when we have enough data + painted
-//   useEffect(() => {
-//     if (typeof window === "undefined") return;
-//     if (didReadyRef.current) return;
-
-//     const hasSomeData = subjects?.length > 0 || hasContactData(contactInfo);
-//     if (!hasSomeData) return;
-//     if (!containerRef.current) return;
-
-//     didReadyRef.current = true;
-
-//     (async () => {
-//       await rafN(2);
-//       try {
-//         if (!window.__AG_CTC_READY__) {
-//           window.__AG_CTC_READY__ = true;
-//           window.dispatchEvent(new Event("ag:contactReady"));
-//         }
-//       } catch {}
-//     })();
-//   }, [subjects?.length, contactInfo]);
-
-//   const onFocusPanel = useCallback((key) => setActiveDiv(key), []);
-//   const onChangeName = useCallback((e) => setContactInfo((p) => ({ ...p, name: e.target.value })), []);
-//   const onChangeEmail = useCallback((e) => setContactInfo((p) => ({ ...p, email: e.target.value })), []);
-//   const onChangeSubject = useCallback((e) => setSelectedSubject(e.target.value), []);
-//   const onChangeMessage = useCallback((e) => setMessage(e.target.value), []);
-
-//   const renderCount = useRef(0);
-//   renderCount.current++;
-//   if (import.meta.env.DEV) console.log("🔁 Contact render", renderCount.current);
-
-//   return (
-//     <div className="ctc-page" data-reveal={revealReady ? "1" : "0"}>
-//       <div className="ctc-title">
-//         <h2>{title}</h2>
-//         <div className="ctc-subline">
-//           <span className="ctc-dot" />
-//           <span>Promis, je reponds vite!</span>
-//           <span className="ctc-dot" />
-//         </div>
-//       </div>
-
-//       <div className="contact-container" ref={containerRef}>
-//         {/* USER INFOS */}
-//         <Draggable
-//           nodeRef={userNodeRef}
-//           bounds="parent"
-//           cancel={DRAG_CANCEL}
-//           disabled={!canDrag}
-//           onStart={() => onFocusPanel("userInfos")}
-//         >
-//           <div
-//             ref={userNodeRef}
-//             className={`ctc-panel ctc-user-infos ${activeDiv === "userInfos" ? "active" : ""}`}
-//             onMouseDown={() => onFocusPanel("userInfos")}
-//             role="group"
-//           >
-//             <div className="ctc-grab" aria-hidden="true">
-//               <span className="ctc-grab__hand">✋</span>
-//               <span className="ctc-grab__txt">grab me</span>
-//             </div>
-
-//             <div className="ctc-panel__hud" aria-hidden="true" />
-
-//             <div className="ctc-panel__header">
-//               <div className="ctc-kicker">identity</div>
-//               <div className="ctc-headline">User infos</div>
-//             </div>
-
-//             <label className="ctc-field">
-//               <span className="ctc-label">Name</span>
-//               <input
-//                 type="text"
-//                 placeholder="Kasia"
-//                 value={contactInfo.name || ""}
-//                 onChange={onChangeName}
-//                 autoComplete="name"
-//               />
-//             </label>
-
-//             <label className="ctc-field">
-//               <span className="ctc-label">Email</span>
-//               <input
-//                 type="email"
-//                 placeholder="kasia@angels.city"
-//                 value={contactInfo.email || ""}
-//                 onChange={onChangeEmail}
-//                 autoComplete="email"
-//               />
-//             </label>
-//           </div>
-//         </Draggable>
-
-//         {/* CONTENT */}
-//         <Draggable
-//           nodeRef={contentNodeRef}
-//           bounds="parent"
-//           cancel={DRAG_CANCEL}
-//           disabled={!canDrag}
-//           onStart={() => onFocusPanel("content")}
-//         >
-//           <div
-//             ref={contentNodeRef}
-//             className={`ctc-panel ctc-content ${activeDiv === "content" ? "active" : ""}`}
-//             onMouseDown={() => onFocusPanel("content")}
-//             role="group"
-//           >
-//             <div className="ctc-panel__hud" aria-hidden="true" />
-
-//             <div className="ctc-grab" aria-hidden="true">
-//               <span className="ctc-grab__hand">✋</span>
-//               <span className="ctc-grab__txt">grab me</span>
-//             </div>
-
-//             <div className="ctc-panel__header">
-//               <div className="ctc-kicker">message</div>
-//               <div className="ctc-headline">Compose</div>
-//             </div>
-
-//             <label className="ctc-field">
-//               <span className="ctc-label">Subject</span>
-//               <select onChange={onChangeSubject} value={selectedSubject}>
-//                 <option value="">Select subject</option>
-//                 {subjects.map((subject) => (
-//                   <option key={subject.id} value={subject.id}>
-//                     {subject.title}
-//                   </option>
-//                 ))}
-//               </select>
-//             </label>
-
-//             <label className="ctc-field ctc-field--textarea">
-//               <span className="ctc-label">Payload</span>
-//               <textarea value={message} onChange={onChangeMessage} placeholder="Write your message…" />
-//             </label>
-
-//             <button className="ctc-send" type="button">
-//               <span className="ctc-send__glow" aria-hidden="true" />
-//               Send
-//             </button>
-//           </div>
-//         </Draggable>
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default memo(Contact);

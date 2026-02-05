@@ -9,25 +9,25 @@
 
     "web": {
       "title": "Web Developer",
-      "lead": "Where code and design collaborate to build clear, durable interfaces.",
+      "lead": "Where code and design align to build useful interfaces.",
       "timeline": "2023–2025 · Fullstack Coach (Molengeek) → 2025–2026 · Developer (Urban Tech)"
     },
 
     "threeD": {
       "title": "3D & Creative Tech",
-      "lead": " Real-time assets built to live cleanly on the web.",
+      "lead": "3D designed for interaction, not just visual impact.",
       "timeline": "2023 · 3D modeling & video design (Tarmac)"
     },
 
     "events": {
       "title": "Creative Events",
-      "lead": "Ideas that become real in space and time.",
+      "lead": "Ideas brought to life, from concept to real experience.",
       "timeline": "2018–2020 · Styling & creative direction (Bloody Louis) → 2021 · Art direction & events (Emotion)"
     },
 
     "all": {
-      "title": "Creative Tech",
-      "lead": "A meeting point between dev, visuals, and production.",
+      "title": "Creative Technologist",
+      "lead": "A space where dev, visuals, and production meet.",
       "timeline": "2015–2018 · Visual Merch (MMFG) → 2018–2020 · Visual Merch (Swarovski) → 2020–2023 · Visual Merch (Pinko) → 2023–2025 · Fullstack Coach (Molengeek) → 2025–2026 · Dev (Urban Tech) · + 2023 · 3D (Tarmac) · + 2018–2021 · Events (Bloody Louis / Emotion)",
       "educationLine": "Education: 2023–2024 Fullstack (Molengeek) · 2023 3D (Blender/Tuto) · 2017 Graphic design (Domestika) · 2018 Styling (Reggio Emilia)"
     },
@@ -48,8 +48,8 @@
           "bold": "Urban Tech",
           "meta": "Developer",
           "year": "2025–2026",
-          "text": "Building production-ready apps for real client projects.",
-          "note": "Real-world delivery."
+          "text": "Building production-ready applications for real client use cases.",
+          "note": "Concrete work, not PowerPoint."
         },
         {
           "id": "molengeek",
@@ -57,55 +57,55 @@
           "meta": "Fullstack Web Dev Coach",
           "year": "2023–2025",
           "text": "Coaching, mentoring, and building web projects in real-life conditions.",
-          "note": "Teaching + shipping: fewer surprises."
+          "note": "Teaching + delivery: fewer surprises."
         },
         {
           "id": "tarmac",
           "bold": "Tarmac",
           "meta": "3D / Modeling & video design",
-          "year":"2023",
+          "year": "2023",
           "text": "Creating 3D assets and video content focused on narrative and impact.",
-          "note": "Pretty — but useful."
+          "note": "Visuals with a purpose."
         },
         {
           "id": "pinko",
           "bold": "Pinko",
           "meta": "Visual Merchandiser",
-          "year":"2020–2023",
-          "text": "Brand storytelling, boutique scenography, product presentation.",
-          "note": "Visuals that move."
+          "year": "2020–2023",
+          "text": "Brand storytelling, boutique scenography, and product presentation.",
+          "note": "Visuals in motion."
         },
         {
           "id": "emotion",
           "bold": "Emotion",
           "meta": "Event project lead / Art director",
-          "year":"2021",
-          "text": "Visual identity, strategy, communication, event experience.",
+          "year": "2021",
+          "text": "Visual identity, strategy, communication, and event experience.",
           "note": "Vision → execution → lived experience."
         },
         {
           "id": "bloodyLouis",
           "bold": "Bloody Louis",
           "meta": "Event styling & creative direction",
-          "year":"2018–2020",
-          "text": "Scenography, production, visuals, logistics.",
-          "note": "Details + timing (for real)."
+          "year": "2018–2020",
+          "text": "Scenography, production, visuals, and logistics.",
+          "note": "When every detail matters (and timing is real)."
         },
         {
           "id": "swarovski",
           "bold": "Swarovski",
           "meta": "Visual Merchandiser",
-          "year":"2018–2020",
-          "text": "Luxury retail visuals, standards, and detail-focused execution.",
-          "note": "Luxury = rhythm + rigor."
+          "year": "2018–2020",
+          "text": "Luxury retail visuals, merchandising standards, and precision.",
+          "note": "Luxury = rigor + rhythm."
         },
         {
           "id": "mmfg",
           "bold": "MMFG",
           "meta": "Visual Merchandiser",
-          "year":"2015–2018",
-          "text": "Product staging, brand consistency, customer experience.",
-          "note": "The eye learns precision."
+          "year": "2015–2018",
+          "text": "Product staging, brand consistency, and customer experience.",
+          "note": "Training the eye down to the millimeter."
         }
       ]
     },
@@ -117,7 +117,7 @@
           "year": "2023–2024",
           "label": "Fullstack Development",
           "place": "Molengeek",
-          "note": "Strong base in modern web development."
+          "note": "Strong foundation in modern web development."
         },
         {
           "year": "2023",
@@ -129,20 +129,20 @@
           "year": "2017",
           "label": "Graphic Design",
           "place": "Domestika",
-          "note": "Visual culture, composition, framing."
+          "note": "Visual culture, composition, and framing."
         },
         {
           "year": "2018",
           "label": "Styling",
           "place": "Reggio Emilia",
-          "note": "Product, material, intention."
+          "note": "Understanding product, material, and intent."
         }
       ]
     },
 
     "highlights": {
       "title": "Highlights",
-      "text": "I like premium systems: glass UI, neon accents, smooth motion, and interactions that invite exploration."
+      "text": "I enjoy premium systems: glass UI, neon accents, smooth motion, and interactions that invite exploration."
     },
 
     "seeMore": "See more",

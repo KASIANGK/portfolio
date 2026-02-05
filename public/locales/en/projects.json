@@ -1,0 +1,8 @@
+{
+    "title": "Projects",
+    "subtitle": "Pick a lane. Or pick them all.",
+    "tabs": { "all": "All", "web": "Web", "threeD": "3D" },
+    "emptyTitle": "No items here",
+    "emptySub": "Try another tab ✦"
+  }
+  

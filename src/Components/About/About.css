@@ -58,8 +58,8 @@
       transparent 62%
     ),
     linear-gradient(180deg,
-      rgba(10,8,22,0.15),
-      rgba(10,8,22,0.35)
+      rgba(10, 8, 22, 0.292),
+      rgba(10, 8, 22, 0.022)
     );
   opacity: 1;
 }
@@ -1235,7 +1235,7 @@
   position:absolute;
   inset:0;
   border:0;
-  background: rgba(0,0,0,0.55);
+  background: rgba(0, 0, 0, 0.608);
   cursor:pointer;
   z-index: 1;
 }
@@ -1269,7 +1269,7 @@
 .aboutX__modalBlock{
   border-radius: 18px;
   padding: 12px;
-  background: rgba(0,0,0,0.18);
+  background: rgba(0, 0, 0, 0.614);
   border: 1px solid rgba(255,255,255,0.10);
 }
 .aboutX__modalKicker{
@@ -1320,7 +1320,7 @@
     height: 170px;
     min-height: 0;
     left: 370px;
-    top: 0px;
+    top: -38px;
     background-color: rgba(10, 8, 22, 0.788);
   }
   .aboutX__skillsScrollWrap {
@@ -1377,7 +1377,7 @@
     width: min(92vw, 360px);
     min-width: 0;
     display: flex;
-    flex-direction: column-reverse;
+    flex-direction: column;
   }
 
   .aboutX__wheelStage {
@@ -1409,7 +1409,8 @@
 
   /* B) wheel légèrement plus grand */
   .aboutX__core{
-    --wheel: clamp(285px, 28vw, 365px); /* ~+5-7% */
+    --wheel: 340px; /* ~+5-7% */
+    margin-top: -20px;
   }
 
 }
@@ -1453,11 +1454,11 @@
 
   .aboutX__center{
     width: 88vw;
-    align-items: center;    
+    align-items: flex-start;    
     justify-content: center;
     margin-left: auto;
     margin-right: auto;
-    gap: 18px;
+    gap: 12%;
   }
 
   .aboutX__wheelStage{
@@ -1469,16 +1470,21 @@
   }
 
   .aboutX__rightZone {
-    flex-direction: column-reverse;
+    flex-direction: column;
   }
 }
 
-@media (max-width: 500px) {
+@media (max-width: 776px) {
+  .aboutX__core {
+    margin-bottom: 50px;
+  }
   .aboutX__rightZone {
-    flex-direction: column-reverse;
+    flex-direction: column;
   }
   .aboutX__center {
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
 }
 @media (prefers-reduced-motion: reduce){

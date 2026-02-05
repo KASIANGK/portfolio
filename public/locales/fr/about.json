@@ -9,25 +9,25 @@
 
     "web": {
       "title": "Web Developer",
-      "lead": "Là où le code et le design collaborent pour créer des interfaces claires et durables. Des systèmes pensés pour être compris, utilisés et maintenus.",
+      "lead": "Là où le code et le design s’accordent pour créer des interfaces utiles.",
       "timeline": "2023–2025 · Coach Fullstack (Molengeek) → 2025–2026 · Developer (Urban Tech)"
     },
 
     "threeD": {
       "title": "3D & Creative Tech",
-      "lead": "Quand la 3D sert l’interaction et le récit plutôt que l’effet. Des assets temps réel faits pour vivre proprement dans le web.",
+      "lead": "De la 3D pensée pour l’interaction, pas pour le simple effet.",
       "timeline": "2023 · Modélisation & conception vidéo (Tarmac)"
     },
 
     "events": {
-      "title": "Creative Direction & Events",
-      "lead": "Des idées qui prennent forme dans l’espace et dans le temps. Une exécution carrée, sans perdre la vibe.",
+      "title": "Creative Events",
+      "lead": "Des idées qui prennent forme, du concept à l’expérience vécue.",
       "timeline": "2018–2020 · Styling & direction créative (Bloody Louis) → 2021 · DA & événementiel (Emotion)"
     },
 
     "all": {
       "title": "Creative Technologist",
-      "lead": "Un terrain de rencontre entre dev, visuel et production. L’objectif : des expériences cohérentes, lisibles et sensibles.",
+      "lead": "Un point de rencontre entre dev, visuel et production.",
       "timeline": "2015–2018 · Visual Merch (MMFG) → 2018–2020 · Visual Merch (Swarovski) → 2020–2023 · Visual Merch (Pinko) → 2023–2025 · Coach Fullstack (Molengeek) → 2025–2026 · Dev (Urban Tech) · + 2023 · 3D (Tarmac) · + 2018–2021 · Events (Bloody Louis / Emotion)",
       "educationLine": "Formations : 2023–2024 Fullstack (Molengeek) · 2023 3D (Blender/Tuto) · 2017 Graphisme (Domestika) · 2018 Stylisme (Reggio Emilia)"
     },
