@@ -1,3 +1,4 @@
+// src/Components/Home/Home.jsx
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 
@@ -15,9 +16,10 @@ import ProjectsMasonryMessy from "../Projects/ProjectsMasonryMessy";
    Utils
 --------------------------------------- */
 const raf = () => new Promise((r) => requestAnimationFrame(r));
-const rafN = async (n = 2) => { for (let i = 0; i < n; i++) await raf(); };
+const rafN = async (n = 2) => {
+  for (let i = 0; i < n; i++) await raf();
+};
 const clamp01 = (v) => Math.max(0, Math.min(1, v));
-const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 
 /* ---------------------------------------
    Scroll lock (step 1)
@@ -34,17 +36,18 @@ function unlockScrollHard() {
 /* ---------------------------------------
    waitEventOnce
 --------------------------------------- */
-function waitEventOnce(name, timeoutMs = 2600, already = false) {
-  if (already) return Promise.resolve({ name, timedOut: false });
+function waitEventOnce(name, timeoutMs = 2600) {
   return new Promise((resolve) => {
     let done = false;
-    const finish = (timedOut) => {
+    const finish = () => {
       if (done) return;
       done = true;
-      resolve({ name, timedOut });
+      resolve();
     };
-    try { window.addEventListener(name, () => finish(false), { once: true }); } catch {}
-    setTimeout(() => finish(true), timeoutMs);
+    try {
+      window.addEventListener(name, finish, { once: true });
+    } catch {}
+    setTimeout(finish, timeoutMs);
   });
 }
 
@@ -53,8 +56,8 @@ function waitEventOnce(name, timeoutMs = 2600, already = false) {
 --------------------------------------- */
 export default function Home() {
   const pageRef = useRef(null);
+
   const headerRef = useRef(null);
-  const overlayWrapRef = useRef(null);
   const aboutRef = useRef(null);
   const projectsRef = useRef(null);
   const contactRef = useRef(null);
@@ -63,25 +66,33 @@ export default function Home() {
   const { shouldShowLanguageStep } = useOnboarding();
   const boot = useBoot();
 
-  /* Boot data */
+  /* ---------------------------------------
+     Boot data
+  --------------------------------------- */
   const contactInfoData = useMemo(
     () => boot?.contactInfo ?? { name: "", email: "" },
     [boot?.contactInfo]
   );
+
   const subjectsData = useMemo(
     () => (Array.isArray(boot?.subjects) ? boot.subjects : []),
     [boot?.subjects]
   );
 
-  /* Overlay step */
+  /* ---------------------------------------
+     Overlay step
+  --------------------------------------- */
   const [overlayStep, _setOverlayStep] = useState(() =>
     shouldShowLanguageStep ? 1 : 2
   );
+
   const setOverlayStep = useCallback((next) => {
     _setOverlayStep((prev) => (prev === 2 ? 2 : next));
   }, []);
 
-  /* Lock scroll in step 1 */
+  /* ---------------------------------------
+     Lock scroll in step 1
+  --------------------------------------- */
   useEffect(() => {
     if (overlayStep === 1) {
       lockScrollHard();
@@ -90,20 +101,26 @@ export default function Home() {
     unlockScrollHard();
   }, [overlayStep]);
 
-  /* Hash scroll */
+  /* ---------------------------------------
+     Hash scroll
+  --------------------------------------- */
   const scrollToRef = useCallback((ref) => {
-    if (!ref?.current) return false;
+    if (!ref?.current) return;
     requestAnimationFrame(() => {
       const y = ref.current.getBoundingClientRect().top + window.scrollY - 90;
       window.scrollTo({ top: y, behavior: "smooth" });
     });
-    return true;
   }, []);
 
   const scrollToSection = useCallback(
     (key) =>
       scrollToRef(
-        { welcome: headerRef, about: aboutRef, projects: projectsRef, contact: contactRef }[key]
+        {
+          welcome: headerRef,
+          about: aboutRef,
+          projects: projectsRef,
+          contact: contactRef,
+        }[key]
       ),
     [scrollToRef]
   );
@@ -114,121 +131,102 @@ export default function Home() {
     scrollToSection(key);
   }, [location.hash, overlayStep, scrollToSection]);
 
-  /* Section ready */
-  const [ready, setReady] = useState({ about: false, projects: false, contact: false });
+  /* ---------------------------------------
+     Section ready
+  --------------------------------------- */
+  const [ready, setReady] = useState({
+    about: false,
+    projects: false,
+    contact: false,
+  });
 
   useEffect(() => {
-    if (overlayStep !== 2) setReady({ about: false, projects: false, contact: false });
-  }, [overlayStep]);
+    if (overlayStep !== 2) {
+      setReady({ about: false, projects: false, contact: false });
+      return;
+    }
 
-  useEffect(() => {
-    if (overlayStep !== 2) return;
     let alive = true;
+
     (async () => {
-      await waitEventOnce("ag:aboutReady", 2800);
+      await waitEventOnce("ag:aboutReady");
       alive && setReady((s) => ({ ...s, about: true }));
-      await waitEventOnce("ag:projectsReady", 2800);
+
+      await waitEventOnce("ag:projectsReady");
       alive && setReady((s) => ({ ...s, projects: true }));
-      await waitEventOnce("ag:contactReady", 2800);
+
+      await waitEventOnce("ag:contactReady");
       alive && setReady((s) => ({ ...s, contact: true }));
+
       await rafN(2);
       window.dispatchEvent(new Event("ag:homeFirstPaint"));
     })();
-    return () => { alive = false; };
+
+    return () => {
+      alive = false;
+    };
   }, [overlayStep]);
 
-  /* Preload BG images */
-  useEffect(() => {
-    new Image().src = "/assets/about_officee.jpg";
-    new Image().src = "/assets/projects_officee.jpg";
-  }, []);
-
   /* ---------------------------------------
-     BG SMOOTH SCROLL (LERP)
+     BG BLEND (native scroll)
   --------------------------------------- */
-  const releasedRef = useRef(false);
-  const releaseYRef = useRef(0);
-  const bgMaxTravelRef = useRef(0);
-
   useEffect(() => {
     if (overlayStep !== 2) return;
 
     const root = document.documentElement;
     const prj = projectsRef.current;
-    const ov = overlayWrapRef.current;
-    if (!prj || !ov) return;
+    if (!prj) return;
 
-    let imgRatio = 2048 / 1332;
-    let smoothY = window.scrollY;
-    let targetY = window.scrollY;
     let rafId = 0;
 
-    const img = new Image();
-    img.onload = () => {
-      imgRatio = img.naturalHeight / img.naturalWidth;
-      computeBg();
-    };
-    img.src = "/assets/about_officee.jpg";
-
-    const computeBg = () => {
-      const vw = window.innerWidth || 1;
-      const vh = window.innerHeight || 1;
-      const bgH = Math.round(vw * imgRatio);
-      root.style.setProperty("--bgSceneH", `${bgH}px`);
-      bgMaxTravelRef.current = Math.max(0, bgH - vh);
-    };
-
     const update = () => {
-      smoothY += (targetY - smoothY) * 0.08;
-      if (Math.abs(targetY - smoothY) < 0.1) smoothY = targetY;
-
-      let travel = 0;
-      if (releasedRef.current) {
-        travel = smoothY - releaseYRef.current;
-        travel = clamp(travel, 0, bgMaxTravelRef.current);
-      }
-      root.style.setProperty("--bgTravel", travel.toFixed(2));
-
       const vh = window.innerHeight || 1;
       const r = prj.getBoundingClientRect();
-      const blend = clamp01((vh * 0.55 - r.top) / (vh * 1.4));
+
+      const start = vh * 0.6;
+      const end = vh * -0.6;
+
+      const blend = clamp01((start - r.top) / (start - end));
       root.style.setProperty("--projectsBlend", blend.toFixed(4));
 
       rafId = requestAnimationFrame(update);
     };
 
-    const onScroll = () => { targetY = window.scrollY; };
-
-    const io = new IntersectionObserver(
-      ([e]) => {
-        if (!e.isIntersecting && !releasedRef.current) {
-          releasedRef.current = true;
-          releaseYRef.current = targetY;
-        }
-        if (e.isIntersecting && targetY < 4) {
-          releasedRef.current = false;
-          releaseYRef.current = 0;
-        }
-      },
-      { threshold: 0.01 }
-    );
-    io.observe(ov);
-
-    computeBg();
     update();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", computeBg);
 
     return () => {
-      io.disconnect();
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", computeBg);
       cancelAnimationFrame(rafId);
-      root.style.removeProperty("--bgSceneH");
-      root.style.removeProperty("--bgTravel");
       root.style.removeProperty("--projectsBlend");
     };
   }, [overlayStep]);
+
+  /* ---------------------------------------
+   Preload + GPU decode BG images (ONCE)
+  --------------------------------------- */
+  useEffect(() => {
+    let cancelled = false;
+
+    const warm = async () => {
+      try {
+        const imgA = new Image();
+        imgA.src = "/assets/about_officee.jpg";
+        await imgA.decode?.();
+
+        const imgP = new Image();
+        imgP.src = "/assets/projects_officee.jpg";
+        await imgP.decode?.();
+      } catch {
+        // never block
+      }
+    };
+
+    warm();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
 
   /* ---------------------------------------
      Render
@@ -238,28 +236,43 @@ export default function Home() {
       {overlayStep === 2 && (
         <NavbarScrollHomePage
           enabled
-          refs={{ welcome: headerRef, about: aboutRef, projects: projectsRef, contact: contactRef }}
+          refs={{
+            welcome: headerRef,
+            about: aboutRef,
+            projects: projectsRef,
+            contact: contactRef,
+          }}
         />
       )}
 
-      <div className="bgScene" aria-hidden>
-        <img className="bgScene__img bgScene__wire" src="/assets/about_officee.jpg" alt="" />
-        <img className="bgScene__img bgScene__tex" src="/assets/projects_officee.jpg" alt="" />
-      </div>
-
+      {/* Welcome */}
       <div ref={headerRef} id="welcome">
-        <div ref={overlayWrapRef}>
-          <HomeOverlay
-            onStepChange={setOverlayStep}
-            onGoProjects={() => scrollToSection("projects")}
-            onGoContact={() => scrollToSection("contact")}
-          />
-        </div>
+        <HomeOverlay
+          onStepChange={setOverlayStep}
+          onGoProjects={() => scrollToSection("projects")}
+          onGoContact={() => scrollToSection("contact")}
+        />
       </div>
 
       {overlayStep === 2 && <div className="homePage__afterHeader" />}
 
+      {/* ===== BG STARTS HERE ===== */}
       <div className="homeStage" data-enabled={overlayStep === 2 ? "1" : "0"}>
+        <div className="bgScene" aria-hidden>
+          <img
+            className="bgScene__img bgScene__wire"
+            src="/assets/about_officee.jpg"
+            alt=""
+            draggable="false"
+          />
+          <img
+            className="bgScene__img bgScene__tex"
+            src="/assets/projects_officee.jpg"
+            alt=""
+            draggable="false"
+          />
+        </div>
+
         <section ref={aboutRef} id="about" className="homeSection">
           <div className={`homeSection__card ${ready.about ? "isReady" : "isLoading"}`}>
             <About />
@@ -274,7 +287,10 @@ export default function Home() {
 
         <section ref={contactRef} id="contact" className="homeSection">
           <div className={`homeSection__card ${ready.contact ? "isReady" : "isLoading"}`}>
-            <Contact initialContactInfo={contactInfoData} initialSubjects={subjectsData} />
+            <Contact
+              initialContactInfo={contactInfoData}
+              initialSubjects={subjectsData}
+            />
           </div>
         </section>
       </div>
