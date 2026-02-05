@@ -4,206 +4,92 @@
    PAGE BASE
    =============================== */
    .homePage{
-    min-height: 100vh;
+    position: relative;
     width: 100%;
-    position: relative;
+    min-height: 100vh;
     overflow-x: hidden;
+    background: #050016;
   }
   
-  /* spacer under header (step2 only) */
-  .homePage__afterHeader{
-    height: 50px;
-  }
-  
-  /* Backplate fixed behind everything */
-  .homeBackplate{
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-  
-    background: url("/home_bg.jpg") center / cover no-repeat;
-    transform: translateZ(0);
-    backface-visibility: hidden;
-    /* attention: filter = coûteux mais stable si constant */
-    filter: saturate(1.05) contrast(1.05);
-  }
-  
-  /* content above backplate */
-  .homePage > *{
-    position: relative;
-    z-index: 1;
-  }
-  
-  /* ===============================
-     STAGE
-     =============================== */
-  .homeStage{
+  /* content above background */
+  .homePage > *:not(.bgScene){
     position: relative;
     z-index: 2;
   }
   
-  .homeStage[data-enabled="0"]{ display: none; }
-  .homeStage[data-enabled="1"]{ display: block; }
+  .homePage__afterHeader{ height: 50px; }
   
   /* ===============================
-     SECTIONS
+     BG SCENE (FIXED while overlay visible, then ABSOLUTE)
      =============================== */
+  
+  /* default (scrollable) */
+  .bgScene{
+    position: fixed;
+    top: 0;
+    left: 0;
+  
+    width: 100%;
+    height: var(--bgSceneH, 140vh);  /* set by JS from image ratio */
+  
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  
+    transform: translate3d(0, calc(-1px * var(--bgTravel, 0)), 0);
+    will-change: transform;
+  }
+  
+  /* ✅ fixed mode: bg does NOT move while overlay is visible */
+  .homePage[data-bg-fixed="1"] .bgScene{
+    position: fixed;
+    top: 0;
+  }
+  
+  /* ✅ scroll mode: bg becomes part of the page */
+  .homePage[data-bg-fixed="0"] .bgScene{
+    position: absolute;
+    top: 0;
+  }
+  
+  /* images stacked perfectly */
+.bgScene__img{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 0%;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+  
+  /* wireframe base */
+  .bgScene__wire{
+    opacity: 1;
+  }
+  
+  /* texture layer fades in (preserved) */
+  .bgScene__tex{
+    opacity: var(--projectsBlend, 0);
+    will-change: opacity;
+  }
+  
+  /* ===============================
+     STAGE / SECTIONS
+     =============================== */
+  .homeStage{ position: relative; z-index: 3; }
+  .homeStage[data-enabled="0"]{ display:none; }
+  .homeStage[data-enabled="1"]{ display:block; }
+  
   .homeSection{
     margin: 0 auto;
     padding-top: 10%;
-    /* padding: 48px 0; */
     scroll-margin-top: 90px;
     width: min(1200px, 92vw);
-  
-    /* OK: garde le layout stable */
     content-visibility: visible;
     contain-intrinsic-size: 700px;
   }
   
-  /* ===============================
-     CARD BASE (glass)
-     =============================== */
-  .homeSection__card{
-    position: relative;
-    border-radius: 22px;
-    /* padding: clamp(18px, 3vw, 28px); */
+  /* Cards (keep your existing blocks below) */
   
-    background: rgba(16, 10, 38, 0.62);
-    border: 1px solid rgba(255, 255, 255, 0.10);
-  
-    /* IMPORTANT: shadow constant (évite flash) */
-    box-shadow:
-      0 20px 60px rgba(0, 0, 0, 0.45),
-      0 0 0 1px rgba(255, 0, 170, 0.06) inset;
-  
-    isolation: isolate;
-    transform: translateZ(0);
-    backface-visibility: hidden;
-
-    background-blend-mode: screen;
-  }
-  
-  /* ===============================
-     REVEAL (global)
-     =============================== */
-  .homeSection__card{
-    opacity: 0;
-    transform: translateY(10px);
-    filter: blur(8px);
-    transition: opacity 260ms ease, transform 260ms ease, filter 260ms ease;
-    will-change: opacity, transform, filter;
-  }
-  
-  .homeSection__card.isReady{
-    opacity: 1;
-    transform: translateY(0);
-    filter: blur(0);
-  }
-  
-  /* while loading: keep visible but masked */
-  .homeSection__card.isLoading{
-    opacity: 1;
-    transform: none;
-    filter: none;
-  }
-  
-  /* ===============================
-     PREMIUM VEIL (loading only)
-     =============================== */
-  .homeSection__card::before{
-    content:"";
-    position:absolute;
-    inset:-2px;
-    border-radius: inherit;
-    pointer-events:none;
-    opacity: 0;
-    transition: opacity 240ms ease;
-    z-index: 5;
-    mix-blend-mode: soft-light;
-  }
-  
-  .homeSection__card.isLoading::before{
-    opacity: 1;
-  }
-  
-  /* small label */
-  .homeSection__card.isLoading::after{
-    content: "Loading…";
-    position: absolute;
-    left: 16px;
-    top: 14px;
-    z-index: 6;
-  
-    padding: 6px 10px;
-    border-radius: 999px;
-    border: 1px solid rgba(255,255,255,0.10);
-    background: rgba(0,0,0,0.20);
-  
-    color: rgba(255,255,255,0.72);
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-    letter-spacing: 0.10em;
-    text-transform: uppercase;
-    font-size: 11px;
-  }
-  
-  /* ===============================
-     Reduced motion
-     =============================== */
-  @media (prefers-reduced-motion: reduce){
-    .homeSection__card{
-      transition: none !important;
-      transform: none !important;
-      filter: none !important;
-    }
-  }
-  
-  /* ===============================
-     SCROLL MODE (SAFE)
-     ⚠️ IMPORTANT: ne change pas l’opacité / background / blend-mode en scroll,
-     sinon tu recrées le flash. On coupe uniquement transitions/animations.
-     =============================== */
-  html.agScrolling .homeSection__card,
-  html.agScrolling .homeSection__card::before,
-  html.agScrolling .homeSection__card::after{
-    transition: none !important;
-    animation: none !important;
-  }
-  
-  /* calmer une anim connue (si elle existe) */
-  html.agScrolling .pm2__veilScan{
-    animation: none !important;
-  }
-  
-  /* ===============================
-     OPTIONAL: per-section min heights
-     =============================== */
-  .homeSection[data-s="about"]    .homeSection__card{ min-height: 520px; }
-  .homeSection[data-s="projects"] .homeSection__card{ min-height: 530px; }
-  .homeSection[data-s="contact"]  .homeSection__card{ min-height: 700px; }
-  
-  @media (max-width: 680px){
-    .homeSection[data-s="about"]    .homeSection__card{ min-height: 460px; }
-    .homeSection[data-s="projects"] .homeSection__card{ min-height: 520px; }
-    .homeSection[data-s="contact"]  .homeSection__card{ min-height: 620px; }
-  }
-  
-  /* OPTIONAL: no blur on sensitive sections */
-  #projects .homeSection__card,
-  #contact .homeSection__card{
-    filter: none;
-  }
-
-  html[data-ag-scrolling="1"] .homeSection__card{
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-    filter: none !important;
-  }
-  
-  /* NE PAS couper/ramener des layers via opacity:0/1 */
-  html[data-ag-scrolling="1"] .homeSection__card::before{
-    mix-blend-mode: normal !important;
-    opacity: 0.55; /* constant */
-  }
-  
-

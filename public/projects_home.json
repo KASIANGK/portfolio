@@ -7,11 +7,11 @@
       "description": "Description projet 1",
       "images": {
         "laptop": [
-          "/assets/color.png",
-          "/assets/s.jpg",
-          "/assets/aura.jpg",
-          "/assets/s.jpg",
-          "/assets/aura.jpg"
+          "/assets/ExcuseApp/ex1.png",
+          "/assets/ExcuseApp/ex2.png",
+          "/assets/ExcuseApp/ex3.png",
+          "/assets/ExcuseApp/ex4.png",
+          "/assets/ExcuseApp/ex5.png"
         ],
         "tablet": [],
         "mobile": []
@@ -41,11 +41,14 @@
       "description": "Description projet 3",
       "images": {
         "laptop": [
-          "/assets/color.png",
-          "/assets/s.jpg",
-          "/assets/aura.jpg",
-          "/assets/s.jpg",
-          "/assets/aura.jpg"
+          "/assets/PastaTimer/p0.png",
+          "/assets/PastaTimer/p1.png",
+          "/assets/PastaTimer/p2.png",
+          "/assets/PastaTimer/p3.png",
+          "/assets/PastaTimer/p4.png",
+          "/assets/PastaTimer/p5.png",
+          "/assets/PastaTimer/p6.png",
+          "/assets/PastaTimer/p7.png"
         ],
         "tablet": [],
         "mobile": []
@@ -74,30 +77,12 @@
     },
     {
       "id": 5,
-      "title": "Pasta_Timer",
-      "function": "Web Dev",
-      "description": "Description projet 3",
-      "images": {
-        "laptop": [
-          "/assets/color.png",
-          "/assets/s.jpg",
-          "/assets/aura.jpg",
-          "/assets/s.jpg",
-          "/assets/aura.jpg"
-        ],
-        "tablet": [],
-        "mobile": []
-      },
-      "link": "https://www.lien.com"
-    },
-    {
-      "id": 8,
       "title": "Why Not",
       "function": "Web Dev",
       "description": "Description projet 3",
       "images": {
         "laptop": [
-          "/assets/WhyNot/wn_1.png",
+          "/assets/WhyNot/wn_1.jpg",
           "/assets/WhyNot/wn_2.jpg",
           "/assets/WhyNot/wn_3.jpg",
           "/assets/WhyNot/wn_4.jpg",
@@ -109,13 +94,13 @@
       "link": "https://www.lien.com"
     },
     {
-      "id": 9,
-      "title": "MolenGame",
+      "id": 7,
+      "title": "Sneakers",
       "function": "Web Dev",
       "description": "Description projet 3",
       "images": {
         "laptop": [
-          "/assets/color.png",
+          "/assets/Sneakers/snlight.png",
           "/assets/s.jpg",
           "/assets/aura.jpg",
           "/assets/s.jpg",
@@ -138,6 +123,24 @@
           "/assets/Sneakers/sn10.png",
           "/assets/Sneakers/sn9.png",
           "/assets/Sneakers/sn2.png"
+        ],
+        "tablet": [],
+        "mobile": []
+      },
+      "link": "https://www.lien.com"
+    },
+    {
+      "id": 8,
+      "title": "MolenGame",
+      "function": "Web Dev",
+      "description": "Description projet 3",
+      "images": {
+        "laptop": [
+          "/assets/MolenGame/m1.png",
+          "/assets/s.jpg",
+          "/assets/aura.jpg",
+          "/assets/s.jpg",
+          "/assets/aura.jpg"
         ],
         "tablet": [],
         "mobile": []
@@ -235,13 +238,20 @@
       "title": "Pasta_Timer",
       "function": "Web Dev",
       "description": "Description projet 3",
-      "images": [
-        "/assets/color.png",
-        "/assets/s.jpg",
-        "/assets/aura.jpg",
-        "/assets/s.jpg",
-        "/assets/aura.jpg"
-      ],
+      "images": {
+        "laptop": [
+          "/assets/PastaTimer/p0.png",
+          "/assets/PastaTimer/p1.png",
+          "/assets/PastaTimer/p2.png",
+          "/assets/PastaTimer/p3.png",
+          "/assets/PastaTimer/p4.png",
+          "/assets/PastaTimer/p5.png",
+          "/assets/PastaTimer/p6.png",
+          "/assets/PastaTimer/p7.png"
+        ],
+        "tablet": [],
+        "mobile": []
+      },
       "link": "https://www.lien.com"
     },
     {
@@ -264,7 +274,7 @@
       "function": "3D",
       "description": "Description projet 3",
       "images": [
-        "/assets/color.png",
+        "/assets/Brainy/b1.png",
         "/assets/s.jpg",
         "/assets/aura.jpg",
         "/assets/s.jpg",

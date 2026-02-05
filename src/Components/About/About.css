@@ -35,15 +35,36 @@
   --skillsH: 240px;
 }
 
-.homeSection #about{
+/* .homeSection #about{
   position: relative;
   isolation: isolate;
   display: flex;
-  overflow: hidden;
+  overflow: visible;
   border-radius: 25px;
   justify-content: center;
-  background:
-    /* overlays cyber par-dessus l’image */
+  background: transparent;
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  margin-top: -5%;
+} */
+/* ✅ background full-bleed, sans changer la taille du container */
+/* .homeSection #about::before{
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+
+  z-index: -1;
+  pointer-events: none; */
+
+  /* ton background original */
+  /* background:
     radial-gradient(
       1200px 600px at 50% -10%,
       rgba(255,0,170,0.14),
@@ -54,17 +75,17 @@
       rgba(124,58,237,0.12),
       transparent 55%
     ),
-    /* image */
-    url("/assets/about/about_office.jpg"),
-    /* fallback */
-    #050016;
+    image-set(
+      url("/assets/about_office.jpg") 1x
+    ),
+    #050016; */
 
-  background-size: cover;
+  /* background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  margin-top: -10%;
-}
 
+  border-radius: 25px;
+} */
 /* Header */
 .aboutX__header{ margin-bottom: 18px; }
 .aboutX__title{
@@ -251,28 +272,61 @@
 .aboutX__timelineRail{
   position: relative;
   height: 16px;
-  border-radius: 999px;
   overflow: hidden;
   z-index: 2;
+
   background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 999px;
+
+  /* on enlève le border ici si tu veux que le contour soit 100% polygonal */
+  border: 0;
+
+  clip-path: polygon(
+    0 0,
+    calc(100% - 14px) 0,
+    100% 50%,
+    calc(100% - 14px) 100%,
+    0 100%
+  );
+
   box-shadow:
     0 14px 28px rgba(0,0,0,0.25),
     0 0 0 1px rgba(0,255,255,0.05) inset;
 }
-.aboutX__timelineRail::after{
+
+/* ✅ contour polygonal, y compris la pointe */
+.aboutX__timelineRail::before{
   content:"";
   position:absolute;
-  right: 10px;
-  top: 50%;
-  width: 10px;
-  height: 10px;
-  transform: translateY(-50%) rotate(45deg);
-  border-right: 2px solid rgba(0,255,255,0.55);
-  border-top: 2px solid rgba(0,255,255,0.55);
-  box-shadow: 0 0 16px rgba(0,255,255,0.16);
+  inset: 0;
   pointer-events:none;
+
+  /* couche de “border” */
+  background: rgba(255,255,255,0.10);
+
+  /* on creuse l'intérieur pour ne garder qu’un trait */
+  -webkit-mask: 
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+
+  padding: 7px; 
+  border-radius: 999px;
+
+  /* IMPORTANT: on applique la même forme */
+  clip-path: polygon(
+    0 0,
+    calc(100% - 14px) 0,
+    100% 50%,
+    calc(100% - 14px) 100%,
+    0 100%
+  );
 }
+
 .aboutX__timelineProg{
   position: absolute;
   left: 0;

@@ -592,7 +592,7 @@ function About() {
   }, [updateSkillsScrollState, displayKey, skillsFull.length]);
   
   return (
-    <section className="aboutX" id="about" ref={sectionRef} aria-label={t("title", { defaultValue: "ABOUT" })}>
+    <section className="aboutX" ref={sectionRef} aria-label={t("title", { defaultValue: "ABOUT" })}>
       <header className="aboutX__header">
         <h2 className="aboutX__title">{t("title", { defaultValue: "About" })}</h2>
         <p className="aboutX__lead">{bioLead}</p>
