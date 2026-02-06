@@ -3,7 +3,7 @@
    - Step2 only scroll hint (bottom-right)
    ========================================= */
 
-  .homeOverlay__scrollHint {
+   .homeOverlay__scrollHint {
     position: relative;
     margin-top: 24px;
   
@@ -17,15 +17,14 @@
   }
   
   /* Step2 layout: stack panel + hint vertically */
-.homeOverlay__slide--menu {
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 18px;
-}
-
+  .homeOverlay__slide--menu {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 18px;
+  }
   
-  /* Circle */
+  /* Circle button (kept for layout/click) — VISUEL: transparent, no border */
   .homeOverlay__scrollCircle {
     width: 54px;
     height: 54px;
@@ -34,36 +33,39 @@
     display: flex;
     align-items: center;
     justify-content: center;
-
+  
     pointer-events: auto;
     cursor: pointer;
   
-    background:
-      radial-gradient(120px 80px at 30% 30%, rgba(255,0,170,0.25), transparent 60%),
-      radial-gradient(120px 80px at 70% 70%, rgba(0,255,255,0.20), transparent 60%),
-      rgba(10, 6, 24, 0.85);
+    /* ✅ no background / no border */
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   
-    border: 1px solid rgba(255,0,170,0.35);
-    backdrop-filter: blur(10px) saturate(140%);
-    -webkit-backdrop-filter: blur(10px) saturate(140%);
-  
-    box-shadow:
-      0 14px 40px rgba(0,0,0,0.55),
-      0 0 28px rgba(255,0,170,0.25),
-      0 0 18px rgba(0,255,255,0.18);
+    /* keep it feeling clickable */
+    transition: transform 180ms ease;
   }
   
-  
-  /* Arrow */
-  .homeOverlay__scrollArrow {
-    font-size: 26px;
-    color: rgba(255,255,255,0.95);
-    text-shadow:
-      0 0 18px rgba(255,0,170,0.8),
-      0 0 12px rgba(0,255,255,0.6);
+  .homeOverlay__scrollCircle:active {
+    transform: translateY(1px);
   }
   
-  /* Bounce animation */
+  /* wrapper icon (avoid text styles moving it) */
+  .homeOverlay__scrollIcon {
+    display: inline-flex;
+    line-height: 0;
+  }
+  
+  /* SVG sizing — bigger & premium */
+  .homeOverlay__scrollChevronSvg {
+    display: block;
+    width: 40px;   /* ✅ légèrement plus grande */
+    height: 40px;
+  }
+  
+  /* Bounce animation (applied to the icon, not the circle) */
   @keyframes scrollBounce {
     0%   { transform: translateY(0); }
     20%  { transform: translateY(10px); }
@@ -74,21 +76,22 @@
   }
   
   /* bounce 3 times (~3s), then stop */
-  .homeOverlay__scrollCircle {
+  .homeOverlay__scrollIcon {
     animation: scrollBounce 1s ease-in-out 3;
   }
-
   
   /* Respect reduced motion */
   @media (prefers-reduced-motion: reduce) {
     .homeOverlay__scrollHint,
+    .homeOverlay__scrollIcon,
     .homeOverlay__scrollCircle {
       transition: none !important;
       animation: none !important;
     }
   }
+  
   /* Step1 keyboard hint (one-shot) */
-.homeOverlay__kbdHint{
+  .homeOverlay__kbdHint{
     --kbdX: -50px;
     --kbdY: 10px;
   
@@ -105,7 +108,6 @@
   
     opacity: 1;
     transform: translate3d(-50px, 10px, 0);
-    /* filter: blur(2px); */
   
     transition:
       opacity 320ms ease,
@@ -121,7 +123,6 @@
   .homeOverlay__kbdHint.isVisible{
     opacity: 1;
     transform: translate3d(var(--kbdX), var(--kbdY), 0);
-    /* filter: blur(0px); */
   }
   
   .homeOverlay__kbdHint.isHiding{
@@ -154,4 +155,10 @@
     display: flex;
     align-items: center;
   }
-  
+  .homeOverlay__scrollChevronSvg path:first-child {
+    opacity: 0.55;
+  }
+  .homeOverlay__scrollChevronSvg path:last-child {
+    opacity: 1;
+  }
+    

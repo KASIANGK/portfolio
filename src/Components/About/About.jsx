@@ -147,8 +147,19 @@ function About() {
   const isGE1245 = useMediaQuery("(min-width: 1245px)");
   
   // Visual open/close (GPU friendly)
-  const [visualOpen, setVisualOpen] = useState(false);
-  const userClosedRef = useRef(false);
+  // const [visualOpen, setVisualOpen] = useState(false);
+  const LS_VISUAL_OPEN = "ag_about_visual_open_v1";
+
+  const [visualOpen, setVisualOpen] = useState(() => {
+    try {
+      const raw = localStorage.getItem(LS_VISUAL_OPEN);
+      return raw === "1"; // défaut false si null
+    } catch {
+      return false;
+    }
+  });
+
+  // const userClosedRef = useRef(false);
 
   // hover/preview wins over active
   const displayKey = previewKey ?? activeKey;
@@ -511,14 +522,16 @@ function About() {
 
         if (inView) {
           start();
-          if (!userClosedRef.current) setVisualOpen(true);
+        // if (!userClosedRef.current) setVisualOpen(true);
         } else {
           stop();
-          setVisualOpen(false);
           setIsCanvasHover(false);
           setMousePosition({ x: 0, y: 0 });
           setIsWheelHover(false);
         }
+        
+      
+        
       },
       { threshold: 0.08 }
     );
@@ -646,15 +659,11 @@ function About() {
   const previewSkills = isGE1245 ? [] : skillsMax4;
 
   const toggleVisual = useCallback(() => {
-    setVisualOpen((v) => {
-      const next = !v;
-      userClosedRef.current = !next;
-      return next;
-    });
-
+    setVisualOpen((v) => !v);
     setIsCanvasHover(false);
     setMousePosition({ x: 0, y: 0 });
   }, []);
+  
 
   useEffect(() => {
     // recalcul quand on change d’onglet (liste de skills change)
@@ -666,6 +675,13 @@ function About() {
       window.removeEventListener("resize", updateSkillsScrollState);
     };
   }, [updateSkillsScrollState, displayKey, skillsFull.length]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(LS_VISUAL_OPEN, visualOpen ? "1" : "0");
+    } catch {}
+  }, [visualOpen]);
+  
   
   return (
     <section className="aboutX" ref={sectionRef} aria-label={t("title", { defaultValue: "ABOUT" })}>

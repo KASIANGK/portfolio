@@ -6,7 +6,7 @@
     width: 100%;
     min-height: 100vh;
     overflow-x: hidden;
-    background: #331569;
+    background: #1F1044;
   }
   
   /* content above background */
@@ -30,6 +30,7 @@
     overflow: hidden;
     backface-visibility: hidden;
     transform-style: preserve-3d;
+    margin-top: -148px;
   }
   
   /* images stacked */

@@ -26,7 +26,7 @@
 *{ box-sizing: border-box; }
 
 .ctc2{
-  min-height: 100svh;
+  /* min-height: 100svh; */
   width: 100%;
   color: var(--ctc2-text);
 
@@ -331,4 +331,45 @@
     text-rendering: geometricPrecision;
   }
   
-  
+  /* ===============================
+   FORM FOCUS BACKDROP (READABILITY)
+   =============================== */
+
+/* zone droite = contexte */
+.ctc2__right{
+  position: relative;
+  isolation: isolate;
+}
+
+/* backdrop assombri + blur léger */
+.ctc2__right::before{
+  content: "";
+  position: absolute;
+  inset: -18px -18px -18px -18px;
+  z-index: 0;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(26, 26, 68, 0.78),
+      rgba(6, 6, 18, 0.88)
+    );
+
+  backdrop-filter: blur(6px) saturate(1.05);
+  -webkit-backdrop-filter: blur(6px) saturate(1.05);
+
+  opacity: 0;
+  transition: opacity 220ms ease;
+  border-radius: 18px;
+}
+
+/* active quand on écrit */
+.ctc2__right:focus-within::before{
+  opacity: 1;
+}
+
+/* garder le form au-dessus */
+.ctc2__form{
+  position: relative;
+  z-index: 1;
+}
