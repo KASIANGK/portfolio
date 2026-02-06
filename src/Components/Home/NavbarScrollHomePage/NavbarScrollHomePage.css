@@ -2,8 +2,8 @@
 
 .navbar__scroll__hp{
     position: fixed;
-    right: -30px;
-    top: 50%;
+    right: -20px;
+    top: 100%;
     transform: translateY(-50%);
     z-index: 2147483647;
   

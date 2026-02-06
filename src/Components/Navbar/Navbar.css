@@ -214,10 +214,12 @@
   gap: 8px;
 }
 
-.navHUD__list a {
+.navHUD__list a,
+.navHUD__list .navHUD__linkBtn {
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
   height: 40px;
   border-radius: 14px;
   border: 1px solid rgba(255,255,255,0.10);
@@ -230,10 +232,11 @@
   transition: transform 140ms ease, border-color 140ms ease, background 140ms ease, box-shadow 140ms ease;
 }
 
-.navHUD__list a:hover {
+.navHUD__list a:hover,
+.navHUD__list .navHUD__linkBtn:hover {
   border-color: rgba(255, 0, 170, 0.40);
   background:
-    radial-gradient(520px 220px at 15% 20%, rgba(255,0,170,0.12), transparent 60%),
+    radial-gradient(520px 220px at 15% 20%, rgba(255, 0, 170, 0.24), transparent 60%),
     radial-gradient(520px 220px at 85% 30%, rgba(124,58,237,0.12), transparent 60%),
     rgba(255,255,255,0.06);
   box-shadow:
@@ -241,7 +244,15 @@
     0 0 22px rgba(255, 0, 170, 0.10);
   transform: translateY(-1px);
 }
-
+/* ✅ focus unified */
+.navHUD__list a:focus-visible,
+.navHUD__list .navHUD__linkBtn:focus-visible {
+  border-color: rgba(255, 0, 170, 0.75);
+  box-shadow:
+    0 0 0 2px rgba(255, 0, 170, 0.25),
+    0 0 35px rgba(124, 58, 237, 0.14),
+    var(--nav-shadow);
+}
 /* Social row */
 .navHUD__social {
   display: flex;
@@ -467,4 +478,62 @@
     0 0 0 1px rgba(124, 58, 237, 0.18),
     0 0 22px rgba(124, 58, 237, 0.12);
   transform: translateY(-1px);
+}
+/* =========================
+   LANG buttons hover (LanguagePicker)
+   - generic: targets buttons/links inside lang block
+========================= */
+.navHUD__lang :is(button, a) {
+  width: 100%;
+  height: 36px;
+  border-radius: 12px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.86);
+
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+
+  cursor: pointer;
+  user-select: none;
+
+  transition: transform 140ms ease, border-color 140ms ease, background 140ms ease, box-shadow 140ms ease;
+}
+
+.navHUD__lang :is(button, a):hover {
+  border-color: rgba(255, 0, 170, 0.40);
+  background:
+    radial-gradient(520px 220px at 15% 20%, rgba(255, 0, 170, 0.21), transparent 60%),
+    radial-gradient(520px 220px at 35% 30%, rgba(124,58,237,0.12), transparent 60%),
+    rgba(255,255,255,0.06) !important;
+  box-shadow:
+    0 0 0 1px rgba(255, 0, 170, 0.10),
+    0 0 18px rgba(255, 0, 170, 0.10);
+  transform: translateY(-1px);
+}
+
+.navHUD__lang :is(button, a):active {
+  transform: translateY(0px);
+}
+
+.navHUD__lang :is(button, a):focus-visible {
+  outline: none;
+  border-color: rgba(255, 0, 170, 0.75);
+  box-shadow:
+    0 0 0 2px rgba(255, 0, 170, 0.22),
+    0 0 28px rgba(124, 58, 237, 0.12),
+    var(--nav-shadow);
+}
+
+/* optional: if LanguagePicker marks active language with aria-pressed */
+.navHUD__lang :is(button, a)[aria-pressed="true"] {
+  border-color: rgba(255, 0, 170, 0.45);
+  background: rgba(255,255,255,0.06);
+  box-shadow: 0 0 0 1px rgba(255, 0, 170, 0.12);
 }
