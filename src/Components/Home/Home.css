@@ -80,3 +80,47 @@
     width: min(1200px, 92vw);
   }
   
+  @media (min-width:1025px) {
+    .bgScene {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+      backface-visibility: hidden;
+      transform-style: preserve-3d;
+      margin-top: -158px;
+    }
+  }
+  
+  @media (max-width:1024px) {
+    .bgScene {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+      backface-visibility: hidden;
+      transform-style: preserve-3d;
+      margin-top: -158px;
+    }
+  }
+
+  @media (max-width:768px) {
+    .bgScene {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+      backface-visibility: hidden;
+      transform-style: preserve-3d;
+      margin-top: -188px;
+    }
+    .homeOverlay {
+      height: fit-content;
+    }
+    .homeOverlay__slide{
+      padding-bottom: 30px;
+    }
+  }

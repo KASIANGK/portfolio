@@ -71,11 +71,11 @@
   
     font-size: 14px;
     line-height: 1.45;
-    max-width: 44ch;
+    max-width: 54ch;
   
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
     opacity: 0.95;
-  
+    font-size: 14px;
     position: relative;
     z-index: 2;
   }

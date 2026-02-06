@@ -2,7 +2,7 @@
 
 .navbar__scroll__hp{
     position: fixed;
-    right: 18px;
+    right: -30px;
     top: 50%;
     transform: translateY(-50%);
     z-index: 2147483647;
@@ -22,7 +22,7 @@
     padding: 12px;
     border-radius: 18px;
   
-    background: rgba(0,0,0,0.45);
+    background: rgba(0, 0, 0, 0.6);
     border: 1px solid rgba(255,255,255,0.14);
     box-shadow: 0 18px 60px rgba(0,0,0,0.45);
   
@@ -48,19 +48,20 @@
     background: transparent;
   
     cursor: pointer;
-    color: rgba(120,210,255,0.6);
-  
+    color: rgba(120, 210, 255, 0.783);
+    font-weight: 600;
     transition: background 160ms ease, color 160ms ease, transform 160ms ease;
   }
   
   .navbar__scroll__hp__item:hover{
-    background: rgba(255,255,255,0.06);
+    background: rgba(98, 24, 125, 0.578);
     color: rgba(170,240,255,0.92);
   }
   
   .navbar__scroll__hp__item.isActive{
-    background: rgba(0,255,255,0.10);
+    background: rgba(0, 255, 255, 0.233);
     color: rgba(200,255,255,1);
+    font-weight: bolder;
   }
   
   .navbar__scroll__hp__dot{
@@ -132,4 +133,171 @@
       height: 42px;
     }
   }
-  
+  .navbar__scroll__hp,
+  .navbar__scroll__hp *{
+    font-family: "Plus Jakarta Sans", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  }
+/* src/Components/Home/NavbarScrollHomePage/NavbarScrollHomePage.css */
+
+.navbar__scroll__hp{
+  position: fixed;
+
+  /* ✅ base position + draggable offset (GPU friendly) */
+  transform: translate3d(var(--dx, 0px), calc(-50% + var(--dy, 0px)), 0);
+
+  z-index: 2147483647;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease, transform 200ms ease;
+  will-change: transform, opacity;
+}
+
+.navbar__scroll__hp.isVisible{
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* When dragging, disable transition to feel “direct” */
+.navbar__scroll__hp.isDragging{
+  transition: opacity 200ms ease;
+}
+
+.navbar__scroll__hp__card{
+  width: 190px;
+  padding: 12px;
+  border-radius: 18px;
+
+  background: rgba(0,0,0,0.45);
+  border: 1px solid rgba(255,255,255,0.14);
+  box-shadow: 0 18px 60px rgba(0,0,0,0.45);
+
+  display: grid;
+  gap: 10px;
+}
+
+.navbar__scroll__hp__list{
+  display: grid;
+  gap: 8px;
+}
+
+/* ... tes styles item/dot/txt restent identiques ... */
+
+.navbar__scroll__hp__bottomRow{
+  display: grid;
+  grid-template-columns: 1fr 44px;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ✅ drag handle */
+.navbar__scroll__hp__dragHandle{
+  height: 44px;
+  border-radius: 999px;
+
+  border: 1px dashed rgba(0,255,255,0.22);
+  background: rgba(0,0,0,0.28);
+  color: rgba(200,255,255,0.78);
+
+  cursor: grab;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+
+  user-select: none;
+  touch-action: none; /* important for pointer drag */
+}
+
+.navbar__scroll__hp.isDragging .navbar__scroll__hp__dragHandle{
+  cursor: grabbing;
+  border-color: rgba(255,0,170,0.28);
+}
+
+
+.navbar__scroll__hp__dragTxt{
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* ✅ top button: perfect centering */
+.navbar__scroll__hp__topBtn{
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(0,0,0,0.35);
+  color: rgba(255,255,255,0.92);
+
+  cursor: pointer;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+
+.navbar__scroll__hp__topIcon{
+  display:block;
+  line-height: 1;
+  transform: translateY(-1px); /* micro optical align */
+}
+
+.navbar__scroll__hp__topBtn:hover{
+  transform: translateY(-2px);
+  border-color: rgba(0,255,255,0.32);
+  background: rgba(0,255,255,0.08);
+}
+
+/* mobile pill */
+@media (max-width: 980px){
+  .navbar__scroll__hp{
+    right: 12px;
+    top: auto;
+    bottom: 14px;
+
+    /* ✅ for mobile we remove -50% centering, keep draggable offset */
+    transform: translate3d(var(--dx, 0px), var(--dy, 0px), 0);
+  }
+
+  .navbar__scroll__hp__card{
+    width: auto;
+    padding: 10px 10px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .navbar__scroll__hp__list{
+    display: flex;
+    gap: 6px;
+  }
+
+  .navbar__scroll__hp__item{
+    grid-template-columns: 10px 0fr;
+    padding: 8px 10px;
+  }
+
+  .navbar__scroll__hp__txt{ display:none; }
+
+  .navbar__scroll__hp__bottomRow{
+    display:flex;
+    align-items:center;
+    gap: 8px;
+  }
+
+  .navbar__scroll__hp__dragTxt{ display:none; } /* optionnel: plus clean sur mobile */
+  .navbar__scroll__hp__dragHandle{
+    width: 44px;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .navbar__scroll__hp__topBtn{
+    width: 42px;
+    height: 42px;
+  }
+}

@@ -2,7 +2,11 @@
   "menu": "MENU",
   "chip": "NAV",
   "language": "Language",
-
+  "navHp": {
+    "drag": "drag me",
+    "top": "Back to top"
+  },
+  
   "items": {
     "home": "Home",
     "essential": "Essential",

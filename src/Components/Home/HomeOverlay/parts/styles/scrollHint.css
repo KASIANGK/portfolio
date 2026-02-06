@@ -1,6 +1,5 @@
 /* =========================================
    scrollHint.css
-   - Step2 only scroll hint (bottom-right)
    ========================================= */
 
    .homeOverlay__scrollHint {
@@ -16,7 +15,7 @@
     pointer-events: none;
   }
   
-  /* Step2 layout: stack panel + hint vertically */
+  /* Step2 layout */
   .homeOverlay__slide--menu {
     flex-direction: column;
     justify-content: center;
@@ -24,7 +23,7 @@
     gap: 18px;
   }
   
-  /* Circle button (kept for layout/click) — VISUEL: transparent, no border */
+  /* Button: transparent, no border, no bg */
   .homeOverlay__scrollCircle {
     width: 54px;
     height: 54px;
@@ -37,128 +36,131 @@
     pointer-events: auto;
     cursor: pointer;
   
-    /* ✅ no background / no border */
     background: transparent;
     border: 0;
     box-shadow: none;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
   
-    /* keep it feeling clickable */
-    transition: transform 180ms ease;
+    transition: transform 180ms ease, filter 180ms ease;
   }
   
   .homeOverlay__scrollCircle:active {
     transform: translateY(1px);
   }
   
-  /* wrapper icon (avoid text styles moving it) */
+  /* icon wrapper */
   .homeOverlay__scrollIcon {
     display: inline-flex;
     line-height: 0;
+  
+    /* ✅ default micro pulse (subtle) */
+    animation: agHintGlowPulse 2.6s ease-in-out infinite;
+    will-change: transform, filter;
   }
   
-  /* SVG sizing — bigger & premium */
+  /* SVG size (bigger, but stable position) */
   .homeOverlay__scrollChevronSvg {
     display: block;
-    width: 40px;   /* ✅ légèrement plus grande */
+    width: 40px; /* ✅ légèrement plus grand */
     height: 40px;
   }
   
-  /* Bounce animation (applied to the icon, not the circle) */
-  @keyframes scrollBounce {
-    0%   { transform: translateY(0); }
-    20%  { transform: translateY(10px); }
-    40%  { transform: translateY(0); }
-    60%  { transform: translateY(8px); }
-    80%  { transform: translateY(0); }
-    100% { transform: translateY(0); }
+  /* Chevrons: 1st a bit dimmer */
+  .homeOverlay__scrollChevronSvg path:first-child {
+    opacity: 0.58;
+  }
+  .homeOverlay__scrollChevronSvg path:last-child {
+    opacity: 1;
   }
   
-  /* bounce 3 times (~3s), then stop */
-  .homeOverlay__scrollIcon {
-    animation: scrollBounce 1s ease-in-out 3;
+  /* ✅ make ends NOT rounded */
+  .homeOverlay__chevStroke {
+    stroke-linecap: butt; /* ✅ no rounded tips */
   }
   
-  /* Respect reduced motion */
+  /* Hover: brighter + slightly bigger + more glow */
+  .homeOverlay__scrollCircle:hover .homeOverlay__scrollIcon {
+    transform: scale(1.06);
+    filter: drop-shadow(0 0 14px rgba(0, 245, 255, 0.22))
+            drop-shadow(0 0 16px rgba(255, 0, 170, 0.18))
+            drop-shadow(0 0 12px rgba(124, 58, 237, 0.16));
+  }
+  
+  /* Mini pulse */
+  @keyframes agHintGlowPulse{
+    0%{
+      transform: translateY(0) scale(1);
+      filter:
+        drop-shadow(0 0 0 rgba(0,245,255,0))
+        drop-shadow(0 0 0 rgba(255,0,170,0))
+        drop-shadow(0 0 0 rgba(124,58,237,0));
+      opacity: 0.88;
+    }
+    55%{
+      transform: translateY(-1px) scale(1.07);
+      filter:
+        drop-shadow(0 0 20px rgba(0,245,255,0.55))
+        drop-shadow(0 0 22px rgba(255,0,170,0.40))
+        drop-shadow(0 0 18px rgba(124,58,237,0.35));
+      opacity: 1;
+    }
+    100%{
+      transform: translateY(0) scale(1);
+      filter:
+        drop-shadow(0 0 0 rgba(0,245,255,0))
+        drop-shadow(0 0 0 rgba(255,0,170,0))
+        drop-shadow(0 0 0 rgba(124,58,237,0));
+      opacity: 0.9;
+    }
+  }
+  /* Reduced motion */
   @media (prefers-reduced-motion: reduce) {
-    .homeOverlay__scrollHint,
     .homeOverlay__scrollIcon,
     .homeOverlay__scrollCircle {
       transition: none !important;
       animation: none !important;
     }
   }
-  
-  /* Step1 keyboard hint (one-shot) */
-  .homeOverlay__kbdHint{
-    --kbdX: -50px;
-    --kbdY: 10px;
-  
-    margin-top: 12px;
-    font-size: 12px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: rgba(200, 255, 255, 0.62);
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  
-    display: flex;
-    gap: 10px;
-    align-items: center;
-  
-    opacity: 1;
-    transform: translate3d(-50px, 10px, 0);
-  
-    transition:
-      opacity 320ms ease,
-      transform 420ms cubic-bezier(0.16, 1, 0.3, 1),
-      filter 320ms ease;
-  
-    will-change: opacity, transform, filter;
-    position: relative;
-    z-index: 5;
-    flex-wrap: wrap;
-  }
-  
-  .homeOverlay__kbdHint.isVisible{
-    opacity: 1;
-    transform: translate3d(var(--kbdX), var(--kbdY), 0);
-  }
-  
-  .homeOverlay__kbdHint.isHiding{
-    opacity: 0;
-    transform: translate3d(var(--kbdX), var(--kbdY), 0);
-    filter: blur(3px);
-  }
-  
-  .homeOverlay__kbdPill{
-    display: inline-flex;
-    gap: 6px;
-    align-items: center;
-    padding: 6px 10px;
-    border-radius: 999px;
-    background: rgba(0,0,0,0.18);
-    border: 1px solid rgba(0,255,255,0.16);
-    box-shadow: 0 0 18px rgba(0,255,255,0.10);
-  }
-  
-  .homeOverlay__kbdKey{
-    padding: 2px 6px;
-    border-radius: 6px;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.10);
-    color: rgba(245,245,255,0.85);
-  }
-  
-  .homeOverlay__hintSlot{
-    min-height: 44px;
-    display: flex;
-    align-items: center;
-  }
-  .homeOverlay__scrollChevronSvg path:first-child {
-    opacity: 0.55;
-  }
-  .homeOverlay__scrollChevronSvg path:last-child {
-    opacity: 1;
-  }
-    
+  /* --- REAL hover (stronger + stops pulse while hovering) --- */
+.homeOverlay__scrollCircle{
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+
+  transition: transform 180ms ease, filter 180ms ease;
+}
+
+.homeOverlay__scrollCircle:hover{
+  transform: translateY(-1px);
+}
+
+.homeOverlay__scrollCircle:hover .homeOverlay__scrollIcon{
+  /* stop pulse to make hover feel “locked” */
+  animation: none;
+
+  transform: scale(1.12);
+  filter:
+    drop-shadow(0 0 26px rgba(0,245,255,0.70))
+    drop-shadow(0 0 28px rgba(255,0,170,0.55))
+    drop-shadow(0 0 22px rgba(124,58,237,0.45));
+  opacity: 1;
+}
+
+/* press feedback */
+.homeOverlay__scrollCircle:active .homeOverlay__scrollIcon{
+  transform: scale(1.06);
+  filter:
+    drop-shadow(0 0 18px rgba(0,245,255,0.55))
+    drop-shadow(0 0 18px rgba(255,0,170,0.40));
+}
+
+/* keep ends not rounded */
+.homeOverlay__chevStroke{
+  stroke-linecap: butt;
+}
+
+/* reduced motion */
+@media (prefers-reduced-motion: reduce){
+  .homeOverlay__scrollIcon{ animation: none !important; }
+  .homeOverlay__scrollCircle,
+  .homeOverlay__scrollIcon{ transition: none !important; }
+}

@@ -2,7 +2,11 @@
   "menu": "MENU",
   "chip": "NAW",
   "language": "Język",
-
+  "navHp": {
+    "drag": "przesuń mnie",
+    "top": "Do góry"
+  },
+  
   "items": {
     "home": "Strona główna",
     "essential": "Podstawy",
