@@ -11,7 +11,7 @@ i18n
   .init({
     fallbackLng: "en",
 
-    ns: ["common", "intro", "home", "markers", "nav", "about", "portfolio", "projects"],
+    ns: ["common", "intro", "home", "markers", "nav", "about", "portfolio", "projects", "projects_home"],
     defaultNS: "common",
 
     backend: {

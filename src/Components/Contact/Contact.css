@@ -57,7 +57,7 @@
   font-family: "Plus Jakarta Sans", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
   font-size: clamp(44px, 6.6vw, 110px);
 
-  text-shadow: 0 0 22px rgba(255,0,170,0.14);
+  text-shadow: 0 0 22px rgba(255, 0, 170, 0.43);
 }
 
 /* grid: left info / right form */

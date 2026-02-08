@@ -16,7 +16,8 @@ import Skills from "./Components/Skills/Skills";
 import Navbar from "./Components/Navbar/Navbar";
 import Footer from "./Components/Footer/Footer";
 import LanguageToast from "./Components/Navbar/LanguageToast";
-import Dandelion from "./Components/Dandlion/Dandlion";
+import Portfolio from "./Components/Portfolio/Portfolio";
+import ProjectPage from "./Components/Portfolio/ProjectPage/ProjectPage";
 
 function Layout() {
   const location = useLocation();
@@ -28,18 +29,13 @@ function Layout() {
       <Navbar />
       <LanguageToast />
 
-      {/* cursor custom uniquement hors Home/City */}
-      {!isHome && !isCity && <Dandelion />}
-
-      {/* ✅ No key here (important). Hash changes should NOT remount anything. */}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/city" element={<HomeCity />} />
-
-        {/* routes alias → hash */}
         <Route path="/projects" element={<Navigate to="/#projects" replace />} />
+        <Route path="/portfolio" element={<Portfolio />} />
+        <Route path="/project/:slug" element={<ProjectPage />} />
         <Route path="/about" element={<Navigate to="/#about" replace />} />
-        <Route path="/portfolio" element={<Navigate to="/#projects" replace />} />
         <Route path="/contact" element={<Navigate to="/#contact" replace />} />
 
         <Route path="/skills" element={<Skills />} />

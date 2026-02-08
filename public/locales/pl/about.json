@@ -21,7 +21,7 @@
 
     "events": {
       "title": "Creative Events",
-      "lead": "Pomysły, które nabierają realnej formy.",
+      "lead": "Pomysły i wizje, które nabierają realnej formy.",
       "timeline": "2018–2020 · Styling & creative direction (Bloody Louis) → 2021 · Direction artystyczna & eventy (Emotion)"
     },
 
@@ -114,7 +114,7 @@
       "title": "Edukacja",
       "items": [
         { "year": "2023–2024", "label": "Fullstack Development", "place": "Molengeek", "note": "Nowoczesny web w praktyce." },
-        { "year": "2023", "label": "3D Modeling & Animation", "place": "Blender / Tuto.com", "note": "Real-time assety i optymalizacja." },
+        { "year": "2023", "label": "3D Modeling & Animation", "place": "Blender / Tuto.com", "note": "Assety i optymalizacja." },
         { "year": "2017", "label": "Grafika", "place": "Domestika", "note": "Kompozycja i kultura wizualna." },
         { "year": "2018", "label": "Stylizm", "place": "Reggio Emilia", "note": "Produkt, materiał, intencja." }
       ]
@@ -149,7 +149,10 @@
     },
 
     "lists": {
-      "web": ["React", "Next.js", "Nuxt", "Vue.js", "TypeScript", "HTML", "CSS", "SASS", "Tailwind", "REST APIs"],
+      "web": {
+        "frontend": ["React", "Next.js", "Nuxt", "Vue.js", "TypeScript", "HTML", "CSS", "SASS", "Tailwind"],
+        "backend": ["Node.js", "PHP", "Laravel", "Django", "MySQL", "REST APIs", "Auth", "CRUD", "Deploy"]
+      },
       "threeD": ["Blender", "3D Modeling", "Shading", "Optimization", "Real-time assets", "Three.js / R3F"],
       "events": ["Creative direction", "Production", "Coordination", "Scenography", "Stakeholders", "Timing"],
       "all": ["Creative Dev", "Fullstack", "3D", "Product UX", "Design systems", "Story"]

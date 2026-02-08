@@ -149,7 +149,10 @@
     },
 
     "lists": {
-      "web": ["React", "Next.js", "Nuxt", "Vue.js", "TypeScript", "HTML", "CSS", "SASS", "Tailwind", "REST APIs"],
+      "web": {
+        "frontend": ["React", "Next.js", "Nuxt", "Vue.js", "TypeScript", "HTML", "CSS", "SASS", "Tailwind"],
+        "backend": ["Node.js", "PHP", "Laravel", "Django", "MySQL", "REST APIs", "Auth", "CRUD", "Deploy"]
+      },
       "threeD": ["Blender", "3D Modeling", "Shading", "Optimization", "Real-time assets", "Three.js / R3F"],
       "events": ["Creative direction", "Production", "Coordination", "Scenography", "Stakeholders", "Timing"],
       "all": ["Creative Dev", "Fullstack", "3D", "Product UX", "Design systems", "Story"]

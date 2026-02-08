@@ -4,6 +4,22 @@ let _projectsData = null;
 
 // url -> Promise<void> (dedupe global)
 const _imgCache = new Map();
+export function normalizeImagesToArray(images) {
+  if (Array.isArray(images)) return images.filter(Boolean);
+
+  if (images && typeof images === "object" && !Array.isArray(images)) {
+    const laptop = Array.isArray(images.laptop) ? images.laptop : [];
+    if (laptop.length) return laptop.filter(Boolean);
+
+    const tablet = Array.isArray(images.tablet) ? images.tablet : [];
+    if (tablet.length) return tablet.filter(Boolean);
+
+    const mobile = Array.isArray(images.mobile) ? images.mobile : [];
+    return mobile.filter(Boolean);
+  }
+
+  return [];
+}
 
 /**
  * Internal: preload + decode a single image once (cached).
@@ -91,7 +107,7 @@ export function pickProjectImages(data, max = 10) {
   const urls = [];
 
   for (const p of data || []) {
-    const imgs = Array.isArray(p.images) ? p.images.filter(Boolean) : [];
+    const imgs = normalizeImagesToArray(p.images);
     const cover = p.cover || imgs[0];
 
     if (cover) urls.push(cover);
@@ -105,6 +121,7 @@ export function pickProjectImages(data, max = 10) {
 
   return urls.slice(0, max);
 }
+
 
 /* --------------------------
    3) Preview organs assets

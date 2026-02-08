@@ -480,6 +480,12 @@
     0 0 28px rgba(80,130,255,0.14),
     0 0 60px rgba(255,0,170,0.10);
   }
+  .pm2__tab.isHover {
+    border-color: rgba(80,130,255,0.35);
+    box-shadow:
+      0 0 18px rgba(80,130,255,0.18),
+      0 0 26px rgba(255,0,170,0.12);
+  }
   
   .pm2__tab.isActive{
     border-color: rgba(255, 0, 170, 0.343);

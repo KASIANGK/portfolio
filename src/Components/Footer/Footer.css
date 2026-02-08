@@ -112,4 +112,31 @@
       justify-content: center;
     }
   }
+  .agFooter__homeBtn {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    padding: 4px;
+    cursor: pointer;
+    color: var(--f-muted);
+    
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  
+    transition: color 160ms ease, filter 160ms ease, transform 160ms ease;
+  }
+  
+  .agFooter__homeBtn:hover {
+    color: rgba(255,255,255,0.95);
+    filter:
+      drop-shadow(0 0 10px var(--f-pink))
+      drop-shadow(0 0 14px var(--f-violet));
+    transform: translateY(-1px);
+  }
+  
+  .agFooter__homeIcon {
+    width: 18px;
+    height: 18px;
+  }
   

@@ -1,6 +1,7 @@
 // src/bootstrap/preloadBoot.js
 import i18n from "../i18n";
-import { preloadImagesOnce } from "../utils/projectsCache";
+import { preloadImagesOnce, normalizeImagesToArray } from "../utils/projectsCache";
+// import { normalizeImagesToArray } from "../utils/projectsCache";
 
 const ASSETS_PREFIX = "/assets/";
 // productcache.js (ou preloadAssets.js)
@@ -57,12 +58,26 @@ async function fetchJson(url) {
   if (!r.ok) throw new Error(`Fetch failed: ${url} (${r.status})`);
   return r.json();
 }
+function baseUrl() {
+  // Vite: ok en dev + prod (github pages etc.)
+  return import.meta?.env?.BASE_URL || "/";
+}
+
+function langShort() {
+  const l = i18n.resolvedLanguage || i18n.language || "en";
+  return String(l).split("-")[0];
+}
+
+function urlLocales(file) {
+  // ex: /locales/fr/projects_home.json
+  return `${baseUrl()}locales/${langShort()}/${file}`;
+}
 
 /** Collect portfolio images (cover + 2 next) */
 function collectPortfolioImages(projects) {
   const urls = [];
   (projects || []).forEach((p) => {
-    const imgs = Array.isArray(p.images) ? p.images.filter(Boolean) : [];
+    const imgs = normalizeImagesToArray(p.images);
     const cover = p.cover || imgs[0];
     const slides = [...(cover ? [cover] : []), ...imgs.filter((u) => u !== cover)];
     slides.slice(0, 3).forEach((u) => urls.push(u));
@@ -105,8 +120,8 @@ export function preloadBootOnce() {
     // 2) JSON blocking
     const [projects, projectsHome, contactMessages, subjects] = await Promise.all([
       fetchJson("/projects.json"),
-      fetchJson("/projects_home.json"),
-      fetchJson("/messages.json"),
+      fetchJson(urlLocales("projects_home.json")),
+      // fetchJson("/messages.json"),
       fetchJson("/subjects.json"),
     ]);
     

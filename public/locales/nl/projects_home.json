@@ -1,0 +1,265 @@
+{
+    "web": [
+      {
+        "id": 1,
+        "slug": "excuse-app",
+        "title": "Excuse App",
+        "function": "Web Dev",
+        "lead": "Excusegenerator: filters, toonvariaties, geïllustreerde 2D UI.",
+        "description": "Een speelse mobiele app waarin gebruikers een excuus samenstellen via criteria (doelwit, stijl, intensiteit), met een art direction geïnspireerd door stadsborden en gaming.",
+        "overview": "Experience-first project: een eenvoudige flow (criteria kiezen → genereren → itereren) in een geïllustreerde, geanimeerde 2D interface. Ik ontwierp de volledige art direction (decors, illustraties, micro-animaties) en structureerde de app voor soepele navigatie, leesbare logica en een makkelijk uitbreidbaar content-systeem (nieuwe criteria, tonen, categorieën).",
+        "stack": ["React Native", "JavaScript", "JSON"],
+        "role": [
+          "Mobile UI/UX design (flow + interacties)",
+          "2D art direction (illustraties, decors, animaties)",
+          "Generatielogica: criteria, varianten, toonlevels",
+          "Projectstructuur voor schaalbaarheid (content uitbreiding)"
+        ],
+        "images": {
+          "laptop": [
+            "/assets/ExcuseApp/ex1.png",
+            "/assets/ExcuseApp/ex2.png",
+            "/assets/ExcuseApp/ex3.png",
+            "/assets/ExcuseApp/ex4.png",
+            "/assets/ExcuseApp/ex5.png"
+          ],
+          "tablet": [],
+          "mobile": []
+        },
+        "link": "https://www.lien.com",
+        "links": { "demo": "https://www.lien.com", "repo": "" }
+      },
+      {
+        "id": 2,
+        "slug": "sidegeek",
+        "title": "SideGeek",
+        "function": "Web Dev",
+        "lead": "Infoplatform + leerlingendatabase: Vue.js & Laravel, teamproject.",
+        "description": "Samenwerkingsproject (Vue.js + Laravel): een opleidingsplatform bouwen met een database gekoppeld aan leerlingprofielen.",
+        "overview": "Teamproject met focus op een gestructureerde, onderhoudbare app voor front én back. Ik droeg bij aan UI-integratie, componentplanning en Git/GitHub-organisatie (branches, PR’s, reviews). Doel: leveren én een gezonde basis: conventies, duidelijke opdeling en sterke teamcommunicatie.",
+        "stack": ["Vue.js", "Laravel", "PHP", "MySQL", "GitHub"],
+        "role": [
+          "Team development (Git/GitHub workflow, PR’s, branches)",
+          "UI-integratie (Vue) + componentstructuur",
+          "Bijdrage aan logica en data (afhankelijk van scope)",
+          "Coördinatie: conventies, opdeling, UI-consistentie"
+        ],
+        "images": {
+          "laptop": [
+            "/assets/SideGeek/s1.png",
+            "/assets/SideGeek/s3.png",
+            "/assets/SideGeek/side.png"
+          ],
+          "tablet": [],
+          "mobile": []
+        },
+        "link": "https://www.lien.com",
+        "links": { "demo": "https://www.lien.com", "repo": "" }
+      },
+      {
+        "id": 3,
+        "slug": "pasta-timer",
+        "title": "Pasta Timer",
+        "function": "Web Dev",
+        "lead": "Kookapp: timers, pastasoorten, recepten, leuke alarmen.",
+        "description": "Mobiele app rond pasta: kies type, timing, recepten en alarmen — met een volledig handgemaakte illustratieve stijl.",
+        "overview": "Nut + persoonlijkheid: een eenvoudige flow (kiezen → timer → melding) verrijkt met content (pastasoorten, recepten, tips) en een sterke geïllustreerde identiteit. Ik bouwde een nette structuur (JSON data, componenten, navigatie) zodat de app stabiel blijft en makkelijk uitbreidbaar is (nieuwe types, recepten, variaties).",
+        "stack": ["React", "TypeScript", "CSS", "JSON"],
+        "role": [
+          "UI/UX + mobiele integratie",
+          "Datastructuur (JSON): content & recepten",
+          "Timerlogica + alarmen",
+          "Art direction: handgemaakte illustraties & assets"
+        ],
+        "images": {
+          "laptop": [
+            "/assets/PastaTimer/p0.png",
+            "/assets/PastaTimer/p1.png",
+            "/assets/PastaTimer/p2.png",
+            "/assets/PastaTimer/p3.png",
+            "/assets/PastaTimer/p4.png",
+            "/assets/PastaTimer/p5.png",
+            "/assets/PastaTimer/p6.png",
+            "/assets/PastaTimer/p7.png"
+          ],
+          "tablet": [],
+          "mobile": []
+        },
+        "link": "https://www.lien.com",
+        "links": { "demo": "https://www.lien.com", "repo": "" }
+      },
+      {
+        "id": 4,
+        "slug": "mc-do",
+        "title": "McDo",
+        "function": "Web Dev",
+        "lead": "E-commerce demo: winkelmand, checkout, levering, responsive UI.",
+        "description": "Bestel- en leveringssite met flow product → winkelmand → bevestiging, ontworpen om duidelijk en onderhoudbaar te zijn.",
+        "overview": "Frontproject met state-logica: navigatie, catalogus, winkelmand, samenvatting en responsive UX. Ik werkte aan componentstructuur, UI-consistentie en een leesbare aankoopflow. Doel: een eenvoudige maar nette app met voorspelbaar gedrag en een schaalbare basis. Ik maakte ook de art direction en visuele assets (graphics, compositie, visuele samenhang).",
+        "stack": ["React", "JavaScript", "CSS", "JSON"],
+        "role": [
+          "UI/UX + responsive integratie",
+          "Winkelmand state management",
+          "Componentstructuur + routing (indien van toepassing)",
+          "Art direction + asset creatie + perceived performance"
+        ],
+        "images": {
+          "laptop": [
+            "/assets/McDo/mc.png",
+            "/assets/McDo/mcdoo.png",
+            "/assets/McDo/mcdooo.png"
+          ],
+          "tablet": ["/assets/McDo/mcdo-tablet.png"],
+          "mobile": ["/assets/McDo/m1.png"]
+        },
+        "link": "https://www.lien.com",
+        "links": { "demo": "https://www.lien.com", "repo": "" }
+      },
+      {
+        "id": 5,
+        "slug": "why-not",
+        "title": "Why Not",
+        "function": "Web Dev",
+        "lead": "UI-concept: community & planning platform, dark/light.",
+        "description": "Figma mock-up voor een community-gedreven planning platform, met dark & light varianten en een productgerichte flow.",
+        "overview": "Design-first: informatiehiërarchie, user journey, herbruikbare UI-componenten en navigatielogica. Doel: een sterke basis vóór development: consistente screens, stylesysteem en nette dark/light variaties. Ik zette een design system op (typografie, spacing, componenten) voor een vlotte front-end implementatie.",
+        "stack": ["Figma", "Design System", "UI/UX"],
+        "role": [
+          "UX design (flow, structuur, navigatie)",
+          "UI design (dark/light) + herbruikbare componenten",
+          "Design system setup (tokens, styles, regels)",
+          "Handoff klaar voor implementatie"
+        ],
+        "images": {
+          "laptop": [
+            "/assets/WhyNot/wn_1.jpg",
+            "/assets/WhyNot/wn_2.jpg",
+            "/assets/WhyNot/wn_3.jpg",
+            "/assets/WhyNot/wn_4.jpg",
+            "/assets/WhyNot/wn_5.jpg"
+          ],
+          "tablet": [],
+          "mobile": []
+        },
+        "link": "https://www.lien.com",
+        "links": { "demo": "https://www.lien.com", "repo": "" }
+      },
+      {
+        "id": 6,
+        "slug": "sneakers",
+        "title": "Sneakers",
+        "function": "Web Dev",
+        "lead": "Schoenen e-commerce: React + DB, street/cosmic wereld.",
+        "description": "Responsive schoenen e-commerce met winkelmandflow, gedragen door een volledige art direction (illustraties, animaties, light/dark sfeer).",
+        "overview": "Full front-end met e-commerce logica: listing, detail, winkelmand en een vloeiende experience over schermgroottes. De onderscheidende factor is de sterke visuele identiteit: twee werelden (kleurvolle street in light, cosmic in dark) met geïllustreerde en geanimeerde assets. Ik hield de structuur clean (componenten, data, styles) voor voorspelbaar gedrag en makkelijk onderhoud.",
+        "stack": ["React", "JavaScript", "CSS", "DBeaver", "Database"],
+        "role": [
+          "E-commerce UI/UX + responsive integratie",
+          "Winkelmand + purchase flow",
+          "Art direction: illustraties, animaties, light/dark identiteit",
+          "Projectorganisatie (componenten, data, styles)"
+        ],
+        "images": {
+          "laptop": [
+            "/assets/Sneakers/snlight.png",
+            "/assets/s.jpg",
+            "/assets/aura.jpg",
+            "/assets/s.jpg",
+            "/assets/aura.jpg"
+          ],
+          "tablet": [],
+          "mobile": []
+        },
+        "link": "https://www.lien.com",
+        "links": { "demo": "https://www.lien.com", "repo": "" }
+      },
+      {
+        "id": 7,
+        "slug": "nisa",
+        "title": "NISA",
+        "function": "Web Dev",
+        "lead": "Neuro-instituut: Figma mock-up, dark/light, heldere structuur.",
+        "description": "Figma mock-up voor een neurowetenschappelijk instituut: editorial hiërarchie, secties en consistente dark & light varianten.",
+        "overview": "Content- en leesbaarheid-gedreven: structuur om een instituut te presenteren (missie, onderzoek, nieuws, contact) zonder clutter. Ik werkte aan typografische hiërarchie, grids en herbruikbare componenten voor een serieuze maar moderne look. De dual theme (dark/light) werd van bij de start ontworpen voor coherentie (contrast, accenten, states).",
+        "stack": ["Figma", "UI/UX", "Design System"],
+        "role": [
+          "Informatie-architectuur (pagina’s, secties, navigatie)",
+          "Dark/light UI design (coherentie, contrast, states)",
+          "Herbruikbare componenten + grids",
+          "Handoff klaar voor implementatie"
+        ],
+        "images": {
+          "laptop": [
+            "/assets/MolenGame/m1.png",
+            "/assets/s.jpg",
+            "/assets/aura.jpg",
+            "/assets/s.jpg",
+            "/assets/aura.jpg"
+          ],
+          "tablet": [],
+          "mobile": []
+        },
+        "link": "https://www.lien.com",
+        "links": { "demo": "https://www.lien.com", "repo": "" }
+      }
+    ],
+    "threeD": [
+      {
+        "id": 8,
+        "slug": "tarmac",
+        "title": "Tarmac",
+        "function": "3D",
+        "lead": "Blender modeling + animatie: assets, shading, eindvideo.",
+        "description": "End-to-end 3D project: modeling, shading, animatie en videomontage, met custom assets.",
+        "overview": "Productiegericht: een coherente output van A tot Z (modeling, materialen, licht, animatie) en daarna een nette video (ritme, cuts, export). Ik focuste op perceived quality via shading/lights en leesbare motion, met een duidelijke pipeline (scènes, assets, exports) om veilig te itereren.",
+        "stack": ["Blender", "3D Modeling", "Shading", "Animation", "Video Editing"],
+        "role": [
+          "Modeling + asset creatie",
+          "Shading / materialen / lighting",
+          "Animatie + rendering",
+          "Videomontage + eindexport"
+        ],
+        "images": {
+          "laptop": ["/assets/color.png", "/assets/s.jpg", "/assets/aura.jpg", "/assets/s.jpg", "/assets/aura.jpg"],
+          "tablet": [],
+          "mobile": []
+        },
+        "link": "https://www.lien.com",
+        "links": { "demo": "https://www.lien.com", "repo": "" }
+      },
+      {
+        "id": 9,
+        "slug": "brainy",
+        "title": "Brainy",
+        "function": "3D",
+        "lead": "Cartoon character: sculpt, vormen, render — social (TikTok).",
+        "description": "Cartoon personage: sculpting, proporties, details en rendering, ontworpen voor social formats (TikTok).",
+        "overview": "Character-focused: een leesbare cartoonstijl (silhouet, expressie, vormen) en een clean, coherente render. Ik werkte aan sculpting, details en presentatie voor social: snelle leesbaarheid, simpele maar effectieve belichting en outputs klaar om te posten.",
+        "stack": ["Blender", "Sculpting", "Character Design", "Rendering"],
+        "role": [
+          "Character design (vormen, silhouet, stijl)",
+          "Sculpting + detailing",
+          "Lookdev / belichting / rendering",
+          "Social-ready outputs (kaders, hoeken)"
+        ],
+        "images": {
+          "laptop": ["/assets/color.png", "/assets/s.jpg", "/assets/aura.jpg", "/assets/s.jpg", "/assets/aura.jpg"],
+          "tablet": [],
+          "mobile": []
+        },
+        "link": "https://www.lien.com",
+        "links": { "demo": "https://www.lien.com", "repo": "" }
+      }
+    ],
+    "all": [
+      { "id": 10, "slug": "brainy", "title": "Brainy", "function": "3D", "lead": "Cartoon character: sculpt, vormen, render — social (TikTok).", "description": "Cartoon personage: sculpting, proporties, details en rendering, ontworpen voor social formats (TikTok).", "overview": "Character-focused: een leesbare cartoonstijl (silhouet, expressie, vormen) en een clean, coherente render. Ik werkte aan sculpting, details en presentatie voor social: snelle leesbaarheid, simpele maar effectieve belichting en outputs klaar om te posten.", "stack": ["Blender", "Sculpting", "Character Design", "Rendering"], "role": ["Character design (vormen, silhouet, stijl)", "Sculpting + detailing", "Lookdev / belichting / rendering", "Social-ready outputs (kaders, hoeken)"], "images": { "laptop": ["/assets/color.png", "/assets/s.jpg", "/assets/aura.jpg", "/assets/s.jpg", "/assets/aura.jpg"], "tablet": [], "mobile": [] }, "link": "https://www.lien.com", "links": { "demo": "https://www.lien.com", "repo": "" } },
+      { "id": 11, "slug": "mc-do", "title": "McDo", "function": "Web Dev", "lead": "E-commerce demo: winkelmand, checkout, levering, responsive UI.", "description": "Bestel- en leveringssite met flow product → winkelmand → bevestiging, ontworpen om duidelijk en onderhoudbaar te zijn.", "overview": "Frontproject met state-logica: navigatie, catalogus, winkelmand, samenvatting en responsive UX. Ik werkte aan componentstructuur, UI-consistentie en een leesbare aankoopflow. Doel: een eenvoudige maar nette app met voorspelbaar gedrag en een schaalbare basis. Ik maakte ook de art direction en visuele assets (graphics, compositie, visuele samenhang).", "stack": ["React", "JavaScript", "CSS", "JSON"], "role": ["UI/UX + responsive integratie", "Winkelmand state management", "Componentstructuur + routing (indien van toepassing)", "Art direction + asset creatie + perceived performance"], "images": { "laptop": ["/assets/McDo/mc.png", "/assets/McDo/mcdoo.png", "/assets/McDo/mcdooo.png"], "tablet": ["/assets/McDo/mcdo-tablet.png"], "mobile": ["/assets/McDo/m1.png"] }, "link": "https://www.lien.com", "links": { "demo": "https://www.lien.com", "repo": "" } },
+      { "id": 12, "slug": "nisa", "title": "NISA", "function": "Web Dev", "lead": "Neuro-instituut: Figma mock-up, dark/light, heldere structuur.", "description": "Figma mock-up voor een neurowetenschappelijk instituut: editorial hiërarchie, secties en consistente dark & light varianten.", "overview": "Content- en leesbaarheid-gedreven: structuur om een instituut te presenteren (missie, onderzoek, nieuws, contact) zonder clutter. Ik werkte aan typografische hiërarchie, grids en herbruikbare componenten voor een serieuze maar moderne look. De dual theme (dark/light) werd van bij de start ontworpen voor coherentie (contrast, accenten, states).", "stack": ["Figma", "UI/UX", "Design System"], "role": ["Informatie-architectuur (pagina’s, secties, navigatie)", "Dark/light UI design (coherentie, contrast, states)", "Herbruikbare componenten + grids", "Handoff klaar voor implementatie"], "images": { "laptop": ["/assets/MolenGame/m1.png", "/assets/s.jpg", "/assets/aura.jpg", "/assets/s.jpg", "/assets/aura.jpg"], "tablet": [], "mobile": [] }, "link": "https://www.lien.com", "links": { "demo": "https://www.lien.com", "repo": "" } },
+      { "id": 13, "slug": "sidegeek", "title": "SideGeek", "function": "Web Dev", "lead": "Infoplatform + leerlingendatabase: Vue.js & Laravel, teamproject.", "description": "Samenwerkingsproject (Vue.js + Laravel): een opleidingsplatform bouwen met een database gekoppeld aan leerlingprofielen.", "overview": "Teamproject met focus op een gestructureerde, onderhoudbare app voor front én back. Ik droeg bij aan UI-integratie, componentplanning en Git/GitHub-organisatie (branches, PR’s, reviews). Doel: leveren én een gezonde basis: conventies, duidelijke opdeling en sterke teamcommunicatie.", "stack": ["Vue.js", "Laravel", "PHP", "MySQL", "GitHub"], "role": ["Team development (Git/GitHub workflow, PR’s, branches)", "UI-integratie (Vue) + componentstructuur", "Bijdrage aan logica en data (afhankelijk van scope)", "Coördinatie: conventies, opdeling, UI-consistentie"], "images": { "laptop": ["/assets/SideGeek/s1.png", "/assets/SideGeek/s3.png", "/assets/SideGeek/side.png"], "tablet": [], "mobile": [] }, "link": "https://www.lien.com", "links": { "demo": "https://www.lien.com", "repo": "" } },
+      { "id": 14, "slug": "sneakers", "title": "Sneakers", "function": "Web Dev", "lead": "Schoenen e-commerce: React + DB, street/cosmic wereld.", "description": "Responsive schoenen e-commerce met winkelmandflow, gedragen door een volledige art direction (illustraties, animaties, light/dark sfeer).", "overview": "Full front-end met e-commerce logica: listing, detail, winkelmand en een vloeiende experience over schermgroottes. De onderscheidende factor is de sterke visuele identiteit: twee werelden (kleurvolle street in light, cosmic in dark) met geïllustreerde en geanimeerde assets. Ik hield de structuur clean (componenten, data, styles) voor voorspelbaar gedrag en makkelijk onderhoud.", "stack": ["React", "JavaScript", "CSS", "DBeaver", "Database"], "role": ["E-commerce UI/UX + responsive integratie", "Winkelmand + purchase flow", "Art direction: illustraties, animaties, light/dark identiteit", "Projectorganisatie (componenten, data, styles)"], "images": { "laptop": ["/assets/Sneakers/snlight.png", "/assets/s.jpg", "/assets/aura.jpg", "/assets/s.jpg", "/assets/aura.jpg"], "tablet": [], "mobile": [] }, "link": "https://www.lien.com", "links": { "demo": "https://www.lien.com", "repo": "" } },
+      { "id": 15, "slug": "pasta-timer", "title": "Pasta Timer", "function": "Web Dev", "lead": "Kookapp: timers, pastasoorten, recepten, leuke alarmen.", "description": "Mobiele app rond pasta: kies type, timing, recepten en alarmen — met een volledig handgemaakte illustratieve stijl.", "overview": "Nut + persoonlijkheid: een eenvoudige flow (kiezen → timer → melding) verrijkt met content (pastasoorten, recepten, tips) en een sterke geïllustreerde identiteit. Ik bouwde een nette structuur (JSON data, componenten, navigatie) zodat de app stabiel blijft en makkelijk uitbreidbaar is (nieuwe types, recepten, variaties).", "stack": ["React", "TypeScript", "CSS", "JSON"], "role": ["UI/UX + mobiele integratie", "Datastructuur (JSON): content & recepten", "Timerlogica + alarmen", "Art direction: handgemaakte illustraties & assets"], "images": { "laptop": ["/assets/PastaTimer/p0.png", "/assets/PastaTimer/p1.png", "/assets/PastaTimer/p2.png", "/assets/PastaTimer/p3.png", "/assets/PastaTimer/p4.png", "/assets/PastaTimer/p5.png", "/assets/PastaTimer/p6.png", "/assets/PastaTimer/p7.png"], "tablet": [], "mobile": [] }, "link": "https://www.lien.com", "links": { "demo": "https://www.lien.com", "repo": "" } },
+      { "id": 16, "slug": "excuse-app", "title": "Excuse App", "function": "Web Dev", "lead": "Excusegenerator: filters, toonvariaties, geïllustreerde 2D UI.", "description": "Een speelse mobiele app waarin gebruikers een excuus samenstellen via criteria (doelwit, stijl, intensiteit), met een art direction geïnspireerd door stadsborden en gaming.", "overview": "Experience-first project: een eenvoudige flow (criteria kiezen → genereren → itereren) in een geïllustreerde, geanimeerde 2D interface. Ik ontwierp de volledige art direction (decors, illustraties, micro-animaties) en structureerde de app voor soepele navigatie, leesbare logica en een makkelijk uitbreidbaar content-systeem (nieuwe criteria, tonen, categorieën).", "stack": ["React Native", "JavaScript", "JSON"], "role": ["Mobile UI/UX design (flow + interacties)", "2D art direction (illustraties, decors, animaties)", "Generatielogica: criteria, varianten, toonlevels", "Projectstructuur voor schaalbaarheid (content uitbreiding)"], "images": { "laptop": ["/assets/ExcuseApp/ex1.png", "/assets/ExcuseApp/ex2.png", "/assets/ExcuseApp/ex3.png", "/assets/ExcuseApp/ex4.png", "/assets/ExcuseApp/ex5.png"], "tablet": [], "mobile": [] }, "link": "https://www.lien.com", "links": { "demo": "https://www.lien.com", "repo": "" } },
+      { "id": 17, "slug": "why-not", "title": "Why Not", "function": "Web Dev", "lead": "UI-concept: community & planning platform, dark/light.", "description": "Figma mock-up voor een community-gedreven planning platform, met dark & light varianten en een productgerichte flow.", "overview": "Design-first: informatiehiërarchie, user journey, herbruikbare UI-componenten en navigatielogica. Doel: een sterke basis vóór development: consistente screens, stylesysteem en nette dark/light variaties. Ik zette een design system op (typografie, spacing, componenten) voor een vlotte front-end implementatie.", "stack": ["Figma", "Design System", "UI/UX"], "role": ["UX design (flow, structuur, navigatie)", "UI design (dark/light) + herbruikbare componenten", "Design system setup (tokens, styles, regels)", "Handoff klaar voor implementatie"], "images": { "laptop": ["/assets/WhyNot/wn_1.jpg", "/assets/WhyNot/wn_2.jpg", "/assets/WhyNot/wn_3.jpg", "/assets/WhyNot/wn_4.jpg", "/assets/WhyNot/wn_5.jpg"], "tablet": [], "mobile": [] }, "link": "https://www.lien.com", "links": { "demo": "https://www.lien.com", "repo": "" } },
+      { "id": 18, "slug": "tarmac", "title": "Tarmac", "function": "3D", "lead": "Blender modeling + animatie: assets, shading, eindvideo.", "description": "End-to-end 3D project: modeling, shading, animatie en videomontage, met custom assets.", "overview": "Productiegericht: een coherente output van A tot Z (modeling, materialen, licht, animatie) en daarna een nette video (ritme, cuts, export). Ik focuste op perceived quality via shading/lights en leesbare motion, met een duidelijke pipeline (scènes, assets, exports) om veilig te itereren.", "stack": ["Blender", "3D Modeling", "Shading", "Animation", "Video Editing"], "role": ["Modeling + asset creatie", "Shading / materialen / lighting", "Animatie + rendering", "Videomontage + eindexport"], "images": { "laptop": ["/assets/color.png", "/assets/s.jpg", "/assets/aura.jpg", "/assets/s.jpg", "/assets/aura.jpg"], "tablet": [], "mobile": [] }, "link": "https://www.lien.com", "links": { "demo": "https://www.lien.com", "repo": "" } }
+    ]
+  }

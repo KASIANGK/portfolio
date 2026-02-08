@@ -96,8 +96,43 @@ function InvalidateOnActive({ active, mousePosition }) {
   return null;
 }
 
+function useLockBodyScroll(locked) {
+  useEffect(() => {
+    if (!locked) return;
+
+    const html = document.documentElement;
+    const body = document.body;
+
+    const scrollY = window.scrollY || 0;
+
+    const prevHtmlOverflow = html.style.overflow;
+    const prevBodyOverflow = body.style.overflow;
+    const prevBodyPosition = body.style.position;
+    const prevBodyTop = body.style.top;
+    const prevBodyWidth = body.style.width;
+
+    html.style.overflow = "hidden";
+    body.style.overflow = "hidden";
+    body.style.position = "fixed";
+    body.style.top = `-${scrollY}px`;
+    body.style.width = "100%";
+
+    return () => {
+      html.style.overflow = prevHtmlOverflow;
+      body.style.overflow = prevBodyOverflow;
+      body.style.position = prevBodyPosition;
+      body.style.top = prevBodyTop;
+      body.style.width = prevBodyWidth;
+
+      window.scrollTo(0, scrollY);
+    };
+  }, [locked]);
+}
+
+
 function About() {
   useMountLog("About");
+  
   const { t } = useTranslation("about");
   const [isCvOpen, setIsCvOpen] = useState(false);
   const openCv = useCallback(() => setIsCvOpen(true), []);
@@ -107,6 +142,7 @@ function About() {
   const skillsWrapRef = useRef(null);
   const [skillsAtBottom, setSkillsAtBottom] = useState(false);
   const [skillsScrollable, setSkillsScrollable] = useState(false);
+  useLockBodyScroll(isCvOpen);
 
   const updateSkillsScrollState = useCallback(() => {
     const el = skillsScrollRef.current;
@@ -384,16 +420,24 @@ function About() {
   
 
   const skillsByTab = useMemo(() => {
-    const fromJson = (k) => t(`skills.lists.${k}`, { returnObjects: true });
-    const pick = (k, fallback) => (Array.isArray(fromJson(k)) ? fromJson(k) : fallback);
+    const get = (path) => t(path, { returnObjects: true });
+  
+    const webObj = get("skills.lists.web");
+    const webFrontend = Array.isArray(webObj?.frontend) ? webObj.frontend : [];
+    const webBackend = Array.isArray(webObj?.backend) ? webObj.backend : [];
+  
+    const threeD = get("skills.lists.threeD");
+    const events = get("skills.lists.events");
+    const all = get("skills.lists.all");
   
     return {
-      web: pick("web", ["React", "Next.js", "TypeScript", "HTML", "CSS", "REST APIs"]),
-      threeD: pick("threeD", ["Blender", "Three.js / R3F", "Optimization", "Shading"]),
-      events: pick("events", ["Direction", "Production", "Coordination", "Timing"]),
-      all: pick("all", ["Fullstack", "3D", "Design systems", "Product UX"]),
+      web: { frontend: webFrontend, backend: webBackend },
+      threeD: Array.isArray(threeD) ? threeD : [],
+      events: Array.isArray(events) ? events : [],
+      all: Array.isArray(all) ? all : [],
     };
   }, [t]);
+  
   
 
   const pdfHref = t("pdfHref", { defaultValue: "/pdf/kasia_cv.pdf" });
@@ -412,14 +456,14 @@ function About() {
 
   // lock scroll when modal open
   // lock scroll when CV modal open
-  useEffect(() => {
-    if (!isCvOpen) return;
-    const prev = document.documentElement.style.overflow;
-    document.documentElement.style.overflow = "hidden";
-    return () => {
-      document.documentElement.style.overflow = prev;
-    };
-  }, [isCvOpen]);
+  // useEffect(() => {
+  //   if (!isCvOpen) return;
+  //   const prev = document.documentElement.style.overflow;
+  //   document.documentElement.style.overflow = "hidden";
+  //   return () => {
+  //     document.documentElement.style.overflow = prev;
+  //   };
+  // }, [isCvOpen]);
 
 
   // snap needle target on active change + glow pulse
@@ -654,9 +698,19 @@ function About() {
   const ctaDownload = t("downloadPdf", { defaultValue: "Download PDF" });
 
   // Skills logic
-  const skillsFull = skillsByTab[displayKey] || [];
+  const skillsFull = useMemo(() => {
+    if (displayKey === "web") {
+      const f = skillsByTab.web?.frontend || [];
+      const b = skillsByTab.web?.backend || [];
+      return [...f, ...b];
+    }
+    const v = skillsByTab[displayKey];
+    return Array.isArray(v) ? v : [];
+  }, [displayKey, skillsByTab]);
+
   const skillsMax4 = skillsFull.slice(0, 4);
   const previewSkills = isGE1245 ? [] : skillsMax4;
+
 
   const toggleVisual = useCallback(() => {
     setVisualOpen((v) => !v);
@@ -1021,7 +1075,6 @@ function About() {
           aria-modal="true"
           aria-label="Full CV"
           onPointerDown={(e) => {
-            // click "outside" (anywhere not inside modal) closes
             if (e.target === e.currentTarget) closeCv();
           }}
           onKeyDown={(e) => {
@@ -1031,55 +1084,148 @@ function About() {
         >
           <div className="aboutX__modal" onPointerDown={(e) => e.stopPropagation()}>
             <div className="aboutX__modalTop">
-              <div className="aboutX__modalTitle">CURRICULUM VITAE — ATS</div>
+              <div className="aboutX__modalTitleRow">
+                <div className="aboutX__modalTitle">CURRICULUM VITAE — ATS</div>
+
+                {/* ✅ ALL title here (name + role) */}
+                <div className="aboutX__modalIdentity">
+                  <span className="aboutX__modalName">Kasia Nagorka</span>
+                  <span className="aboutX__modalSep">—</span>
+                  <span className="aboutX__modalRole">
+                    {t("bio.all.title", { defaultValue: "Creative Technologist" })}
+                  </span>
+                  <span className="aboutX__modalSep">—</span>
+                  <a
+                    className="aboutX__modalEmail"
+                    href="mailto:ngk.kasia@gmail.com"
+                  >
+                    ngk.kasia@gmail.com
+                  </a>
+                </div>
+              </div>
 
               <button type="button" className="aboutX__btn isGhost" onClick={closeCv}>
                 {t("close", { defaultValue: "Close" })}
               </button>
             </div>
 
-            <div className="aboutX__modalBody">
+            {/* ✅ scroll uniquement ici */}
+            <div className="aboutX__modalBody" role="document">
+              {/* =========================
+                  SUMMARY (2 colonnes)
+                ========================= */}
               <section className="aboutX__modalBlock">
                 <div className="aboutX__modalKicker">SUMMARY</div>
-                <p className="aboutX__modalLead">
-                  Fullstack developer with a strong creative/3D background. Builds performant UI systems,
-                  interactive experiences, and real-time visuals (React, Vite, Three.js/R3F, Blender).
-                </p>
+
+                <div className="aboutX__summaryGrid">
+                  <div className="aboutX__summaryLeft">
+                    {/* ✅ ALL moved out of here */}
+                      <div className="aboutX__summaryList">
+                        {(skillsByTab.all || []).map((s) => (
+                          <p key={`all-${s}`}>{s}</p>
+                        ))}
+                    </div>
+                  </div>
+
+                  <div className="aboutX__summaryRight">
+                    <p className="aboutX__modalLead">
+                      Fullstack developer with a strong creative/3D background. Builds performant UI systems,
+                      interactive experiences, and real-time visuals (React, Vite, Three.js/R3F, Blender).
+                    </p>
+                    <div className="aboutX__summaryAvatar">
+                      <img
+                        src="/assets/about/avatar.jpg"
+                        alt="Kasia – creative technologist"
+                        draggable="false"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </div>
+                  </div>
+                </div>
               </section>
 
+              {/* =========================
+                  CORE SKILLS (4 tables)
+                ========================= */}
               <section className="aboutX__modalBlock">
                 <div className="aboutX__modalKicker">CORE SKILLS</div>
-                <ul className="aboutX__modalList">
-                  <li>React, Vite, JavaScript, CSS, UI architecture, i18n</li>
-                  <li>Three.js / React Three Fiber, real-time 3D, optimization</li>
-                  <li>Blender, 3D pipeline, shading, asset workflows</li>
-                  <li>API integration, Git, clean code, performance mindset</li>
-                </ul>
+
+                <div className="aboutX__skillsGrid4">
+                  {/* WEB — FRONTEND */}
+                  <div className="aboutX__skillCard aboutX__skillCard--web">
+                    <div className="aboutX__skillCardTitle">Web — Frontend</div>
+                    <ul className="aboutX__modalList">
+                      {(skillsByTab.web?.frontend || []).map((s) => (
+                        <li key={`wf-${s}`}>{s}</li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* WEB — BACKEND */}
+                  <div className="aboutX__skillCard aboutX__skillCard--web">
+                    <div className="aboutX__skillCardTitle">Web — Backend</div>
+                    <ul className="aboutX__modalList">
+                      {(skillsByTab.web?.backend || []).map((s) => (
+                        <li key={`wb-${s}`}>{s}</li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* 3D */}
+                  <div className="aboutX__skillCard aboutX__skillCard--3d">
+                    <div className="aboutX__skillCardTitle">3D</div>
+                    <ul className="aboutX__modalList">
+                      {(skillsByTab.threeD || []).map((s) => (
+                        <li key={`d3-${s}`}>{s}</li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* EVENTS */}
+                  <div className="aboutX__skillCard aboutX__skillCard--events">
+                    <div className="aboutX__skillCardTitle">Events</div>
+                    <ul className="aboutX__modalList">
+                      {(skillsByTab.events || []).map((s) => (
+                        <li key={`ev-${s}`}>{s}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
               </section>
 
+              {/* =========================
+                  EXPERIENCE (2 colonnes)
+                ========================= */}
               <section className="aboutX__modalBlock">
                 <div className="aboutX__modalKicker">EXPERIENCE</div>
-                <ul className="aboutX__modalList">
+
+                <div className="aboutX__xpGrid">
                   {expItems.map((it, i) => (
-                    <li key={`${it.key}-${i}`}>
-                      <strong>{it.bold}</strong> {it.text}
-                    </li>
+                    <div className="aboutX__xpRow" key={`${it.key}-${i}`}>
+                      <div className="aboutX__xpLeft">
+                        {it.year ? <div className="aboutX__xpYear">{it.year}</div> : null}
+                        <div className="aboutX__xpTitleLine">
+                          {it.meta ? <div className="aboutX__xpRole">{it.meta}</div> : null}
+                          {it.bold ? <div className="aboutX__xpCompany">{it.bold}</div> : null}
+                        </div>
+                        {/* si tu ajoutes `place` plus tard dans JSON */}
+                        {it.place ? <div className="aboutX__xpPlace">{it.place}</div> : null}
+                      </div>
+
+                      <div className="aboutX__xpRight">
+                        {it.text ? <div className="aboutX__xpDesc">{it.text}</div> : null}
+                        {it.note ? <div className="aboutX__xpNote">{it.note}</div> : null}
+                      </div>
+                    </div>
                   ))}
-                </ul>
+                </div>
               </section>
 
-              <section className="aboutX__modalBlock">
-                <div className="aboutX__modalKicker">PROJECT HIGHLIGHTS</div>
-                <ul className="aboutX__modalList">
-                  <li>Interactive 3D portfolio (R3F): onboarding, markers, performance tuning</li>
-                  <li>Design systems: hover/glow, glass panels, smooth loading flow</li>
-                  <li>Creative tech product universe: Angels Gang (visual identity + UX)</li>
-                </ul>
-              </section>
+              {/* ✅ PAS de project highlights */}
             </div>
 
             <div className="aboutX__modalFooter">
-              {/* ✅ 2 buttons only, as requested */}
               <a className="aboutX__btn" href={pdfHref} download>
                 {t("downloadPdf", { defaultValue: "Download PDF" })}
               </a>
@@ -1090,9 +1236,8 @@ function About() {
             </div>
           </div>
         </div>
-
-
       )}
+
     </section>
   );
 }

@@ -1,5 +1,6 @@
 // src/Components/Projects/ProjectsMasonryMessy.jsx
 import { useEffect, useMemo, useState, useCallback, useRef, memo } from "react";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import "./ProjectsMasonryMessy.css";
 import useBoot from "../../hooks/useBoot";
@@ -132,12 +133,17 @@ function useIsMobile(breakpoint = 742) {
 function ProjectsMasonryMessy({
   title,
   subtitle,
-  jsonUrl = "/projects_home.json",
+  jsonUrl,
   onItemClick,
 }) {
   useMountLog("ProjectsMasonryMessy");
 
-  const { t } = useTranslation("projects");
+  const { t, i18n } = useTranslation("projects");
+  const navigate = useNavigate();
+
+  const lang = (i18n.resolvedLanguage || i18n.language || "en").split("-")[0];
+  const base = import.meta.env.BASE_URL || "/";
+  const effectiveJsonUrl = jsonUrl || `${base}locales/${lang}/projects_home.json`;
 
   const uiTitle = title ?? t("title");
   const uiSubtitle = subtitle ?? t("subtitle");
@@ -145,7 +151,11 @@ function ProjectsMasonryMessy({
   const boot = useBoot();
 
   const [active, setActive] = useState("all");
+  const [hoverTab, setHoverTab] = useState(null);
+  const effectiveTab = hoverTab ?? active;
+  const lastHoverTabRef = useRef(null);
   const [data, setData] = useState(EMPTY);
+  const sectionRef = useRef(null);
 
   // loaded = "pixels stable" (decode done)
   const [loaded, setLoaded] = useState(false);
@@ -202,10 +212,11 @@ function ProjectsMasonryMessy({
 
     (async () => {
       try {
-        const res = await fetch(jsonUrl, {
+        const res = await fetch(effectiveJsonUrl, {
           signal: ac.signal,
-          cache: "force-cache",
+          cache: "no-store", // dev safe
         });
+        if (!res.ok) throw new Error(`Fetch failed ${res.status} for ${effectiveJsonUrl}`);
         const json = await res.json();
         if (!alive) return;
 
@@ -227,27 +238,36 @@ function ProjectsMasonryMessy({
       alive = false;
       ac.abort();
     };
-  }, [bootHasProjects, boot, jsonUrl]);
+  }, [bootHasProjects, boot, effectiveJsonUrl]);
 
   /* ------------------------------
      2) Current stack
   ------------------------------ */
   const currentList = useMemo(() => {
-    const key = tabToJsonKey(active);
+    const key = tabToJsonKey(effectiveTab);
     return Array.isArray(data?.[key]) ? data[key] : [];
-  }, [data, active]);
+  }, [data, effectiveTab]);
+  
 
   const normalized = useMemo(
-    () => normalizeBucket(currentList, active),
-    [currentList, active]
+    () => normalizeBucket(currentList, effectiveTab),
+    [currentList, effectiveTab]
   );
-
+  
   // ✅ 6 cards on desktop (was 7)
   const stack = useMemo(
     () => normalized.slice(0, isCompact ? 4 : 6),
     [normalized, isCompact]
   );
-
+  const goToPortfolio = useCallback(
+    (tabKey) => {
+      const map = { all: "all", web: "web", "3d": "3d" };
+      const filter = map[tabKey] || "all";
+      navigate(`/portfolio?filter=${filter}`);
+    },
+    [navigate]
+  );
+  
   /* ------------------------------
      3) Decode ONCE before loaded=true
      - decode 6 covers from ALL bucket
@@ -322,9 +342,23 @@ function ProjectsMasonryMessy({
     },
     [onItemClick]
   );
-
+  useEffect(() => {
+    if (isCompact) return;
+    const el = sectionRef.current;
+    if (!el) return;
+  
+    const onLeave = () => {
+      setHoverTab(null);
+      lastHoverTabRef.current = null;
+      setActive("all"); // ✅ reset only when leaving the whole section
+    };
+  
+    el.addEventListener("mouseleave", onLeave);
+    return () => el.removeEventListener("mouseleave", onLeave);
+  }, [isCompact]);
+  
   return (
-    <section className="pm2" aria-label="Projects section">
+    <section ref={sectionRef} className="pm2" aria-label="Projects section">
       <div className="pm2__row">
         {/* LEFT : stacked posters */}
         <div className="pm2__left" aria-label="Project previews">
@@ -407,10 +441,10 @@ function ProjectsMasonryMessy({
                   type="button"
                   onMouseEnter={() => {
                     setHoveredIdx(idx);
-                    setPinnedIdx(idx); // ✅ stays top after leaving
+                    setPinnedIdx(idx); 
                   }}
                   onMouseLeave={() => {
-                    setHoveredIdx(null); // ✅ but keeps pinned
+                    setHoveredIdx(null); 
                   }}
                   onFocus={() => {
                     setHoveredIdx(idx);
@@ -482,10 +516,40 @@ function ProjectsMasonryMessy({
                       <button
                         key={tab.key}
                         role="tab"
-                        aria-selected={isOn}
-                        className={`pm2__tab ${isOn ? "isActive" : ""}`}
+                        aria-selected={active === tab.key}
+                        className={`pm2__tab ${active === tab.key ? "isActive" : ""} ${hoverTab === tab.key ? "isHover" : ""}`}
                         type="button"
-                        onClick={() => setActive(tab.key)}
+                        onMouseEnter={() => {
+                          if (isCompact) return;
+                          setHoverTab(tab.key);
+                          lastHoverTabRef.current = tab.key;
+                        }}
+                        onMouseLeave={() => {
+                          if (isCompact) return;
+
+                          // ✅ commit la sélection au "release" du hover
+                          const last = lastHoverTabRef.current;
+                          if (last) setActive(last);
+
+                          setHoverTab(null);
+                          lastHoverTabRef.current = null;
+                        }}
+                        onFocus={() => {
+                          if (isCompact) return;
+                          setHoverTab(tab.key);
+                          lastHoverTabRef.current = tab.key;
+                        }}
+                        onBlur={() => {
+                          if (isCompact) return;
+                          const last = lastHoverTabRef.current;
+                          if (last) setActive(last);
+                          setHoverTab(null);
+                          lastHoverTabRef.current = null;
+                        }}
+                        onClick={() => {
+                          // ✅ click = navigation (comme maintenant)
+                          goToPortfolio(tab.key);
+                        }}
                       >
                         <span className="pm2__tabIcon" aria-hidden="true">
                           <img
