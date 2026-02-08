@@ -42,13 +42,29 @@
     },
 
     "commands": {
-      "title": "Commando’s",
-      "move": "Bewegen",
-      "look": "Kijken",
-      "lookValue": "Muis / Joystick R",
-      "escValue": "Hoofdcontrole loslaten",
-      "confirmValue": "Bevestigen / Doorgaan"
+      "title": "Besturing",
+    
+      "desktop": {
+        "rows": [
+          { "k": "Bewegen", "v": "← ↑ ↓ →" },
+          { "k": "Kijken", "v": "Muis" },
+          { "k": "Camera activeren", "v": "Klik" },
+          { "k": "Camera verlaten", "v": "ESC" },
+          { "k": "Doorgaan", "v": "ENTER / SPATIE" }
+        ]
+      },
+    
+      "mobile": {
+        "rows": [
+          { "k": "Bewegen", "v": "Linker joystick" },
+          { "k": "Kijken", "v": "Rechter joystick" },
+          { "k": "Camera", "v": "Tap aan / uit" },
+          { "k": "Bevestigen", "v": "Knop op scherm" }
+        ]
+      }
     }
+    
+    
   },
   "navGameHelp": {
     "title": "Even een houvast nodig?",

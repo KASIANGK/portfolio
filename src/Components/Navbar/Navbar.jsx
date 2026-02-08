@@ -47,6 +47,7 @@ export default function Navbar() {
     (window.matchMedia?.("(hover: none)")?.matches ||
       /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent));
 
+  const gameIsMobile = isTouch;
   // -----------------------------
   // State
   // -----------------------------
@@ -207,8 +208,13 @@ export default function Navbar() {
     []
   );
 
-  const gameItems = useMemo(
-    () => [
+  const gameItems = useMemo(() => {
+    const rows = t(`game.commands.${gameIsMobile ? "mobile" : "desktop"}.rows`, {
+      returnObjects: true,
+      defaultValue: [],
+    });
+  
+    return [
       {
         type: "action",
         key: "returnHome",
@@ -216,13 +222,19 @@ export default function Navbar() {
         onClick: () => navigate("/", { state: { goHomeStep: 2 } }),
       },
       { type: "divider" },
-      { type: "info", key: "cmd_1", label: t("game.commands.move"), value: "← ↑ ↓ → / Joystick L" },
-      { type: "info", key: "cmd_2", label: t("game.commands.look"), value: t("game.commands.lookValue") },
-      { type: "info", key: "cmd_3", label: "ESC", value: t("game.commands.escValue") },
-      { type: "info", key: "cmd_4", label: "ENTER/SPACE", value: t("game.commands.confirmValue") },
-    ],
-    [navigate, t]
-  );
+  
+      // rows[] venant du JSON
+      ...(Array.isArray(rows)
+        ? rows.map((r, i) => ({
+            type: "info",
+            key: `cmd_${i}`,
+            label: r?.k ?? "",
+            value: r?.v ?? "",
+          }))
+        : []),
+    ];
+  }, [navigate, t, gameIsMobile]);
+  
 
   // Panel open logic:
   const panelOpen =
@@ -591,16 +603,6 @@ export default function Navbar() {
           <div className="navHUD__gameWrap">
             <div className="navHUD__gameHead">
               <div className="navHUD__gameTitle">{t("game.commands.title")}</div>
-
-              <button
-                type="button"
-                className="navHUD__gameClose"
-                onClick={() => setCollapsed(true, { user: true })}
-                aria-label={t("game.collapse")}
-                title={t("game.collapse")}
-              >
-                «
-              </button>
             </div>
 
             <ul className="navHUD__gameList" role="none">
@@ -627,9 +629,18 @@ export default function Navbar() {
             </ul>
 
             <div className="navHUD__gameFoot">
-              {t("game.footer", {
+              <button
+                  type="button"
+                  className="navHUD__gameClose"
+                  onClick={() => setCollapsed(true, { user: true })}
+                  aria-label={t("game.collapse")}
+                  title={t("game.collapse")}
+                >
+                  HIDE 
+                </button>
+              {/* {t("game.footer", {
                 state: gameCollapsed ? t("game.stateCollapsed") : t("game.stateOpen"),
-              })}
+              })} */}
             </div>
           </div>
         )}

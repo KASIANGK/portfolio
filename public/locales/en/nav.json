@@ -43,13 +43,28 @@
     },
 
     "commands": {
-      "title": "Commands",
-      "move": "Move",
-      "look": "Look",
-      "lookValue": "Mouse / Joystick R",
-      "escValue": "Release head control",
-      "confirmValue": "Confirm / Continue"
+      "title": "Controls",
+    
+      "desktop": {
+        "rows": [
+          { "k": "Move", "v": "← ↑ ↓ →" },
+          { "k": "Look", "v": "Mouse" },
+          { "k": "Activate Camera", "v": "Click" },
+          { "k": "Exit Camera", "v": "ESC" },
+          { "k": "Continue", "v": "ENTER / SPACE" }
+        ]
+      },
+    
+      "mobile": {
+        "rows": [
+          { "k": "Move", "v": "Left joystick" },
+          { "k": "Look", "v": "Right joystick" },
+          { "k": "Camera", "v": "Tap on / off" },
+          { "k": "Confirm", "v": "On-screen button" }
+        ]
+      }    
     }
+    
   },
   "navGameHelp": {
     "title": "Need a reference point?",

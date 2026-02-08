@@ -44,12 +44,28 @@
 
     "commands": {
       "title": "Sterowanie",
-      "move": "Ruch",
-      "look": "Widok",
-      "lookValue": "Mysz / Joystick P",
-      "escValue": "Zwolnij kontrolę głowy",
-      "confirmValue": "Potwierdź / Kontynuuj"
+    
+      "desktop": {
+        "rows": [
+          { "k": "Ruch", "v": "← ↑ ↓ →" },
+          { "k": "Widok", "v": "Mysz" },
+          { "k": "Aktywuj kamerę", "v": "Klik" },
+          { "k": "Wyjdź z kamery", "v": "ESC" },
+          { "k": "Kontynuuj", "v": "ENTER / SPACJA" }
+        ]
+      },
+    
+      "mobile": {
+        "rows": [
+          { "k": "Ruch", "v": "Lewy joystick" },
+          { "k": "Widok", "v": "Prawy joystick" },
+          { "k": "Kamera", "v": "Tap on / off" },
+          { "k": "Potwierdź", "v": "Przycisk na ekranie" }
+        ]
+      }
     }
+    
+    
   },
   "navGameHelp": {
     "title": "Potrzebujesz punktu odniesienia?",

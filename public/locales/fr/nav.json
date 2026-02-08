@@ -44,12 +44,28 @@
 
     "commands": {
       "title": "Commandes",
-      "move": "Déplacement",
-      "look": "Regard",
-      "lookValue": "Souris / Joystick D",
-      "escValue": "Libérer le contrôle de tête",
-      "confirmValue": "Confirmer / Continuer"
+    
+      "desktop": {
+        "rows": [
+          { "k": "Déplacement", "v": "← ↑ ↓ →" },
+          { "k": "Regarder", "v": "Souris" },
+          { "k": "Activer la caméra", "v": "Clic" },
+          { "k": "Quitter la caméra", "v": "ESC" },
+          { "k": "Continuer", "v": "ENTRÉE / ESPACE" }
+        ]
+      },
+    
+      "mobile": {
+        "rows": [
+          { "k": "Déplacement", "v": "Joystick gauche" },
+          { "k": "Regarder", "v": "Joystick droit" },
+          { "k": "Caméra", "v": "Tap on / off" },
+          { "k": "Confirmer", "v": "Bouton à l’écran" }
+        ]
+      }
     }
+    
+    
   },
   "navGameHelp": {
     "title": "Besoin d’un repère ?",
