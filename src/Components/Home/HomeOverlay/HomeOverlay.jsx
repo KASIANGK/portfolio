@@ -25,6 +25,9 @@ import StepMenu from "./parts/StepMenu";
 const FIRST_VISIT_KEY = "ag_home_first_visit_done_v1";
 const KB_HINT_KEY = "ag_step1_kb_hint_seen_v2";
 const FORCE_STEP_KEY = "ag_home_step_once";
+const CITY_TUTO_KEY = "ag_city_tutorial_done_v1";
+const NAVHELP_SEEN_KEY = "ag_navhelp_hint_seen_v1";
+const GAMENAV_TOAST_SEEN_KEY = "ag_gamenav_toast_seen_v1";
 
 const raf2 = () =>
   new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
@@ -499,6 +502,22 @@ export default function HomeOverlay({
 
   const bgTrackRef = useRef(null);
 
+  const handleResetHomeCitySteps = useCallback(() => {
+    // reset des flags city tuto/hints
+    safeRemoveLS(CITY_TUTO_KEY);
+    safeRemoveLS(NAVHELP_SEEN_KEY);
+    safeRemoveLS(GAMENAV_TOAST_SEEN_KEY);
+  
+    // reset intro skip si tu veux (optionnel)
+    safeRemoveLS("angels_city_skip_intro");
+  
+    // event “reset” (au cas où tu listens ailleurs)
+    window.dispatchEvent(new Event("ag:resetHomeCityTutorial"));
+  
+    // retour step1 (comme tu voulais)
+    goToStep1Instant();
+  }, [goToStep1Instant]);
+  
   return (
     <header className="homeOverlay" data-step={slideIndex === 0 ? "1" : "2"} aria-label="Home onboarding header">
       <OverlayBackground slideIndex={slideIndex} noAnimOnce={noAnimOnce} bgTrackRef={bgTrackRef} />
@@ -508,6 +527,7 @@ export default function HomeOverlay({
         onResetLanguage={handleResetLanguage}
         onResetHint={handleResetHint}
         onResetStep={handleResetFirstStep}
+        onResetSteps={handleResetHomeCitySteps}
       />
 
       <div className="homeOverlay__viewport">

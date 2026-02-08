@@ -145,3 +145,127 @@
   transform: scale(1.12);
   filter: drop-shadow(0 0 10px rgba(255,62,201,0.7));
 }
+
+/* Hint */
+.homeOverlay__hint {
+  margin-top: 14px;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(200, 255, 255, 0.65);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  opacity: 0.9;
+  position: relative;
+  z-index: 2;
+}
+.homeOverlay__kbdHint {
+  /* margin: 0 0 20px; */
+  color: rgba(220, 230, 255, 0.75);
+  font-size: 14px;
+  line-height: 1.45;
+  max-width: 54ch;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  opacity: 0.95;
+  font-size: 14px;
+  position: relative;
+  z-index: 2;
+}
+
+.homeOverlay__footer{
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  margin-top: 18px;
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  flex-wrap: wrap;
+  }
+.homeOverlay__hintSlot{
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  /* width: 100%; */
+}
+
+.homeOverlay__kbdHint{
+max-width: 500px;
+display: flex;
+align-items: center;
+gap: 10px;
+flex-wrap: wrap;
+font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+font-size: 12px;
+letter-spacing: 0.16em;
+text-transform: uppercase;
+color: rgba(200, 255, 255, 0.82);
+position: relative;
+isolation: isolate;
+/* ✅ anim states */
+opacity: 0;
+transform: translateX(-8px);
+transition: opacity 240ms ease, transform 260ms ease, filter 260ms ease;
+}
+
+/* Glow gradient derrière (comme ton badge) */
+.homeOverlay__kbdHint::after{
+content:"";
+position:absolute;
+inset:-4px -10px;
+border-radius:999px;
+z-index:-1;
+filter: blur(16px);
+opacity: 0.38;
+pointer-events:none;
+}
+
+/* ✅ Visible */
+.homeOverlay__kbdHint.isVisible{
+opacity: 1;
+}
+
+/* ✅ Disparition légère (fade + petit slide) */
+.homeOverlay__kbdHint.isHiding{
+opacity: 0;
+transform: translateX(-10px);
+filter: blur(1.5px);
+}
+
+.homeOverlay__kbdPill{
+display: inline-flex;
+align-items: center;
+gap: 8px;
+padding: 6px 10px;
+border-radius: 999px;
+background: rgba(255,255,255,0.04);
+border: 1px solid rgba(255,255,255,0.10);
+}
+
+.homeOverlay__kbdKey{
+display: inline-flex;
+align-items: center;
+justify-content: center;
+min-width: 22px;
+height: 22px;
+padding: 0 6px;
+
+border-radius: 7px;
+background: rgba(0,0,0,0.35);
+border: 1px solid rgba(0,255,255,0.18);
+
+color: rgba(245,245,255,0.92);
+font-weight: 700;
+letter-spacing: 0.06em;
+}
+
+/* Responsive: si trop serré, le hint passe au-dessus du bouton */
+@media (max-width: 620px){
+.homeOverlay__footer{
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.homeOverlay__continueBtn{
+  align-self: flex-end;
+}
+}

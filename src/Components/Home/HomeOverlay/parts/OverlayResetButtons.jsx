@@ -1,8 +1,13 @@
 // src/Components/Home/HomeOverlay/parts/OverlayResetButtons.jsx
 import React from "react";
-import { DEV_KEYS, devResetKey } from '../../../../utils/devResets'
 
-export default function OverlayResetButtons({ t, onResetLanguage, onResetHint, onResetStep, onResetSteps }) {
+export default function OverlayResetButtons({
+  t,
+  onResetLanguage,
+  onResetHint,
+  onResetStep,
+  onResetSteps,
+}) {
   return (
     <>
       <button type="button" className="homeOverlay__resetBtn" onClick={onResetLanguage}>
@@ -20,19 +25,14 @@ export default function OverlayResetButtons({ t, onResetLanguage, onResetHint, o
         <span className="homeOverlay__resetText">RESET STEP1</span>
       </button>
 
-      <button type="button" className="homeOverlay__resetBtn__HomeCity"
-        onClick={onResetSteps}
-      >
-        <span className="homeOverlay__resetIcon" aria-hidden="true">↺</span>
-        <span className="homeOverlay__resetText">RESET STEPS</span>
-      </button>
       <button
         type="button"
-        className="homeOverlay__resetBtn__Canvas"
-        onClick={() => devResetKey(DEV_KEYS.ABOUT_HINT_3D)}
-        title="Dev: reset About 3D hint"
+        className="homeOverlay__resetBtn__HomeCity"
+        onClick={onResetSteps}
+        title="Dev: reset City tutorial + hints"
       >
-        Reset About 3D hint
+        <span className="homeOverlay__resetIcon" aria-hidden="true">↺</span>
+        <span className="homeOverlay__resetText">RESET CITY STEPS</span>
       </button>
     </>
   );

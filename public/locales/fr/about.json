@@ -6,25 +6,21 @@
 
   "bio": {
     "kicker": "PROFIL",
-
     "web": {
       "title": "Web Developer",
       "lead": "Là où le code et le design s’accordent pour créer des interfaces utiles.",
       "timeline": "2023–2025 · Coach Fullstack (Molengeek) → 2025–2026 · Developer (Urban Tech)"
     },
-
     "threeD": {
       "title": "3D & Creative Tech",
       "lead": "De la 3D pensée pour l’interaction, pas pour le simple effet.",
       "timeline": "2023 · Modélisation & conception vidéo (Tarmac)"
     },
-
     "events": {
       "title": "Creative Events",
       "lead": "Des idées qui prennent forme, du concept à l’expérience vécue.",
       "timeline": "2018–2020 · Styling & direction créative (Bloody Louis) → 2021 · DA & événementiel (Emotion)"
     },
-
     "all": {
       "title": "Creative Technologist",
       "lead": "Un point de rencontre entre dev, visuel et production.",

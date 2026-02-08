@@ -29,7 +29,7 @@ export default function StepLanguage({
         <div className="homeOverlay__badge">KASIA NAGORKA://CREATIVE_TECH</div>
 
         <h1 className="homeOverlay__title">{t("language.title")}</h1>
-        <p className="homeOverlay__subtitle">{t("language.subtitle")}</p>
+        <p className="homeOverlay__subtitle__step1">{t("language.subtitle")}</p>
 
         <div className="homeOverlay__langGrid" role="radiogroup" aria-label={t("a11y.languageSelector")}>
           {LANGS.map((code, idx) => {
@@ -68,13 +68,13 @@ export default function StepLanguage({
                   <span className="homeOverlay__kbdKey">↓</span>
                   <span className="homeOverlay__kbdKey">←</span>
                   <span className="homeOverlay__kbdKey">→</span>
-                  <span>to navigate</span>
+                  <span>- navigate</span>
                 </span>
 
                 <span className="homeOverlay__kbdPill">
                   <span className="homeOverlay__kbdKey">Enter</span>
                   <span className="homeOverlay__kbdKey">Space</span>
-                  <span>to continue</span>
+                  <span>- continue</span>
                 </span>
               </div>
             )}

@@ -79,7 +79,20 @@
     position: relative;
     z-index: 2;
   }
+  .homeOverlay__subtitle__step1{
+    margin: 0 0 20px;
+    color: rgba(220, 230, 255, 0.75);
   
+    font-size: 14px;
+    line-height: 1.45;
+    max-width: 44ch;
+  
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    opacity: 0.95;
+    font-size: 14px;
+    position: relative;
+    z-index: 2;
+  }
   /* Grids / Menu */
   .homeOverlay__langGrid {
     display: grid;
@@ -102,31 +115,10 @@
     z-index: 2;
   }
   
-  /* Footer */
-  .homeOverlay__footer {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    margin-top: 18px;
-    position: relative;
-    z-index: 2;
-  }
   
   .homeOverlay__continueBtn {
     padding-left: 26px;
     padding-right: 26px;
   }
   
-  /* Hint */
-  .homeOverlay__hint {
-    margin-top: 14px;
-    font-size: 12px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: rgba(200, 255, 255, 0.65);
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-    opacity: 0.9;
-    position: relative;
-    z-index: 2;
-  }
   

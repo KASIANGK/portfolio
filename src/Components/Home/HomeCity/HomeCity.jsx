@@ -14,6 +14,7 @@ import * as THREE from "three";
 import { Physics, RigidBody, CuboidCollider } from "@react-three/rapier";
 import { EffectComposer, Bloom, Vignette, SMAA } from "@react-three/postprocessing";
 import { useTranslation } from "react-i18next";
+import homeSvg from "../../../../public/assets/icons/home.svg";
 
 import "./HomeCity.css";
 
@@ -23,10 +24,10 @@ import CityModel from "../City/CityModel";
 import CityMarkers from "../City/CityMarkers";
 import CityNightLights from "../City/CityNightLights";
 import Joystick from "../Player/Joystick";
-import GameNavToast from "./parts/GameNavToast";
+// import GameNavToast from "./parts/GameNavToast";
 
 import StepsHomeCity from "./parts/StepsHomeCity";
-import ResetStepsHomeCity from "./parts/ResetStepsHomeCity";
+// import ResetStepsHomeCity from "./parts/ResetStepsHomeCity";
 import NavHelpHint from "./parts/NavHelpHint";
 
 
@@ -98,7 +99,16 @@ export default function HomeCity() {
   const openedGameHudOnceRef = useRef(false);
 
   const [navHelpOpen, setNavHelpOpen] = useState(false);
-
+  const goHome = useCallback(() => {
+    // clean pointer lock si actif
+    try {
+      if (document.pointerLockElement) document.exitPointerLock?.();
+    } catch {}
+  
+    // optionnel: tu peux laisser le state, mais je mets replace pour éviter back bizarre
+    navigate("/", { replace: false, state: { goHomeStep: 2 } });
+  }, [navigate]);
+  
   const hasSeenNavHelp = useCallback(() => {
     try {
       return localStorage.getItem(NAVHELP_SEEN_KEY) === "1";
@@ -612,25 +622,25 @@ export default function HomeCity() {
     });
   }, [requestedEnter, gateOpen, tutorialDone]);
 
-  useEffect(() => {
-    const LS_GAMENAV_TOAST_SEEN = "ag_gamenav_toast_seen_v1";
+  // useEffect(() => {
+  //   const LS_GAMENAV_TOAST_SEEN = "ag_gamenav_toast_seen_v1";
   
-    const onConfirmed = () => {
-      let seen = false;
-      try { seen = localStorage.getItem(LS_GAMENAV_TOAST_SEEN) === "1"; } catch {}
-      if (seen) return;
+  //   const onConfirmed = () => {
+  //     let seen = false;
+  //     try { seen = localStorage.getItem(LS_GAMENAV_TOAST_SEEN) === "1"; } catch {}
+  //     if (seen) return;
   
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          window.dispatchEvent(new Event("ag:showGameNavToast"));
-          try { localStorage.setItem(LS_GAMENAV_TOAST_SEEN, "1"); } catch {}
-        });
-      });
-    };
+  //     requestAnimationFrame(() => {
+  //       requestAnimationFrame(() => {
+  //         window.dispatchEvent(new Event("ag:showGameNavToast"));
+  //         try { localStorage.setItem(LS_GAMENAV_TOAST_SEEN, "1"); } catch {}
+  //       });
+  //     });
+  //   };
   
-    window.addEventListener("ag:cityTutorialConfirmed", onConfirmed);
-    return () => window.removeEventListener("ag:cityTutorialConfirmed", onConfirmed);
-  }, []);
+  //   window.addEventListener("ag:cityTutorialConfirmed", onConfirmed);
+  //   return () => window.removeEventListener("ag:cityTutorialConfirmed", onConfirmed);
+  // }, []);
   
   return (
     <div className={rootClass}>
@@ -797,7 +807,7 @@ export default function HomeCity() {
         <GameNavToast show={requestedEnter && gateOpen && tutorialDone} />
       )} */}
       {/* always mounted while in city, it will show only on event */}
-      <GameNavToast />
+      {/* <GameNavToast /> */}
 
       <NavHelpHint
         open={navHelpOpen}
@@ -806,6 +816,20 @@ export default function HomeCity() {
 
       {/* ✅ Tint AU-DESSUS du Canvas, n'intercepte rien */}
       {requestedEnter && <div className="agCityTint" aria-hidden="true" />}
+      {/* Home button (bas-gauche) */}
+      {requestedEnter && gateOpen && tutorialDone && (
+        <button
+          type="button"
+          className="agCityHomeBtn"
+          onClick={goHome}
+          aria-label="Back to Home"
+          title="Home"
+        >
+          <img className="agCityHomeBtn__svg" src={homeSvg} alt="" aria-hidden="true" />
+
+        </button>
+
+      )}
 
       {/* Joysticks mobile (au-dessus) */}
       {!uiIntro && requestedEnter && isMobile && (
@@ -840,9 +864,9 @@ export default function HomeCity() {
         </>
       )}
 
-      {import.meta.env.DEV && requestedEnter && (
+      {/* {import.meta.env.DEV && requestedEnter && (
         <ResetStepsHomeCity onResetSteps={resetStepsHomeCity} />
-      )}
+      )} */}
     </div>
   );
 }

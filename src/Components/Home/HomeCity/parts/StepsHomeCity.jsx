@@ -19,7 +19,7 @@ import {
 const LS_KEY = "ag_city_tutorial_done_v1";
 
 // ✅ GameNav toast: show only first time, return on reset
-const LS_GAMENAV_TOAST_SEEN = "ag_gamenav_toast_seen_v1";
+// const LS_GAMENAV_TOAST_SEEN = "ag_gamenav_toast_seen_v1";
 
 // timings
 const LOOK_SECONDS = 2.4;
@@ -44,23 +44,23 @@ function clamp01(v) {
   return Math.max(0, Math.min(1, v));
 }
 
-function shouldShowGameNavToast() {
-  try {
-    return localStorage.getItem(LS_GAMENAV_TOAST_SEEN) !== "1";
-  } catch {
-    return false;
-  }
-}
-function markGameNavToastSeen() {
-  try {
-    localStorage.setItem(LS_GAMENAV_TOAST_SEEN, "1");
-  } catch {}
-}
-function resetGameNavToastSeen() {
-  try {
-    localStorage.removeItem(LS_GAMENAV_TOAST_SEEN);
-  } catch {}
-}
+// function shouldShowGameNavToast() {
+//   try {
+//     return localStorage.getItem(LS_GAMENAV_TOAST_SEEN) !== "1";
+//   } catch {
+//     return false;
+//   }
+// }
+// function markGameNavToastSeen() {
+//   try {
+//     localStorage.setItem(LS_GAMENAV_TOAST_SEEN, "1");
+//   } catch {}
+// }
+// function resetGameNavToastSeen() {
+//   try {
+//     localStorage.removeItem(LS_GAMENAV_TOAST_SEEN);
+//   } catch {}
+// }
 
 export default function StepsHomeCity({
   enabled,
@@ -276,7 +276,7 @@ export default function StepsHomeCity({
       window.dispatchEvent(new Event("ag:closeGameHud"));
 
       // allow GameNav toast to show again
-      resetGameNavToastSeen();
+      // resetGameNavToastSeen();
 
       // reset all local tutorial states
       openedGameHudRef.current = false;

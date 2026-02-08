@@ -1,6 +1,5 @@
 // src/App.jsx
-import React from "react";
-import {
+import React, { useEffect, useState } from "react";import {
   BrowserRouter as Router,
   Routes,
   Route,
@@ -24,6 +23,21 @@ function Layout() {
   const isHome = location.pathname === "/";
   const isCity = location.pathname === "/city";
 
+  const [cityLoading, setCityLoading] = useState(false)
+  useEffect(() => {
+    const on = () => setCityLoading(true);
+    const off = () => setCityLoading(false);
+
+    window.addEventListener("ag:cityLoaderOn", on);
+    window.addEventListener("ag:cityLoaderOff", off);
+    return () => {
+      window.removeEventListener("ag:cityLoaderOn", on);
+      window.removeEventListener("ag:cityLoaderOff", off);
+    };
+  }, []);
+
+  const hideFooter = isCity || cityLoading;
+
   return (
     <>
       <Navbar />
@@ -43,8 +57,8 @@ function Layout() {
         {/* fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-
-      <Footer />
+      {!hideFooter && <Footer />}
+      {/* <Footer /> */}
     </>
   );
 }
