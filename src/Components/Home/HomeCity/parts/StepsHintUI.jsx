@@ -29,12 +29,12 @@ export function DesktopEtirement({
         <span className="agDesktopStretch__ping" />
       </div>
 
-      {(label || sub) && (
+      {/* {(label || sub) && (
         <div className="agDesktopStretch__text">
           {label ? <div className="agDesktopStretch__label">{label}</div> : null}
           {sub ? <div className="agDesktopStretch__sub">{sub}</div> : null}
         </div>
-      )}
+      )} */}
     </div>
   );
 }

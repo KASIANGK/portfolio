@@ -1,50 +1,50 @@
 {
   "loader": {
-    "subLabel": "Je m’infiltre dans la Matrix",
-    "eta": "ETA ~{{seconds}}s",
-    "calibrating": "Calibration des portails… (ça arrive 😇)"
+    "subLabel": "Intrusion dans la matrice",
+    "eta": "~{{seconds}}s",
+    "calibrating": "Calibration des portails… tiens bon 😇"
   },
   "cityTutorial": {
     "common": {
-      "waiting": "En attente…"
+      "waiting": ""
     },
     "boot": {
       "badge": "CITY://JACK-IN",
       "title": "Bienvenue dans la matrice.",
-      "desc": "Promis, ici c’est légal.",
+      "desc": "T’inquiète — ici c’est légal.",
       "cta": "JACK IN"
     },
     "look": {
       "badge": "CALIBRATE://POV",
       "preCapture": {
-        "title": "Déclenche la vue (ON/OFF).",
-        "desc": "CLICK / TAP PAD SUR LA SCÈNE",
-        "subLock": "En attente de capture…"
+        "title": "Vue ON/OFF",
+        "desc": "Clique dans la scène, hors de la carte.",
+        "subLock": ""
       },
       "captured": {
-        "title": "Quelques étirements.",
-        "descDesktop": "SCAN LA SCÈNE",
-        "descMobile": "JOYSTICK DROIT → SCAN LA SCÈNE",
-        "progressLabel": "POV_SYNC"
+        "title": "Petit échauffement.",
+        "descDesktop": "SCANNE LA SCÈNE",
+        "descMobile": "JOY DROIT → SCANNE LA SCÈNE",
+        "progressLabel": "PROGRÈS"
       },
-      "cursorOverlayLabel": "CLIQUE SUR LA SCÈNE",
-      "cursorOverlaySub": "hors de la carte",
-      "stretchOverlayLabel": "SCAN LA SCÈNE",
-      "stretchOverlaySub": "bouge ta souris / trackpad"
+      "cursorOverlayLabel": "CLIQUE LA SCÈNE",
+      "cursorOverlaySub": "",
+      "stretchOverlayLabel": "SCANNE LA SCÈNE",
+      "stretchOverlaySub": ""
     },
     "move": {
       "badge": "CALIBRATE://MOVE",
-      "title": "Déplacement.",
+      "title": "Mouvement.",
       "descDesktop": "FLÈCHES ← ↑ ↓ → POUR BOUGER",
-      "descMobile": "JOYSTICK GAUCHE → BOUGER",
+      "descMobile": "JOY GAUCHE → BOUGER",
       "progressLabel": "MOTOR_LINK",
-      "holdArrowHint": "Maintiens une flèche ~1,2s"
+      "holdArrowHint": ""
     },
     "portals": {
       "badge": "PORTALS://ORBIT",
-      "title": "Repère les orbits roses — des portails.",
-      "desc": "Je t’en ping un. Après, à toi de jouer.",
-      "cta": "GOT IT",
+      "title": "Repère les orbes roses — ce sont des portails.",
+      "desc": "J’en ping un. Après, à toi.",
+      "cta": "OK",
       "arrowLabel": "ORBIT"
     },
     "hints": {
@@ -54,11 +54,12 @@
       "mouse": "SOURIS",
       "joyRight": "JOY DROIT",
       "joyLeft": "JOY GAUCHE",
-      "moveCamera": "BOUGE LA CAM",
+      "moveCamera": "",
       "toggleAnytime": "toggle anytime",
-      "useArrows": "UTILISE FLÈCHES",
-      "move": "bouger",
-      "seconds_2_3": "2–3s"
+      "useArrows": "",
+      "move": "move",
+      "seconds_2_3": ""
     }
   }
 }
+

@@ -1,12 +1,12 @@
 {
   "loader": {
-    "subLabel": "Włamuję się do Matrixa",
-    "eta": "ETA ~{{seconds}}s",
-    "calibrating": "Kalibruję portale… (już prawie 😇)"
+    "subLabel": "Włam do matriksa",
+    "eta": "~{{seconds}}s",
+    "calibrating": "Kalibracja portali… trzymaj się 😇"
   },
   "cityTutorial": {
     "common": {
-      "waiting": "Czekam…"
+      "waiting": ""
     },
     "boot": {
       "badge": "CITY://JACK-IN",
@@ -17,20 +17,20 @@
     "look": {
       "badge": "CALIBRATE://POV",
       "preCapture": {
-        "title": "Włącz kontrolę widoku (ON/OFF).",
-        "desc": "KLIK / TAP PAD NA SCENĘ",
-        "subLock": "Czekam na przejęcie…"
+        "title": "View ON/OFF",
+        "desc": "Kliknij w scenę, poza kartą.",
+        "subLock": ""
       },
       "captured": {
         "title": "Szybka rozgrzewka.",
         "descDesktop": "SKANUJ SCENĘ",
         "descMobile": "PRAWY JOY → SKANUJ SCENĘ",
-        "progressLabel": "POV_SYNC"
+        "progressLabel": "POSTĘP"
       },
-      "cursorOverlayLabel": "KLIKNIJ SCENĘ",
-      "cursorOverlaySub": "poza kartą",
+      "cursorOverlayLabel": "KLIKNIJ W SCENĘ",
+      "cursorOverlaySub": "",
       "stretchOverlayLabel": "SKANUJ SCENĘ",
-      "stretchOverlaySub": "rusz myszą / trackpadem"
+      "stretchOverlaySub": ""
     },
     "move": {
       "badge": "CALIBRATE://MOVE",
@@ -38,27 +38,27 @@
       "descDesktop": "STRZAŁKI ← ↑ ↓ → ABY IŚĆ",
       "descMobile": "LEWY JOY → RUCH",
       "progressLabel": "MOTOR_LINK",
-      "holdArrowHint": "Przytrzymaj strzałkę ~1,2s"
+      "holdArrowHint": ""
     },
     "portals": {
       "badge": "PORTALS://ORBIT",
       "title": "Wypatrz różowe orbity — to portale.",
-      "desc": "Zaznaczę jeden. Potem Twoja kolej.",
-      "cta": "GOT IT",
+      "desc": "Zpinguję jeden. Potem twoja kolej.",
+      "cta": "OK",
       "arrowLabel": "ORBIT"
     },
     "hints": {
-      "click": "KLIK",
+      "click": "CLICK",
       "tap": "TAP",
       "tapPad": "TAP PAD",
-      "mouse": "MYSZ",
-      "joyRight": "PRAWY JOY",
-      "joyLeft": "LEWY JOY",
-      "moveCamera": "RUSZ KAMERĄ",
-      "toggleAnytime": "przełączaj zawsze",
-      "useArrows": "UŻYJ STRZAŁEK",
-      "move": "ruch",
-      "seconds_2_3": "2–3s"
+      "mouse": "MOUSE",
+      "joyRight": "JOY RIGHT",
+      "joyLeft": "JOY LEFT",
+      "moveCamera": "",
+      "toggleAnytime": "toggle anytime",
+      "useArrows": "",
+      "move": "move",
+      "seconds_2_3": ""
     }
   }
 }

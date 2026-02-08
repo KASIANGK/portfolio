@@ -367,6 +367,8 @@
   opacity: 0.0;
   transition: opacity 180ms ease, filter 180ms ease;
   filter: saturate(1);
+
+  
 }
 
 .agDesktopStretch.isActive{ opacity: 1; }
@@ -396,9 +398,9 @@
   color: rgba(0,220,255,0.95);
   filter: drop-shadow(0 14px 26px rgba(0,0,0,0.45));
   animation: agScanPath 1.35s ease-in-out infinite;
-  /* animation: agScanPath 2.25s cubic-bezier(.22,.61,.36,1) infinite; */
   will-change: transform;
 }
+
 
 /* petit “ping” au bout du curseur */
 .agDesktopStretch__ping{
@@ -452,24 +454,21 @@
   }
 }
 
-/* trajectoire type “scan diagonal” + micro jitter */
-@keyframes agScanPath{
-  0%   { transform: translate(0,0) rotate(-2deg) scale(1); }
-  35%  { transform: translate(52vw, 10vh) rotate(1deg) scale(0.99); }
-  70%  { transform: translate(70vw, 40vh) rotate(0deg) scale(1.01); }
-  100% { transform: translate(0,0) rotate(-2deg) scale(1); }
+@keyframes agScanPath {
+  0%   { transform: translate(10vw,  10px) rotate(-10deg); }
+  25%  { transform: translate(20vw,  -16px) rotate(-6deg); }
+  25%  { transform: translate(30vw,  -26px) rotate(-6deg); }
+  50%  { transform: translate(50vw, 10px) rotate( 0deg); }
+  75%  { transform: translate(30vw,  -6px) rotate( 6deg); }
+  75%  { transform: translate(30vw,  -16px) rotate( 6deg); }
+  100% { transform: translate(10vw,  10px) rotate(10deg); }
 }
-/* @keyframes agScanPath{
-  0%   { transform: translate(0,0) rotate(-1.2deg) scale(1); }
-  28%  { transform: translate(38vw, 8vh) rotate(0.6deg) scale(0.995); }
-  62%  { transform: translate(62vw, 30vh) rotate(0.2deg) scale(1.005); }
-  100% { transform: translate(0,0) rotate(-1.2deg) scale(1); }
-} */
 
 @keyframes agPing{
   0%,100%{ transform: scale(0.85); opacity: 0.55; }
   55%    { transform: scale(1.25); opacity: 1; }
 }
+
 
 @media (prefers-reduced-motion: reduce){
   .agDesktopStretch__cursor,

@@ -19,8 +19,8 @@ import {
 const LS_KEY = "ag_city_tutorial_done_v1";
 
 // timings
-const LOOK_SECONDS = 2.4;
-const MOVE_SECONDS = 1.2;
+const LOOK_SECONDS = 1.2;
+const MOVE_SECONDS = 0.6;
 
 // thresholds
 const LOOK_MAG_THRESHOLD = 0.18;
@@ -40,24 +40,6 @@ const STEP = {
 function clamp01(v) {
   return Math.max(0, Math.min(1, v));
 }
-
-// function shouldShowGameNavToast() {
-//   try {
-//     return localStorage.getItem(LS_GAMENAV_TOAST_SEEN) !== "1";
-//   } catch {
-//     return false;
-//   }
-// }
-// function markGameNavToastSeen() {
-//   try {
-//     localStorage.setItem(LS_GAMENAV_TOAST_SEEN, "1");
-//   } catch {}
-// }
-// function resetGameNavToastSeen() {
-//   try {
-//     localStorage.removeItem(LS_GAMENAV_TOAST_SEEN);
-//   } catch {}
-// }
 
 export default function StepsHomeCity({
   enabled,
@@ -272,9 +254,6 @@ export default function StepsHomeCity({
       // close HUD immediately
       window.dispatchEvent(new Event("ag:closeGameHud"));
 
-      // allow GameNav toast to show again
-      // resetGameNavToastSeen();
-
       // reset all local tutorial states
       openedGameHudRef.current = false;
 
@@ -484,7 +463,7 @@ export default function StepsHomeCity({
         }
 
         // ✅ hide arrow overlay as soon as user starts moving
-        if (active && !hideMoveOverlay) setHideMoveOverlay(true);
+        // if (active && !hideMoveOverlay) setHideMoveOverlay(true);
 
         setMoveProg((p) => {
           const next = clamp01(p + (active ? dt / MOVE_SECONDS : -dt * 0.7));
@@ -660,12 +639,6 @@ export default function StepsHomeCity({
     if (step === STEP.LOOK && lookPhase === "captured") {
       return (
         <HintRow>
-          <Keycap label={isMobile ? t("cityTutorial.hints.joyRight") : t("cityTutorial.hints.mouse")} active />
-          <Keycap label={t("cityTutorial.hints.moveCamera")} sub={t("cityTutorial.hints.seconds_2_3")} active />
-          <Keycap
-            label={isMobile ? t("cityTutorial.hints.tap") : t("cityTutorial.hints.click")}
-            sub={t("cityTutorial.hints.toggleAnytime")}
-          />
         </HintRow>
       );
     }
@@ -673,11 +646,6 @@ export default function StepsHomeCity({
     if (step === STEP.MOVE) {
       return (
         <HintRow>
-          {isMobile ? (
-            <Keycap label={t("cityTutorial.hints.joyLeft")} active />
-          ) : (
-            <Keycap label={t("cityTutorial.hints.useArrows")} sub={t("cityTutorial.hints.move")} active />
-          )}
         </HintRow>
       );
     }
@@ -756,7 +724,7 @@ export default function StepsHomeCity({
 
           {/* ✅ Step 3: ArrowCluster INSIDE card — disappears as soon as step3Confirmed */}
           {step === STEP.MOVE && !isMobile && !step3Confirmed && (
-            <div className={`agCitySteps__inlineArrows agMoveBlue ${hideMoveOverlay ? "isHidden" : ""}`}>
+            <div className="agCitySteps__inlineArrows agMoveBlue">
               <ArrowCluster active pressedSet={pressedKeys} demoPulse />
               <div className="agCitySteps__inlineArrowsHint">
                 {t("cityTutorial.move.holdArrowHint")}

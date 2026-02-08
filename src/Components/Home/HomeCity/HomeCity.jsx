@@ -33,9 +33,46 @@ const NAVHELP_SEEN_KEY = "ag_navhelp_hint_seen_v1";
 
 const FullScreenLoader = lazy(() => import("./parts/FullScreenLoader"));
 
+// function OrbitHintProjector({ enabled, world, onScreen }) {
+//   const { camera, size } = useThree();
+//   const lastRef = useRef({ x: -99999, y: -99999, onScreen: false });
+
+//   useFrame(() => {
+//     if (!enabled || !world) return;
+
+//     const v = new THREE.Vector3(world.x, world.y, world.z);
+//     v.project(camera);
+
+//     const x = (v.x * 0.5 + 0.5) * size.width;
+//     const y = (-v.y * 0.5 + 0.5) * size.height;
+
+//     const on =
+//       v.z > -1 &&
+//       v.z < 1 &&
+//       x >= 0 &&
+//       x <= size.width &&
+//       y >= 0 &&
+//       y <= size.height;
+
+//     const last = lastRef.current;
+
+//     // ✅ seuil anti-spam (évite 60 updates/sec)
+//     const movedEnough = Math.abs(last.x - x) > 1.25 || Math.abs(last.y - y) > 1.25;
+//     const toggled = last.onScreen !== on;
+
+//     if (!movedEnough && !toggled) return;
+
+//     lastRef.current = { x, y, onScreen: on };
+
+//     // ✅ setState mais rarement
+//     onScreen?.({ x, y, onScreen: on });
+//   });
+
+//   return null;
+// }
 function OrbitHintProjector({ enabled, world, onScreen }) {
   const { camera, size } = useThree();
-  const lastRef = useRef({ x: -99999, y: -99999, onScreen: false });
+  const lastRef = useRef({ x: null, y: null, onScreen: null, angle: null });
 
   useFrame(() => {
     if (!enabled || !world) return;
@@ -43,29 +80,44 @@ function OrbitHintProjector({ enabled, world, onScreen }) {
     const v = new THREE.Vector3(world.x, world.y, world.z);
     v.project(camera);
 
-    const x = (v.x * 0.5 + 0.5) * size.width;
-    const y = (-v.y * 0.5 + 0.5) * size.height;
+    const rawX = (v.x * 0.5 + 0.5) * size.width;
+    const rawY = (-v.y * 0.5 + 0.5) * size.height;
 
     const on =
       v.z > -1 &&
       v.z < 1 &&
-      x >= 0 &&
-      x <= size.width &&
-      y >= 0 &&
-      y <= size.height;
+      rawX >= 0 &&
+      rawX <= size.width &&
+      rawY >= 0 &&
+      rawY <= size.height;
+
+    // ✅ clamp aux bords (edge indicator)
+    const M = 22; // marge en px
+    const x = Math.max(M, Math.min(size.width - M, rawX));
+    const y = Math.max(M, Math.min(size.height - M, rawY));
+
+    // ✅ angle depuis le centre vers la cible (pour orienter la flèche)
+    const cx = size.width * 0.5;
+    const cy = size.height * 0.5;
+    const angle = Math.atan2(rawY - cy, rawX - cx); // radians
 
     const last = lastRef.current;
 
-    // ✅ seuil anti-spam (évite 60 updates/sec)
-    const movedEnough = Math.abs(last.x - x) > 1.25 || Math.abs(last.y - y) > 1.25;
+    const movedEnough =
+      last.x === null ||
+      Math.abs(last.x - x) > 1.25 ||
+      Math.abs(last.y - y) > 1.25;
+
     const toggled = last.onScreen !== on;
 
-    if (!movedEnough && !toggled) return;
+    // angle change un peu moins strict (sinon spam)
+    const angleChanged = last.angle === null || Math.abs(last.angle - angle) > 0.02;
 
-    lastRef.current = { x, y, onScreen: on };
+    if (!movedEnough && !toggled && !angleChanged) return;
 
-    // ✅ setState mais rarement
-    onScreen?.({ x, y, onScreen: on });
+    lastRef.current = { x, y, onScreen: on, angle };
+
+    onScreen?.({ x, y, onScreen: on, angle });
   });
 
   return null;

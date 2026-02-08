@@ -1,36 +1,36 @@
 {
   "loader": {
     "subLabel": "Breaking into the matrix",
-    "eta": "ETA ~{{seconds}}s",
+    "eta": "~{{seconds}}s",
     "calibrating": "Calibrating the portals… hang tight 😇"
   },
   "cityTutorial": {
     "common": {
-      "waiting": "Waiting…"
+      "waiting": ""
     },
     "boot": {
       "badge": "CITY://JACK-IN",
       "title": "Welcome to the matrix.",
-      "desc": "Don’t worry — it’s legal in here.",
+      "desc": "Don’t worry - it’s legal in here.",
       "cta": "JACK IN"
     },
     "look": {
       "badge": "CALIBRATE://POV",
       "preCapture": {
-        "title": "Enable view control (ON/OFF).",
-        "desc": "CLICK / TAP PAD ON THE SCENE",
-        "subLock": "Waiting for capture…"
+        "title": "View ON/OFF",
+        "desc": "Click the scene, outside the card.",
+        "subLock": ""
       },
       "captured": {
         "title": "Quick warm-up.",
-        "descDesktop": "SCAN THE SCENE",
-        "descMobile": "RIGHT JOY → SCAN THE SCENE",
-        "progressLabel": "POV_SYNC"
+        "descDesktop": "",
+        "descMobile": "",
+        "progressLabel": "PROGRESS"
       },
       "cursorOverlayLabel": "CLICK THE SCENE",
-      "cursorOverlaySub": "outside the card",
+      "cursorOverlaySub": "",
       "stretchOverlayLabel": "SCAN THE SCENE",
-      "stretchOverlaySub": "move your mouse / trackpad"
+      "stretchOverlaySub": ""
     },
     "move": {
       "badge": "CALIBRATE://MOVE",
@@ -38,7 +38,7 @@
       "descDesktop": "ARROWS ← ↑ ↓ → TO MOVE",
       "descMobile": "LEFT JOY → MOVE",
       "progressLabel": "MOTOR_LINK",
-      "holdArrowHint": "Hold any arrow for ~1.2s"
+      "holdArrowHint": ""
     },
     "portals": {
       "badge": "PORTALS://ORBIT",
@@ -54,11 +54,11 @@
       "mouse": "MOUSE",
       "joyRight": "JOY RIGHT",
       "joyLeft": "JOY LEFT",
-      "moveCamera": "MOVE CAMERA",
+      "moveCamera": "",
       "toggleAnytime": "toggle anytime",
-      "useArrows": "USE ARROWS",
+      "useArrows": "",
       "move": "move",
-      "seconds_2_3": "2–3s"
+      "seconds_2_3": ""
     }
   }
 }
