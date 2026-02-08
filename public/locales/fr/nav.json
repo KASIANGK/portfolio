@@ -50,5 +50,9 @@
       "escValue": "Libérer le contrôle de tête",
       "confirmValue": "Confirmer / Continuer"
     }
+  },
+  "navGameHelp": {
+    "title": "Besoin d’un repère ?",
+    "content": "La navigation reste accessible à tout moment."
   }
 }

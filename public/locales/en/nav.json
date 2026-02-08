@@ -50,5 +50,9 @@
       "escValue": "Release head control",
       "confirmValue": "Confirm / Continue"
     }
+  },
+  "navGameHelp": {
+    "title": "Need a reference point?",
+    "content": "Navigation stays available at any time."
   }
 }

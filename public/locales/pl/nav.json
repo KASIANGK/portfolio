@@ -50,6 +50,10 @@
       "escValue": "Zwolnij kontrolę głowy",
       "confirmValue": "Potwierdź / Kontynuuj"
     }
+  },
+  "navGameHelp": {
+    "title": "Potrzebujesz punktu odniesienia?",
+    "content": "Nawigacja jest dostępna w każdej chwili."
   }
 }
 

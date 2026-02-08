@@ -24,10 +24,7 @@ import CityModel from "../City/CityModel";
 import CityMarkers from "../City/CityMarkers";
 import CityNightLights from "../City/CityNightLights";
 import Joystick from "../Player/Joystick";
-// import GameNavToast from "./parts/GameNavToast";
-
 import StepsHomeCity from "./parts/StepsHomeCity";
-// import ResetStepsHomeCity from "./parts/ResetStepsHomeCity";
 import NavHelpHint from "./parts/NavHelpHint";
 
 
@@ -622,26 +619,6 @@ export default function HomeCity() {
     });
   }, [requestedEnter, gateOpen, tutorialDone]);
 
-  // useEffect(() => {
-  //   const LS_GAMENAV_TOAST_SEEN = "ag_gamenav_toast_seen_v1";
-  
-  //   const onConfirmed = () => {
-  //     let seen = false;
-  //     try { seen = localStorage.getItem(LS_GAMENAV_TOAST_SEEN) === "1"; } catch {}
-  //     if (seen) return;
-  
-  //     requestAnimationFrame(() => {
-  //       requestAnimationFrame(() => {
-  //         window.dispatchEvent(new Event("ag:showGameNavToast"));
-  //         try { localStorage.setItem(LS_GAMENAV_TOAST_SEEN, "1"); } catch {}
-  //       });
-  //     });
-  //   };
-  
-  //   window.addEventListener("ag:cityTutorialConfirmed", onConfirmed);
-  //   return () => window.removeEventListener("ag:cityTutorialConfirmed", onConfirmed);
-  // }, []);
-  
   return (
     <div className={rootClass}>
       {/* Loader / Tutorial (layers hautes) */}
@@ -803,12 +780,6 @@ export default function HomeCity() {
         </Canvas>
       )}
 
-      {/* {requestedEnter && (
-        <GameNavToast show={requestedEnter && gateOpen && tutorialDone} />
-      )} */}
-      {/* always mounted while in city, it will show only on event */}
-      {/* <GameNavToast /> */}
-
       <NavHelpHint
         open={navHelpOpen}
         onClose={() => setNavHelpOpen(false)}
@@ -826,9 +797,7 @@ export default function HomeCity() {
           title="Home"
         >
           <img className="agCityHomeBtn__svg" src={homeSvg} alt="" aria-hidden="true" />
-
         </button>
-
       )}
 
       {/* Joysticks mobile (au-dessus) */}
@@ -863,10 +832,6 @@ export default function HomeCity() {
           </div>
         </>
       )}
-
-      {/* {import.meta.env.DEV && requestedEnter && (
-        <ResetStepsHomeCity onResetSteps={resetStepsHomeCity} />
-      )} */}
     </div>
   );
 }

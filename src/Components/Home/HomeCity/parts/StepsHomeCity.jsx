@@ -18,9 +18,6 @@ import {
 
 const LS_KEY = "ag_city_tutorial_done_v1";
 
-// ✅ GameNav toast: show only first time, return on reset
-// const LS_GAMENAV_TOAST_SEEN = "ag_gamenav_toast_seen_v1";
-
 // timings
 const LOOK_SECONDS = 2.4;
 const MOVE_SECONDS = 1.2;

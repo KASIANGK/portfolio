@@ -49,6 +49,10 @@
       "escValue": "Hoofdcontrole loslaten",
       "confirmValue": "Bevestigen / Doorgaan"
     }
+  },
+  "navGameHelp": {
+    "title": "Even een houvast nodig?",
+    "content": "De navigatie blijft altijd beschikbaar."
   }
 }
 
