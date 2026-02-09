@@ -56,6 +56,7 @@ export default function CityModel({
 
   // ✅ colliders trimesh (doit être dans <Physics />)
   scene.updateWorldMatrix(true, true);
+  
 
   return (
     <RigidBody type="fixed" colliders={false}>

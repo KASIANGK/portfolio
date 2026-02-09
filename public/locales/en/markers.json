@@ -1,38 +1,173 @@
 {
-    "portalBadge": "Portal",
-    "ctaHint": "(SPACE / ENTER)",
-    "footerHint": "Approach → popup • Click orb → pin • ESC → unlock mouse",
-    "markers": {
-      "TRIGGER_PORTFOLIO": {
-        "title": "Portfolio Vault",
-        "kicker": "Selected works",
-        "description": "Web + 3D + prototypes. Short, clean, impact-driven.",
-        "cta": "Enter Portfolio"
-      },
-      "TRIGGER_SKILLS": {
-        "title": "Skill Tree",
-        "kicker": "Stack & superpowers",
-        "description": "Tools I master + the ones I’m upgrading. Spoiler: I ship fast.",
-        "cta": "Open Skills"
-      },
-      "TRIGGER_ABOUT": {
-        "title": "About Kasia",
-        "kicker": "The builder behind it",
-        "description": "Hybrid profile: fullstack dev + 3D + product vision. Yes, it’s intentional.",
-        "cta": "Meet Me"
-      },
-      "TRIGGER_VISION": {
-        "title": "Vision Room",
-        "kicker": "Why this exists",
-        "description": "Angels Gang: evolving fashion + tech + experience. A brand, not just a product.",
-        "cta": "See Vision"
-      },
-      "TRIGGER_CONTACT": {
-        "title": "Contact Portal",
-        "kicker": "Let’s collaborate",
-        "description": "If you want someone who executes, iterates, and delivers — hi 👋",
-        "cta": "Contact"
+  "nothing": { "nic": "NOTHING" },
+  "portalBadge": "Portal",
+  "ctaHint": "(SPACE / ENTER)",
+  "footerHint": "Walk up → popup • Click orb → pin • ESC → unlock mouse",
+
+  "drinks": {
+    "ctaPrimary": "I’m taking it",
+    "ctaLetsGo": "Let’s go",
+    "ctaAgain": "Again",
+    "ctaClose": "Close",
+    "labelCity": "CITY DRINKS",
+    "labelFuture": "FUTURE JUICE",
+    "labelSass": "SASS MODE",
+    "hint": "Click to roll",
+
+    "city": {
+      "image": "/assets/homeCity/city_drinks.png",
+      "items": [
+        { "name": "Soft Reset", "line": "Tastes like a break." },
+        { "name": "Low Voltage", "line": "Quiet runs best." },
+        { "name": "Street Juice", "line": "City in pause mode." },
+        { "name": "Stable Mood", "line": "No rush." },
+        { "name": "Night Hydrate", "line": "Like night light." },
+        { "name": "Clean Loop", "line": "No pretending." },
+        { "name": "Background Refresh", "line": "Suspiciously normal." },
+        { "name": "Quiet Boost", "line": "Exactly what you need." },
+        { "name": "No Drama", "line": "Easy." },
+        { "name": "Soft Focus", "line": "Cool. Steady." }
+      ]
+    },
+
+    "future": {
+      "image": "/assets/homeCity/future_juice.png",
+      "items": [
+        { "name": "Neon Intuition", "prediction": "What looks chaotic now will sort itself out." },
+        { "name": "Next Build", "prediction": "The first version was enough." },
+        { "name": "Prediction Shot", "prediction": "You don’t have to speed this up." },
+        { "name": "Glitch Vision", "prediction": "Not a bug — a signal." },
+        { "name": "Signal Sip", "prediction": "Someone already sees it. They’re just not saying it yet." },
+        { "name": "Patch Incoming", "prediction": "That idea will come back. Stronger." },
+        { "name": "Runtime Oracle", "prediction": "Do less. It’s enough." },
+        { "name": "Quiet Prophecy", "prediction": "Trust what you’re building quietly." },
+        { "name": "Version Bloom", "prediction": "Not everything needs a label." },
+        { "name": "Lagless Luck", "prediction": "You’re closer than you think." }
+      ]
+    },
+
+    "sass": {
+      "items": [
+        { "name": "Side-Eye Soda", "line": "…seriously?" },
+        { "name": "Machine Mood", "line": "OK." },
+        { "name": "Passive Aggressive", "line": "That was… a choice." },
+        { "name": "Dry Response", "line": "Don’t ask." },
+        { "name": "Silent Judgement", "line": "You again." },
+        { "name": "Bare Minimum", "line": "Fine. Next." },
+        { "name": "No Comment", "line": "No opinion." },
+        { "name": "OK Whatever", "line": "Yeah." },
+        { "name": "System Tired", "line": "System logged it." },
+        { "name": "404 Drink", "line": "No." }
+      ]
+    }
+  },
+
+  "markers": {
+    "TRIGGER_ABOUT": {
+      "title": "Kasia.exe",
+      "kicker": "Control panel",
+      "description": "Dev, 3D and design in one body. I like clear systems and bold ideas.",
+      "cta": "Meet me"
+    },
+
+    "TRIGGER_PROJECT": {
+      "title": "Projects Zone",
+      "kicker": "Builds that live",
+      "description": "Code + design + a lot of iteration. See what I actually ship.",
+      "cta": "Enter"
+    },
+
+    "TRIGGER_PORTFOLIO": {
+      "title": "Contact Link",
+      "kicker": "Ping me",
+      "description": "Got a project, a mission, or chaos to fix? Send a signal — I’ll ship the iteration.",
+      "cta": "Send message"
+    },
+
+    "TRIGGER_VISION_HOME": {
+      "title": "Back to base",
+      "kicker": "Home, sweet home",
+      "description": "Reset to the lobby. No drama — just re-entry.",
+      "cta": "Return"
+    },
+
+    "TRIGGER_GLOW": {
+      "label": "GLOW://SCAN",
+      "items": {
+        "TRIGGER_PARKMETRE": {
+          "title": "Parking Meter: Final Boss",
+          "kicker": "Real-life paywall",
+          "description": "Here even oxygen feels subscription-based. Relax — I’m still free tier… for now.",
+          "cta": "Alright then",
+          "description2": "Free tier: active. Parking meter: offended."
+        },
+        "TRIGGER_TRASH": {
+          "title": "Trash: Support 24/7",
+          "kicker": "Ticket handling",
+          "description": "Throw a problem in — it’ll come back as a production bug. Circle of life.",
+          "cta": "Close ticket",
+          "description2": "Status: RESOLVED ✅ (lie)."
+        },
+        "TRIGGER_CAR": {
+          "title": "Car",
+          "kicker": "Parking level: expert",
+          "description": "Parked perfectly. Since 2019. Record still unbeaten.",
+          "cta": "Respect",
+          "description2": "Not a car — a monument to stability. Props sent. Render approved."
+        },
+
+        "TRIGGER_DRINK_COFFEE": {
+          "title": "Coffee",
+          "kicker": "Brain fuel",
+          "description": "Won’t solve problems. But gives +10 focus.",
+          "cta": "Drink",
+          "description2": "Coffee consumed. +10 focus, -2 patience."
+        },
+
+        "TRIGGER_DRINK_DISTRIBUTOR": {
+          "title": "Vending Machine",
+          "kicker": "Surprise mode",
+          "description": "You press. Something happens. The machine has moods.",
+          "cta": "I’m taking it"
+        }
+      }
+    },
+
+    "TRIGGER_FUN": {
+      "label": "FUN://WTF",
+      "items": {
+        "TRIGGER_BUS": {
+          "title": "Bus to Nowhere",
+          "kicker": "Line: ???",
+          "description": "It always arrives… once you stop waiting. Relatable.",
+          "cta": "Keep waiting",
+          "description2": "We did warn you it’s not coming…"
+        },
+
+        "TRIGGER_STAIRS": {
+          "title": "Premium Stairs",
+          "kicker": "DLC required",
+          "description": "They exist. They lead somewhere. Not today.",
+          "cta": "Understood",
+          "description2": "Stairs work. The storyline doesn’t."
+        },
+
+        "TRIGGER_FIRE": {
+          "title": "Campfire",
+          "kicker": "Chill zone",
+          "description": "Fire: on. Chair: present. Missing: marshmallows.",
+          "cta": "Sit",
+          "description2": "Yes, this is therapy. For free."
+        },
+
+        "TRIGGER_NOTHING": {
+          "title": "Fixed point",
+          "kicker": "No pressure",
+          "description": "Nothing will happen here. And that’s okay.",
+          "cta": "Next",
+          "description2": "There is literally NOTHING here. 💀"
+        }
       }
     }
   }
-  
+}

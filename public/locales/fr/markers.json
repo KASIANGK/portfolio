@@ -1,38 +1,173 @@
 {
-    "portalBadge": "Portail",
-    "ctaHint": "(ESPACE / ENTRÉE)",
-    "footerHint": "Approche → popup • Clique l’orbe → épingle • ESC → libère la souris",
-    "markers": {
-      "TRIGGER_PORTFOLIO": {
-        "title": "Coffre Portfolio",
-        "kicker": "Projets sélectionnés",
-        "description": "Web + 3D + prototypes. Court, propre, orienté impact.",
-        "cta": "Entrer"
-      },
-      "TRIGGER_SKILLS": {
-        "title": "Arbre de skills",
-        "kicker": "Stack & super-pouvoirs",
-        "description": "Les outils que je maîtrise + ceux que j’upgrade. Spoiler : je ship vite.",
-        "cta": "Ouvrir"
-      },
-      "TRIGGER_ABOUT": {
-        "title": "À propos de Kasia",
-        "kicker": "La builder derrière tout ça",
-        "description": "Profil hybride : dev fullstack + 3D + vision produit. Oui, c’est volontaire.",
-        "cta": "Me découvrir"
-      },
-      "TRIGGER_VISION": {
-        "title": "Salle Vision",
-        "kicker": "Pourquoi ça existe",
-        "description": "Angels Gang : mode évolutive + tech + expérience. Une marque, pas juste un produit.",
-        "cta": "Voir la vision"
-      },
-      "TRIGGER_CONTACT": {
-        "title": "Portail Contact",
-        "kicker": "On collab ?",
-        "description": "Si tu veux quelqu’un qui exécute, itère et livre — tu viens de me trouver.",
-        "cta": "Contacter"
+  "nothing": { "nic": "RIEN" },
+  "portalBadge": "Portail",
+  "ctaHint": "(ESPACE / ENTRÉE)",
+  "footerHint": "Approche → popup • Clique l’orb → épingle • ESC → libère la souris",
+
+  "drinks": {
+    "ctaPrimary": "Je prends",
+    "ctaLetsGo": "Let’s go",
+    "ctaAgain": "Encore",
+    "ctaClose": "Fermer",
+    "labelCity": "CITY DRINKS",
+    "labelFuture": "FUTURE JUICE",
+    "labelSass": "SASS MODE",
+    "hint": "Clique pour tirer au sort",
+
+    "city": {
+      "image": "/assets/homeCity/city_drinks.png",
+      "items": [
+        { "name": "Soft Reset", "line": "Ça a le goût d’une pause." },
+        { "name": "Low Voltage", "line": "Le calme marche mieux." },
+        { "name": "Street Juice", "line": "Ville en mode pause." },
+        { "name": "Stable Mood", "line": "Sans se presser." },
+        { "name": "Night Hydrate", "line": "Comme une lumière de nuit." },
+        { "name": "Clean Loop", "line": "Rien ne fait semblant." },
+        { "name": "Background Refresh", "line": "Étonnamment normal." },
+        { "name": "Quiet Boost", "line": "Exactement ce qu’il faut." },
+        { "name": "No Drama", "line": "Tranquille." },
+        { "name": "Soft Focus", "line": "Froid. Stable." }
+      ]
+    },
+
+    "future": {
+      "image": "/assets/homeCity/future_juice.png",
+      "items": [
+        { "name": "Neon Intuition", "prediction": "Ce qui paraît chaotique maintenant va se mettre en place tout seul." },
+        { "name": "Next Build", "prediction": "La première version était suffisante." },
+        { "name": "Prediction Shot", "prediction": "Tu n’as pas besoin d’accélérer." },
+        { "name": "Glitch Vision", "prediction": "Ce n’est pas un bug — c’est un signal." },
+        { "name": "Signal Sip", "prediction": "Quelqu’un le voit déjà. Il ne le dit pas encore." },
+        { "name": "Patch Incoming", "prediction": "Cette idée reviendra. Plus forte." },
+        { "name": "Runtime Oracle", "prediction": "Fais moins. C’est suffisant." },
+        { "name": "Quiet Prophecy", "prediction": "Fais confiance à ce que tu construis en silence." },
+        { "name": "Version Bloom", "prediction": "Tout n’a pas besoin d’un nom." },
+        { "name": "Lagless Luck", "prediction": "Tu es plus proche que tu ne le penses." }
+      ]
+    },
+
+    "sass": {
+      "items": [
+        { "name": "Side-Eye Soda", "line": "…sérieusement ?" },
+        { "name": "Machine Mood", "line": "OK." },
+        { "name": "Passive Aggressive", "line": "C’était… un choix." },
+        { "name": "Dry Response", "line": "Ne demande pas." },
+        { "name": "Silent Judgement", "line": "Toi, encore." },
+        { "name": "Bare Minimum", "line": "Bon. Suivant." },
+        { "name": "No Comment", "line": "Sans commentaire." },
+        { "name": "OK Whatever", "line": "Ouais." },
+        { "name": "System Tired", "line": "Le système a noté." },
+        { "name": "404 Drink", "line": "Non." }
+      ]
+    }
+  },
+
+  "markers": {
+    "TRIGGER_ABOUT": {
+      "title": "Kasia.exe",
+      "kicker": "Panneau de contrôle",
+      "description": "Dev, 3D et design dans un seul corps. J’aime les systèmes clairs et les idées qui osent.",
+      "cta": "Me découvrir"
+    },
+
+    "TRIGGER_PROJECT": {
+      "title": "Zone Projets",
+      "kicker": "Des builds qui vivent",
+      "description": "Code + design + beaucoup d’itération. Regarde ce que je livre vraiment.",
+      "cta": "Entrer"
+    },
+
+    "TRIGGER_PORTFOLIO": {
+      "title": "Lien Contact",
+      "kicker": "Ping-moi",
+      "description": "Un projet, une mission ou du chaos à dompter ? Envoie un signal — je livre l’itération.",
+      "cta": "Envoyer"
+    },
+
+    "TRIGGER_VISION_HOME": {
+      "title": "Retour à la base",
+      "kicker": "Home, sweet home",
+      "description": "Reset vers le lobby. Pas de drama — juste un re-entry.",
+      "cta": "Revenir"
+    },
+
+    "TRIGGER_GLOW": {
+      "label": "GLOW://SCAN",
+      "items": {
+        "TRIGGER_PARKMETRE": {
+          "title": "Parcmètre : Final Boss",
+          "kicker": "Paywall IRL",
+          "description": "Ici même l’air est sur abonnement. T’inquiète — je suis encore free tier… pour l’instant.",
+          "cta": "Bon, d’accord",
+          "description2": "Free tier : actif. Parcmètre : vexé."
+        },
+        "TRIGGER_TRASH": {
+          "title": "Poubelle : Support 24/7",
+          "kicker": "Gestion des tickets",
+          "description": "Jette un problème ici — il reviendra en bug de prod. La magie du recyclage.",
+          "cta": "Fermer ticket",
+          "description2": "Statut : RÉSOLU ✅ (mensonge)."
+        },
+        "TRIGGER_CAR": {
+          "title": "Voiture",
+          "kicker": "Parking level: expert",
+          "description": "Garée parfaitement. Depuis 2019. Record toujours intact.",
+          "cta": "Respect",
+          "description2": "Ce n’est pas une voiture — c’est un monument à la stabilité. Propsy envoyés. Render validé."
+        },
+
+        "TRIGGER_DRINK_COFFEE": {
+          "title": "Café",
+          "kicker": "Carburant du cerveau",
+          "description": "Ne règle pas les problèmes. Mais donne +10 en focus.",
+          "cta": "Boire",
+          "description2": "Café consommé. +10 focus, -2 patience."
+        },
+
+        "TRIGGER_DRINK_DISTRIBUTOR": {
+          "title": "Distributeur",
+          "kicker": "Surprise mode",
+          "description": "Tu appuies. Quelque chose arrive. La machine a ses humeurs.",
+          "cta": "Je prends"
+        }
+      }
+    },
+
+    "TRIGGER_FUN": {
+      "label": "FUN://WTF",
+      "items": {
+        "TRIGGER_BUS": {
+          "title": "Bus vers nulle part",
+          "kicker": "Ligne : ???",
+          "description": "Il arrive toujours… quand tu arrêtes d’attendre. Relatable.",
+          "cta": "J’attends",
+          "description2": "On t’avait dit qu’il ne viendrait pas…"
+        },
+
+        "TRIGGER_STAIRS": {
+          "title": "Escaliers Premium",
+          "kicker": "DLC requis",
+          "description": "Ils existent. Ils mènent quelque part. Pas aujourd’hui.",
+          "cta": "Je vois",
+          "description2": "Les escaliers marchent. Le scénario, non."
+        },
+
+        "TRIGGER_FIRE": {
+          "title": "Feu de camp",
+          "kicker": "Chill zone",
+          "description": "Y’a le feu. Y’a la chaise. Il manque juste des marshmallows.",
+          "cta": "Je m’assois",
+          "description2": "Oui, c’est de la thérapie. Gratuite."
+        },
+
+        "TRIGGER_NOTHING": {
+          "title": "Point fixe",
+          "kicker": "Sans pression",
+          "description": "Rien ne va se passer ici. Et c’est très bien comme ça.",
+          "cta": "Suivant",
+          "description2": "Ici, il n’y a vraiment RIEN. 💀"
+        }
       }
     }
   }
-  
+}

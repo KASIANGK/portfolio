@@ -14,7 +14,7 @@ import * as THREE from "three";
 import { Physics, RigidBody, CuboidCollider } from "@react-three/rapier";
 import { EffectComposer, Bloom, Vignette, SMAA } from "@react-three/postprocessing";
 import { useTranslation } from "react-i18next";
-import homeSvg from "../../../../public/assets/icons/home.svg";
+import homeSvg from "/assets/homeCity/icons/home.svg";
 
 import "./HomeCity.css";
 
@@ -33,46 +33,9 @@ const NAVHELP_SEEN_KEY = "ag_navhelp_hint_seen_v1";
 
 const FullScreenLoader = lazy(() => import("./parts/FullScreenLoader"));
 
-// function OrbitHintProjector({ enabled, world, onScreen }) {
-//   const { camera, size } = useThree();
-//   const lastRef = useRef({ x: -99999, y: -99999, onScreen: false });
-
-//   useFrame(() => {
-//     if (!enabled || !world) return;
-
-//     const v = new THREE.Vector3(world.x, world.y, world.z);
-//     v.project(camera);
-
-//     const x = (v.x * 0.5 + 0.5) * size.width;
-//     const y = (-v.y * 0.5 + 0.5) * size.height;
-
-//     const on =
-//       v.z > -1 &&
-//       v.z < 1 &&
-//       x >= 0 &&
-//       x <= size.width &&
-//       y >= 0 &&
-//       y <= size.height;
-
-//     const last = lastRef.current;
-
-//     // ✅ seuil anti-spam (évite 60 updates/sec)
-//     const movedEnough = Math.abs(last.x - x) > 1.25 || Math.abs(last.y - y) > 1.25;
-//     const toggled = last.onScreen !== on;
-
-//     if (!movedEnough && !toggled) return;
-
-//     lastRef.current = { x, y, onScreen: on };
-
-//     // ✅ setState mais rarement
-//     onScreen?.({ x, y, onScreen: on });
-//   });
-
-//   return null;
-// }
 function OrbitHintProjector({ enabled, world, onScreen }) {
   const { camera, size } = useThree();
-  const lastRef = useRef({ x: null, y: null, onScreen: null, angle: null });
+  const lastRef = useRef({ x: -99999, y: -99999, onScreen: false });
 
   useFrame(() => {
     if (!enabled || !world) return;
@@ -80,44 +43,29 @@ function OrbitHintProjector({ enabled, world, onScreen }) {
     const v = new THREE.Vector3(world.x, world.y, world.z);
     v.project(camera);
 
-    const rawX = (v.x * 0.5 + 0.5) * size.width;
-    const rawY = (-v.y * 0.5 + 0.5) * size.height;
+    const x = (v.x * 0.5 + 0.5) * size.width;
+    const y = (-v.y * 0.5 + 0.5) * size.height;
 
     const on =
       v.z > -1 &&
       v.z < 1 &&
-      rawX >= 0 &&
-      rawX <= size.width &&
-      rawY >= 0 &&
-      rawY <= size.height;
-
-    // ✅ clamp aux bords (edge indicator)
-    const M = 22; // marge en px
-    const x = Math.max(M, Math.min(size.width - M, rawX));
-    const y = Math.max(M, Math.min(size.height - M, rawY));
-
-    // ✅ angle depuis le centre vers la cible (pour orienter la flèche)
-    const cx = size.width * 0.5;
-    const cy = size.height * 0.5;
-    const angle = Math.atan2(rawY - cy, rawX - cx); // radians
+      x >= 0 &&
+      x <= size.width &&
+      y >= 0 &&
+      y <= size.height;
 
     const last = lastRef.current;
 
-    const movedEnough =
-      last.x === null ||
-      Math.abs(last.x - x) > 1.25 ||
-      Math.abs(last.y - y) > 1.25;
-
+    // ✅ seuil anti-spam (évite 60 updates/sec)
+    const movedEnough = Math.abs(last.x - x) > 1.25 || Math.abs(last.y - y) > 1.25;
     const toggled = last.onScreen !== on;
 
-    // angle change un peu moins strict (sinon spam)
-    const angleChanged = last.angle === null || Math.abs(last.angle - angle) > 0.02;
+    if (!movedEnough && !toggled) return;
 
-    if (!movedEnough && !toggled && !angleChanged) return;
+    lastRef.current = { x, y, onScreen: on };
 
-    lastRef.current = { x, y, onScreen: on, angle };
-
-    onScreen?.({ x, y, onScreen: on, angle });
+    // ✅ setState mais rarement
+    onScreen?.({ x, y, onScreen: on });
   });
 
   return null;
@@ -153,9 +101,7 @@ export default function HomeCity() {
     try {
       if (document.pointerLockElement) document.exitPointerLock?.();
     } catch {}
-  
-    // optionnel: tu peux laisser le state, mais je mets replace pour éviter back bizarre
-    navigate("/", { replace: false, state: { goHomeStep: 2 } });
+      navigate("/", { replace: false, state: { goHomeStep: 2 } });
   }, [navigate]);
   
   const hasSeenNavHelp = useCallback(() => {
@@ -338,28 +284,6 @@ export default function HomeCity() {
       return next;
     });
   }, [uiIntro, lockLook, isMobile, requestPointerLock]);
-
-
-  const resetStepsHomeCity = useCallback(() => {
-    // 0) ferme le toast tout de suite (avant navigation)
-    openedGameHudOnceRef.current = false;
-    setTutorialDone(false);        // ✅ coupe show du NavHUD immédiatement
-    setGateOpen(false);            // optionnel mais “hard stop”
-    setOrbitHintScreen(null);      // optionnel: clean
-    resetNavHelpSeen();
-    setNavHelpOpen(false);
-
-    // 1) supprime la trace "tutorial done"
-    try {
-      localStorage.removeItem(TUTO_KEY);
-    } catch {}
-    window.dispatchEvent(new Event("ag:resetHomeCityTutorial"));
-
-    // 2) renvoie à Home avec flags
-    navigate("/", { replace: true, state: { resetCityTutorial: true, goHomeStep: 2 } });
-  }, [navigate]);
-  
-  
 
   useEffect(() => {
     if (!autoEnterCity) return;
@@ -634,6 +558,27 @@ export default function HomeCity() {
     return chosen ? { x: chosen.position[0], y: chosen.position[1], z: chosen.position[2] } : null;
   }, [orbits]);
   
+  const onMarkerTrigger = useCallback((id) => {
+    // NAV triggers (orbits roses)
+    if (id === "TRIGGER_ABOUT") {
+      navigate("/", { state: { goHomeStep: 2, scrollTo: "about" } });
+      return;
+    }
+    if (id === "TRIGGER_PROJECT") {
+      navigate("/", { state: { goHomeStep: 2, scrollTo: "projects" } });
+      return;
+    }
+    if (id === "TRIGGER_PORTFOLIO") {
+      navigate("/", { state: { goHomeStep: 2, scrollTo: "contact" } });
+      return;
+    }
+    if (id === "TRIGGER_VISION_HOME") {
+      navigate("/", { replace: false, state: { goHomeStep: 2 } });
+      return;
+    }
+  
+    // Non-nav triggers: laisse CityMarkers gérer popup (ou un toast)
+  }, [navigate]);
   
 
   useEffect(() => {

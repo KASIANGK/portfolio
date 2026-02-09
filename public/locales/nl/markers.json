@@ -1,38 +1,173 @@
 {
-    "portalBadge": "Portaal",
-    "ctaHint": "(SPATIE / ENTER)",
-    "footerHint": "Nader → popup • Klik orb → vastzetten • ESC → muis vrij",
-    "markers": {
-      "TRIGGER_PORTFOLIO": {
-        "title": "Portfolio-kluis",
-        "kicker": "Geselecteerde werken",
-        "description": "Web + 3D + prototypes. Kort, strak, impactgericht.",
-        "cta": "Open Portfolio"
-      },
-      "TRIGGER_SKILLS": {
-        "title": "Skill Tree",
-        "kicker": "Stack & superkrachten",
-        "description": "Tools die ik beheers + wat ik aan het upgraden ben. Spoiler: ik ship snel.",
-        "cta": "Open Skills"
-      },
-      "TRIGGER_ABOUT": {
-        "title": "Over Kasia",
-        "kicker": "De builder erachter",
-        "description": "Hybride profiel: fullstack dev + 3D + productvisie. Ja, bewust.",
-        "cta": "Leer me kennen"
-      },
-      "TRIGGER_VISION": {
-        "title": "Vision Room",
-        "kicker": "Waarom dit bestaat",
-        "description": "Angels Gang: evoluerende fashion + tech + experience. Een merk, niet alleen een product.",
-        "cta": "Bekijk visie"
-      },
-      "TRIGGER_CONTACT": {
-        "title": "Contact Portaal",
-        "kicker": "Samenwerken?",
-        "description": "Wil je iemand die uitvoert, itereert en levert — hi 👋",
-        "cta": "Contact"
+  "nothing": { "nic": "NIETS" },
+  "portalBadge": "Portaal",
+  "ctaHint": "(SPATIE / ENTER)",
+  "footerHint": "Loop dichterbij → popup • Klik orb → pin • ESC → muis vrij",
+
+  "drinks": {
+    "ctaPrimary": "Ik neem ’m",
+    "ctaLetsGo": "Let’s go",
+    "ctaAgain": "Nog eens",
+    "ctaClose": "Sluiten",
+    "labelCity": "CITY DRINKS",
+    "labelFuture": "FUTURE JUICE",
+    "labelSass": "SASS MODE",
+    "hint": "Klik om te rollen",
+
+    "city": {
+      "image": "/assets/homeCity/city_drinks.png",
+      "items": [
+        { "name": "Soft Reset", "line": "Smaakt als een pauze." },
+        { "name": "Low Voltage", "line": "Stil werkt het best." },
+        { "name": "Street Juice", "line": "Stad in pauzemodus." },
+        { "name": "Stable Mood", "line": "Geen haast." },
+        { "name": "Night Hydrate", "line": "Zoals nachtlampjes." },
+        { "name": "Clean Loop", "line": "Niks doet alsof." },
+        { "name": "Background Refresh", "line": "Verdacht normaal." },
+        { "name": "Quiet Boost", "line": "Precies wat je nodig hebt." },
+        { "name": "No Drama", "line": "Rustig aan." },
+        { "name": "Soft Focus", "line": "Koel. Stevig." }
+      ]
+    },
+
+    "future": {
+      "image": "/assets/homeCity/future_juice.png",
+      "items": [
+        { "name": "Neon Intuition", "prediction": "Wat nu chaotisch lijkt, valt vanzelf op z’n plek." },
+        { "name": "Next Build", "prediction": "De eerste versie was genoeg." },
+        { "name": "Prediction Shot", "prediction": "Je hoeft dit niet te versnellen." },
+        { "name": "Glitch Vision", "prediction": "Geen bug — een signaal." },
+        { "name": "Signal Sip", "prediction": "Iemand ziet het al. Zegt het alleen nog niet." },
+        { "name": "Patch Incoming", "prediction": "Dat idee komt terug. Sterker." },
+        { "name": "Runtime Oracle", "prediction": "Doe minder. Dat is genoeg." },
+        { "name": "Quiet Prophecy", "prediction": "Vertrouw op wat je in stilte bouwt." },
+        { "name": "Version Bloom", "prediction": "Niet alles heeft een label nodig." },
+        { "name": "Lagless Luck", "prediction": "Je bent dichterbij dan je denkt." }
+      ]
+    },
+
+    "sass": {
+      "items": [
+        { "name": "Side-Eye Soda", "line": "…serieus?" },
+        { "name": "Machine Mood", "line": "OK." },
+        { "name": "Passive Aggressive", "line": "Dat was… een keuze." },
+        { "name": "Dry Response", "line": "Niet vragen." },
+        { "name": "Silent Judgement", "line": "Jij weer." },
+        { "name": "Bare Minimum", "line": "Goed. Volgende." },
+        { "name": "No Comment", "line": "Geen commentaar." },
+        { "name": "OK Whatever", "line": "Ja hoor." },
+        { "name": "System Tired", "line": "Systeem heeft het genoteerd." },
+        { "name": "404 Drink", "line": "Nee." }
+      ]
+    }
+  },
+
+  "markers": {
+    "TRIGGER_ABOUT": {
+      "title": "Kasia.exe",
+      "kicker": "Controlepaneel",
+      "description": "Dev, 3D en design in één lichaam. Ik hou van heldere systemen en brutale ideeën.",
+      "cta": "Leer mij kennen"
+    },
+
+    "TRIGGER_PROJECT": {
+      "title": "Projectzone",
+      "kicker": "Builds die leven",
+      "description": "Code + design + veel iteratie. Kijk wat ik écht ship.",
+      "cta": "Ga erin"
+    },
+
+    "TRIGGER_PORTFOLIO": {
+      "title": "Contactlink",
+      "kicker": "Ping mij",
+      "description": "Project, missie of chaos te fixen? Geef een signaal — ik ship de iteratie.",
+      "cta": "Stuur bericht"
+    },
+
+    "TRIGGER_VISION_HOME": {
+      "title": "Terug naar basis",
+      "kicker": "Home, sweet home",
+      "description": "Reset naar de lobby. Geen drama — gewoon re-entry.",
+      "cta": "Terug"
+    },
+
+    "TRIGGER_GLOW": {
+      "label": "GLOW://SCAN",
+      "items": {
+        "TRIGGER_PARKMETRE": {
+          "title": "Parkeermeter: Final Boss",
+          "kicker": "Paywall in het echt",
+          "description": "Hier voelt zelfs lucht als abonnement. Relax — ik ben nog free tier… voorlopig.",
+          "cta": "Oké dan",
+          "description2": "Free tier: actief. Parkeermeter: beledigd."
+        },
+        "TRIGGER_TRASH": {
+          "title": "Vuilbak: Support 24/7",
+          "kicker": "Ticket service",
+          "description": "Gooi er een probleem in — het komt terug als productiebug. Cirkel van het leven.",
+          "cta": "Ticket sluiten",
+          "description2": "Status: OPGELOST ✅ (leugen)."
+        },
+        "TRIGGER_CAR": {
+          "title": "Auto",
+          "kicker": "Parking level: expert",
+          "description": "Perfect geparkeerd. Sinds 2019. Record nog steeds ongebroken.",
+          "cta": "Respect",
+          "description2": "Geen auto — een monument voor stabiliteit. Props verzonden. Render goedgekeurd."
+        },
+
+        "TRIGGER_DRINK_COFFEE": {
+          "title": "Koffie",
+          "kicker": "Brandstof voor je brein",
+          "description": "Lost niks op. Maar geeft +10 focus.",
+          "cta": "Drinken",
+          "description2": "Koffie geconsumeerd. +10 focus, -2 geduld."
+        },
+
+        "TRIGGER_DRINK_DISTRIBUTOR": {
+          "title": "Drankautomaat",
+          "kicker": "Surprise mode",
+          "description": "Je drukt. Iets gebeurt. De automaat heeft moods.",
+          "cta": "Ik neem ’m"
+        }
+      }
+    },
+
+    "TRIGGER_FUN": {
+      "label": "FUN://WTF",
+      "items": {
+        "TRIGGER_BUS": {
+          "title": "Bus naar nergens",
+          "kicker": "Lijn: ???",
+          "description": "Hij komt altijd… zodra je stopt met wachten. Relatable.",
+          "cta": "Ik wacht",
+          "description2": "We hadden gezegd dat hij niet komt…"
+        },
+
+        "TRIGGER_STAIRS": {
+          "title": "Premium Trappen",
+          "kicker": "DLC vereist",
+          "description": "Ze zijn er. Ze gaan ergens heen. Niet vandaag.",
+          "cta": "Begrepen",
+          "description2": "De trappen werken. Het verhaal niet."
+        },
+
+        "TRIGGER_FIRE": {
+          "title": "Kampvuur",
+          "kicker": "Chill zone",
+          "description": "Vuur: aan. Stoel: aanwezig. Marshmallows: ontbreken.",
+          "cta": "Ik ga zitten",
+          "description2": "Ja, dit is therapie. Gratis."
+        },
+
+        "TRIGGER_NOTHING": {
+          "title": "Vast punt",
+          "kicker": "Geen druk",
+          "description": "Hier gaat niets gebeuren. En dat is oké.",
+          "cta": "Verder",
+          "description2": "Hier is écht helemaal NIETS. 💀"
+        }
       }
     }
   }
-  
+}

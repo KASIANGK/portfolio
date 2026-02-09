@@ -1,31 +1,141 @@
-import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+// src/Components/City/CityMarkers.jsx
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  useCallback,
+} from "react";
 import { useGLTF, Html } from "@react-three/drei";
 import { useThree, useFrame } from "@react-three/fiber";
 import { useNavigate } from "react-router-dom";
 import * as THREE from "three";
 import { useTranslation } from "react-i18next";
 
-const FUCHSIA_SOLID = "rgba(255,0,170,0.95)";
+/** ---------------------------
+ *  Groups & Trigger naming
+ *  -------------------------- */
+const GROUP = {
+  NAV: "NAV",
+  GLOW: "GLOW",
+  FUN: "FUN",
+};
 
-// ✅ routes + chips restent “data”, pas du texte UI
+const NAV_ORBITS = new Set([
+  "TRIGGER_ABOUT",
+  "TRIGGER_PROJECT",
+  "TRIGGER_PORTFOLIO",
+  "TRIGGER_VISION_HOME",
+]);
+
 const MARKER_ROUTES = {
-  TRIGGER_PORTFOLIO: "/portfolio",
-  TRIGGER_SKILLS: "/skills",
   TRIGGER_ABOUT: "/about",
-  TRIGGER_VISION: "/vision",
-  TRIGGER_CONTACT: "/contact",
+  TRIGGER_PROJECT: "/#projects",
+  TRIGGER_PORTFOLIO: "/contact",
+  TRIGGER_VISION_HOME: "/",
 };
 
+// Optional chips only for NAV
 const MARKER_CHIPS = {
-  TRIGGER_PORTFOLIO: ["React", "3D", "UX", "Ship it"],
-  TRIGGER_SKILLS: ["JS", "React", "Python", "Blender"],
+  TRIGGER_PROJECT: ["React", "3D", "UX", "Ship it"],
   TRIGGER_ABOUT: ["Builder", "Design", "Systems"],
-  TRIGGER_VISION: ["Hardware", "Software", "Brand"],
-  TRIGGER_CONTACT: ["Freelance", "CDI", "Collab"],
+  TRIGGER_PORTFOLIO: ["Collab", "Freelance", "CDI"],
+  TRIGGER_VISION_HOME: ["Back", "Reset", "Lobby"],
 };
+
+function getGroupByName(name) {
+  if (NAV_ORBITS.has(name)) return GROUP.NAV;
+
+  if (name.startsWith("TRIGGER_")) {
+    // GLOW
+    if (
+      name === "TRIGGER_PARKMETRE" ||
+      name === "TRIGGER_TRASH" ||
+      name === "TRIGGER_DRINK_DISTRIBUTOR" ||
+      name === "TRIGGER_DRINK_COFFEE" ||
+      name === "TRIGGER_CAR"
+    )
+      return GROUP.GLOW;
+
+    // FUN
+    if (
+      name === "TRIGGER_BUS" ||
+      name === "TRIGGER_STAIRS" ||
+      name === "TRIGGER_FIRE" ||
+      name === "TRIGGER_NOTHING"
+    )
+      return GROUP.FUN;
+  }
+
+  return null;
+}
+
+/** ---------------------------
+ *  Colors per group (neon)
+ *  -------------------------- */
+const COLORS = {
+  [GROUP.NAV]: {
+    color: new THREE.Color("#ff00ff"),
+    emissive: new THREE.Color("#ff00ff"),
+    baseOpacity: 0.22,
+    selectedOpacity: 0.44,
+    baseEmi: 1.05,
+    selectedEmi: 2.1,
+  },
+  [GROUP.GLOW]: {
+    color: new THREE.Color("#00F2FF"),
+    emissive: new THREE.Color("#00F2FF"),
+    baseOpacity: 0.16,
+    selectedOpacity: 0.34,
+    baseEmi: 0.95,
+    selectedEmi: 1.85,
+  },
+  [GROUP.FUN]: {
+    color: new THREE.Color("#C400FF"),
+    emissive: new THREE.Color("#C400FF"),
+    baseOpacity: 0.16,
+    selectedOpacity: 0.34,
+    baseEmi: 0.9,
+    selectedEmi: 1.8,
+  },
+};
+
+/** ---------------------------
+ *  Distributor logic
+ *  -------------------------- */
+const DRINK_MODE = {
+  CITY: "city",
+  FUTURE: "future",
+  SASS: "sass",
+};
+
+const DIST_STEP = {
+  INTRO: 1,
+  DISPENSE: 2,
+};
+
+function randItem(arr) {
+  if (!Array.isArray(arr) || arr.length === 0) return null;
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+function randMode() {
+  const m = [DRINK_MODE.CITY, DRINK_MODE.FUTURE, DRINK_MODE.SASS];
+  return m[Math.floor(Math.random() * m.length)];
+}
+
+/** ---------------------------
+ *  NOTHING cutscene
+ *  -------------------------- */
+const NOTHING = {
+  ID: "TRIGGER_NOTHING",
+  PHASE: { OFF: null, TITLE: "TITLE" },
+  TITLE_MS: 5200,
+};
+
 
 export default function CityMarkers({
-  url = "/models/city_markers.glb",
+  url = "/models/markers_final.glb",
   visible = true,
   radius = 2,
   yOffset = 2,
@@ -41,57 +151,77 @@ export default function CityMarkers({
   const { t } = useTranslation("markers");
 
   const [selected, setSelected] = useState(null);
+
+  // Distributor state
+  const [drinkMode, setDrinkMode] = useState(DRINK_MODE.CITY);
+  const [drinkPick, setDrinkPick] = useState(null);
+  const [distStep, setDistStep] = useState(DIST_STEP.INTRO);
+
+  // Temporary description override (mini-interactions)
+  const [descOverride, setDescOverride] = useState({}); // { [id]: string }
+  const timersRef = useRef(new Map()); // id -> timeoutId
+
+  // NOTHING cutscene local state
+  const [nothingPhase, setNothingPhase] = useState(NOTHING.PHASE.OFF);
+  const nothingTimersRef = useRef({ t1: null, t2: null });
+
   const tmpWorld = useMemo(() => new THREE.Vector3(), []);
+  const orbRefs = useRef(new Map());
 
   const loadedOnceRef = useRef(false);
   const shownOnceRef = useRef(false);
-
-  const orbRefs = useRef(new Map());
-
-  const orbColor = useMemo(() => new THREE.Color(1, 0, 0.75), []);
-  const orbEmissive = useMemo(() => new THREE.Color(1, 0, 0.65), []);
 
   useLayoutEffect(() => {
     scene.updateMatrixWorld(true);
   }, [scene]);
 
+  /** ---------------------------
+   *  Parse triggers from GLB
+   *  (stable: use objects named TRIGGER_*, ignore meshes)
+   *  -------------------------- */
   const points = useMemo(() => {
     const arr = [];
-
     scene.traverse((o) => {
-      if (o.isMesh) return;
       if (!o.name || o.name === "Scene") return;
 
-      const route = MARKER_ROUTES[o.name];
-      if (!route) return;
+      // ✅ we only want the marker objects (empties/groups), not the geometry
+      if (o.isMesh) return;
+
+      const group = getGroupByName(o.name);
+      if (!group) return;
 
       o.getWorldPosition(tmpWorld);
+
       arr.push({
         name: o.name,
+        group,
         position: tmpWorld.clone(),
-        route,
+        route: MARKER_ROUTES[o.name] || null,
       });
     });
-
     return arr;
   }, [scene, tmpWorld]);
 
-    // ✅ expose orbit positions (for tutorial hint arrow)
-    useEffect(() => {
-      if (!points?.length) return;
-  
-      // Same world pos as the visible spheres (yOffset included)
-      const orbits = points.map((p) => ({
+  /** ---------------------------
+   *  Expose orbit positions (NAV only)
+   *  -------------------------- */
+  useEffect(() => {
+    if (!points?.length) return;
+
+    const orbits = points
+      .filter((p) => p.group === GROUP.NAV && NAV_ORBITS.has(p.name))
+      .map((p) => ({
         id: p.name,
         position: [p.position.x, p.position.y + yOffset, p.position.z],
         route: p.route,
       }));
-  
-      onOrbits?.(orbits);
-    }, [points, yOffset, onOrbits]);
-  
 
-  // ✅ loaded = points parsed
+    onOrbits?.(orbits);
+  }, [points, yOffset, onOrbits]);
+
+  /** ---------------------------
+   *  loaded / shown
+   *  -------------------------- */
   useEffect(() => {
     if (loadedOnceRef.current) return;
     if (points.length >= 1) {
@@ -100,7 +230,6 @@ export default function CityMarkers({
     }
   }, [points, onLoaded]);
 
-  // ✅ shown = visible true + points + next frame
   useEffect(() => {
     if (shownOnceRef.current) return;
     if (!visible) return;
@@ -110,11 +239,14 @@ export default function CityMarkers({
     requestAnimationFrame(() => onShown?.());
   }, [visible, points, onShown]);
 
-  
-
+  /** ---------------------------
+   *  Select logic + pulse
+   *  (no pin: close if too far)
+   *  -------------------------- */
   useFrame((state) => {
     if (!points.length) return;
 
+    // auto-select nearest
     if (selected) {
       const d = camera.position.distanceTo(selected.position);
       if (d > closeDistance) setSelected(null);
@@ -139,137 +271,390 @@ export default function CityMarkers({
       if (!mesh) continue;
 
       const isSelected = selected?.name === p.name;
+      const cfg = COLORS[p.group] || COLORS[GROUP.NAV];
 
-      const pulse = 0.5 + 0.5 * Math.sin(tt * 2.2 + p.position.x * 0.08);
-      const s = isSelected ? 1.18 : 1.0 + pulse * 0.08;
+      // ✅ NAV pulse normal, GLOW/FUN pulse slower + sparkle
+      const speed = p.group === GROUP.NAV ? 1.8 : 0.75; // slower for glow/fun
+      const pulse = 0.5 + 0.5 * Math.sin(tt * speed + p.position.x * 0.1);
+
+      // "sparkle" slow loop for glow/fun (subtle)
+      const sparkle =
+        p.group === GROUP.NAV ? 0 : 0.5 + 0.5 * Math.sin(tt * 0.23 + p.position.z * 0.07);
+
+      const ampScale = p.group === GROUP.NAV ? 0.14 : 0.10;
+      const s = isSelected ? 1.28 : 1.0 + pulse * ampScale;
       mesh.scale.setScalar(s);
 
       const mat = mesh.material;
       if (mat) {
-        mat.opacity = isSelected ? 0.42 : 0.22 + pulse * 0.10;
-        mat.emissiveIntensity = isSelected ? 1.65 : 0.75 + pulse * 0.55;
+        mat.opacity = isSelected ? cfg.selectedOpacity : cfg.baseOpacity + pulse * 0.08;
+
+        const emiExtra =
+          p.group === GROUP.NAV
+            ? pulse * 0.45
+            : pulse * 0.25 + sparkle * 0.35;
+
+        mat.emissiveIntensity = isSelected ? cfg.selectedEmi : cfg.baseEmi + emiExtra;
       }
     }
   });
 
-  useEffect(() => {
-    const onKeyDown = (e) => {
-      if (e.code !== "Space" && e.code !== "Enter") return;
-      if (!selected?.route) return;
-      e.preventDefault();
-      navigate(selected.route);
+  /** ---------------------------
+   *  i18n helpers (+ optional description2)
+   *  -------------------------- */
+  const markerI18n = useCallback(
+    (id, group) => {
+      if (group === GROUP.NAV) {
+        return {
+          title: t(`markers.${id}.title`),
+          kicker: t(`markers.${id}.kicker`),
+          description: t(`markers.${id}.description`),
+          description2: t(`markers.${id}.description2`, { defaultValue: "" }),
+          cta: t(`markers.${id}.cta`),
+          badge: t("portalBadge"),
+        };
+      }
+
+      const bucket = group === GROUP.GLOW ? "TRIGGER_GLOW" : "TRIGGER_FUN";
+      return {
+        title: t(`markers.${bucket}.items.${id}.title`),
+        kicker: t(`markers.${bucket}.items.${id}.kicker`),
+        description: t(`markers.${bucket}.items.${id}.description`),
+        description2: t(`markers.${bucket}.items.${id}.description2`, {
+          defaultValue: "",
+        }),
+        cta: t(`markers.${bucket}.items.${id}.cta`),
+        badge: t(`markers.${bucket}.label`),
+      };
+    },
+    [t]
+  );
+
+  /** ---------------------------
+   *  Button styles
+   *  -------------------------- */
+  const getBtnTheme = (group) => {
+    if (group === GROUP.GLOW) {
+      return {
+        border: "1px solid rgba(0,242,255,0.40)",
+        bg: "linear-gradient(90deg, rgba(0,242,255,0.22), rgba(124,58,237,0.18))",
+        dot: "rgba(0,242,255,0.98)",
+      };
+    }
+    if (group === GROUP.FUN) {
+      return {
+        border: "1px solid rgba(196,0,255,0.36)",
+        bg: "linear-gradient(90deg, rgba(196,0,255,0.26), rgba(255,0,170,0.14))",
+        dot: "rgba(196,0,255,0.98)",
+      };
+    }
+    return {
+      border: "1px solid rgba(255,0,170,0.40)",
+      bg: "linear-gradient(90deg, rgba(124,58,237,0.92), rgba(255,0,170,0.24))",
+      dot: "rgba(255,0,170,0.98)",
     };
-    window.addEventListener("keydown", onKeyDown, { passive: false });
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [selected, navigate]);
-
-  const go = () => {
-    if (!selected?.route) return;
-    navigate(selected.route);
   };
 
-  const btnBase = {
-    marginTop: 12,
-    width: "100%",
-    padding: "10px 12px",
-    borderRadius: 14,
-    border: "1px solid rgba(255,0,170,0.35)",
-    background: "linear-gradient(90deg, rgba(124,58,237,0.92), rgba(255,0,170,0.22))",
-    color: "rgba(255,255,255,0.94)",
-    fontWeight: 950,
-    cursor: "pointer",
-    letterSpacing: 0.2,
-    transition:
-      "transform 140ms ease, box-shadow 160ms ease, border-color 160ms ease, filter 160ms ease",
+  const btnBase = (group) => {
+    const th = getBtnTheme(group);
+    return {
+      marginTop: 12,
+      width: "100%",
+      padding: "10px 12px",
+      borderRadius: 14,
+      border: th.border,
+      background: th.bg,
+      color: "rgba(255,255,255,0.94)",
+      fontWeight: 950,
+      cursor: "pointer",
+      letterSpacing: 0.2,
+      transition:
+        "transform 140ms ease, box-shadow 160ms ease, border-color 160ms ease, filter 160ms ease",
+    };
   };
 
-  const btnHover = (el) => {
+  const btnHover = (el, group) => {
     el.style.transform = "translateY(-1px)";
-    el.style.filter = "brightness(1.05)";
-    el.style.borderColor = "rgba(255,0,170,0.60)";
+    el.style.filter = "brightness(1.06)";
     el.style.boxShadow =
-      "0 0 0 1px rgba(255,0,170,0.18), 0 0 28px rgba(255,0,170,0.14), 0 0 70px rgba(124,58,237,0.12)";
+      group === GROUP.GLOW
+        ? "0 0 0 1px rgba(0,242,255,0.20), 0 0 28px rgba(0,242,255,0.16), 0 0 72px rgba(124,58,237,0.10)"
+        : group === GROUP.FUN
+        ? "0 0 0 1px rgba(196,0,255,0.18), 0 0 28px rgba(196,0,255,0.14), 0 0 72px rgba(255,0,170,0.08)"
+        : "0 0 0 1px rgba(255,0,170,0.20), 0 0 28px rgba(255,0,170,0.16), 0 0 72px rgba(124,58,237,0.12)";
+    el.style.borderColor =
+      group === GROUP.GLOW
+        ? "rgba(0,242,255,0.70)"
+        : group === GROUP.FUN
+        ? "rgba(196,0,255,0.65)"
+        : "rgba(255,0,170,0.70)";
   };
 
-  const btnLeave = (el) => {
+  const btnLeave = (el, group) => {
+    const th = getBtnTheme(group);
     el.style.transform = "translateY(0)";
     el.style.filter = "none";
-    el.style.borderColor = "rgba(255,0,170,0.35)";
+    el.style.border = th.border;
     el.style.boxShadow = "none";
   };
 
-  // ✅ helper: get translated marker data
-  const markerI18n = (id) => ({
-    title: t(`markers.${id}.title`),
-    kicker: t(`markers.${id}.kicker`),
-    description: t(`markers.${id}.description`),
-    cta: t(`markers.${id}.cta`),
-  });
+  /** ---------------------------
+   *  Distributor: roll logic
+   *  -------------------------- */
+  const rollDrink = useCallback(() => {
+    const cityItems = t("drinks.city.items", { returnObjects: true });
+    const futureItems = t("drinks.future.items", { returnObjects: true });
+    const sassItems = t("drinks.sass.items", { returnObjects: true });
 
-  return (
-    <group>
-      {points.map((p) => (
-        <mesh
-          key={p.name}
-          position={[p.position.x, p.position.y + yOffset, p.position.z]}
-          visible={visible}
-          ref={(r) => {
-            if (!r) {
-              orbRefs.current.delete(p.name);
-              return;
-            }
-            orbRefs.current.set(p.name, r);
-          }}
-          onPointerDown={(e) => {
-            e.stopPropagation();
-            setSelected(p);
-          }}
-        >
-          <sphereGeometry args={[radius, 18, 18]} />
-          <meshStandardMaterial
-            transparent
-            opacity={0.28}
-            emissive={orbEmissive}
-            emissiveIntensity={0.85}
-            color={orbColor}
-          />
-        </mesh>
-      ))}
+    const mode = randMode();
+    setDrinkMode(mode);
 
-      {selected && (() => {
-        const ui = markerI18n(selected.name);
-        const chips = MARKER_CHIPS[selected.name] || [];
+    if (mode === DRINK_MODE.CITY) {
+      setDrinkPick({ mode, item: randItem(cityItems) });
+      return;
+    }
+    if (mode === DRINK_MODE.FUTURE) {
+      setDrinkPick({ mode, item: randItem(futureItems) });
+      return;
+    }
 
-        return (
-          <Html
-            position={[
-              selected.position.x,
-              selected.position.y + yOffset + 1.6,
-              selected.position.z,
-            ]}
-            center
-            style={{ pointerEvents: "none" }}
+    setDrinkPick({ mode, item: randItem(sassItems) });
+  }, [t]);
+
+  /** ---------------------------
+   *  Mini interaction: show description2 for 5s
+   *  -------------------------- */
+  const flashDescription = useCallback((id, text, ms = 5000) => {
+    if (!text) return;
+
+    const prev = timersRef.current.get(id);
+    if (prev) clearTimeout(prev);
+
+    setDescOverride((cur) => ({ ...cur, [id]: text }));
+
+    const to = setTimeout(() => {
+      setDescOverride((cur) => {
+        const next = { ...cur };
+        delete next[id];
+        return next;
+      });
+      timersRef.current.delete(id);
+    }, ms);
+
+    timersRef.current.set(id, to);
+  }, []);
+
+  /** ---------------------------
+   *  NOTHING cutscene controller
+   *  -------------------------- */
+  const startNothingCutscene = useCallback(() => {
+    if (nothingPhase !== NOTHING.PHASE.OFF) return;
+  
+    if (nothingTimersRef.current.t1) clearTimeout(nothingTimersRef.current.t1);
+  
+    setNothingPhase(NOTHING.PHASE.TITLE);
+  
+    nothingTimersRef.current.t1 = setTimeout(() => {
+      setNothingPhase(NOTHING.PHASE.OFF);
+    }, NOTHING.TITLE_MS);
+  }, [nothingPhase]);
+  
+
+  useEffect(() => {
+    return () => {
+      for (const to of timersRef.current.values()) clearTimeout(to);
+      timersRef.current.clear();
+
+      if (nothingTimersRef.current.t1) clearTimeout(nothingTimersRef.current.t1);
+      if (nothingTimersRef.current.t2) clearTimeout(nothingTimersRef.current.t2);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (selected?.name !== NOTHING.ID && nothingPhase !== NOTHING.PHASE.OFF) {
+      setNothingPhase(NOTHING.PHASE.OFF);
+    }
+  }, [selected, nothingPhase]);
+
+  /** ---------------------------
+   *  ONE action for click/space/enter
+   *  -------------------------- */
+  const triggerAction = useCallback(() => {
+    if (!selected) return;
+
+    // NAV
+    if (selected.group === GROUP.NAV && selected.route) {
+      navigate(selected.route);
+      return;
+    }
+
+    // Distributor
+    if (selected.name === "TRIGGER_DRINK_DISTRIBUTOR") {
+      // Space/Enter/Click = "Je prends"
+      if (distStep === DIST_STEP.INTRO) {
+        setDistStep(DIST_STEP.DISPENSE);
+        rollDrink();
+        return;
+      }
+      // si déjà en step2, "Je prends" = fermer / reset
+      setDrinkPick(null);
+      setDistStep(DIST_STEP.INTRO);
+      return;
+    }
+    
+
+    // NOTHING special cutscene
+    if (selected.name === NOTHING.ID) {
+      startNothingCutscene();
+      return;
+    }
+
+    // GLOW / FUN mini-interactions
+    if (selected.group === GROUP.GLOW || selected.group === GROUP.FUN) {
+      const ui = markerI18n(selected.name, selected.group);
+      flashDescription(selected.name, ui.description2, 5000);
+    }
+  }, [selected, navigate, distStep, rollDrink, markerI18n, flashDescription, startNothingCutscene]);
+
+  /** ---------------------------
+   *  Keyboard: Enter/Space triggers same action
+   *  -------------------------- */
+  useEffect(() => {
+    const onKeyDown = (e) => {
+      if (e.code !== "Space" && e.code !== "Enter") return;
+      if (!selected) return;
+
+      const tag = e.target?.tagName?.toLowerCase?.();
+      if (tag === "input" || tag === "textarea" || e.target?.isContentEditable) return;
+
+      e.preventDefault();
+      triggerAction();
+    };
+
+    window.addEventListener("keydown", onKeyDown, { passive: false });
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [selected, triggerAction]);
+
+  /** ---------------------------
+   *  Distributor Screen UI (2 steps)
+   *  -------------------------- */
+  const DistributorScreen = () => {
+    const hint = t("drinks.hint");
+    const ctaPrimary = t("drinks.ctaPrimary"); // Biorę
+    const ctaAgain = t("drinks.ctaAgain"); // Jeszcze raz
+    const letsGo = t("drinks.ctaLetsGo", { defaultValue: "Let’s go" });
+
+    const cityImg = t("drinks.city.image");
+    const futureImg = t("drinks.future.image");
+
+    const isCity = drinkMode === DRINK_MODE.CITY;
+    const isFuture = drinkMode === DRINK_MODE.FUTURE;
+    const isSass = drinkMode === DRINK_MODE.SASS;
+
+    const screenImg = isFuture ? futureImg : cityImg;
+
+    const pickedName = drinkPick?.item?.name || "—";
+    const pickedLine = drinkPick?.item?.line || "";
+    const pickedPred = drinkPick?.item?.prediction || "";
+
+    const startDispense = () => {
+      if (distStep === DIST_STEP.INTRO) {
+        setDistStep(DIST_STEP.DISPENSE);
+        rollDrink();
+      }
+    };
+
+    const pressBiorę = () => {
+      setDrinkPick(null);
+      setDistStep(DIST_STEP.INTRO);
+    };
+
+    const pressTake = () => {
+      setDrinkPick(null);
+      setDistStep(DIST_STEP.INTRO);
+    };
+    
+    const pressAgain = () => {
+      if (distStep !== DIST_STEP.DISPENSE) return;
+      rollDrink();
+    };
+    
+    return (
+      <div style={{ marginTop: 12 }}>
+        {distStep === DIST_STEP.INTRO && (
+          <div
+            style={{
+              borderRadius: 16,
+              border: "1px solid rgba(255,255,255,0.12)",
+              background: "rgba(0,0,0,0.35)",
+              padding: 12,
+            }}
           >
             <div
               style={{
-                pointerEvents: "auto",
-                width: 320,
-                borderRadius: 18,
-                padding: 14,
-                background:
-                  "radial-gradient(700px 360px at 18% 25%, rgba(255,0,170,0.16), transparent 60%)," +
-                  "radial-gradient(700px 360px at 78% 35%, rgba(124,58,237,0.18), transparent 55%)," +
-                  "rgba(0,0,0,0.72)",
-                border: "1px solid rgba(255,255,255,0.16)",
-                boxShadow:
-                  "0 18px 55px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,0,170,0.10), 0 0 60px rgba(124,58,237,0.10)",
-                backdropFilter: "blur(12px)",
-                color: "white",
-                fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, sans-serif",
-                overflow: "hidden",
-                position: "relative",
+                fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
+                fontSize: 11,
+                opacity: 0.75,
+                marginBottom: 6,
               }}
             >
+              terminal://distributor
+            </div>
+
+            <button
+              type="button"
+              onClick={startDispense}
+              style={{
+                marginTop: 6,
+                width: "100%",
+                padding: "10px 12px",
+                borderRadius: 14,
+                border: "1px solid rgba(0,242,255,0.40)",
+                background: "linear-gradient(90deg, rgba(0,242,255,0.20), rgba(124,58,237,0.16))",
+                color: "rgba(255,255,255,0.94)",
+                fontWeight: 950,
+                cursor: "pointer",
+              }}
+              onMouseEnter={(e) => btnHover(e.currentTarget, GROUP.GLOW)}
+              onMouseLeave={(e) => btnLeave(e.currentTarget, GROUP.GLOW)}
+            >
+              {letsGo} <span style={{ opacity: 0.75 }}>{t("ctaHint")}</span>
+            </button>
+
+            <div style={{ marginTop: 8, fontSize: 11, opacity: 0.7, textAlign: "center" }}>
+              {hint}
+            </div>
+          </div>
+        )}
+
+        {distStep === DIST_STEP.DISPENSE && (
+          <div
+            style={{
+              borderRadius: 16,
+              border: "1px solid rgba(255,255,255,0.12)",
+              overflow: "hidden",
+              background: "rgba(0,0,0,0.38)",
+              boxShadow: "0 18px 60px rgba(0,0,0,0.45)",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                gap: 10,
+                padding: "10px 12px",
+                borderBottom: "1px solid rgba(255,255,255,0.08)",
+                fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
+                fontSize: 11,
+                color: "rgba(255,255,255,0.78)",
+                background: "rgba(0,0,0,0.35)",
+              }}
+            >
+              <span>terminal://drink</span>
+              <span style={{ opacity: 0.65 }}>ready</span>
+            </div>
+
+            <div style={{ padding: 12, position: "relative" }}>
               <div
                 aria-hidden="true"
                 style={{
@@ -277,97 +662,357 @@ export default function CityMarkers({
                   inset: 0,
                   pointerEvents: "none",
                   background:
-                    "repeating-linear-gradient(to bottom, rgba(255,255,255,0.04), rgba(255,255,255,0.04) 1px, transparent 1px, transparent 4px)",
+                    "repeating-linear-gradient(to bottom, rgba(255,255,255,0.05), rgba(255,255,255,0.05) 1px, transparent 1px, transparent 4px)",
                   opacity: 0.12,
                   mixBlendMode: "overlay",
                 }}
               />
 
-              <div style={{ display: "flex", justifyContent: "space-between", gap: 10, position: "relative" }}>
-                <div>
-                  <div style={{ fontSize: 11, opacity: 0.75, letterSpacing: 1.2 }}>
-                    {ui.kicker}
-                  </div>
-                  <div style={{ fontWeight: 950, fontSize: 16, marginTop: 3 }}>
-                    {ui.title}
-                  </div>
-                </div>
-
+              {(isCity || isFuture) && (
                 <div
                   style={{
-                    fontSize: 11,
-                    padding: "6px 10px",
-                    borderRadius: 999,
-                    border: "1px solid rgba(255,255,255,0.14)",
-                    background: "rgba(0,0,0,0.35)",
-                    whiteSpace: "nowrap",
-                    height: "fit-content",
+                    borderRadius: 12,
+                    border: "1px solid rgba(255,255,255,0.10)",
+                    background: "rgba(0,0,0,0.28)",
+                    boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.05)",
+                    marginBottom: 10,
+                    overflow: "hidden",
+                    display: "grid",
+                    placeItems: "center",
+                    padding: 8,
                   }}
                 >
-                  <span style={{ color: FUCHSIA_SOLID, fontWeight: 900 }}>●</span>{" "}
-                  {t("portalBadge")}
+                  <img
+                    src={screenImg}
+                    alt={isFuture ? "future juice" : "city drinks"}
+                    draggable={false}
+                    style={{
+                      width: "100%",
+                      height: 160,
+                      objectFit: "contain",
+                      display: "block",
+                      userSelect: "none",
+                    }}
+                  />
                 </div>
-              </div>
+              )}
 
               <div
                 style={{
-                  marginTop: 10,
-                  opacity: 0.9,
-                  lineHeight: 1.45,
+                  fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
+                  color: "rgba(255,255,255,0.90)",
+                  lineHeight: 1.35,
                   fontSize: 12,
+                }}
+              >
+                <div style={{ opacity: 0.75 }}>drink.name</div>
+                <div style={{ fontSize: 14, fontWeight: 900, marginTop: 2 }}>
+                  <span style={{ color: "rgba(0,242,255,0.98)" }}>{pickedName}</span>
+                </div>
+
+                {isFuture && (
+                  <>
+                    <div style={{ marginTop: 10, opacity: 0.75 }}>prediction</div>
+                    <div
+                      style={{
+                        marginTop: 2,
+                        fontFamily:
+                          '"Plus Jakarta Sans", system-ui, -apple-system, Segoe UI, Roboto, sans-serif',
+                      }}
+                    >
+                      {pickedPred || "—"}
+                    </div>
+                  </>
+                )}
+
+                {isCity && (
+                  <>
+                    <div style={{ marginTop: 10, opacity: 0.75 }}>note</div>
+                    <div
+                      style={{
+                        marginTop: 2,
+                        fontFamily:
+                          '"Plus Jakarta Sans", system-ui, -apple-system, Segoe UI, Roboto, sans-serif',
+                      }}
+                    >
+                      {pickedLine || "—"}
+                    </div>
+                  </>
+                )}
+
+                {isSass && (
+                  <>
+                    <div style={{ marginTop: 10, opacity: 0.75 }}>machine.says</div>
+                    <div style={{ marginTop: 2 }}>{pickedLine || "…"}</div>
+                  </>
+                )}
+              </div>
+
+              <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
+                <button
+                  type="button"
+                  onClick={pressTake}
+                  style={{
+                    flex: 1,
+                    padding: "10px 12px",
+                    borderRadius: 14,
+                    border: "1px solid rgba(0,242,255,0.40)",
+                    background: "linear-gradient(90deg, rgba(0,242,255,0.22), rgba(124,58,237,0.14))",
+                    color: "rgba(255,255,255,0.94)",
+                    fontWeight: 950,
+                    cursor: "pointer",
+                  }}
+                  onMouseEnter={(e) => btnHover(e.currentTarget, GROUP.GLOW)}
+                  onMouseLeave={(e) => btnLeave(e.currentTarget, GROUP.GLOW)}
+                >
+                  {ctaPrimary}
+                </button>
+
+                {/* <button
+                  type="button"
+                  onClick={pressAgain}
+                  style={{
+                    flex: 1,
+                    padding: "10px 12px",
+                    borderRadius: 14,
+                    border: "1px solid rgba(255,255,255,0.14)",
+                    background: "rgba(255,255,255,0.06)",
+                    color: "rgba(255,255,255,0.92)",
+                    fontWeight: 900,
+                    cursor: "pointer",
+                  }}
+                >
+                  {ctaAgain}
+                </button> */}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  /** ---------------------------
+   *  Render
+   *  -------------------------- */
+  return (
+    <group>
+      {points.map((p) => {
+        const cfg = COLORS[p.group] || COLORS[GROUP.NAV];
+
+        return (
+          <mesh
+            key={p.name}
+            position={[p.position.x, p.position.y + yOffset, p.position.z]}
+            visible={visible}
+            ref={(r) => {
+              if (!r) orbRefs.current.delete(p.name);
+              else orbRefs.current.set(p.name, r);
+            }}
+            onPointerDown={(e) => {
+              e.stopPropagation();
+              setSelected(p);
+
+              // reset distributor state on select
+              if (p.name === "TRIGGER_DRINK_DISTRIBUTOR") {
+                setDrinkPick(null);
+                setDrinkMode(DRINK_MODE.CITY);
+                setDistStep(DIST_STEP.INTRO);
+              }
+
+              // reset NOTHING cutscene if selecting something else
+              if (p.name !== NOTHING.ID && nothingPhase !== NOTHING.PHASE.OFF) {
+                setNothingPhase(NOTHING.PHASE.OFF);
+              }
+            }}
+          >
+            <sphereGeometry args={[radius, 18, 18]} />
+            <meshStandardMaterial
+              transparent
+              opacity={cfg.baseOpacity}
+              emissive={cfg.emissive}
+              emissiveIntensity={cfg.baseEmi}
+              color={cfg.color}
+              depthWrite={false}
+            />
+          </mesh>
+        );
+      })}
+
+      {selected &&
+        (() => {
+          const ui = markerI18n(selected.name, selected.group);
+          const chips = selected.group === GROUP.NAV ? MARKER_CHIPS[selected.name] || [] : [];
+          const th = getBtnTheme(selected.group);
+
+          const isDistributor = selected.name === "TRIGGER_DRINK_DISTRIBUTOR";
+          const isNothing = selected.name === NOTHING.ID;
+
+          const override = descOverride[selected.name];
+          const descriptionToShow = override || ui.description;
+
+          // ✅ CTA visible only when base description is visible
+          const showCta =
+          !isDistributor &&
+          !override &&
+          !(isNothing && nothingPhase !== NOTHING.PHASE.OFF);
+        
+
+          return (
+            <Html
+              position={[
+                selected.position.x,
+                selected.position.y + yOffset + 1.6,
+                selected.position.z,
+              ]}
+              center
+              style={{ pointerEvents: "none" }}
+            >
+              <div
+                style={{
+                  pointerEvents: "auto",
+                  width: 340,
+                  borderRadius: 18,
+                  padding: 14,
+                  background:
+                    selected.group === GROUP.GLOW
+                      ? "radial-gradient(700px 360px at 18% 25%, rgba(0,242,255,0.14), transparent 60%)," +
+                        "radial-gradient(700px 360px at 78% 35%, rgba(124,58,237,0.14), transparent 55%)," +
+                        "rgba(0,0,0,0.72)"
+                      : selected.group === GROUP.FUN
+                      ? "radial-gradient(700px 360px at 18% 25%, rgba(196,0,255,0.14), transparent 60%)," +
+                        "radial-gradient(700px 360px at 78% 35%, rgba(255,0,170,0.10), transparent 55%)," +
+                        "rgba(0,0,0,0.72)"
+                      : "radial-gradient(700px 360px at 18% 25%, rgba(255,0,170,0.16), transparent 60%)," +
+                        "radial-gradient(700px 360px at 78% 35%, rgba(124,58,237,0.18), transparent 55%)," +
+                        "rgba(0,0,0,0.72)",
+                  border: "1px solid rgba(255,255,255,0.16)",
+                  boxShadow:
+                    selected.group === GROUP.GLOW
+                      ? "0 18px 55px rgba(0,0,0,0.55), 0 0 0 1px rgba(0,242,255,0.10), 0 0 60px rgba(0,242,255,0.10)"
+                      : selected.group === GROUP.FUN
+                      ? "0 18px 55px rgba(0,0,0,0.55), 0 0 0 1px rgba(196,0,255,0.10), 0 0 60px rgba(196,0,255,0.10)"
+                      : "0 18px 55px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,0,170,0.10), 0 0 60px rgba(124,58,237,0.10)",
+                  backdropFilter: "blur(12px)",
+                  color: "white",
+                  fontFamily:
+                    '"Plus Jakarta Sans", system-ui, -apple-system, Segoe UI, Roboto, sans-serif',
+                  overflow: "hidden",
                   position: "relative",
                 }}
               >
-                {ui.description}
-              </div>
+                <div
+                  aria-hidden="true"
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    pointerEvents: "none",
+                    background:
+                      "repeating-linear-gradient(to bottom, rgba(255,255,255,0.04), rgba(255,255,255,0.04) 1px, transparent 1px, transparent 4px)",
+                    opacity: 0.12,
+                    mixBlendMode: "overlay",
+                  }}
+                />
 
-              <div style={{ marginTop: 10, display: "flex", gap: 8, flexWrap: "wrap", position: "relative" }}>
-                {chips.map((c) => (
+                <div style={{ display: "flex", justifyContent: "space-between", gap: 10 }}>
+                  <div>
+                    <div style={{ fontSize: 11, opacity: 0.75, letterSpacing: 1.2 }}>
+                      {ui.kicker}
+                    </div>
+                    <div style={{ fontWeight: 950, fontSize: 16, marginTop: 3 }}>
+                      {ui.title}
+                    </div>
+                  </div>
+
                   <div
-                    key={c}
                     style={{
                       fontSize: 11,
                       padding: "6px 10px",
                       borderRadius: 999,
                       border: "1px solid rgba(255,255,255,0.14)",
-                      background: "rgba(255,255,255,0.06)",
-                      opacity: 0.95,
+                      background: "rgba(0,0,0,0.35)",
+                      whiteSpace: "nowrap",
+                      height: "fit-content",
+                      fontFamily:
+                        "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
                     }}
                   >
-                    {c}
+                    <span style={{ color: th.dot, fontWeight: 900 }}>●</span> {ui.badge}
                   </div>
-                ))}
-              </div>
+                </div>
 
-              <button
-                onClick={go}
-                style={btnBase}
-                onMouseEnter={(e) => btnHover(e.currentTarget)}
-                onMouseLeave={(e) => btnLeave(e.currentTarget)}
-              >
-                {ui.cta} <span style={{ opacity: 0.75 }}>{t("ctaHint")}</span>
-              </button>
+                <div style={{ marginTop: 10 }}>
+                  {isNothing && nothingPhase === NOTHING.PHASE.TITLE && (
+                    <div
+                      style={{
+                        borderRadius: 14,
+                        border: "1px solid rgba(255,255,255,0.12)",
+                        background: "rgba(0,0,0,0.85)",
+                        padding: 14,
+                        textAlign: "center",
+                        fontFamily:
+                          "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
+                        fontWeight: 900,
+                        letterSpacing: 2,
+                        fontSize: 46,
+                      }}
+                    >
+                      {t("nothing.nic")}
+                    </div>
+                  )}
 
-              <div
-                style={{
-                  marginTop: 10,
-                  fontSize: 11,
-                  opacity: 0.7,
-                  textAlign: "center",
-                  fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
-                  position: "relative",
-                }}
-              >
-                {/* {t("footerHint")} */}
+
+                  {(!isNothing || nothingPhase === NOTHING.PHASE.OFF) && (
+                    <>
+                      {!(isDistributor && distStep === DIST_STEP.DISPENSE) && (
+                        <div style={{ opacity: 0.9, lineHeight: 1.45, fontSize: 12 }}>
+                          {descriptionToShow}
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+
+                {!!chips.length && (
+                  <div style={{ marginTop: 10, display: "flex", gap: 8, flexWrap: "wrap" }}>
+                    {chips.map((c) => (
+                      <div
+                        key={c}
+                        style={{
+                          fontSize: 11,
+                          padding: "6px 10px",
+                          borderRadius: 999,
+                          border: "1px solid rgba(255,255,255,0.14)",
+                          background: "rgba(255,255,255,0.06)",
+                          opacity: 0.95,
+                        }}
+                      >
+                        {c}
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {isDistributor && <DistributorScreen />}
+
+                {showCta && (
+                  <button
+                    type="button"
+                    onClick={triggerAction}
+                    style={btnBase(selected.group)}
+                    onMouseEnter={(e) => btnHover(e.currentTarget, selected.group)}
+                    onMouseLeave={(e) => btnLeave(e.currentTarget, selected.group)}
+                  >
+                    {ui.cta} <span style={{ opacity: 0.75 }}>{t("ctaHint")}</span>
+                  </button>
+                )}
               </div>
-            </div>
-          </Html>
-        );
-      })()}
+            </Html>
+          );
+        })()}
     </group>
   );
 }
 
-useGLTF.preload("/models/city_markers.glb");
-
+useGLTF.preload("/models/markers_final.glb");
 
