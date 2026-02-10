@@ -380,11 +380,20 @@ export default function HomeOverlay({
     safeSetLS(FIRST_VISIT_KEY, "1");
     completeLanguageStep(selectedLang);
 
+    // unlockScrollHard();
+    // requestAnimationFrame(() => unlockScrollHard());
+
+    // setSlideIndex(1);
     unlockScrollHard();
     requestAnimationFrame(() => unlockScrollHard());
-
-    setSlideIndex(1);
-
+    
+    // 🧠 clé : laisser une frame respirer AVANT le slide
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setSlideIndex(1);
+      });
+    });
+    
     window.setTimeout(() => {
       document.querySelector(".homeOverlay__menuBtn")?.focus?.();
     }, 420);
