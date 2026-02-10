@@ -2,7 +2,7 @@
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
 
-export function warmCityOnce(url = "/models/city.glb") {
+export function warmCityOnce(url = "/models/city_final_draco.glb") {
   const loader = new GLTFLoader();
 
   const draco = new DRACOLoader();

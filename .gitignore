@@ -47,7 +47,7 @@ coverage/
 /blender_exports/
 
 
-public/assets/**/*.mov
-public/assets/**/*.mp4
-public/assets/**/*.m4v
-public/assets/**/*.webm
+# public/assets/**/*.mov
+# public/assets/**/*.mp4
+# public/assets/**/*.m4v
+# public/assets/**/*.webm
