@@ -45,3 +45,9 @@ coverage/
 /temp/
 /exports/
 /blender_exports/
+
+
+public/assets/**/*.mov
+public/assets/**/*.mp4
+public/assets/**/*.m4v
+public/assets/**/*.webm
