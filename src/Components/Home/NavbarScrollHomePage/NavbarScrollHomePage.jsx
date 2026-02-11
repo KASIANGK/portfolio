@@ -12,27 +12,28 @@ const SECTIONS = [
 ];
 
 const raf = (fn) => requestAnimationFrame(fn);
-const LS_POS = "ag_navscrollhp_pos_v1";
+const LS_POS = "ag_navscrollhp_pos_v2_abs"; // ✅ new key to avoid your old broken values
 
 function clamp(v, a, b) {
   return Math.max(a, Math.min(b, v));
 }
 
-export default function NavbarScrollHomePage({
-  enabled = true,
-  refs,
-  showAfterY = 5,
-}) {
+export default function NavbarScrollHomePage({ enabled = true, refs, showAfterY = 5 }) {
   const { t } = useTranslation("nav");
 
   const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(false);
   const [activeKey, setActiveKey] = useState("welcome");
 
-  const visibleRef = useRef(false);
-  const activeRef = useRef("welcome");
+  // ✅ absolute screen position
+  const [pos, setPos] = useState({ x: 0, y: 0 });
 
   const navRef = useRef(null);
+  const activeRef = useRef("welcome");
+
+  const shownOnceRef = useRef(false);
+  const visibleRef = useRef(false);
+
   const dragRef = useRef({
     dragging: false,
     pid: null,
@@ -46,25 +47,9 @@ export default function NavbarScrollHomePage({
     nextX: 0,
     nextY: 0,
   });
-  const [dragXY, setDragXY] = useState({ x: 0, y: 0 });
 
   useEffect(() => setMounted(true), []);
 
-  // restore saved position
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(LS_POS);
-      if (!raw) return;
-      const parsed = JSON.parse(raw);
-      const x = Number(parsed?.x ?? 0);
-      const y = Number(parsed?.y ?? 0);
-      dragRef.current.x = x;
-      dragRef.current.y = y;
-      setDragXY({ x, y });
-    } catch {}
-  }, []);
-
-  // resolve section elements (refs -> fallback by id)
   const sectionEls = useMemo(() => {
     return SECTIONS.map((s) => ({
       ...s,
@@ -72,44 +57,146 @@ export default function NavbarScrollHomePage({
     })).filter((x) => x.el);
   }, [refs]);
 
-  /* ---------------------------------------
-     Visible toggle
-  --------------------------------------- */
+  const clampAbs = useCallback((x, y) => {
+    const nav = navRef.current;
+    const pad = 10;
+
+    const w = nav?.offsetWidth ?? 190;
+    const h = nav?.offsetHeight ?? 234;
+
+    const minX = pad;
+    const minY = pad;
+    const maxX = window.innerWidth - pad - w;
+    const maxY = window.innerHeight - pad - h;
+
+    return { x: clamp(x, minX, maxX), y: clamp(y, minY, maxY) };
+  }, []);
+
+  // ✅ init position: restore or default (50px from right, y=470)
+  useEffect(() => {
+    const init = () => {
+      // default
+      let x = window.innerWidth - 50 - 190; // 190 = card width (close enough)
+      let y = 470;
+
+      // mobile default near bottom-right
+      if (window.innerWidth <= 980) {
+        x = window.innerWidth - 12 - 190;
+        y = window.innerHeight - 14 - 70; // approx pill height
+      }
+
+      try {
+        const raw = localStorage.getItem(LS_POS);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          const sx = Number(parsed?.x);
+          const sy = Number(parsed?.y);
+          if (Number.isFinite(sx) && Number.isFinite(sy)) {
+            x = sx;
+            y = sy;
+          }
+        }
+      } catch {}
+
+      const clamped = clampAbs(x, y);
+      dragRef.current.x = clamped.x;
+      dragRef.current.y = clamped.y;
+      dragRef.current.nextX = clamped.x;
+      dragRef.current.nextY = clamped.y;
+      setPos(clamped);
+    };
+
+    // after mount so navRef exists
+    requestAnimationFrame(() => requestAnimationFrame(init));
+    window.addEventListener("resize", init);
+
+    return () => window.removeEventListener("resize", init);
+  }, [clampAbs]);
+
+  /* -----------------------------
+     Visible: one-way after scroll
+  ----------------------------- */
+  // useEffect(() => {
+  //   if (!enabled) return;
+
+  //   let ticking = false;
+
+  //   const getScrollY = () =>
+  //     window.scrollY ||
+  //     document.documentElement.scrollTop ||
+  //     document.body.scrollTop ||
+  //     0;
+
+  //   const commit = () => {
+  //     ticking = false;
+  //     if (shownOnceRef.current) return;
+
+  //     const y = getScrollY();
+  //     if (y > showAfterY) {
+  //       shownOnceRef.current = true;
+  //       visibleRef.current = true;
+  //       setVisible(true);
+  //     }
+  //   };
+
+  //   const onScroll = () => {
+  //     if (ticking) return;
+  //     ticking = true;
+  //     raf(commit);
+  //   };
+
+  //   window.addEventListener("scroll", onScroll, { passive: true });
+  //   window.addEventListener("wheel", onScroll, { passive: true });
+  //   window.addEventListener("touchmove", onScroll, { passive: true });
+
+  //   return () => {
+  //     window.removeEventListener("scroll", onScroll);
+  //     window.removeEventListener("wheel", onScroll);
+  //     window.removeEventListener("touchmove", onScroll);
+  //   };
+  // }, [enabled, showAfterY]);
   useEffect(() => {
     if (!enabled) return;
-
+  
     let ticking = false;
-
-    const update = () => {
+  
+    const reveal = () => {
       ticking = false;
-      const y = window.scrollY || 0;
-      const next = y > showAfterY;
-
-      if (visibleRef.current !== next) {
-        visibleRef.current = next;
-        setVisible(next);
-      }
+      if (shownOnceRef.current) return;
+  
+      shownOnceRef.current = true;
+      visibleRef.current = true;
+      setVisible(true);
     };
-
-    const onScroll = () => {
+  
+    const onAnyScrollIntent = () => {
       if (ticking) return;
       ticking = true;
-      raf(update);
+      raf(reveal);
     };
-
-    update();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-
+  
+    // ✅ dès que l’utilisateur “touche” au scroll
+    window.addEventListener("wheel", onAnyScrollIntent, { passive: true });
+    window.addEventListener("touchmove", onAnyScrollIntent, { passive: true });
+    window.addEventListener("scroll", onAnyScrollIntent, { passive: true });
+  
+    // (optionnel) si tu veux aussi : trackpad horizontal / space / arrows
+    window.addEventListener("keydown", (e) => {
+      const keys = ["ArrowDown", "ArrowUp", "PageDown", "PageUp", "Space", "Home", "End"];
+      if (keys.includes(e.code)) onAnyScrollIntent();
+    });
+  
     return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
+      window.removeEventListener("wheel", onAnyScrollIntent);
+      window.removeEventListener("touchmove", onAnyScrollIntent);
+      window.removeEventListener("scroll", onAnyScrollIntent);
+      // si tu gardes keydown, mets-le en handler nommé pour pouvoir remove proprement
     };
-  }, [enabled, showAfterY]);
-
-  /* ---------------------------------------
+  }, [enabled]);
+  
+  /* -----------------------------
      Active section observer
-  --------------------------------------- */
+  ----------------------------- */
   useEffect(() => {
     if (!enabled) return;
     if (!sectionEls.length) return;
@@ -129,7 +216,6 @@ export default function NavbarScrollHomePage({
 
       let bestKey = "welcome";
       let bestScore = -1;
-
       for (const [k, v] of ratios.entries()) {
         if (v > bestScore) {
           bestScore = v;
@@ -164,11 +250,9 @@ export default function NavbarScrollHomePage({
     return () => io.disconnect();
   }, [enabled, sectionEls]);
 
-  /* ---------------------------------------
-     Scroll to section (START)
-     - smooth
-     - set hash softly
-  --------------------------------------- */
+  /* -----------------------------
+     Scroll to section
+  ----------------------------- */
   const setHashSoft = useCallback((key) => {
     try {
       const next = key === "welcome" ? "/" : `/#${key}`;
@@ -190,8 +274,6 @@ export default function NavbarScrollHomePage({
       if (!el) return;
 
       setHashSoft(key);
-
-      // ✅ start of section (stable)
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           el.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
@@ -201,118 +283,97 @@ export default function NavbarScrollHomePage({
     [refs, setHashSoft]
   );
 
-  /* ---------------------------------------
-     Draggable (handle only)
-  --------------------------------------- */
-  const clampToViewport = useCallback((x, y) => {
-    const nav = navRef.current;
-    if (!nav) return { x, y };
-
-    const rect = nav.getBoundingClientRect();
-    const pad = 10;
-
-    const maxRight = window.innerWidth - pad - rect.width;
-    const maxBottom = window.innerHeight - pad - rect.height;
-
-    const dxMin = -rect.left + pad;
-    const dxMax = maxRight - rect.left;
-    const dyMin = -rect.top + pad;
-    const dyMax = maxBottom - rect.top;
-
-    return {
-      x: clamp(x, x + dxMin, x + dxMax),
-      y: clamp(y, y + dyMin, y + dyMax),
-    };
-  }, []);
-
-  const commitDrag = useCallback((x, y) => {
+  /* -----------------------------
+     Drag (absolute)
+  ----------------------------- */
+  const commitPos = useCallback((x, y) => {
     dragRef.current.x = x;
     dragRef.current.y = y;
-    setDragXY({ x, y });
+    dragRef.current.nextX = x;
+    dragRef.current.nextY = y;
+    setPos({ x, y });
     try {
       localStorage.setItem(LS_POS, JSON.stringify({ x, y }));
     } catch {}
   }, []);
 
-  const scheduleDragPaint = useCallback(() => {
+  const schedulePaint = useCallback(() => {
     const st = dragRef.current;
     if (st.rafId) return;
     st.rafId = requestAnimationFrame(() => {
       st.rafId = 0;
-      commitDrag(st.nextX, st.nextY);
+      commitPos(st.nextX, st.nextY);
     });
-  }, [commitDrag]);
+  }, [commitPos]);
 
-  const onHandlePointerDown = useCallback(
-    (e) => {
-      if (!visible) return;
-      const nav = navRef.current;
-      if (!nav) return;
+  const onHandlePointerDown = useCallback((e) => {
+    if (!visibleRef.current) return;
 
-      const st = dragRef.current;
-      st.dragging = true;
-      st.pid = e.pointerId;
-      st.startX = e.clientX;
-      st.startY = e.clientY;
-      st.baseX = st.x;
-      st.baseY = st.y;
+    const nav = navRef.current;
+    if (!nav) return;
 
-      try {
-        e.currentTarget.setPointerCapture?.(e.pointerId);
-      } catch {}
+    const st = dragRef.current;
+    st.dragging = true;
+    st.pid = e.pointerId;
+    st.startX = e.clientX;
+    st.startY = e.clientY;
+    st.baseX = st.x;
+    st.baseY = st.y;
 
-      nav.classList.add("isDragging");
-      e.preventDefault();
-    },
-    [visible]
-  );
+    nav.classList.add("isDragging");
+    e.preventDefault();
+  }, []);
 
-  const onHandlePointerMove = useCallback(
+  const onMove = useCallback(
     (e) => {
       const st = dragRef.current;
       if (!st.dragging) return;
+      if (st.pid != null && e.pointerId != null && e.pointerId !== st.pid) return;
 
       const dx = e.clientX - st.startX;
       const dy = e.clientY - st.startY;
 
-      let nx = st.baseX + dx;
-      let ny = st.baseY + dy;
-
-      const clamped = clampToViewport(nx, ny);
-      st.nextX = clamped.x;
-      st.nextY = clamped.y;
-
-      scheduleDragPaint();
+      const next = clampAbs(st.baseX + dx, st.baseY + dy);
+      st.nextX = next.x;
+      st.nextY = next.y;
+      schedulePaint();
     },
-    [clampToViewport, scheduleDragPaint]
+    [clampAbs, schedulePaint]
   );
 
-  const onHandlePointerUp = useCallback((e) => {
+  const onUp = useCallback((e) => {
     const st = dragRef.current;
     if (!st.dragging) return;
+    if (st.pid != null && e.pointerId != null && e.pointerId !== st.pid) return;
 
     st.dragging = false;
     st.pid = null;
-
-    try {
-      e.currentTarget.releasePointerCapture?.(e.pointerId);
-    } catch {}
-
     navRef.current?.classList.remove("isDragging");
 
     try {
-      localStorage.setItem(LS_POS, JSON.stringify({ x: dragRef.current.x, y: dragRef.current.y }));
+      localStorage.setItem(LS_POS, JSON.stringify({ x: st.x, y: st.y }));
     } catch {}
   }, []);
 
   useEffect(() => {
+    window.addEventListener("pointermove", onMove, { passive: false });
+    window.addEventListener("pointerup", onUp);
+    window.addEventListener("pointercancel", onUp);
+
     const onBlur = () => {
       dragRef.current.dragging = false;
+      dragRef.current.pid = null;
       navRef.current?.classList.remove("isDragging");
     };
     window.addEventListener("blur", onBlur);
-    return () => window.removeEventListener("blur", onBlur);
-  }, []);
+
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+      window.removeEventListener("pointercancel", onUp);
+      window.removeEventListener("blur", onBlur);
+    };
+  }, [onMove, onUp]);
 
   if (!enabled || !mounted) return null;
 
@@ -322,8 +383,8 @@ export default function NavbarScrollHomePage({
       className={`navbar__scroll__hp ${visible ? "isVisible" : ""}`}
       aria-label="Scroll navigation"
       style={{
-        "--dx": `${dragXY.x}px`,
-        "--dy": `${dragXY.y}px`,
+        "--x": `${pos.x}px`,
+        "--y": `${pos.y}px`,
       }}
     >
       <div className="navbar__scroll__hp__card">
@@ -349,9 +410,6 @@ export default function NavbarScrollHomePage({
             type="button"
             className="navbar__scroll__hp__dragHandle"
             onPointerDown={onHandlePointerDown}
-            onPointerMove={onHandlePointerMove}
-            onPointerUp={onHandlePointerUp}
-            onPointerCancel={onHandlePointerUp}
             aria-label={t("navHp.drag", { defaultValue: "drag me" })}
             title={t("navHp.drag", { defaultValue: "drag me" })}
           >
@@ -379,4 +437,3 @@ export default function NavbarScrollHomePage({
 
   return createPortal(ui, document.body);
 }
-
