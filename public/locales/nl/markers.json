@@ -1,7 +1,7 @@
 {
   "nothing": { "nic": "NIETS" },
   "portalBadge": "Portaal",
-  "ctaHint": "(SPATIE / ENTER)",
+  "ctaHint": "",
   "footerHint": "Loop dichterbij → popup • Klik orb → pin • ESC → muis vrij",
 
   "drinks": {
@@ -92,7 +92,7 @@
     },
 
     "TRIGGER_GLOW": {
-      "label": "GLOW://SCAN",
+      "label": "CITY://SCAN",
       "items": {
         "TRIGGER_PARKMETRE": {
           "title": "Parkeermeter: Final Boss",
@@ -134,7 +134,7 @@
     },
 
     "TRIGGER_FUN": {
-      "label": "FUN://WTF",
+      "label": "??://WTF",
       "items": {
         "TRIGGER_BUS": {
           "title": "Bus naar nergens",
@@ -164,8 +164,8 @@
           "title": "Vast punt",
           "kicker": "Geen druk",
           "description": "Hier gaat niets gebeuren. En dat is oké.",
-          "cta": "Verder",
-          "description2": "Hier is écht helemaal NIETS. 💀"
+          "description2": "Hier is écht helemaal NIETS. 💀",
+          "cta": "OK"
         }
       }
     }

@@ -630,14 +630,15 @@ export default function Navbar() {
 
             <div className="navHUD__gameFoot">
               <button
-                  type="button"
-                  className="navHUD__gameClose"
-                  onClick={() => setCollapsed(true, { user: true })}
-                  aria-label={t("game.collapse")}
-                  title={t("game.collapse")}
-                >
-                  HIDE 
-                </button>
+                type="button"
+                className="navHUD__gameClose"
+                onClick={() => setCollapsed(true, { user: true })}
+                aria-label={t("game.collapse")}
+                title={t("game.collapse")}
+              >
+                {t("game.hide")}
+              </button>
+
               {/* {t("game.footer", {
                 state: gameCollapsed ? t("game.stateCollapsed") : t("game.stateOpen"),
               })} */}

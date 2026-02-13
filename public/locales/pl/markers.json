@@ -1,7 +1,7 @@
 {
   "nothing": { "nic": "NIC" },
   "portalBadge": "Portal",
-  "ctaHint": "(SPACJA / ENTER)",
+  "ctaHint": "",
   "footerHint": "Podejdź → popup • Kliknij orb → przypnij • ESC → odblokuj mysz",
 
   "drinks": {
@@ -92,7 +92,7 @@
     },
 
     "TRIGGER_GLOW": {
-      "label": "GLOW://SCAN",
+      "label": "CITY://SCAN",
       "items": {
         "TRIGGER_PARKMETRE": {
           "title": "Parkometr: Final Boss",
@@ -134,7 +134,7 @@
     },
 
     "TRIGGER_FUN": {
-      "label": "FUN://WTF",
+      "label": "??://WTF",
       "items": {
         "TRIGGER_BUS": {
           "title": "Autobus do nigdzie",
@@ -164,8 +164,8 @@
           "title": "Stały punkt",
           "kicker": "Bez presji",
           "description": "Nic się tu nie wydarzy. I to jest w porządku.",
-          "cta": "Dalej",
-          "description2": "Tu naprawdę NIC nie ma. 💀"
+          "description2": "Tu naprawdę NIC nie ma. 💀",
+          "cta": "SPOKO"
         }
       }
     }

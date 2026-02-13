@@ -31,6 +31,7 @@
 
     "expand": "Expand game HUD",
     "collapse": "Collapse game HUD",
+    "hide": "HIDE",
 
     "footer": "HUD is {{state}} • click « to hide",
     "footerLocked": "Complete tutorial to unlock HUD",
@@ -39,7 +40,7 @@
     "stateCollapsed": "collapsed",
 
     "actions": {
-      "returnHome": "Return Home"
+      "returnHome": "HOME"
     },
 
     "commands": {

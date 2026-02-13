@@ -2,7 +2,8 @@
 import React, { useMemo, useRef, useLayoutEffect, useEffect, useState, useCallback } from "react";
 import gsap from "gsap";
 import { useNavigate } from "react-router-dom";
-import { FaEnvelope, FaPhoneAlt, FaInstagram, FaTwitter } from "react-icons/fa";
+import { FaEnvelope, FaPhoneAlt, FaInstagram } from "react-icons/fa";
+import { FaTiktok } from "react-icons/fa6";
 import { whenImageReady } from "../../../../utils/projectsCache";
 
 const clamp01 = (n) => Math.max(0, Math.min(1, n));
@@ -253,17 +254,20 @@ function PreviewProjects({ active, onOpenPortfolio, slidesFromParent, menuAssets
 function PreviewContact() {
   return (
     <div className="homeOverlay__previewContacts">
+      {/* EMAIL */}
       <a className="homeOverlay__iconOnlyBtn" href="mailto:ngk.kasia@gmail.com" aria-label="Email">
         <FaEnvelope className="homeOverlay__iconOnlySvg" />
       </a>
 
-      <a className="homeOverlay__iconOnlyBtn" href="tel:123456789" aria-label="Phone">
+      {/* PHONE */}
+      <a className="homeOverlay__iconOnlyBtn" href="tel:+32472845612" aria-label="Phone">
         <FaPhoneAlt className="homeOverlay__iconOnlySvg" />
       </a>
 
+      {/* INSTAGRAM */}
       <a
         className="homeOverlay__iconOnlyBtn"
-        href="https://www.instagram.com"
+        href="https://www.instagram.com/angels_gang_style/"
         target="_blank"
         rel="noreferrer"
         aria-label="Instagram"
@@ -271,14 +275,15 @@ function PreviewContact() {
         <FaInstagram className="homeOverlay__iconOnlySvg" />
       </a>
 
+      {/* TIKTOK */}
       <a
         className="homeOverlay__iconOnlyBtn"
-        href="https://www.twitter.com"
+        href="https://www.tiktok.com/@kiss_my_fire"
         target="_blank"
         rel="noreferrer"
-        aria-label="Twitter"
+        aria-label="TikTok"
       >
-        <FaTwitter className="homeOverlay__iconOnlySvg" />
+        <FaTiktok className="homeOverlay__iconOnlySvg" />
       </a>
     </div>
   );

@@ -59,7 +59,7 @@ export default function FullScreenLoader({
           <div className="agLoader__text">
             <div className="agLoader__label">{label}</div>
             <div className="agLoader__sub">
-              {subLabel} <span className="agLoader__dots">•••</span>
+              {subLabel} 
             </div>
           </div>
 

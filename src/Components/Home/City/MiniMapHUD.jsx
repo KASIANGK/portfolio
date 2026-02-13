@@ -1,35 +1,38 @@
 // src/Components/HomeCity/MiniMapHUD.jsx
 import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
-import { createPortal } from "react-dom";
 import * as THREE from "three";
+
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 
 export default function MiniMapHUD({
   enabled = true,
-  size = 150,
+  width = 160,
+  height = 260,
   centerX = 0,
   centerZ = 0,
   scale = 0.8,
+  markers = [],
+
+  // ✅ how low the player sits in the map (0–1)
+  playerVerticalRatio = 0.98,
 }) {
   const { camera } = useThree();
   const containerRef = useRef(null);
-  const stateRef = useRef({ x: 0, z: 0, yaw: 0 });
+  const stateRef = useRef({ x: 0, z: 0, rot: 0 });
+  const tmpForward = useMemo(() => new THREE.Vector3(), []);
 
-  // Create DOM container once
   useEffect(() => {
     if (!enabled) return;
-
     const el = document.createElement("div");
     document.body.appendChild(el);
     containerRef.current = el;
-
     return () => {
       document.body.removeChild(el);
       containerRef.current = null;
     };
   }, [enabled]);
 
-  // Update camera state (30 fps)
   const tick = useMemo(() => ({ acc: 0 }), []);
   useFrame((_, dt) => {
     if (!containerRef.current) return;
@@ -39,35 +42,74 @@ export default function MiniMapHUD({
     tick.acc = 0;
 
     const p = camera.position;
-    const e = new THREE.Euler().setFromQuaternion(camera.quaternion, "YXZ");
 
-    stateRef.current = { x: p.x, z: p.z, yaw: e.y };
+    tmpForward.set(0, 0, -1).applyQuaternion(camera.quaternion);
+    const fx = tmpForward.x;
+    const fz = tmpForward.z;
+
+    const rot = Math.atan2(fz, fx);
+
+    stateRef.current = { x: p.x, z: p.z, rot };
     renderHUD();
   });
 
-  // Render HUD into portal container
+  const groupColor = (g) => {
+    if (g === "NAV") return "rgba(255,0,255,0.95)";
+    if (g === "GLOW") return "rgba(0,242,255,0.95)";
+    if (g === "FUN") return "rgba(196,0,255,0.95)";
+    return "rgba(255,255,255,0.65)";
+  };
+
+  const worldToMap = (wx, wz) => {
+    const halfW = width / 2;
+
+    // ✅ player is lower in the map
+    const playerAnchorY = height * playerVerticalRatio;
+
+    const px = halfW + (wz - centerZ) * scale;
+    const py = playerAnchorY - (wx - centerX) * scale;
+
+    const pad = 10;
+    return {
+      x: clamp(px, pad, width - pad),
+      y: clamp(py, pad, height - pad),
+    };
+  };
+
   const renderHUD = () => {
     const el = containerRef.current;
     if (!el) return;
 
-    const { x, z, yaw } = stateRef.current;
+    const { x, z, rot } = stateRef.current;
+    const me = worldToMap(x, z);
 
-    const half = size / 2;
-    const px = half + (z - centerZ) * scale;
-    const py = half - (x - centerX) * scale;
-    
-    const dotX = Math.max(10, Math.min(size - 10, px));
-    const dotY = Math.max(10, Math.min(size - 10, py));
-    
-
+    const dotsHtml = (markers || [])
+      .map((m) => {
+        const p = worldToMap(m.x, m.z);
+        const c = groupColor(m.group);
+        return `
+          <div style="
+            position:absolute;
+            left:${p.x - 3}px;
+            top:${p.y - 3}px;
+            width:6px;
+            height:6px;
+            border-radius:999px;
+            background:${c};
+            box-shadow:0 0 10px ${c};
+            opacity:0.9;
+          "></div>
+        `;
+      })
+      .join("");
 
     el.innerHTML = `
       <div style="
         position:fixed;
         left:16px;
-        top:16px;        
-        width:${size}px;
-        height:${size}px;
+        top:16px;
+        width:${width}px;
+        height:${height}px;
         border-radius:18px;
         background:rgba(0,0,0,0.35);
         border:1px solid rgba(255,255,255,0.12);
@@ -88,27 +130,28 @@ export default function MiniMapHUD({
           opacity:0.55;
         "></div>
 
+        ${dotsHtml}
+
         <div style="
           position:absolute;
-          left:${dotX - 5}px;
-          top:${dotY - 5}px;
+          left:${me.x - 5}px;
+          top:${me.y - 5}px;
           width:10px;
           height:10px;
           border-radius:999px;
-          background:rgba(0,180,255,0.95);    
+          background:rgba(0,180,255,0.95);
           box-shadow:0 0 12px rgba(0,180,255,0.6), 0 0 0 2px rgba(0,0,0,0.35);
-          box-shadow:0 0 0 2px rgba(0,0,0,0.35);
         "></div>
 
         <div style="
           position:absolute;
-          left:${dotX - 1}px;
-          top:${dotY - 18}px;
+          left:${me.x - 1}px;
+          top:${me.y - 18}px;
           width:2px;
           height:16px;
           background:rgba(255,255,255,0.9);
           transform-origin:50% 18px;
-          transform:rotate(${yaw + Math.PI / 2}rad);
+          transform:rotate(${rot}rad);
           border-radius:2px;
         "></div>
 
@@ -119,13 +162,10 @@ export default function MiniMapHUD({
           font-size:10px;
           letter-spacing:0.5px;
           color:rgba(255,255,255,0.6);
-        ">
-          MAP
-        </div>
+        ">MAP</div>
       </div>
     `;
   };
 
-  // Component renders nothing in R3F tree
   return null;
 }

@@ -1,7 +1,7 @@
 {
   "nothing": { "nic": "RIEN" },
   "portalBadge": "Portail",
-  "ctaHint": "(ESPACE / ENTRÉE)",
+  "ctaHint": "",
   "footerHint": "Approche → popup • Clique l’orb → épingle • ESC → libère la souris",
 
   "drinks": {
@@ -74,7 +74,7 @@
       "title": "Zone Projets",
       "kicker": "Des builds qui vivent",
       "description": "Code + design + beaucoup d’itération. Regarde ce que je livre vraiment.",
-      "cta": "Entrer"
+      "cta": "Let's go"
     },
 
     "TRIGGER_PORTFOLIO": {
@@ -92,7 +92,7 @@
     },
 
     "TRIGGER_GLOW": {
-      "label": "GLOW://SCAN",
+      "label": "CITY://SCAN",
       "items": {
         "TRIGGER_PARKMETRE": {
           "title": "Parcmètre : Final Boss",
@@ -134,7 +134,7 @@
     },
 
     "TRIGGER_FUN": {
-      "label": "FUN://WTF",
+      "label": "??://WTF",
       "items": {
         "TRIGGER_BUS": {
           "title": "Bus vers nulle part",
@@ -164,8 +164,8 @@
           "title": "Point fixe",
           "kicker": "Sans pression",
           "description": "Rien ne va se passer ici. Et c’est très bien comme ça.",
-          "cta": "Suivant",
-          "description2": "Ici, il n’y a vraiment RIEN. 💀"
+          "description2": "Ici, il n’y a vraiment RIEN. 💀",
+          "cta": "OK"
         }
       }
     }

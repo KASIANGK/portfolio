@@ -4,117 +4,44 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import "./ProjectPage.css";
 
-const EMPTY = Object.freeze({ web: [], threeD: [], all: [] });
+const EMPTY = Object.freeze({ web: [], threeD: [] });
 
-function normalizeImagesObj(images) {
-  if (images && typeof images === "object" && !Array.isArray(images)) {
-    return {
-      laptop: Array.isArray(images.laptop) ? images.laptop.filter(Boolean) : [],
-      tablet: Array.isArray(images.tablet) ? images.tablet.filter(Boolean) : [],
-      mobile: Array.isArray(images.mobile) ? images.mobile.filter(Boolean) : [],
-    };
-  }
-  if (Array.isArray(images)) {
-    const arr = images.filter(Boolean);
-    return { laptop: arr, tablet: [], mobile: [] };
-  }
-  return { laptop: [], tablet: [], mobile: [] };
-}
-
-function normalizeProject(p) {
-  const images = normalizeImagesObj(p?.images);
-  const cover = images.laptop[0] || images.tablet[0] || images.mobile[0] || "";
-  const videos = p?.videos || p?.video || null;
-
+function normalizeImages(images) {
   return {
-    id: p?.id,
-    slug: String(p?.slug || ""),
-    title: p?.title || "",
-    function: p?.function || "",
-    lead: p?.lead || "",
-    description: p?.description || "",
-    overview: p?.overview || "",
-    stack: Array.isArray(p?.stack) ? p.stack : [],
-    role: Array.isArray(p?.role) ? p.role : [],
-    images,
-    cover,
-    videos,
-    links: {
-      demo: p?.links?.demo || p?.link || "",
-      repo: p?.links?.repo || p?.repo || "",
-    },
+    laptop: Array.isArray(images?.laptop) ? images.laptop.filter(Boolean) : [],
+    tablet: Array.isArray(images?.tablet) ? images.tablet.filter(Boolean) : [],
+    mobile: Array.isArray(images?.mobile) ? images.mobile.filter(Boolean) : [],
+    video: Array.isArray(images?.video) ? images.video.filter(Boolean) : [],
   };
 }
-
-function flattenBuckets(json) {
-  const all = Array.isArray(json?.all) ? json.all : [];
-  if (all.length) return all;
-
-  const web = Array.isArray(json?.web) ? json.web : [];
-  const threeD = Array.isArray(json?.threeD) ? json.threeD : [];
-  return [...web, ...threeD];
-}
-
-const unique = (arr) => [...new Set((arr || []).filter(Boolean))];
 
 function isVideoSrc(src = "") {
   const s = String(src).toLowerCase();
   return s.endsWith(".mp4") || s.endsWith(".webm") || s.endsWith(".mov");
 }
 
-/**
- * Header visual priority:
- * 1) video
- * 2) images.mobile[0]
- * 3) images.tablet[0]
- * 4) images.laptop[0]
- */
-function pickHeaderVisual(project) {
-  const v = project?.videos;
-  if (typeof v === "string" && v) return v;
-  if (Array.isArray(v) && v[0]) return v[0];
-  if (v && typeof v === "object") {
-    if (v.portrait) return v.portrait;
-    if (v.main) return v.main;
-    if (v.mobile) return v.mobile;
-  }
+function normalizeProject(p) {
+  const images = normalizeImages(p?.images || {});
+  // ✅ PRIORITY: video → laptop → mobile
+  const hero = images.video?.[0] || images.laptop?.[0] || images.mobile?.[0] || "";
+  const isVideo = isVideoSrc(hero);
 
-  const m = project?.images?.mobile?.[0];
-  if (m) return m;
-  const t = project?.images?.tablet?.[0];
-  if (t) return t;
-  const l = project?.images?.laptop?.[0];
-  if (l) return l;
-
-  return project?.cover || "";
+  return {
+    ...p,
+    slug: String(p?.slug || "").trim(),
+    images,
+    hero,
+    isVideo,
+  };
 }
 
-function spicyOverview(project) {
-  const raw = (project?.overview || project?.description || "").trim();
-  if (raw) return raw;
-
-  const title = project?.title || "this project";
-  const stack = (project?.stack || []).slice(0, 4).join(" · ");
-
-  return [
-    `Built to feel obvious: ${title} — but faster, cleaner, and less noisy.`,
-    stack ? `Stack: ${stack}.` : null,
-    `Cyber polish + real UX decisions (not just glitter).`,
-  ]
-    .filter(Boolean)
-    .join(" ");
-}
-
-function pickDefaultBucket(images) {
-  const hasM = images.mobile.length > 0;
-  const hasT = images.tablet.length > 0;
-  const hasL = images.laptop.length > 0;
-
-  if (hasM && hasT && hasL) return "all";
-  if (hasM) return "mobile";
-  if (hasT) return "tablet";
-  if (hasL) return "laptop";
-  return "all";
+function buildMap(json) {
+  const map = new Map();
+  [...(json?.web || []), ...(json?.threeD || [])].forEach((p) => {
+    const n = normalizeProject(p);
+    if (n.slug) map.set(n.slug, n);
+  });
+  return map;
 }
 
 export default function ProjectPage({ jsonUrl }) {
@@ -124,307 +51,321 @@ export default function ProjectPage({ jsonUrl }) {
 
   const lang = (i18n.resolvedLanguage || i18n.language || "en").split("-")[0];
   const base = import.meta.env.BASE_URL || "/";
-  const effectiveJsonUrl = jsonUrl || `${base}locales/${lang}/projects_home.json`;
+  const url = jsonUrl || `${base}locales/${lang}/projects_home.json`;
 
   const [data, setData] = useState(EMPTY);
   const [loading, setLoading] = useState(true);
 
-  // gallery bucket
-  const [bucket, setBucket] = useState("all");
+  // ✅ Pagination
+  const ITEMS_PER_PAGE = 3;
+  const [page, setPage] = useState(0);
 
-  const goBack = () => navigate("/portfolio?filter=all");
-  const goHome = () => navigate("/");
+  // ✅ Lightbox (MUST be before returns)
+  const [lightboxIndex, setLightboxIndex] = useState(null);
 
   useEffect(() => {
     let alive = true;
-    const ac = new AbortController();
 
     (async () => {
       try {
         setLoading(true);
-        const r = await fetch(effectiveJsonUrl, { cache: "no-store", signal: ac.signal });
-        if (!r.ok) throw new Error(`Fetch failed ${r.status} for ${effectiveJsonUrl}`);
-
+        const r = await fetch(url, { cache: "no-store" });
+        if (!r.ok) throw new Error(`Fetch failed: ${r.status}`);
         const json = await r.json();
         if (!alive) return;
-
-        setData({
-          web: Array.isArray(json?.web) ? json.web : [],
-          threeD: Array.isArray(json?.threeD) ? json.threeD : [],
-          all: Array.isArray(json?.all) ? json.all : [],
-        });
+        setData(json);
       } catch (e) {
-        if (!alive) return;
-        if (e?.name === "AbortError") return;
         console.error(e);
+        if (!alive) return;
         setData(EMPTY);
       } finally {
-        if (alive) setLoading(false);
+        if (!alive) return;
+        setLoading(false);
       }
     })();
 
     return () => {
       alive = false;
-      ac.abort();
     };
-  }, [effectiveJsonUrl]);
+  }, [url]);
 
   const project = useMemo(() => {
-    const wanted = String(slug || "").trim().toLowerCase();
-    const list = flattenBuckets(data).map(normalizeProject);
-    return list.find((p) => String(p.slug).trim().toLowerCase() === wanted) || null;
+    const map = buildMap(data);
+    return slug ? map.get(String(slug).trim()) : null;
   }, [data, slug]);
 
-  const headerVisual = useMemo(() => (project ? pickHeaderVisual(project) : ""), [project]);
-  const headerVisualIsVideo = useMemo(() => isVideoSrc(headerVisual), [headerVisual]);
-
-  const imagesByBucket = useMemo(() => {
-    if (!project) return { mobile: [], tablet: [], laptop: [] };
-    return {
-      mobile: unique(project.images.mobile),
-      tablet: unique(project.images.tablet),
-      laptop: unique(project.images.laptop),
-    };
+  const allImages = useMemo(() => {
+    if (!project) return [];
+    const list = [
+      ...project.images.laptop,
+      ...project.images.mobile,
+      ...project.images.tablet,
+    ].filter(Boolean);
+    return Array.from(new Set(list));
   }, [project]);
 
-  const canPick = useMemo(
-    () => ({
-      all: unique([...imagesByBucket.mobile, ...imagesByBucket.tablet, ...imagesByBucket.laptop]).length > 0,
-      mobile: imagesByBucket.mobile.length > 0,
-      tablet: imagesByBucket.tablet.length > 0,
-      laptop: imagesByBucket.laptop.length > 0,
-    }),
-    [imagesByBucket]
-  );
+  const totalPages = Math.max(1, Math.ceil(allImages.length / ITEMS_PER_PAGE));
 
-  const currentList = useMemo(() => {
-    if (bucket === "all") {
-      return unique([...imagesByBucket.mobile, ...imagesByBucket.tablet, ...imagesByBucket.laptop]);
-    }
-    const list = imagesByBucket?.[bucket] || [];
-    if (list.length) return list;
+  const paginatedImages = useMemo(() => {
+    const start = page * ITEMS_PER_PAGE;
+    const end = start + ITEMS_PER_PAGE;
+    return allImages.slice(start, end);
+  }, [allImages, page]);
 
-    // fallback safety
-    const all = unique([...imagesByBucket.mobile, ...imagesByBucket.tablet, ...imagesByBucket.laptop]);
-    return all;
-  }, [imagesByBucket, bucket]);
+  const canPrev = page > 0;
+  const canNext = page < totalPages - 1;
 
   useEffect(() => {
-    if (!project) return;
-    setBucket(pickDefaultBucket(project.images));
-  }, [project]);
+    // reset page + lightbox when project changes
+    setPage(0);
+    setLightboxIndex(null);
+  }, [project?.slug]);
 
-  const setBucketSafe = useCallback((b) => setBucket(b), []);
+  // Lightbox open index should be absolute index in allImages
+  const openLightbox = useCallback(
+    (pageLocalIndex) => {
+      const abs = page * ITEMS_PER_PAGE + pageLocalIndex;
+      if (abs >= 0 && abs < allImages.length) setLightboxIndex(abs);
+    },
+    [page, ITEMS_PER_PAGE, allImages.length]
+  );
 
-  const overviewText = project ? spicyOverview(project) : "";
+  const closeLightbox = useCallback(() => setLightboxIndex(null), []);
 
-  if (loading) {
-    return (
-      <main className="ppage">
-        <button className="ppage__homeFab" onClick={goHome} aria-label="Home">
-            <span aria-hidden="true">⌂</span>
-        </button>
-        <div className="ppage__shell">
-          <header className="ppage__header">
-            <div className="ppage__backRow">
-              <button className="ppage__back" onClick={goBack}>
-                ← Back
-              </button>
-            </div>
-            <div className="ppage__headerGrid">
-              <div className="ppage__info">
-                <div className="ppage__kicker">Loading</div>
-                <h1 className="ppage__title">Project</h1>
-                <p className="ppage__lead">Preparing the page…</p>
-                <div className="ppage__overview">
-                  <h2 className="ppage__h2">Overview</h2>
-                  <p className="ppage__p ppage__muted">Loading content…</p>
-                </div>
-              </div>
-              <div className="ppage__visualPanel">
-                <div className="ppage__visualFrame" />
-              </div>
-            </div>
+  const lbCanNav = allImages.length > 1 && lightboxIndex !== null;
 
-          </header>
-        </div>
-      </main>
-    );
-  }
+  const lbPrev = useCallback(() => {
+    if (!lbCanNav) return;
+    setLightboxIndex((i) => (i === 0 ? allImages.length - 1 : i - 1));
+  }, [lbCanNav, allImages.length]);
 
-  if (!project) {
-    return (
-      <main className="ppage">
-        <div className="ppage__shell">
-          <header className="ppage__header">
-            <div className="ppage__backRow">
-              <button className="ppage__back" onClick={goBack}>
-                ← Back
-              </button>
-            </div>
-            <div className="ppage__headerGrid">
-              <div className="ppage__info">
-                <div className="ppage__kicker">Not found</div>
-                <h1 className="ppage__title">Unknown project</h1>
-                <p className="ppage__lead">Slug “{slug}” doesn’t match {effectiveJsonUrl}.</p>
-              </div>
-              <div className="ppage__visualPanel">
-                <div className="ppage__visualFrame" />
-              </div>
-            </div>
-          </header>
-        </div>
-      </main>
-    );
-  }
+  const lbNext = useCallback(() => {
+    if (!lbCanNav) return;
+    setLightboxIndex((i) => (i === allImages.length - 1 ? 0 : i + 1));
+  }, [lbCanNav, allImages.length]);
+
+  // ✅ Keyboard: ESC + arrows
+  useEffect(() => {
+    if (lightboxIndex === null) return;
+
+    const onKeyDown = (e) => {
+      if (e.key === "Escape") closeLightbox();
+      if (e.key === "ArrowLeft") lbPrev();
+      if (e.key === "ArrowRight") lbNext();
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [lightboxIndex, closeLightbox, lbPrev, lbNext]);
+
+  // ✅ Lock scroll when lightbox open
+  useEffect(() => {
+    if (lightboxIndex === null) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [lightboxIndex]);
+
+  if (loading) return <main className="ppage">Loading...</main>;
+  if (!project) return <main className="ppage">Not found</main>;
 
   return (
     <main className="ppage">
       <div className="ppage__shell">
-        {/* HEADER */}
-        <header className="ppage__header">
-          <div className="ppage__backRow">
-            <button className="ppage__back" onClick={goBack}>
-              ← Back
-            </button>
-          </div>
-
-          <div className="ppage__headerGrid">
-            <div className="ppage__info">
-              <div className="ppage__kicker">{project.function}</div>
-              <h1 className="ppage__title">{project.title}</h1>
-              {project.lead ? <p className="ppage__lead">{project.lead}</p> : null}
-
-              <div className="ppage__overview">
-                <h2 className="ppage__h2">Overview</h2>
-                <p className="ppage__p">{overviewText}</p>
-              </div>
+        {/* TOP */}
+        <section className="ppage__top">
+          {/* LEFT META */}
+          <article className="ppage__card ppage__meta">
+            <div className="ppage__backRow">
+              <button className="ppage__backBtn" onClick={() => navigate(-1)}>
+                Back
+              </button>
             </div>
 
-            <div className="ppage__visualPanel">
-              <div className="ppage__visualFrame" aria-label="Project visual">
-                {headerVisual ? (
-                  headerVisualIsVideo ? (
-                    <video
-                      className="ppage__visualMedia"
-                      src={headerVisual}
-                      autoPlay
-                      muted
-                      loop
-                      playsInline
-                      preload="metadata"
-                    />
-                  ) : (
-                    <img
-                      className="ppage__visualMedia"
-                      src={headerVisual}
-                      alt={`${project.title} visual`}
-                      loading="eager"
-                      decoding="async"
-                    />
-                  )
-                ) : (
-                  <div className="ppage__visualFallback" aria-hidden="true" />
-                )}
-                <div className="ppage__visualFx" aria-hidden="true" />
-              </div>
-            </div>
-          </div>
+            <div className="ppage__cat">{project.function}</div>
+            <h1 className="ppage__title">{project.title}</h1>
 
-          {/* home button bottom-left */}
-        </header>
+            {project.description ? (
+              <p className="ppage__desc">{project.description}</p>
+            ) : null}
 
-        {/* BODY */}
-        <section className="ppage__body">
-          {/* Images (left) */}
-          <article className="ppage__card ppage__card--images">
-            <div className="ppage__imagesTop">
-              <h2 className="ppage__h2">Images</h2>
-
-              <div className="ppage__imagesControls">
-                <div className="ppage__tabs" role="tablist" aria-label="Screens by device">
-                  {canPick.all && (
-                    <button
-                      type="button"
-                      className={`ppage__tab ${bucket === "all" ? "isActive" : ""}`}
-                      onClick={() => setBucketSafe("all")}
-                      role="tab"
-                      aria-selected={bucket === "all"}
-                    >
-                      All
-                    </button>
-                  )}
-                  {canPick.mobile && (
-                    <button
-                      type="button"
-                      className={`ppage__tab ${bucket === "mobile" ? "isActive" : ""}`}
-                      onClick={() => setBucketSafe("mobile")}
-                      role="tab"
-                      aria-selected={bucket === "mobile"}
-                    >
-                      Mobile
-                    </button>
-                  )}
-                  {canPick.tablet && (
-                    <button
-                      type="button"
-                      className={`ppage__tab ${bucket === "tablet" ? "isActive" : ""}`}
-                      onClick={() => setBucketSafe("tablet")}
-                      role="tab"
-                      aria-selected={bucket === "tablet"}
-                    >
-                      Tablet
-                    </button>
-                  )}
-                  {canPick.laptop && (
-                    <button
-                      type="button"
-                      className={`ppage__tab ${bucket === "laptop" ? "isActive" : ""}`}
-                      onClick={() => setBucketSafe("laptop")}
-                      role="tab"
-                      aria-selected={bucket === "laptop"}
-                    >
-                      Laptop
-                    </button>
-                  )}
+            {/* STACK */}
+            {!!project.stack?.length && (
+              <div className="ppage__block">
+                <h3 className="ppage__h3">Stack</h3>
+                <div className="ppage__chips">
+                  {project.stack.map((s) => (
+                    <span className="ppage__chip" key={s}>
+                      {s}
+                    </span>
+                  ))}
                 </div>
               </div>
-            </div>
+            )}
 
-            {/* ✅ strip scrollable tight (height max 300) */}
-            <div className="ppage__strip" aria-label="Screens strip">
-              {currentList.map((src, i) => (
-                <figure className="ppage__stripItem" key={`${src}_${i}`}>
-                  <img src={src} alt={`${project.title} ${bucket} ${i + 1}`} loading="lazy" decoding="async" />
-                </figure>
-              ))}
-            </div>
+            {/* ROLE */}
+            {!!project.role?.length && (
+              <div className="ppage__block">
+                <h3 className="ppage__h3">Role</h3>
+                <ul className="ppage__roleList">
+                  {project.role.map((r) => (
+                    <li key={r}>{r}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </article>
 
-          {/* Stack + Role (right) */}
-          <aside className="ppage__side">
-            <article className="ppage__card ppage__card--side">
-              <h2 className="ppage__h2">Stack</h2>
-              <div className="ppage__chips">
-                {project.stack.map((s) => (
-                  <span className="ppage__chip" key={s}>
-                    {s}
-                  </span>
-                ))}
-              </div>
-            </article>
+          {/* RIGHT HERO */}
+          <article className="ppage__card ppage__visual">
+            <div className="ppage__heroBox" aria-label="Hero media">
+              {project.hero ? (
+                project.isVideo ? (
+                  <video
+                    className="ppage__heroEl"
+                    src={project.hero}
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    preload="metadata"
+                    controls
+                    controlsList="nodownload noplaybackrate"
+                    onLoadedMetadata={(e) => {
+                      try {
+                        // some browsers need a nudge even if autoplay+muted
+                        e.currentTarget.play();
+                      } catch {}
+                    }}
+                  />
+                ) : (
+                  <img
+                    className="ppage__heroEl"
+                    src={project.hero}
+                    alt={project.title}
+                    loading="eager"
+                    decoding="async"
+                  />
+                )
+              ) : (
+                <div className="ppage__heroFallback" aria-hidden="true" />
+              )}
 
-            <article className="ppage__card ppage__card--side">
-              <h2 className="ppage__h2">Role</h2>
-              <ul className="ppage__list">
-                {project.role.map((r) => (
-                  <li key={r}>{r}</li>
-                ))}
-              </ul>
-            </article>
-          </aside>
+              <div className="ppage__scanlines" aria-hidden="true" />
+              <div className="ppage__heroFx" aria-hidden="true" />
+            </div>
+          </article>
         </section>
+
+        {/* GALLERY + PAGINATION */}
+        {allImages.length > 0 && (
+          <section className="ppage__galleryWrap" aria-label="Gallery">
+            <div className="ppage__galleryGrid">
+              {paginatedImages.map((src, i) => (
+                <button
+                  type="button"
+                  key={`${src}_${i}`}
+                  className="ppage__galleryItem"
+                  onClick={() => openLightbox(i)}
+                  aria-label={`Open image ${i + 1}`}
+                >
+                  <img
+                    src={src}
+                    alt={`${project.title} ${i + 1}`}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <div className="ppage__scanlines" aria-hidden="true" />
+                </button>
+              ))}
+            </div>
+
+            {totalPages > 1 && (
+              <div className="ppage__pager" aria-label="Gallery pagination">
+                <button
+                  className="ppg__btn"
+                  disabled={!canPrev}
+                  onClick={() => setPage((p) => Math.max(0, p - 1))}
+                >
+                  <span className="ppg__icon" aria-hidden="true">
+                    ←
+                  </span>
+                  <span className="ppg__txt">Prev</span>
+                </button>
+
+                <div className="ppg__center">
+                  <div className="ppg__meta">
+                    <span className="ppg__count">
+                      <b>{page + 1}</b>
+                    </span>
+                    <span className="ppg__sep">/</span>
+                    <span className="ppg__count">
+                      <b>{totalPages}</b>
+                    </span>
+                  </div>
+
+                  <div className="ppg__dots" aria-label="Pages">
+                    {Array.from({ length: totalPages }).map((_, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        className={`ppg__dot ${idx === page ? "is-active" : ""}`}
+                        onClick={() => setPage(idx)}
+                        aria-label={`Go to page ${idx + 1}`}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <button
+                  className="ppg__btn"
+                  disabled={!canNext}
+                  onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+                >
+                  <span className="ppg__txt">Next</span>
+                  <span className="ppg__icon" aria-hidden="true">
+                    →
+                  </span>
+                </button>
+              </div>
+            )}
+          </section>
+        )}
       </div>
+
+      {/* ✅ LIGHTBOX */}
+      {lightboxIndex !== null && (
+        <div className="ppage__lightbox" onClick={closeLightbox} role="dialog" aria-modal="true">
+          <div className="ppage__lightboxInner" onClick={(e) => e.stopPropagation()}>
+            <button className="ppage__lbClose" onClick={closeLightbox} aria-label="Close">
+              ✕
+            </button>
+
+            <img
+              className="ppage__lbImg"
+              src={allImages[lightboxIndex]}
+              alt={`${project.title} preview`}
+            />
+
+            {allImages.length > 1 && (
+              <>
+                <button className="ppage__lbNav ppage__lbPrev" onClick={lbPrev} aria-label="Previous">
+                  ←
+                </button>
+                <button className="ppage__lbNav ppage__lbNext" onClick={lbNext} aria-label="Next">
+                  →
+                </button>
+              </>
+            )}
+
+            <div className="ppage__lbHint" aria-hidden="true">
+              ESC to close · ← → to navigate
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

@@ -1,7 +1,7 @@
 {
   "nothing": { "nic": "NOTHING" },
   "portalBadge": "Portal",
-  "ctaHint": "(SPACE / ENTER)",
+  "ctaHint": "",
   "footerHint": "Walk up → popup • Click orb → pin • ESC → unlock mouse",
 
   "drinks": {
@@ -74,7 +74,7 @@
       "title": "Projects Zone",
       "kicker": "Builds that live",
       "description": "Code + design + a lot of iteration. See what I actually ship.",
-      "cta": "Enter"
+      "cta": "Let's go"
     },
 
     "TRIGGER_PORTFOLIO": {
@@ -92,7 +92,7 @@
     },
 
     "TRIGGER_GLOW": {
-      "label": "GLOW://SCAN",
+      "label": "CITY://SCAN",
       "items": {
         "TRIGGER_PARKMETRE": {
           "title": "Parking Meter: Final Boss",
@@ -134,7 +134,7 @@
     },
 
     "TRIGGER_FUN": {
-      "label": "FUN://WTF",
+      "label": "??://WTF",
       "items": {
         "TRIGGER_BUS": {
           "title": "Bus to Nowhere",
@@ -164,8 +164,8 @@
           "title": "Fixed point",
           "kicker": "No pressure",
           "description": "Nothing will happen here. And that’s okay.",
-          "cta": "Next",
-          "description2": "There is literally NOTHING here. 💀"
+          "description2": "There is literally NOTHING here. 💀",
+          "cta": "ALL RIGHT"
         }
       }
     }

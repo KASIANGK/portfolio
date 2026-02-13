@@ -19,11 +19,26 @@ const SUBJECTS = [
 ];
 
 const SOCIALS = [
-  // ✅ remplace les href par tes vrais liens
-  { id: "instagram", label: "Instagram", href: "#", Icon: IconInstagram },
-  { id: "tiktok", label: "TikTok", href: "#", Icon: IconTikTok },
-  { id: "github", label: "GitHub", href: "#", Icon: IconGitHub },
-  { id: "linkedin", label: "LinkedIn", href: "#", Icon: IconLinkedIn },
+  {
+    id: "instagram",
+    label: "Instagram",
+    href: "https://www.instagram.com/angels_gang_style/",
+    Icon: IconInstagram,
+  },
+  {
+    id: "tiktok",
+    label: "TikTok",
+    href: "https://www.tiktok.com/@kiss_my_fire",
+    Icon: IconTikTok,
+  },
+  // ✅ GitHub supprimé
+  {
+    id: "linkedin",
+    label: "LinkedIn",
+    // 🔁 Remplace par TON URL exacte si besoin
+    href: "https://www.linkedin.com/in/kasia-nagorka/",
+    Icon: IconLinkedIn,
+  },
 ];
 
 const raf = () => new Promise((r) => requestAnimationFrame(r));
@@ -51,17 +66,6 @@ function IconTikTok(props) {
       <path
         fill="currentColor"
         d="M16.5 2h-2.8v12.2a3.2 3.2 0 1 1-2.7-3.2V8.2a6 6 0 1 0 5.5 6V8.8c1.1 1 2.6 1.6 4.2 1.6V7.7c-1.7 0-3.2-.7-4.2-1.8-.7-.8-1.1-2-1.1-3.3Z"
-      />
-    </svg>
-  );
-}
-
-function IconGitHub(props) {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" {...props}>
-      <path
-        fill="currentColor"
-        d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.18-3.37-1.18-.45-1.14-1.1-1.44-1.1-1.44-.9-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.56-1.11-4.56-4.95 0-1.09.39-1.98 1.02-2.68-.1-.25-.44-1.27.1-2.64 0 0 .84-.27 2.75 1.02A9.6 9.6 0 0 1 12 6.8c.85 0 1.71.11 2.51.33 1.9-1.29 2.74-1.02 2.74-1.02.55 1.37.21 2.39.1 2.64.64.7 1.02 1.59 1.02 2.68 0 3.85-2.34 4.69-4.57 4.94.36.32.68.94.68 1.9v2.82c0 .27.18.58.69.48A10 10 0 0 0 12 2Z"
       />
     </svg>
   );
@@ -198,7 +202,8 @@ function Contact() {
                   <IconMail className="ctc2__iconSvg" />
                 </a>
 
-                <a className="ctc2__iconBtn" href={`tel:${PHONE_PUBLIC}`} aria-label="Phone">
+                {/* ✅ tel: format international (affichage inchangé) */}
+                <a className="ctc2__iconBtn" href="tel:+32472845612" aria-label="Phone">
                   <IconPhone className="ctc2__iconSvg" />
                 </a>
 
@@ -208,6 +213,8 @@ function Contact() {
                     className="ctc2__iconBtn"
                     href={href}
                     aria-label={label}
+                    target="_blank"
+                    rel="noreferrer"
                     onClick={(e) => {
                       if (href === "#") e.preventDefault();
                     }}
@@ -217,15 +224,19 @@ function Contact() {
                 ))}
               </div>
 
-              <div className="ctc2__hint">
-                Tip: click phone/email to copy.
-              </div>
+              <div className="ctc2__hint">Tip: click phone/email to copy.</div>
             </div>
           </aside>
 
           {/* RIGHT FORM */}
           <div className="ctc2__right" aria-label="Contact form">
-            <form className="ctc2__form" onSubmit={onSend}>
+            <form
+              className="ctc2__form"
+              onSubmit={onSend}
+              onKeyDownCapture={(e) => e.stopPropagation()}
+              onPointerDownCapture={(e) => e.stopPropagation()}
+              onMouseDownCapture={(e) => e.stopPropagation()}
+            >
               <div className="ctc2__row2">
                 <label className="ctc2__field">
                   <span className="ctc2__label">FIRST NAME</span>
@@ -233,7 +244,7 @@ function Contact() {
                     className="ctc2__input"
                     value={first}
                     onChange={(e) => setFirst(e.target.value)}
-                    placeholder="Kasia"
+                    placeholder="Your first name"
                     autoComplete="given-name"
                   />
                 </label>
@@ -244,7 +255,7 @@ function Contact() {
                     className="ctc2__input"
                     value={last}
                     onChange={(e) => setLast(e.target.value)}
-                    placeholder="Nagorka"
+                    placeholder="Your last name"
                     autoComplete="family-name"
                   />
                 </label>
@@ -292,11 +303,7 @@ function Contact() {
                   {sent ? "SENT ✓" : "SEND"}
                 </button>
 
-                <button
-                  className="aboutX__btn isGhost"
-                  type="button"
-                  onClick={() => setMessage("")}
-                >
+                <button className="aboutX__btn isGhost" type="button" onClick={() => setMessage("")}>
                   CLEAR
                 </button>
               </div>

@@ -30,6 +30,7 @@
 
     "expand": "HUD uitklappen",
     "collapse": "HUD inklappen",
+    "hide": "VERBERG",
 
     "footer": "HUD is {{state}} • klik op « om te verbergen",
     "footerLocked": "Voltooi de tutorial om HUD te ontgrendelen",
@@ -38,7 +39,7 @@
     "stateCollapsed": "ingeklapt",
 
     "actions": {
-      "returnHome": "Terug naar Home"
+      "returnHome": "HOME"
     },
 
     "commands": {

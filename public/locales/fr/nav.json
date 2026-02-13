@@ -31,6 +31,7 @@
 
     "expand": "Déplier le HUD",
     "collapse": "Replier le HUD",
+    "hide": "MASQUER",
 
     "footer": "HUD {{state}} • cliquez sur « pour masquer",
     "footerLocked": "Terminez le tutoriel pour débloquer le HUD",
@@ -39,7 +40,7 @@
     "stateCollapsed": "replié",
 
     "actions": {
-      "returnHome": "Retour à l’accueil"
+      "returnHome": "ACCUEIL"
     },
 
     "commands": {

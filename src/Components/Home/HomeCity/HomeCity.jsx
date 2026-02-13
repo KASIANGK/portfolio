@@ -252,6 +252,7 @@ export default function HomeCity() {
     }),
     [requestedEnter, uiIntro, streetPos]
   );
+  const [minimapMarkers, setMinimapMarkers] = useState([]);
 
   const shouldShowTutorial = requestedEnter && gateOpen && !tutorialDone;
 
@@ -616,6 +617,38 @@ export default function HomeCity() {
     });
   }, [requestedEnter, gateOpen, tutorialDone]);
 
+  const minimapBounds = useMemo(() => {
+    // fallback si pas encore de markers
+    if (!minimapMarkers?.length) {
+      const pad = 40;
+      return {
+        minX: streetPos[0] - pad,
+        maxX: streetPos[0] + pad,
+        minZ: streetPos[2] - pad,
+        maxZ: streetPos[2] + pad,
+      };
+    }
+  
+    let minX = Infinity, maxX = -Infinity, minZ = Infinity, maxZ = -Infinity;
+    for (const m of minimapMarkers) {
+      if (m.x < minX) minX = m.x;
+      if (m.x > maxX) maxX = m.x;
+      if (m.z < minZ) minZ = m.z;
+      if (m.z > maxZ) maxZ = m.z;
+    }
+  
+    // ✅ padding world units
+    const pad = 12;
+    minX -= pad; maxX += pad; minZ -= pad; maxZ += pad;
+  
+    // safety
+    if (!Number.isFinite(minX) || minX === maxX) { minX = streetPos[0] - 40; maxX = streetPos[0] + 40; }
+    if (!Number.isFinite(minZ) || minZ === maxZ) { minZ = streetPos[2] - 40; maxZ = streetPos[2] + 40; }
+  
+    return { minX, maxX, minZ, maxZ };
+  }, [minimapMarkers, streetPos]);
+
+
   return (
     <div className={rootClass}>
       {/* Loader / Tutorial (layers hautes) */}
@@ -707,6 +740,7 @@ export default function HomeCity() {
               closeDistance={9}
               onLoaded={() => setMarkersReady(true)}
               onOrbits={setOrbits}
+              onMinimapPoints={setMinimapMarkers}
             />
           </Suspense>
 
@@ -763,11 +797,16 @@ export default function HomeCity() {
 
           <MiniMapHUD
             enabled={minimapConfig.enabled}
-            size={minimapConfig.size}
+            width={160}
+            height={260}
             centerX={minimapConfig.centerX}
             centerZ={minimapConfig.centerZ}
             scale={minimapConfig.scale}
+            markers={minimapMarkers}
+            yawOffset={-Math.PI / 2}
+            
           />
+
 
           <EffectComposer multisampling={0}>
             <SMAA />

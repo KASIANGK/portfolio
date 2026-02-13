@@ -754,8 +754,8 @@
     padding: 10px 14px;
     border-radius: 999px;
   
-    border: 1px solid rgba(255,255,255,0.14);
-    background: rgba(0,0,0,0.35);
+    border: 1px solid rgba(255, 0, 170, 0.28);
+    background: rgba(255, 0, 170, 0.438);
   
     color: rgba(255,255,255,0.88);
     font-size: 11px;
@@ -773,6 +773,7 @@
     box-shadow:
       0 0 18px rgba(255,0,170,0.14),
       0 0 26px rgba(124,58,237,0.10);
+    background-color: #491e6a;
   }
   .portfolio_btn_commands {
     display: flex;

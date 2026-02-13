@@ -356,7 +356,7 @@ export default function Portfolio({ jsonUrl }) {
             <div className="portfolio_btn_commands">
               <div className="portfolio__back">
                 <button className="portfolio__backBtn" onClick={goBackToProjects}>
-                  ← Back
+                  Back
                 </button>
               </div>
 

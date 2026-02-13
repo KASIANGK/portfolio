@@ -1,286 +1,468 @@
 {
-    "web": [
-      {
-        "id": 1,
-        "slug": "excuse-app",
-        "title": "Excuse App",
-        "function": "Web Dev",
-        "lead": "Excuse generator: filters, tone variants, illustrated 2D UI.",
-        "description": "A playful mobile app where users craft an excuse using criteria (target, style, intensity), with an art direction inspired by urban signage and gaming.",
-        "overview": "Experience-first project: a simple flow (pick criteria → generate → iterate) wrapped in an illustrated, animated 2D interface. I designed the full art direction (sets, illustrations, micro-animations) and structured the app to keep navigation smooth, logic readable, and the content system easy to expand (new criteria, tones, categories).",
-        "stack": ["React Native", "JavaScript", "JSON"],
-        "role": [
-          "Mobile UI/UX design (flow + interactions)",
-          "2D art direction (illustrations, sets, animations)",
-          "Generation logic: criteria, variants, tone levels",
-          "Project structure for scalability (content expansion)"
+  "web": [
+    {
+      "id": 1,
+      "slug": "excuse-app",
+      "title": "Excuse App",
+      "function": "Web Dev",
+      "lead": "Excuse generator: criteria, tone variations, illustrated 2D UI.",
+      "description": "A playful mobile app where the user builds an excuse through criteria (target, style, intensity), with an art direction inspired by urban signs and game UI.",
+      "overview": "Experience-driven project: a simple flow (choose criteria → generate → iterate) with an illustrated and animated 2D interface. I designed the full art direction (backgrounds, illustrations, micro-animations) and structured the app to keep navigation smooth, logic readable, and the base easy to expand (new criteria, new tones, new categories).",
+      "stack": ["React Native", "JavaScript", "JSON"],
+      "role": [
+        "Mobile UI/UX design (flow + interactions)",
+        "2D art direction (illustrations, backgrounds, animations)",
+        "Generation logic: criteria, variants, tone intensity",
+        "Project structure for scalability (content additions)"
+      ],
+      "images": {
+        "laptop": [],
+        "tablet": [],
+        "mobile": [
+          "/assets/ExcuseApp/ex1.png",
+          "/assets/ExcuseApp/ex2.png",
+          "/assets/ExcuseApp/ex3.png",
+          "/assets/ExcuseApp/ex4.png",
+          "/assets/ExcuseApp/ex5.png"
         ],
-        "images": {
-          "laptop": [
-            "/assets/ExcuseApp/ex1.png",
-            "/assets/ExcuseApp/ex2.png",
-            "/assets/ExcuseApp/ex3.png",
-            "/assets/ExcuseApp/ex4.png",
-            "/assets/ExcuseApp/ex5.png"
-          ],
-          "tablet": [],
-          "mobile": []
-        },
-        "link": "https://www.lien.com",
-        "links": {
-          "demo": "https://www.lien.com",
-          "repo": ""
-        }
+        "video": ["/assets/about/ExcuseApp.mov"]
       },
-      {
-        "id": 2,
-        "slug": "sidegeek",
-        "title": "SideGeek",
-        "function": "Web Dev",
-        "lead": "Info platform + student database: Vue.js & Laravel, team project.",
-        "description": "Collaborative project (Vue.js + Laravel): building a training platform and a database connected to learner profiles.",
-        "overview": "Team project focused on delivering a structured, maintainable app across front and back. I contributed to UI integration, component planning, and Git/GitHub organization (branches, PRs, reviews). The goal was both delivery and a clean base: conventions, clear splitting, and solid team communication.",
-        "stack": ["Vue.js", "Laravel", "PHP", "MySQL", "GitHub"],
-        "role": [
-          "Team development (Git/GitHub workflow, PRs, branches)",
-          "UI integration (Vue) + component structuring",
-          "Contribution to logic and data (scope-dependent)",
-          "Coordination: conventions, split, UI consistency"
-        ],
-        "images": {
-          "laptop": [
-            "/assets/SideGeek/s1.png",
-            "/assets/SideGeek/s3.png",
-            "/assets/SideGeek/side.png"
-          ],
-          "tablet": [],
-          "mobile": []
-        },
-        "link": "https://www.lien.com",
-        "links": {
-          "demo": "https://www.lien.com",
-          "repo": ""
-        }
+      "link": "https://www.lien.com",
+      "links": { "demo": "https://www.lien.com", "repo": "" }
+    },
+    {
+      "id": 2,
+      "slug": "sidegeek",
+      "title": "SideGeek",
+      "function": "Web Dev",
+      "lead": "Info platform + student database: Vue.js & Laravel, team work.",
+      "description": "Collaborative project (Vue.js + Laravel): building a training platform and a database connected to student/learner profiles.",
+      "overview": "Team project aimed at delivering a structured, maintainable and consistent app across front/back. I contributed to integration, component framing, and work organization via Git/GitHub (branches, PRs, reviews). The focus was both delivery and a healthy base: conventions, clear structure and team communication.",
+      "stack": ["Vue.js", "Laravel", "PHP", "MySQL", "GitHub"],
+      "role": [
+        "Team development (Git/GitHub workflow, PRs, branches)",
+        "UI integration (Vue) and component structuring",
+        "Contribution to logic and data (depending on scope)",
+        "Coordination: conventions, structure, UI consistency"
+      ],
+      "images": {
+        "laptop": ["/assets/SideGeek/s1.png", "/assets/SideGeek/s3.png", "/assets/SideGeek/side.png"],
+        "tablet": [],
+        "mobile": []
       },
-      {
-        "id": 3,
-        "slug": "pasta-timer",
-        "title": "Pasta Timer",
-        "function": "Web Dev",
-        "lead": "Cooking app: timers, pasta types, recipes, fun alarm.",
-        "description": "A pasta-focused mobile app: choose pasta type, timing, recipes, and alarms — with a fully hand-crafted illustrated art style.",
-        "overview": "Utility + personality: an easy flow (choose → timer → alert) enriched with content (pasta types, recipes, tips) and a strong illustrated identity. I built a clean structure (JSON data, components, navigation) so the app stays stable and easy to extend (new types, recipes, variations).",
-        "stack": ["React", "TypeScript", "CSS", "JSON"],
-        "role": [
-          "UI/UX + mobile integration",
-          "Data structuring (JSON): content & recipes",
-          "Timer logic + alarms",
-          "Art direction: hand-made illustrations & assets"
+      "link": "https://www.lien.com",
+      "links": { "demo": "https://www.lien.com", "repo": "" }
+    },
+    {
+      "id": 3,
+      "slug": "pasta-timer",
+      "title": "Pasta Timer",
+      "function": "Web Dev",
+      "lead": "Cooking app: timers, pasta types, recipes, fun alarm.",
+      "description": "A pasta-focused mobile app: choose the type, timing, recipes, and alarms — with hand-made illustrated art direction.",
+      "overview": "The project blends usefulness and personality: a simple experience (choose → timer → alert) enriched with content (pasta types, recipes, tips) and an illustrated visual identity. I built a clear structure (JSON data, components, navigation) so the app stays stable and easy to extend (new types, new recipes, new variations).",
+      "stack": ["React", "TypeScript", "CSS", "JSON"],
+      "role": [
+        "UI/UX + mobile integration",
+        "Data structure (JSON): content & recipes",
+        "Timer logic + alarms",
+        "Art direction: illustrations and assets (hand-made)"
+      ],
+      "images": {
+        "laptop": [
+          "/assets/PastaTimer/p0.png",
+          "/assets/PastaTimer/p1.png",
+          "/assets/PastaTimer/p2.png",
+          "/assets/PastaTimer/p3.png",
+          "/assets/PastaTimer/p4.png",
+          "/assets/PastaTimer/p5.png",
+          "/assets/PastaTimer/p6.png",
+          "/assets/PastaTimer/p7.png"
         ],
-        "images": {
-          "laptop": [
-            "/assets/PastaTimer/p0.png",
-            "/assets/PastaTimer/p1.png",
-            "/assets/PastaTimer/p2.png",
-            "/assets/PastaTimer/p3.png",
-            "/assets/PastaTimer/p4.png",
-            "/assets/PastaTimer/p5.png",
-            "/assets/PastaTimer/p6.png",
-            "/assets/PastaTimer/p7.png"
-          ],
-          "tablet": [],
-          "mobile": []
-        },
-        "link": "https://www.lien.com",
-        "links": {
-          "demo": "https://www.lien.com",
-          "repo": ""
-        }
+        "tablet": [],
+        "mobile": [],
+        "video": ["/assets/about/pasta-timer.mov"]
       },
-      {
-        "id": 4,
-        "slug": "mc-do",
-        "title": "McDo",
-        "function": "Web Dev",
-        "lead": "E-commerce demo: cart, checkout, delivery, responsive UI.",
-        "description": "Shopping & delivery website with a product → cart → confirmation flow, designed to be clear and maintainable.",
-        "overview": "Front-focused project with state logic: navigation, catalog, cart, summary, and responsive UX. I worked on component structure, UI consistency, and a readable purchase flow. Goal: a simple but clean app with predictable behavior and a scalable base. I also created the art direction and visual assets (graphics, composition, overall visual consistency).",
-        "stack": ["React", "JavaScript", "CSS", "JSON"],
-        "role": [
-          "UI/UX + responsive integration",
-          "Cart state management",
-          "Component structure + routing (if applicable)",
-          "Art direction + asset creation + perceived performance"
-        ],
-        "images": {
-          "laptop": [
-            "/assets/McDo/mc.png",
-            "/assets/McDo/mcdoo.png",
-            "/assets/McDo/mcdooo.png"
-          ],
-          "tablet": ["/assets/McDo/mcdo-tablet.png"],
-          "mobile": ["/assets/McDo/m1.png"]
-        },
-        "link": "https://www.lien.com",
-        "links": {
-          "demo": "https://www.lien.com",
-          "repo": ""
-        }
+      "link": "https://www.lien.com",
+      "links": { "demo": "https://www.lien.com", "repo": "" }
+    },
+    {
+      "id": 4,
+      "slug": "mc-do",
+      "title": "McDo",
+      "function": "Web Dev",
+      "lead": "E-commerce demo: cart, ordering and delivery with responsive UI.",
+      "description": "Purchase/delivery website with product → cart → confirmation flow, designed to be clear and maintainable.",
+      "overview": "Front-end project with solid state logic: navigation, catalog, cart, recap and responsive UX. I worked on component structure, UI consistency and the readability of the purchase flow. Goal: a simple but clean app, predictable behavior and a scalable base. I also handled art direction and assets (visuals, composition, graphic consistency).",
+      "stack": ["React", "JavaScript", "CSS", "JSON"],
+      "role": [
+        "UI/UX + responsive integration",
+        "Cart state management",
+        "Component structuring + routing (if present)",
+        "Art direction + asset creation (visuals) + perceived performance"
+      ],
+      "images": {
+        "laptop": ["/assets/McDo/mc.png", "/assets/McDo/mcdoo.png", "/assets/McDo/mcdooo.png"],
+        "tablet": ["/assets/McDo/m1.png", "/assets/McDo/m2.png", "/assets/McDo/m3.png", "/assets/McDo/m5.png", "/assets/McDo/mcdo-tablet.png"],
+        "mobile": ["/assets/McDo/m4.png", "/assets/McDo/mcdo-small2.png"]
       },
-      {
-        "id": 5,
-        "slug": "why-not",
-        "title": "Why Not",
-        "function": "Web Dev",
-        "lead": "UI concept: community & planning platform, dark/light modes.",
-        "description": "Figma mockup for a community-driven planning platform, with dark & light variants and a product-minded user flow.",
-        "overview": "Design-first project: information hierarchy, user journey, reusable UI components, and navigation logic. The goal was a solid base before development: coherent screens, styling system, and clean dark/light variations. I shaped a design system (typography, spacing, components) to make future front-end implementation straightforward.",
-        "stack": ["Figma", "Design System", "UI/UX"],
-        "role": [
-          "UX design (flow, structure, navigation)",
-          "UI design (dark/light) + reusable components",
-          "Design system setup (tokens, styles, rules)",
-          "Implementation-ready handoff"
-        ],
-        "images": {
-          "laptop": [
-            "/assets/WhyNot/wn_1.jpg",
-            "/assets/WhyNot/wn_2.jpg",
-            "/assets/WhyNot/wn_3.jpg",
-            "/assets/WhyNot/wn_4.jpg",
-            "/assets/WhyNot/wn_5.jpg"
-          ],
-          "tablet": [],
-          "mobile": []
-        },
-        "link": "https://www.lien.com",
-        "links": {
-          "demo": "https://www.lien.com",
-          "repo": ""
-        }
+      "link": "https://www.lien.com",
+      "links": { "demo": "https://www.lien.com", "repo": "" }
+    },
+    {
+      "id": 5,
+      "slug": "why-not",
+      "title": "Why Not",
+      "function": "Web Dev",
+      "lead": "UI concept: community & organization platform, dark/light.",
+      "description": "Figma mockup of a community platform focused on organization, with dark & light versions and a product-minded user flow.",
+      "overview": "Design-centered project: information hierarchy, user journey, reusable UI components and navigation logic. The goal was to build a solid base before development: consistent screens, a style system, and clean dark/light variations. I worked on the design system (typography, spacing, components) to ease future front-end integration.",
+      "stack": ["Figma", "Design System", "UI/UX"],
+      "role": [
+        "UX design (journey, structure, navigation)",
+        "UI design (dark/light) + reusable components",
+        "Design system setup (tokens, styles, rules)",
+        "Integration preparation (clear handoff)"
+      ],
+      "images": {
+        "laptop": [],
+        "tablet": [],
+        "mobile": [
+          "/assets/WhyNot/wn_1.jpg",
+          "/assets/WhyNot/wn_2.jpg",
+          "/assets/WhyNot/wn_3.jpg",
+          "/assets/WhyNot/wn_4.jpg",
+          "/assets/WhyNot/wn_5.jpg"
+        ]
       },
-      {
-        "id": 6,
-        "slug": "sneakers",
-        "title": "Sneakers",
-        "function": "Web Dev",
-        "lead": "Shoe e-commerce: React + DB, street/cosmic visual world.",
-        "description": "A responsive shoe e-commerce website with cart flow, backed by a full art direction (illustrations, animations, light/dark atmospheres).",
-        "overview": "Full front-end project with e-commerce logic: listing, details, cart, and a smooth experience across screen sizes. The standout element is the strong visual identity: two worlds (colorful street in light mode, cosmic in dark mode), with illustrated and animated assets. I kept the structure clean (components, data, styles) to maintain predictable behavior and easy maintenance.",
-        "stack": ["React", "JavaScript", "CSS", "DBeaver", "Database"],
-        "role": [
-          "E-commerce UI/UX + responsive integration",
-          "Cart handling + purchase flow",
-          "Art direction: illustrations, animations, light/dark identity",
-          "Project organization (components, data, styles)"
-        ],
-        "images": {
-          "laptop": [
-            "/assets/Sneakers/snlight.png",
-            "/assets/s.jpg",
-            "/assets/aura.jpg",
-            "/assets/s.jpg",
-            "/assets/aura.jpg"
-          ],
-          "tablet": [],
-          "mobile": []
-        },
-        "link": "https://www.lien.com",
-        "links": {
-          "demo": "https://www.lien.com",
-          "repo": ""
-        }
+      "link": "https://www.lien.com",
+      "links": { "demo": "https://www.lien.com", "repo": "" }
+    },
+    {
+      "id": 6,
+      "slug": "sneakers",
+      "title": "Sneakers",
+      "function": "Web Dev",
+      "lead": "Shoe e-commerce: React + DB, street/cosmic universe.",
+      "description": "Shoe e-commerce website with cart and responsive design, supported by full art direction (illustrations, animations, light/dark moods).",
+      "overview": "Full front-end project with e-commerce logic: listing, product details, cart, and a smooth experience across screen sizes. The key point: strong art direction with two identities (colorful street in light mode, cosmic in dark mode), plus illustrated and animated assets. I kept a clean structure (components, data, styles) to avoid surprises and make the project easy to maintain.",
+      "stack": ["React", "JavaScript", "CSS", "DBeaver", "Database"],
+      "role": [
+        "E-commerce UI/UX + responsive integration",
+        "Cart management + purchase flow",
+        "Art direction: illustrations, animations, light/dark identity",
+        "Project organization (components, data, styles)"
+      ],
+      "images": {
+        "laptop": ["/assets/Sneakers/snlight.png", "/assets/Sneakers/sneakers.png", "/assets/Sneakers/sn9.png", "/assets/Sneakers/sn10.png"],
+        "tablet": ["/assets/Sneakers/sn2.png", "/assets/Sneakers/sn3.png", "/assets/Sneakers/sn4.png", "/assets/Sneakers/sn5.png", "/assets/Sneakers/sn6.png", "/assets/Sneakers/sn7.png", "/assets/Sneakers/sn8.png"],
+        "mobile": ["/assets/Sneakers/s1.png", "/assets/Sneakers/sneakersDark.png"]
       },
-      {
-        "id": 7,
-        "slug": "nisa",
-        "title": "NISA",
-        "function": "Web Dev",
-        "lead": "Neuroscience institute: Figma mockup, dark/light, clear structure.",
-        "description": "Figma mockup for a neuroscience institute: editorial hierarchy, sections, and consistent dark & light variants.",
-        "overview": "Content and readability-driven: a structure designed to present an institute (mission, research, news, contact) without clutter. I worked on typographic hierarchy, grids, and reusable components to achieve a serious yet modern look. The dual theme (dark/light) was designed from day one to stay coherent (contrast, accents, states).",
-        "stack": ["Figma", "UI/UX", "Design System"],
-        "role": [
-          "Information architecture (pages, sections, navigation)",
-          "Dark/light UI design (coherence, contrast, states)",
-          "Reusable components + grids",
-          "Implementation-ready handoff"
-        ],
-        "images": {
-          "laptop": [
-            "/assets/MolenGame/m1.png",
-            "/assets/s.jpg",
-            "/assets/aura.jpg",
-            "/assets/s.jpg",
-            "/assets/aura.jpg"
-          ],
-          "tablet": [],
-          "mobile": []
-        },
-        "link": "https://www.lien.com",
-        "links": {
-          "demo": "https://www.lien.com",
-          "repo": ""
-        }
-      }
-    ],
-    "threeD": [
-      {
-        "id": 8,
-        "slug": "tarmac",
-        "title": "Tarmac",
-        "function": "3D",
-        "lead": "Blender modeling + animation: assets, shading, final video.",
-        "description": "End-to-end 3D project: modeling, shading, animation and video editing, with custom asset creation.",
-        "overview": "Production-oriented pipeline: build a coherent result from A to Z (modeling, materials, lighting, animation), then deliver a clean video (rhythm, cuts, export). I focused on perceived quality via shading/lights and motion readability, while keeping a clear pipeline (scenes, assets, exports) to iterate safely.",
-        "stack": ["Blender", "3D Modeling", "Shading", "Animation", "Video Editing"],
-        "role": [
-          "Modeling + asset creation",
-          "Shading / materials / lighting",
-          "Animation + rendering",
-          "Video editing + final export"
-        ],
-        "images": {
-          "laptop": ["/assets/color.png", "/assets/s.jpg", "/assets/aura.jpg", "/assets/s.jpg", "/assets/aura.jpg"],
-          "tablet": [],
-          "mobile": []
-        },
-        "link": "https://www.lien.com",
-        "links": { "demo": "https://www.lien.com", "repo": "" }
+      "link": "https://www.lien.com",
+      "links": { "demo": "https://www.lien.com", "repo": "" }
+    },
+    {
+      "id": 7,
+      "slug": "nisa",
+      "title": "NISA",
+      "function": "Web Dev",
+      "lead": "Neuroscience institute: Figma mockup, dark/light, clean structure.",
+      "description": "Figma mockup for a neuroscience institute: editorial hierarchy, sections, and dark & light variations.",
+      "overview": "Content and readability project: a structure designed to present an institute (missions, research, news, contact) without overload. I worked on typographic hierarchy, grids, and reusable components to achieve a serious yet modern result. The dual theme (dark/light) was designed from the start to remain coherent (contrast, accents, states).",
+      "stack": ["Figma", "UI/UX", "Design System"],
+      "role": [
+        "Information architecture (pages, sections, navigation)",
+        "Dark/light UI design (coherence, contrasts, states)",
+        "Reusable components + grids",
+        "Integration-ready handoff"
+      ],
+      "images": {
+        "laptop": [],
+        "tablet": [],
+        "mobile": ["/assets/Nisa/n1.jpeg", "/assets/Nisa/n2.jpeg"]
       },
-      {
-        "id": 9,
-        "slug": "brainy",
-        "title": "Brainy",
-        "function": "3D",
-        "lead": "Cartoon character: sculpt, shapes, render — social content (TikTok).",
-        "description": "Cartoon character creation: sculpting, proportions, details and rendering, designed for social formats (TikTok).",
-        "overview": "Character-focused project: exploring a readable cartoon style (silhouette, expressions, shapes) and achieving a clean, cohesive render. I worked on sculpting, detailing, and presentation for social formats: fast readability, simple but effective lighting, and outputs ready to publish.",
-        "stack": ["Blender", "Sculpting", "Character Design", "Rendering"],
-        "role": [
-          "Character design (shapes, silhouette, style)",
-          "Sculpting + detailing",
-          "Lookdev / lighting / rendering",
-          "Social-ready outputs (frames, angles)"
-        ],
-        "images": {
-          "laptop": ["/assets/color.png", "/assets/s.jpg", "/assets/aura.jpg", "/assets/s.jpg", "/assets/aura.jpg"],
-          "tablet": [],
-          "mobile": []
-        },
-        "link": "https://www.lien.com",
-        "links": { "demo": "https://www.lien.com", "repo": "" }
-      }
-    ],
-    "all": [
-      { "id": 10, "slug": "brainy", "title": "Brainy", "function": "3D", "lead": "Cartoon character: sculpt, shapes, render — social content (TikTok).", "description": "Cartoon character creation: sculpting, proportions, details and rendering, designed for social formats (TikTok).", "overview": "Character-focused project: exploring a readable cartoon style (silhouette, expressions, shapes) and achieving a clean, cohesive render. I worked on sculpting, detailing, and presentation for social formats: fast readability, simple but effective lighting, and outputs ready to publish.", "stack": ["Blender", "Sculpting", "Character Design", "Rendering"], "role": ["Character design (shapes, silhouette, style)", "Sculpting + detailing", "Lookdev / lighting / rendering", "Social-ready outputs (frames, angles)"], "images": { "laptop": ["/assets/color.png", "/assets/s.jpg", "/assets/aura.jpg", "/assets/s.jpg", "/assets/aura.jpg"], "tablet": [], "mobile": [] }, "link": "https://www.lien.com", "links": { "demo": "https://www.lien.com", "repo": "" } },
-      { "id": 11, "slug": "mc-do", "title": "McDo", "function": "Web Dev", "lead": "E-commerce demo: cart, checkout, delivery, responsive UI.", "description": "Shopping & delivery website with a product → cart → confirmation flow, designed to be clear and maintainable.", "overview": "Front-focused project with state logic: navigation, catalog, cart, summary, and responsive UX. I worked on component structure, UI consistency, and a readable purchase flow. Goal: a simple but clean app with predictable behavior and a scalable base. I also created the art direction and visual assets (graphics, composition, overall visual consistency).", "stack": ["React", "JavaScript", "CSS", "JSON"], "role": ["UI/UX + responsive integration", "Cart state management", "Component structure + routing (if applicable)", "Art direction + asset creation + perceived performance"], "images": { "laptop": ["/assets/McDo/mc.png", "/assets/McDo/mcdoo.png", "/assets/McDo/mcdooo.png"], "tablet": ["/assets/McDo/mcdo-tablet.png"], "mobile": ["/assets/McDo/m1.png"] }, "link": "https://www.lien.com", "links": { "demo": "https://www.lien.com", "repo": "" } },
-      { "id": 12, "slug": "nisa", "title": "NISA", "function": "Web Dev", "lead": "Neuroscience institute: Figma mockup, dark/light, clear structure.", "description": "Figma mockup for a neuroscience institute: editorial hierarchy, sections, and consistent dark & light variants.", "overview": "Content and readability-driven: a structure designed to present an institute (mission, research, news, contact) without clutter. I worked on typographic hierarchy, grids, and reusable components to achieve a serious yet modern look. The dual theme (dark/light) was designed from day one to stay coherent (contrast, accents, states).", "stack": ["Figma", "UI/UX", "Design System"], "role": ["Information architecture (pages, sections, navigation)", "Dark/light UI design (coherence, contrast, states)", "Reusable components + grids", "Implementation-ready handoff"], "images": { "laptop": ["/assets/MolenGame/m1.png", "/assets/s.jpg", "/assets/aura.jpg", "/assets/s.jpg", "/assets/aura.jpg"], "tablet": [], "mobile": [] }, "link": "https://www.lien.com", "links": { "demo": "https://www.lien.com", "repo": "" } },
-      { "id": 13, "slug": "sidegeek", "title": "SideGeek", "function": "Web Dev", "lead": "Info platform + student database: Vue.js & Laravel, team project.", "description": "Collaborative project (Vue.js + Laravel): building a training platform and a database connected to learner profiles.", "overview": "Team project focused on delivering a structured, maintainable app across front and back. I contributed to UI integration, component planning, and Git/GitHub organization (branches, PRs, reviews). The goal was both delivery and a clean base: conventions, clear splitting, and solid team communication.", "stack": ["Vue.js", "Laravel", "PHP", "MySQL", "GitHub"], "role": ["Team development (Git/GitHub workflow, PRs, branches)", "UI integration (Vue) + component structuring", "Contribution to logic and data (scope-dependent)", "Coordination: conventions, split, UI consistency"], "images": { "laptop": ["/assets/SideGeek/s1.png", "/assets/SideGeek/s3.png", "/assets/SideGeek/side.png"], "tablet": [], "mobile": [] }, "link": "https://www.lien.com", "links": { "demo": "https://www.lien.com", "repo": "" } },
-      { "id": 14, "slug": "sneakers", "title": "Sneakers", "function": "Web Dev", "lead": "Shoe e-commerce: React + DB, street/cosmic visual world.", "description": "A responsive shoe e-commerce website with cart flow, backed by a full art direction (illustrations, animations, light/dark atmospheres).", "overview": "Full front-end project with e-commerce logic: listing, details, cart, and a smooth experience across screen sizes. The standout element is the strong visual identity: two worlds (colorful street in light mode, cosmic in dark mode), with illustrated and animated assets. I kept the structure clean (components, data, styles) to maintain predictable behavior and easy maintenance.", "stack": ["React", "JavaScript", "CSS", "DBeaver", "Database"], "role": ["E-commerce UI/UX + responsive integration", "Cart handling + purchase flow", "Art direction: illustrations, animations, light/dark identity", "Project organization (components, data, styles)"], "images": { "laptop": ["/assets/Sneakers/snlight.png", "/assets/s.jpg", "/assets/aura.jpg", "/assets/s.jpg", "/assets/aura.jpg"], "tablet": [], "mobile": [] }, "link": "https://www.lien.com", "links": { "demo": "https://www.lien.com", "repo": "" } },
-      { "id": 15, "slug": "pasta-timer", "title": "Pasta Timer", "function": "Web Dev", "lead": "Cooking app: timers, pasta types, recipes, fun alarm.", "description": "A pasta-focused mobile app: choose pasta type, timing, recipes, and alarms — with a fully hand-crafted illustrated art style.", "overview": "Utility + personality: an easy flow (choose → timer → alert) enriched with content (pasta types, recipes, tips) and a strong illustrated identity. I built a clean structure (JSON data, components, navigation) so the app stays stable and easy to extend (new types, recipes, variations).", "stack": ["React", "TypeScript", "CSS", "JSON"], "role": ["UI/UX + mobile integration", "Data structuring (JSON): content & recipes", "Timer logic + alarms", "Art direction: hand-made illustrations & assets"], "images": { "laptop": ["/assets/PastaTimer/p0.png", "/assets/PastaTimer/p1.png", "/assets/PastaTimer/p2.png", "/assets/PastaTimer/p3.png", "/assets/PastaTimer/p4.png", "/assets/PastaTimer/p5.png", "/assets/PastaTimer/p6.png", "/assets/PastaTimer/p7.png"], "tablet": [], "mobile": [] }, "link": "https://www.lien.com", "links": { "demo": "https://www.lien.com", "repo": "" } },
-      { "id": 16, "slug": "excuse-app", "title": "Excuse App", "function": "Web Dev", "lead": "Excuse generator: filters, tone variants, illustrated 2D UI.", "description": "A playful mobile app where users craft an excuse using criteria (target, style, intensity), with an art direction inspired by urban signage and gaming.", "overview": "Experience-first project: a simple flow (pick criteria → generate → iterate) wrapped in an illustrated, animated 2D interface. I designed the full art direction (sets, illustrations, micro-animations) and structured the app to keep navigation smooth, logic readable, and the content system easy to expand (new criteria, tones, categories).", "stack": ["React Native", "JavaScript", "JSON"], "role": ["Mobile UI/UX design (flow + interactions)", "2D art direction (illustrations, sets, animations)", "Generation logic: criteria, variants, tone levels", "Project structure for scalability (content expansion)"], "images": { "laptop": ["/assets/ExcuseApp/ex1.png", "/assets/ExcuseApp/ex2.png", "/assets/ExcuseApp/ex3.png", "/assets/ExcuseApp/ex4.png", "/assets/ExcuseApp/ex5.png"], "tablet": [], "mobile": [] }, "link": "https://www.lien.com", "links": { "demo": "https://www.lien.com", "repo": "" } },
-      { "id": 17, "slug": "why-not", "title": "Why Not", "function": "Web Dev", "lead": "UI concept: community & planning platform, dark/light modes.", "description": "Figma mockup for a community-driven planning platform, with dark & light variants and a product-minded user flow.", "overview": "Design-first project: information hierarchy, user journey, reusable UI components, and navigation logic. The goal was a solid base before development: coherent screens, styling system, and clean dark/light variations. I shaped a design system (typography, spacing, components) to make future front-end implementation straightforward.", "stack": ["Figma", "Design System", "UI/UX"], "role": ["UX design (flow, structure, navigation)", "UI design (dark/light) + reusable components", "Design system setup (tokens, styles, rules)", "Implementation-ready handoff"], "images": { "laptop": ["/assets/WhyNot/wn_1.jpg", "/assets/WhyNot/wn_2.jpg", "/assets/WhyNot/wn_3.jpg", "/assets/WhyNot/wn_4.jpg", "/assets/WhyNot/wn_5.jpg"], "tablet": [], "mobile": [] }, "link": "https://www.lien.com", "links": { "demo": "https://www.lien.com", "repo": "" } },
-      { "id": 18, "slug": "tarmac", "title": "Tarmac", "function": "3D", "lead": "Blender modeling + animation: assets, shading, final video.", "description": "End-to-end 3D project: modeling, shading, animation and video editing, with custom asset creation.", "overview": "Production-oriented pipeline: build a coherent result from A to Z (modeling, materials, lighting, animation), then deliver a clean video (rhythm, cuts, export). I focused on perceived quality via shading/lights and motion readability, while keeping a clear pipeline (scenes, assets, exports) to iterate safely.", "stack": ["Blender", "3D Modeling", "Shading", "Animation", "Video Editing"], "role": ["Modeling + asset creation", "Shading / materials / lighting", "Animation + rendering", "Video editing + final export"], "images": { "laptop": ["/assets/color.png", "/assets/s.jpg", "/assets/aura.jpg", "/assets/s.jpg", "/assets/aura.jpg"], "tablet": [], "mobile": [] }, "link": "https://www.lien.com", "links": { "demo": "https://www.lien.com", "repo": "" } }
-    ]
-  }
+      "link": "https://www.lien.com",
+      "links": { "demo": "https://www.lien.com", "repo": "" }
+    }
+  ],
+  "threeD": [
+    {
+      "id": 8,
+      "slug": "tarmac",
+      "title": "Tarmac",
+      "function": "3D",
+      "lead": "Blender modeling + animation: assets, shading, final video.",
+      "description": "Complete 3D project: modeling, shading, animation and video editing, with dedicated asset creation.",
+      "overview": "Production-driven project: build a coherent result from A to Z (modeling, materials, lighting, animation), then deliver a clean video (rhythm, cuts, export). I worked on perceived quality through shading/lights and motion readability, while keeping a clear pipeline (scenes, assets, exports) to iterate without breaking things.",
+      "stack": ["Blender", "3D Modeling", "Shading", "Animation", "Video Editing"],
+      "role": [
+        "Modeling & asset creation",
+        "Shading / materials / lighting",
+        "Animation + rendering",
+        "Video editing + final export"
+      ],
+      "images": {
+        "laptop": [],
+        "tablet": [],
+        "mobile": ["/assets/Tarmac/t.png"],
+        "video": ["/assets/Tarmac/tarmac.mov"]
+      },
+      "link": "https://www.lien.com",
+      "links": { "demo": "https://www.lien.com", "repo": "" }
+    },
+    {
+      "id": 9,
+      "slug": "brainy",
+      "title": "Brainy",
+      "function": "3D",
+      "lead": "Cartoon character: sculpt, shapes, render — social content (TikTok).",
+      "description": "Creating a cartoon character: sculpt, proportions, details, and rendering, designed for social content (TikTok).",
+      "overview": "Character-focused project: explore a readable cartoon style (silhouette, expressions, shapes) and achieve a clean, coherent render. I worked on sculpting, details and presentation for a social format: angles that read fast, simple but effective lighting, and an output ready to publish.",
+      "stack": ["Blender", "Sculpting", "Character Design", "Rendering"],
+      "role": [
+        "Character design (shapes, silhouette, style)",
+        "Sculpting + details",
+        "Lookdev / lighting / rendering",
+        "Social-ready outputs (framing, angles)"
+      ],
+      "images": {
+        "laptop": [],
+        "tablet": [],
+        "mobile": ["/assets/Brainy/b1.png"],
+        "video": ["/assets/Brainy/Brainy.mov", "/assets/Brainy/Brainy2.mov"]
+      },
+      "link": "https://www.lien.com",
+      "links": { "demo": "https://www.lien.com", "repo": "" }
+    }
+  ],
+  "all": [
+    {
+      "id": 10,
+      "slug": "brainy",
+      "refSlug": "brainy",
+      "title": "Brainy",
+      "function": "3D",
+      "lead": "Cartoon character: sculpt, shapes, render — social content (TikTok).",
+      "description": "A cartoon character project: sculpting, proportions, details, and rendering, designed for social content (TikTok).",
+      "overview": "Character-focused project: explore a readable cartoon style (silhouette, expressions, shapes) and deliver a clean, consistent render. I worked on sculpting, details, and presentation for social formats: angles that read fast, simple but effective lighting, and an output ready to publish.",
+      "stack": ["Blender", "Sculpting", "Character Design", "Rendering"],
+      "role": [
+        "Character design (shapes, silhouette, style)",
+        "Sculpting + details",
+        "Lookdev / lighting / rendering",
+        "Social-ready outputs (framing, angles)"
+      ],
+      "images": {
+        "laptop": [],
+        "tablet": [],
+        "mobile": ["/assets/Brainy/b1.png"],
+        "video": ["/assets/Brainy/Brainy.mov", "/assets/Brainy/Brainy2.mov"]
+      },
+      "link": "https://www.lien.com",
+      "links": { "demo": "https://www.lien.com", "repo": "" }
+    },
+  
+    {
+      "id": 11,
+      "slug": "mc-do",
+      "refSlug": "mc-do",
+      "title": "McDo",
+      "function": "Web Dev",
+      "lead": "E-commerce demo: cart, checkout, delivery — responsive UI.",
+      "description": "Purchase/delivery website with product → cart → confirmation flow, designed to be clear and maintainable.",
+      "overview": "Front-end + state logic project: navigation, catalog, cart, summary, and responsive UX. I worked on component structure, UI consistency, and the readability of the purchase flow. Goal: a simple but clean app, with predictable behavior and a scalable base. I also handled art direction and assets (visuals, composition, graphic consistency).",
+      "stack": ["React", "JavaScript", "CSS", "JSON"],
+      "role": [
+        "UI/UX + responsive integration",
+        "Cart state management",
+        "Component structure + routing (if applicable)",
+        "Art direction + asset creation (visuals) + perceived performance"
+      ],
+      "images": {
+        "laptop": ["/assets/McDo/mc.png", "/assets/McDo/mcdoo.png", "/assets/McDo/mcdooo.png"],
+        "tablet": ["/assets/McDo/m1.png", "/assets/McDo/m2.png", "/assets/McDo/m3.png", "/assets/McDo/m5.png", "/assets/McDo/mcdo-tablet.png"],
+        "mobile": ["/assets/McDo/m4.png", "/assets/McDo/mcdo-small2.png"]
+      },
+      "link": "https://www.lien.com",
+      "links": { "demo": "https://www.lien.com", "repo": "" }
+    },
+    {
+      "id": 12,
+      "slug": "tarmac",
+      "refSlug": "tarmac",
+      "title": "Tarmac",
+      "function": "3D",
+      "lead": "Blender modeling + animation: assets, shading, final video.",
+      "description": "End-to-end 3D project: modeling, shading, animation, and video editing — with dedicated asset creation.",
+      "overview": "Production-oriented project: build a consistent result from A to Z (modeling, materials, lighting, animation), then deliver a polished video (rhythm, cuts, export). I improved perceived quality through shading/lights and motion clarity, while keeping a clean pipeline (scenes, assets, exports) to iterate without breaking things.",
+      "stack": ["Blender", "3D Modeling", "Shading", "Animation", "Video Editing"],
+      "role": [
+        "Modeling & asset creation",
+        "Shading / materials / lighting",
+        "Animation + rendering",
+        "Video edit + final export"
+      ],
+      "images": {
+        "laptop": [],
+        "tablet": [],
+        "mobile": ["/assets/Tarmac/t.png"],
+        "video": ["/assets/Tarmac/tarmac.mov"]
+      },
+      "link": "https://www.lien.com",
+      "links": { "demo": "https://www.lien.com", "repo": "" }
+    },
+  
+    {
+      "id": 13,
+      "slug": "sidegeek",
+      "refSlug": "sidegeek",
+      "title": "SideGeek",
+      "function": "Web Dev",
+      "lead": "Info platform + student database: Vue.js & Laravel, team project.",
+      "description": "Collaborative project (Vue.js + Laravel): building a training platform and a database tied to learner profiles.",
+      "overview": "Team project aiming to ship a structured, maintainable app with consistent front/back. I contributed to integration, component scoping, and work organization via Git/GitHub (branches, PRs, reviews). Focus was as much on delivery as on a solid base: conventions, clean splitting, and team communication.",
+      "stack": ["Vue.js", "Laravel", "PHP", "MySQL", "GitHub"],
+      "role": [
+        "Team development (Git/GitHub workflow, PRs, branches)",
+        "UI integration (Vue) + component structuring",
+        "Logic & data contribution (depending on scope)",
+        "Coordination: conventions, splitting, UI consistency"
+      ],
+      "images": {
+        "laptop": ["/assets/SideGeek/s1.png", "/assets/SideGeek/s3.png", "/assets/SideGeek/side.png"],
+        "tablet": [],
+        "mobile": []
+      },
+      "link": "https://www.lien.com",
+      "links": { "demo": "https://www.lien.com", "repo": "" }
+    },
+  
+    {
+      "id": 15,
+      "slug": "pasta-timer",
+      "refSlug": "pasta-timer",
+      "title": "Pasta Timer",
+      "function": "Web Dev",
+      "lead": "Cooking app: timers, pasta types, recipes, fun alarm.",
+      "description": "A pasta-focused app: choose the type, timing, recipes, and alarms — with hand-made illustrated art direction.",
+      "overview": "Utility + personality: a simple flow (choose → timer → alert) enriched with content (pasta types, recipes, tips) and an illustrated visual identity. I built a clean structure (JSON data, components, navigation) to keep the app stable and easy to extend (new types, new recipes, new variations).",
+      "stack": ["React", "TypeScript", "CSS", "JSON"],
+      "role": [
+        "UI/UX + mobile integration",
+        "Data structuring (JSON): content & recipes",
+        "Timer logic + alarms",
+        "Art direction: illustrations and hand-made assets"
+      ],
+      "images": {
+        "laptop": ["/assets/PastaTimer/p0.png", "/assets/PastaTimer/p1.png", "/assets/PastaTimer/p2.png", "/assets/PastaTimer/p3.png", "/assets/PastaTimer/p4.png", "/assets/PastaTimer/p5.png", "/assets/PastaTimer/p6.png", "/assets/PastaTimer/p7.png"],
+        "tablet": [],
+        "mobile": [],
+        "video": ["/assets/about/pasta-timer.mov"]
+      },
+      "link": "https://www.lien.com",
+      "links": { "demo": "https://www.lien.com", "repo": "" }
+    },
+  
+    {
+      "id": 16,
+      "slug": "excuse-app",
+      "refSlug": "excuse-app",
+      "title": "Excuse App",
+      "function": "Web Dev",
+      "lead": "Excuse generator: criteria, tone variations, illustrated 2D UI.",
+      "description": "A playful mobile app where users craft an excuse using criteria (target, style, intensity), with an art direction inspired by street signs and game UI.",
+      "overview": "Experience-driven project: a simple journey (pick criteria → generate → iterate) with an illustrated, animated 2D interface. I designed the full art direction (backgrounds, illustrations, micro-animations) and structured the app to keep navigation smooth, logic readable, and the base easy to extend (new criteria, new tones, new categories).",
+      "stack": ["React Native", "JavaScript", "JSON"],
+      "role": [
+        "Mobile UI/UX design (flow + interactions)",
+        "2D art direction (illustrations, backgrounds, animations)",
+        "Generation logic: criteria, variants, tone levels",
+        "Project structuring for scalability (content additions)"
+      ],
+      "images": {
+        "laptop": [],
+        "tablet": [],
+        "mobile": ["/assets/ExcuseApp/ex1.png", "/assets/ExcuseApp/ex2.png", "/assets/ExcuseApp/ex3.png", "/assets/ExcuseApp/ex4.png", "/assets/ExcuseApp/ex5.png"],
+        "video": ["/assets/about/ExcuseApp.mov"]
+      },
+      "link": "https://www.lien.com",
+      "links": { "demo": "https://www.lien.com", "repo": "" }
+    },
+  
+    {
+      "id": 17,
+      "slug": "why-not",
+      "refSlug": "why-not",
+      "title": "Why Not",
+      "function": "Web Dev",
+      "lead": "UI concept: community + planning platform, dark/light.",
+      "description": "Figma concept for a community platform focused on organization, with clean dark & light versions and a product-minded user flow.",
+      "overview": "Design-focused project: information hierarchy, user journey, reusable UI components, and navigation logic. Goal was to build a solid base before development: consistent screens, a style system, and clean dark/light variations. I worked on the design system (typography, spacing, components) to make future front-end integration easier.",
+      "stack": ["Figma", "Design System", "UI/UX"],
+      "role": [
+        "UX design (flow, structure, navigation)",
+        "UI design (dark/light) + reusable components",
+        "Design system setup (tokens, styles, rules)",
+        "Integration preparation (clear handoff)"
+      ],
+      "images": {
+        "laptop": [],
+        "tablet": [],
+        "mobile": ["/assets/WhyNot/wn_1.jpg", "/assets/WhyNot/wn_2.jpg", "/assets/WhyNot/wn_3.jpg", "/assets/WhyNot/wn_4.jpg", "/assets/WhyNot/wn_5.jpg"]
+      },
+      "link": "https://www.lien.com",
+      "links": { "demo": "https://www.lien.com", "repo": "" }
+    },
+    {
+      "id": 18,
+      "slug": "nisa",
+      "refSlug": "nisa",
+      "title": "NISA",
+      "function": "Web Dev",
+      "lead": "Neuroscience institute: Figma mockup, dark/light, clean structure.",
+      "description": "Figma mockup for a neuroscience institute: editorial hierarchy, sections, and dark/light variants.",
+      "overview": "Content & readability project: a structure designed to present an institute (missions, research, news, contact) without overload. I worked on typographic hierarchy, grids, and reusable components to achieve a serious but modern look. The dual theme (dark/light) was designed from day one to stay coherent (contrast, accents, states).",
+      "stack": ["Figma", "UI/UX", "Design System"],
+      "role": [
+        "Information architecture (pages, sections, navigation)",
+        "Dark/light UI design (coherence, contrast, states)",
+        "Reusable components + grids",
+        "Integration-ready handoff"
+      ],
+      "images": {
+        "laptop": [],
+        "tablet": [],
+        "mobile": ["/assets/Nisa/n1.jpeg", "/assets/Nisa/n2.jpeg"]
+      },
+      "link": "https://www.lien.com",
+      "links": { "demo": "https://www.lien.com", "repo": "" }
+    },
+  
+    {
+      "id": 19,
+      "slug": "sneakers",
+      "refSlug": "sneakers",
+      "title": "Sneakers",
+      "function": "Web Dev",
+      "lead": "Shoe e-commerce: React + DB, street/cosmic universe.",
+      "description": "Shoe e-commerce website with cart and responsive UI, supported by a full art direction (illustrations, animations, light/dark moods).",
+      "overview": "Full front-end project with e-commerce logic: listing, details, cart, and a smooth experience across screen sizes. The twist: a strong art direction with two identities (colorful street in light mode, cosmic in dark mode), plus illustrated and animated assets. I kept the structure clean (components, data, styles) to avoid surprises and make the project easy to maintain.",
+      "stack": ["React", "JavaScript", "CSS", "DBeaver", "Database"],
+      "role": [
+        "E-commerce UI/UX + responsive integration",
+        "Cart logic + purchase flow",
+        "Art direction: illustrations, animations, light/dark identity",
+        "Project organization (components, data, styles)"
+      ],
+      "images": {
+        "laptop": ["/assets/Sneakers/snlight.png", "/assets/Sneakers/sneakers.png", "/assets/Sneakers/sn9.png", "/assets/Sneakers/sn10.png"],
+        "tablet": ["/assets/Sneakers/sn2.png", "/assets/Sneakers/sn3.png", "/assets/Sneakers/sn4.png", "/assets/Sneakers/sn5.png", "/assets/Sneakers/sn6.png", "/assets/Sneakers/sn7.png", "/assets/Sneakers/sn8.png"],
+        "mobile": ["/assets/Sneakers/s1.png", "/assets/Sneakers/sneakersDark.png"]
+      },
+      "link": "https://www.lien.com",
+      "links": { "demo": "https://www.lien.com", "repo": "" }
+    }
+  ]
+  
+}
+

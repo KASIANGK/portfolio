@@ -31,7 +31,7 @@
 
     "expand": "Rozwiń HUD",
     "collapse": "Zwiń HUD",
-
+    "hide": "UKRYJ",
     "footer": "HUD jest {{state}} • kliknij « aby ukryć",
     "footerLocked": "Ukończ samouczek, aby odblokować HUD",
 
@@ -39,7 +39,7 @@
     "stateCollapsed": "zwinięty",
 
     "actions": {
-      "returnHome": "Powrót do strony głównej"
+      "returnHome": "Strona główna"
     },
 
     "commands": {

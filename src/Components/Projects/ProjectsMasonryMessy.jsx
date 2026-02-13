@@ -76,19 +76,38 @@ function pickCoverImage(p, categoryHint) {
   return "";
 }
 
+// function normalizeBucket(bucket, activeTab) {
+//   const arr = Array.isArray(bucket) ? bucket : [];
+//   return arr.map((p) => {
+//     const inferred = inferCategory(p);
+//     const category = activeTab === "all" ? inferred : activeTab;
+
+//     return {
+//       id: p.id,
+//       title: p.title,
+//       subtitle: p.description,
+//       category,
+//       href: p.link,
+//       // ✅ web now uses laptop[0] if object format exists
+//       image: pickCoverImage(p, category),
+//     };
+//   });
+// }
 function normalizeBucket(bucket, activeTab) {
   const arr = Array.isArray(bucket) ? bucket : [];
   return arr.map((p) => {
     const inferred = inferCategory(p);
     const category = activeTab === "all" ? inferred : activeTab;
 
+    const slug = (p?.refSlug || p?.slug || "").trim(); // ✅ IMPORTANT pour duplicata all
+
     return {
       id: p.id,
       title: p.title,
       subtitle: p.description,
       category,
-      href: p.link,
-      // ✅ web now uses laptop[0] if object format exists
+      slug,               // ✅
+      demoHref: p?.links?.demo || p?.link || "",  // optionnel (si tu veux garder un lien externe)
       image: pickCoverImage(p, category),
     };
   });
@@ -335,13 +354,26 @@ function ProjectsMasonryMessy({
   /* ------------------------------
      Actions
   ------------------------------ */
+  // const handleCardClick = useCallback(
+  //   (it) => {
+  //     if (onItemClick) return onItemClick(it);
+  //     if (it?.href) window.open(it.href, "_blank", "noopener,noreferrer");
+  //   },
+  //   [onItemClick]
+  // );
   const handleCardClick = useCallback(
     (it) => {
       if (onItemClick) return onItemClick(it);
-      if (it?.href) window.open(it.href, "_blank", "noopener,noreferrer");
+  
+      const slug = String(it?.slug || "").trim();
+      if (slug) return navigate(`/project/${slug}`);
+  
+      // fallback si jamais un item n’a pas de slug
+      if (it?.demoHref) window.open(it.demoHref, "_blank", "noopener,noreferrer");
     },
-    [onItemClick]
+    [onItemClick, navigate]
   );
+  
   useEffect(() => {
     if (isCompact) return;
     const el = sectionRef.current;

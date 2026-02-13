@@ -16,11 +16,7 @@ import { useTranslation } from "react-i18next";
 /** ---------------------------
  *  Groups & Trigger naming
  *  -------------------------- */
-const GROUP = {
-  NAV: "NAV",
-  GLOW: "GLOW",
-  FUN: "FUN",
-};
+const GROUP = { NAV: "NAV", GLOW: "GLOW", FUN: "FUN" };
 
 const NAV_ORBITS = new Set([
   "TRIGGER_ABOUT",
@@ -36,7 +32,6 @@ const MARKER_ROUTES = {
   TRIGGER_VISION_HOME: "/",
 };
 
-// Optional chips only for NAV
 const MARKER_CHIPS = {
   TRIGGER_PROJECT: ["React", "3D", "UX", "Ship it"],
   TRIGGER_ABOUT: ["Builder", "Design", "Systems"],
@@ -104,16 +99,8 @@ const COLORS = {
 /** ---------------------------
  *  Distributor logic
  *  -------------------------- */
-const DRINK_MODE = {
-  CITY: "city",
-  FUTURE: "future",
-  SASS: "sass",
-};
-
-const DIST_STEP = {
-  INTRO: 1,
-  DISPENSE: 2,
-};
+const DRINK_MODE = { CITY: "city", FUTURE: "future", SASS: "sass" };
+const DIST_STEP = { INTRO: 1, DISPENSE: 2 };
 
 function randItem(arr) {
   if (!Array.isArray(arr) || arr.length === 0) return null;
@@ -133,17 +120,19 @@ const NOTHING = {
   TITLE_MS: 5200,
 };
 
-
 export default function CityMarkers({
   url = "/models/markers_final.glb",
   visible = true,
-  radius = 2,
+  radius = 2, // visual orb radius
   yOffset = 2,
   openDistance = 10,
   closeDistance = 13,
+  clickDistance = 18, // ✅ only allow click-select within this distance
+  hitboxScale = 18.9, // ✅ hitbox radius = radius * hitboxScale
   onLoaded,
   onShown,
   onOrbits,
+  onMinimapPoints,
 }) {
   const { scene } = useGLTF(url);
   const { camera } = useThree();
@@ -151,17 +140,18 @@ export default function CityMarkers({
   const { t } = useTranslation("markers");
 
   const [selected, setSelected] = useState(null);
+  const [pinned, setPinned] = useState(false);
 
   // Distributor state
   const [drinkMode, setDrinkMode] = useState(DRINK_MODE.CITY);
   const [drinkPick, setDrinkPick] = useState(null);
   const [distStep, setDistStep] = useState(DIST_STEP.INTRO);
 
-  // Temporary description override (mini-interactions)
-  const [descOverride, setDescOverride] = useState({}); // { [id]: string }
-  const timersRef = useRef(new Map()); // id -> timeoutId
+  // Temporary description override
+  const [descOverride, setDescOverride] = useState({});
+  const timersRef = useRef(new Map());
 
-  // NOTHING cutscene local state
+  // NOTHING cutscene
   const [nothingPhase, setNothingPhase] = useState(NOTHING.PHASE.OFF);
   const nothingTimersRef = useRef({ t1: null, t2: null });
 
@@ -171,21 +161,20 @@ export default function CityMarkers({
   const loadedOnceRef = useRef(false);
   const shownOnceRef = useRef(false);
 
+  const cursorWantedRef = useRef(false);
+
   useLayoutEffect(() => {
     scene.updateMatrixWorld(true);
   }, [scene]);
 
   /** ---------------------------
    *  Parse triggers from GLB
-   *  (stable: use objects named TRIGGER_*, ignore meshes)
    *  -------------------------- */
   const points = useMemo(() => {
     const arr = [];
     scene.traverse((o) => {
       if (!o.name || o.name === "Scene") return;
-
-      // ✅ we only want the marker objects (empties/groups), not the geometry
-      if (o.isMesh) return;
+      if (o.isMesh) return; // only empties/groups
 
       const group = getGroupByName(o.name);
       if (!group) return;
@@ -203,7 +192,7 @@ export default function CityMarkers({
   }, [scene, tmpWorld]);
 
   /** ---------------------------
-   *  Expose orbit positions (NAV only)
+   *  Expose orbit positions
    *  -------------------------- */
   useEffect(() => {
     if (!points?.length) return;
@@ -218,6 +207,19 @@ export default function CityMarkers({
 
     onOrbits?.(orbits);
   }, [points, yOffset, onOrbits]);
+
+  useEffect(() => {
+    if (!points?.length) return;
+
+    onMinimapPoints?.(
+      points.map((p) => ({
+        id: p.name,
+        group: p.group,
+        x: p.position.x,
+        z: p.position.z,
+      }))
+    );
+  }, [points, onMinimapPoints]);
 
   /** ---------------------------
    *  loaded / shown
@@ -241,27 +243,37 @@ export default function CityMarkers({
 
   /** ---------------------------
    *  Select logic + pulse
-   *  (no pin: close if too far)
    *  -------------------------- */
   useFrame((state) => {
     if (!points.length) return;
 
-    // auto-select nearest
-    if (selected) {
-      const d = camera.position.distanceTo(selected.position);
-      if (d > closeDistance) setSelected(null);
-    } else {
-      let best = null;
-      let bestDist = Infinity;
+    // auto-select nearest only if NOT pinned and nothing currently selected
+    if (!pinned) {
+      if (selected) {
+        const d = camera.position.distanceTo(selected.position);
+        if (d > closeDistance) setSelected(null);
+      } else {
+        let best = null;
+        let bestDist = Infinity;
 
-      for (const p of points) {
-        const d = camera.position.distanceTo(p.position);
-        if (d < openDistance && d < bestDist) {
-          best = p;
-          bestDist = d;
+        for (const p of points) {
+          const d = camera.position.distanceTo(p.position);
+          if (d < openDistance && d < bestDist) {
+            best = p;
+            bestDist = d;
+          }
+        }
+        if (best) setSelected(best);
+      }
+    } else {
+      // pinned: still auto-close if user walks far away
+      if (selected) {
+        const d = camera.position.distanceTo(selected.position);
+        if (d > closeDistance) {
+          setSelected(null);
+          setPinned(false);
         }
       }
-      if (best) setSelected(best);
     }
 
     const tt = state.clock.getElapsedTime();
@@ -273,11 +285,8 @@ export default function CityMarkers({
       const isSelected = selected?.name === p.name;
       const cfg = COLORS[p.group] || COLORS[GROUP.NAV];
 
-      // ✅ NAV pulse normal, GLOW/FUN pulse slower + sparkle
-      const speed = p.group === GROUP.NAV ? 1.8 : 0.75; // slower for glow/fun
+      const speed = p.group === GROUP.NAV ? 1.8 : 0.75;
       const pulse = 0.5 + 0.5 * Math.sin(tt * speed + p.position.x * 0.1);
-
-      // "sparkle" slow loop for glow/fun (subtle)
       const sparkle =
         p.group === GROUP.NAV ? 0 : 0.5 + 0.5 * Math.sin(tt * 0.23 + p.position.z * 0.07);
 
@@ -290,9 +299,7 @@ export default function CityMarkers({
         mat.opacity = isSelected ? cfg.selectedOpacity : cfg.baseOpacity + pulse * 0.08;
 
         const emiExtra =
-          p.group === GROUP.NAV
-            ? pulse * 0.45
-            : pulse * 0.25 + sparkle * 0.35;
+          p.group === GROUP.NAV ? pulse * 0.45 : pulse * 0.25 + sparkle * 0.35;
 
         mat.emissiveIntensity = isSelected ? cfg.selectedEmi : cfg.baseEmi + emiExtra;
       }
@@ -300,7 +307,7 @@ export default function CityMarkers({
   });
 
   /** ---------------------------
-   *  i18n helpers (+ optional description2)
+   *  i18n helpers
    *  -------------------------- */
   const markerI18n = useCallback(
     (id, group) => {
@@ -323,7 +330,7 @@ export default function CityMarkers({
         description2: t(`markers.${bucket}.items.${id}.description2`, {
           defaultValue: "",
         }),
-        cta: t(`markers.${bucket}.items.${id}.cta`),
+        cta: t(`markers.${bucket}.items.${id}.cta`, { defaultValue: "" }),
         badge: t(`markers.${bucket}.label`),
       };
     },
@@ -449,16 +456,15 @@ export default function CityMarkers({
    *  -------------------------- */
   const startNothingCutscene = useCallback(() => {
     if (nothingPhase !== NOTHING.PHASE.OFF) return;
-  
+
     if (nothingTimersRef.current.t1) clearTimeout(nothingTimersRef.current.t1);
-  
+
     setNothingPhase(NOTHING.PHASE.TITLE);
-  
+
     nothingTimersRef.current.t1 = setTimeout(() => {
       setNothingPhase(NOTHING.PHASE.OFF);
     }, NOTHING.TITLE_MS);
   }, [nothingPhase]);
-  
 
   useEffect(() => {
     return () => {
@@ -467,6 +473,7 @@ export default function CityMarkers({
 
       if (nothingTimersRef.current.t1) clearTimeout(nothingTimersRef.current.t1);
       if (nothingTimersRef.current.t2) clearTimeout(nothingTimersRef.current.t2);
+      document.body.style.cursor = "default";
     };
   }, []);
 
@@ -490,31 +497,36 @@ export default function CityMarkers({
 
     // Distributor
     if (selected.name === "TRIGGER_DRINK_DISTRIBUTOR") {
-      // Space/Enter/Click = "Je prends"
       if (distStep === DIST_STEP.INTRO) {
         setDistStep(DIST_STEP.DISPENSE);
         rollDrink();
         return;
       }
-      // si déjà en step2, "Je prends" = fermer / reset
       setDrinkPick(null);
       setDistStep(DIST_STEP.INTRO);
       return;
     }
-    
 
-    // NOTHING special cutscene
+    // NOTHING
     if (selected.name === NOTHING.ID) {
       startNothingCutscene();
       return;
     }
 
-    // GLOW / FUN mini-interactions
+    // GLOW / FUN
     if (selected.group === GROUP.GLOW || selected.group === GROUP.FUN) {
       const ui = markerI18n(selected.name, selected.group);
       flashDescription(selected.name, ui.description2, 5000);
     }
-  }, [selected, navigate, distStep, rollDrink, markerI18n, flashDescription, startNothingCutscene]);
+  }, [
+    selected,
+    navigate,
+    distStep,
+    rollDrink,
+    startNothingCutscene,
+    markerI18n,
+    flashDescription,
+  ]);
 
   /** ---------------------------
    *  Keyboard: Enter/Space triggers same action
@@ -536,12 +548,11 @@ export default function CityMarkers({
   }, [selected, triggerAction]);
 
   /** ---------------------------
-   *  Distributor Screen UI (2 steps)
+   *  Distributor Screen UI
    *  -------------------------- */
   const DistributorScreen = () => {
     const hint = t("drinks.hint");
-    const ctaPrimary = t("drinks.ctaPrimary"); // Biorę
-    const ctaAgain = t("drinks.ctaAgain"); // Jeszcze raz
+    const ctaPrimary = t("drinks.ctaPrimary");
     const letsGo = t("drinks.ctaLetsGo", { defaultValue: "Let’s go" });
 
     const cityImg = t("drinks.city.image");
@@ -564,21 +575,11 @@ export default function CityMarkers({
       }
     };
 
-    const pressBiorę = () => {
-      setDrinkPick(null);
-      setDistStep(DIST_STEP.INTRO);
-    };
-
     const pressTake = () => {
       setDrinkPick(null);
       setDistStep(DIST_STEP.INTRO);
     };
-    
-    const pressAgain = () => {
-      if (distStep !== DIST_STEP.DISPENSE) return;
-      rollDrink();
-    };
-    
+
     return (
       <div style={{ marginTop: 12 }}>
         {distStep === DIST_STEP.INTRO && (
@@ -610,7 +611,8 @@ export default function CityMarkers({
                 padding: "10px 12px",
                 borderRadius: 14,
                 border: "1px solid rgba(0,242,255,0.40)",
-                background: "linear-gradient(90deg, rgba(0,242,255,0.20), rgba(124,58,237,0.16))",
+                background:
+                  "linear-gradient(90deg, rgba(0,242,255,0.20), rgba(124,58,237,0.16))",
                 color: "rgba(255,255,255,0.94)",
                 fontWeight: 950,
                 cursor: "pointer",
@@ -618,7 +620,7 @@ export default function CityMarkers({
               onMouseEnter={(e) => btnHover(e.currentTarget, GROUP.GLOW)}
               onMouseLeave={(e) => btnLeave(e.currentTarget, GROUP.GLOW)}
             >
-              {letsGo} <span style={{ opacity: 0.75 }}>{t("ctaHint")}</span>
+              {letsGo}
             </button>
 
             <div style={{ marginTop: 8, fontSize: 11, opacity: 0.7, textAlign: "center" }}>
@@ -757,7 +759,8 @@ export default function CityMarkers({
                     padding: "10px 12px",
                     borderRadius: 14,
                     border: "1px solid rgba(0,242,255,0.40)",
-                    background: "linear-gradient(90deg, rgba(0,242,255,0.22), rgba(124,58,237,0.14))",
+                    background:
+                      "linear-gradient(90deg, rgba(0,242,255,0.22), rgba(124,58,237,0.14))",
                     color: "rgba(255,255,255,0.94)",
                     fontWeight: 950,
                     cursor: "pointer",
@@ -767,23 +770,6 @@ export default function CityMarkers({
                 >
                   {ctaPrimary}
                 </button>
-
-                {/* <button
-                  type="button"
-                  onClick={pressAgain}
-                  style={{
-                    flex: 1,
-                    padding: "10px 12px",
-                    borderRadius: 14,
-                    border: "1px solid rgba(255,255,255,0.14)",
-                    background: "rgba(255,255,255,0.06)",
-                    color: "rgba(255,255,255,0.92)",
-                    fontWeight: 900,
-                    cursor: "pointer",
-                  }}
-                >
-                  {ctaAgain}
-                </button> */}
               </div>
             </div>
           </div>
@@ -793,49 +779,89 @@ export default function CityMarkers({
   };
 
   /** ---------------------------
+   *  Shared "select by click" handler
+   *  ✅ separated hitbox vs visual
+   *  -------------------------- */
+  const selectByClick = useCallback(
+    (p) => {
+      // only clickable when close enough
+      const d = camera.position.distanceTo(p.position);
+      if (d > clickDistance) return;
+
+      setSelected(p);
+      setPinned(true);
+
+      // reset distributor state on select
+      if (p.name === "TRIGGER_DRINK_DISTRIBUTOR") {
+        setDrinkPick(null);
+        setDrinkMode(DRINK_MODE.CITY);
+        setDistStep(DIST_STEP.INTRO);
+      }
+
+      // reset NOTHING cutscene if selecting something else
+      if (p.name !== NOTHING.ID && nothingPhase !== NOTHING.PHASE.OFF) {
+        setNothingPhase(NOTHING.PHASE.OFF);
+      }
+    },
+    [camera, clickDistance, nothingPhase]
+  );
+
+  /** ---------------------------
    *  Render
    *  -------------------------- */
   return (
     <group>
       {points.map((p) => {
         const cfg = COLORS[p.group] || COLORS[GROUP.NAV];
+        const pos = [p.position.x, p.position.y + yOffset, p.position.z];
 
         return (
-          <mesh
-            key={p.name}
-            position={[p.position.x, p.position.y + yOffset, p.position.z]}
-            visible={visible}
-            ref={(r) => {
-              if (!r) orbRefs.current.delete(p.name);
-              else orbRefs.current.set(p.name, r);
-            }}
-            onPointerDown={(e) => {
-              e.stopPropagation();
-              setSelected(p);
+          <group key={p.name} position={pos} visible={visible}>
+            {/* ✅ VISUAL ORB (pretty) */}
+            <mesh
+              ref={(r) => {
+                if (!r) orbRefs.current.delete(p.name);
+                else orbRefs.current.set(p.name, r);
+              }}
+            >
+              <sphereGeometry args={[radius, 18, 18]} />
+              <meshStandardMaterial
+                transparent
+                opacity={cfg.baseOpacity}
+                emissive={cfg.emissive}
+                emissiveIntensity={cfg.baseEmi}
+                color={cfg.color}
+                depthWrite={false}
+              />
+            </mesh>
 
-              // reset distributor state on select
-              if (p.name === "TRIGGER_DRINK_DISTRIBUTOR") {
-                setDrinkPick(null);
-                setDrinkMode(DRINK_MODE.CITY);
-                setDistStep(DIST_STEP.INTRO);
-              }
-
-              // reset NOTHING cutscene if selecting something else
-              if (p.name !== NOTHING.ID && nothingPhase !== NOTHING.PHASE.OFF) {
-                setNothingPhase(NOTHING.PHASE.OFF);
-              }
-            }}
-          >
-            <sphereGeometry args={[radius, 18, 18]} />
-            <meshStandardMaterial
-              transparent
-              opacity={cfg.baseOpacity}
-              emissive={cfg.emissive}
-              emissiveIntensity={cfg.baseEmi}
-              color={cfg.color}
-              depthWrite={false}
-            />
-          </mesh>
+            {/* ✅ HITBOX (bigger, invisible, clickable) */}
+            <mesh
+              onPointerOver={(e) => {
+                e.stopPropagation();
+                const d = camera.position.distanceTo(p.position);
+                cursorWantedRef.current = d <= clickDistance;
+                document.body.style.cursor = cursorWantedRef.current ? "pointer" : "default";
+              }}
+              onPointerOut={(e) => {
+                e.stopPropagation();
+                cursorWantedRef.current = false;
+                document.body.style.cursor = "default";
+              }}
+              onPointerDown={(e) => {
+                e.stopPropagation();
+                selectByClick(p);
+              }}
+            >
+              <sphereGeometry args={[radius * hitboxScale, 12, 12]} />
+              <meshBasicMaterial
+                transparent
+                opacity={0}
+                depthWrite={false}
+                depthTest={false}
+              />
+            </mesh>
+          </group>
         );
       })}
 
@@ -851,12 +877,8 @@ export default function CityMarkers({
           const override = descOverride[selected.name];
           const descriptionToShow = override || ui.description;
 
-          // ✅ CTA visible only when base description is visible
           const showCta =
-          !isDistributor &&
-          !override &&
-          !(isNothing && nothingPhase !== NOTHING.PHASE.OFF);
-        
+            !isDistributor && !override && !(isNothing && nothingPhase !== NOTHING.PHASE.OFF);
 
           return (
             <Html
@@ -961,11 +983,10 @@ export default function CityMarkers({
                     </div>
                   )}
 
-
                   {(!isNothing || nothingPhase === NOTHING.PHASE.OFF) && (
                     <>
                       {!(isDistributor && distStep === DIST_STEP.DISPENSE) && (
-                        <div style={{ opacity: 0.9, lineHeight: 1.45, fontSize: 12 }}>
+                        <div style={{ opacity: 0.9, lineHeight: 1.45, fontSize: 16 }}>
                           {descriptionToShow}
                         </div>
                       )}
@@ -1003,7 +1024,7 @@ export default function CityMarkers({
                     onMouseEnter={(e) => btnHover(e.currentTarget, selected.group)}
                     onMouseLeave={(e) => btnLeave(e.currentTarget, selected.group)}
                   >
-                    {ui.cta} <span style={{ opacity: 0.75 }}>{t("ctaHint")}</span>
+                    {ui.cta}
                   </button>
                 )}
               </div>
@@ -1015,4 +1036,3 @@ export default function CityMarkers({
 }
 
 useGLTF.preload("/models/markers_final.glb");
-
