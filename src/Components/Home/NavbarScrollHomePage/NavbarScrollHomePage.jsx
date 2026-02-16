@@ -12,25 +12,28 @@ const SECTIONS = [
 ];
 
 const raf = (fn) => requestAnimationFrame(fn);
-const LS_POS = "ag_navscrollhp_pos_v2_abs"; // ✅ new key to avoid your old broken values
+const LS_POS = "ag_navscrollhp_pos_v2_abs";
 
 function clamp(v, a, b) {
   return Math.max(a, Math.min(b, v));
 }
 
-export default function NavbarScrollHomePage({ enabled = true, refs, showAfterY = 5 }) {
+export default function NavbarScrollHomePage({
+  enabled = true,
+  refs,
+  showAfterY = 5,
+  disableBelow = 980, // ✅ phone + tablet cutoff
+}) {
   const { t } = useTranslation("nav");
 
   const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(false);
   const [activeKey, setActiveKey] = useState("welcome");
-
-  // ✅ absolute screen position
   const [pos, setPos] = useState({ x: 0, y: 0 });
+  const [isSmall, setIsSmall] = useState(false);
 
   const navRef = useRef(null);
   const activeRef = useRef("welcome");
-
   const shownOnceRef = useRef(false);
   const visibleRef = useRef(false);
 
@@ -49,6 +52,20 @@ export default function NavbarScrollHomePage({ enabled = true, refs, showAfterY 
   });
 
   useEffect(() => setMounted(true), []);
+
+  // ✅ detect mobile/tablet once + on resize (NO deprecated addListener)
+  useEffect(() => {
+    const mq = window.matchMedia(`(max-width: ${disableBelow}px)`);
+    const onChange = (e) => setIsSmall(e.matches);
+
+    setIsSmall(mq.matches);
+    mq.addEventListener?.("change", onChange);
+
+    return () => mq.removeEventListener?.("change", onChange);
+  }, [disableBelow]);
+
+  // ✅ HARD OFF on mobile/tablet (unmount the whole thing)
+  if (!enabled || !mounted || isSmall) return null;
 
   const sectionEls = useMemo(() => {
     return SECTIONS.map((s) => ({
@@ -72,18 +89,11 @@ export default function NavbarScrollHomePage({ enabled = true, refs, showAfterY 
     return { x: clamp(x, minX, maxX), y: clamp(y, minY, maxY) };
   }, []);
 
-  // ✅ init position: restore or default (50px from right, y=470)
+  // init pos (desktop only)
   useEffect(() => {
     const init = () => {
-      // default
-      let x = window.innerWidth - 50 - 190; // 190 = card width (close enough)
+      let x = window.innerWidth - 50 - 190;
       let y = 470;
-
-      // mobile default near bottom-right
-      if (window.innerWidth <= 980) {
-        x = window.innerWidth - 12 - 190;
-        y = window.innerHeight - 14 - 70; // approx pill height
-      }
 
       try {
         const raw = localStorage.getItem(LS_POS);
@@ -106,99 +116,44 @@ export default function NavbarScrollHomePage({ enabled = true, refs, showAfterY 
       setPos(clamped);
     };
 
-    // after mount so navRef exists
     requestAnimationFrame(() => requestAnimationFrame(init));
     window.addEventListener("resize", init);
-
     return () => window.removeEventListener("resize", init);
   }, [clampAbs]);
 
   /* -----------------------------
-     Visible: one-way after scroll
+     Visible: reveal after any scroll intent
   ----------------------------- */
-  // useEffect(() => {
-  //   if (!enabled) return;
-
-  //   let ticking = false;
-
-  //   const getScrollY = () =>
-  //     window.scrollY ||
-  //     document.documentElement.scrollTop ||
-  //     document.body.scrollTop ||
-  //     0;
-
-  //   const commit = () => {
-  //     ticking = false;
-  //     if (shownOnceRef.current) return;
-
-  //     const y = getScrollY();
-  //     if (y > showAfterY) {
-  //       shownOnceRef.current = true;
-  //       visibleRef.current = true;
-  //       setVisible(true);
-  //     }
-  //   };
-
-  //   const onScroll = () => {
-  //     if (ticking) return;
-  //     ticking = true;
-  //     raf(commit);
-  //   };
-
-  //   window.addEventListener("scroll", onScroll, { passive: true });
-  //   window.addEventListener("wheel", onScroll, { passive: true });
-  //   window.addEventListener("touchmove", onScroll, { passive: true });
-
-  //   return () => {
-  //     window.removeEventListener("scroll", onScroll);
-  //     window.removeEventListener("wheel", onScroll);
-  //     window.removeEventListener("touchmove", onScroll);
-  //   };
-  // }, [enabled, showAfterY]);
   useEffect(() => {
-    if (!enabled) return;
-  
     let ticking = false;
-  
+
     const reveal = () => {
       ticking = false;
       if (shownOnceRef.current) return;
-  
       shownOnceRef.current = true;
       visibleRef.current = true;
       setVisible(true);
     };
-  
+
     const onAnyScrollIntent = () => {
       if (ticking) return;
       ticking = true;
       raf(reveal);
     };
-  
-    // ✅ dès que l’utilisateur “touche” au scroll
+
     window.addEventListener("wheel", onAnyScrollIntent, { passive: true });
-    window.addEventListener("touchmove", onAnyScrollIntent, { passive: true });
     window.addEventListener("scroll", onAnyScrollIntent, { passive: true });
-  
-    // (optionnel) si tu veux aussi : trackpad horizontal / space / arrows
-    window.addEventListener("keydown", (e) => {
-      const keys = ["ArrowDown", "ArrowUp", "PageDown", "PageUp", "Space", "Home", "End"];
-      if (keys.includes(e.code)) onAnyScrollIntent();
-    });
-  
+
     return () => {
       window.removeEventListener("wheel", onAnyScrollIntent);
-      window.removeEventListener("touchmove", onAnyScrollIntent);
       window.removeEventListener("scroll", onAnyScrollIntent);
-      // si tu gardes keydown, mets-le en handler nommé pour pouvoir remove proprement
     };
-  }, [enabled]);
-  
+  }, [showAfterY]);
+
   /* -----------------------------
      Active section observer
   ----------------------------- */
   useEffect(() => {
-    if (!enabled) return;
     if (!sectionEls.length) return;
 
     const ratios = new Map();
@@ -248,7 +203,7 @@ export default function NavbarScrollHomePage({ enabled = true, refs, showAfterY 
 
     pickBest();
     return () => io.disconnect();
-  }, [enabled, sectionEls]);
+  }, [sectionEls]);
 
   /* -----------------------------
      Scroll to section
@@ -284,7 +239,7 @@ export default function NavbarScrollHomePage({ enabled = true, refs, showAfterY 
   );
 
   /* -----------------------------
-     Drag (absolute)
+     Drag (desktop only)
   ----------------------------- */
   const commitPos = useCallback((x, y) => {
     dragRef.current.x = x;
@@ -375,17 +330,12 @@ export default function NavbarScrollHomePage({ enabled = true, refs, showAfterY 
     };
   }, [onMove, onUp]);
 
-  if (!enabled || !mounted) return null;
-
   const ui = (
     <nav
       ref={navRef}
       className={`navbar__scroll__hp ${visible ? "isVisible" : ""}`}
       aria-label="Scroll navigation"
-      style={{
-        "--x": `${pos.x}px`,
-        "--y": `${pos.y}px`,
-      }}
+      style={{ "--x": `${pos.x}px`, "--y": `${pos.y}px` }}
     >
       <div className="navbar__scroll__hp__card">
         <div className="navbar__scroll__hp__list">
