@@ -189,36 +189,40 @@ export default function Home() {
   --------------------------------------- */
   useEffect(() => {
     if (overlayStep !== 2) return;
-
+  
     const root = document.documentElement;
     const prj = projectsRef.current;
     if (!prj) return;
-
+  
     let rafId = 0;
-
+  
     const compute = () => {
       rafId = 0;
-
-      const vh = window.innerHeight || 1;
-      const r = prj.getBoundingClientRect();
-
-      const start = vh * 0.6;
-      const end = vh * -0.6;
-
-      const blend = clamp01((start - r.top) / (start - end));
+  
+      const rect = prj.getBoundingClientRect();
+      const viewportCenter = window.innerHeight * 0.5;
+  
+      // distance entre le top de projects et le centre écran
+      const distance = rect.top - viewportCenter;
+  
+      // zone de transition (~800px)
+      const RANGE = 800;
+  
+      const blend = clamp01(1 - (distance + RANGE/2) / RANGE);
+  
       root.style.setProperty("--projectsBlend", blend.toFixed(4));
     };
-
+  
     const onScroll = () => {
       if (rafId) return;
       rafId = requestAnimationFrame(compute);
     };
-
+  
     compute();
-
+  
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll, { passive: true });
-
+  
     return () => {
       if (rafId) cancelAnimationFrame(rafId);
       window.removeEventListener("scroll", onScroll);
@@ -226,6 +230,7 @@ export default function Home() {
       root.style.removeProperty("--projectsBlend");
     };
   }, [overlayStep]);
+  
 
   /* ---------------------------------------
      Render
@@ -234,7 +239,7 @@ export default function Home() {
     <div ref={pageRef} className="homePage">
 
       {/* ✅ DESKTOP ONLY */}
-      {overlayStep === 2 && !isSmall && (
+      {/* {overlayStep === 2 && !isSmall && (
         <NavbarScrollHomePage
           enabled
           refs={{
@@ -244,7 +249,7 @@ export default function Home() {
             contact: contactRef,
           }}
         />
-      )}
+      )} */}
 
       {/* Welcome */}
       <div ref={headerRef} id="welcome">

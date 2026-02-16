@@ -184,16 +184,50 @@ function About() {
   
   // Visual open/close (GPU friendly)
   // const [visualOpen, setVisualOpen] = useState(false);
-  const LS_VISUAL_OPEN = "ag_about_visual_open_v1";
+  // const LS_VISUAL_OPEN = "ag_about_visual_open_v1";
 
-  const [visualOpen, setVisualOpen] = useState(() => {
-    try {
-      const raw = localStorage.getItem(LS_VISUAL_OPEN);
-      return raw === "1"; // défaut false si null
-    } catch {
-      return false;
-    }
-  });
+  // const [visualOpen, setVisualOpen] = useState(() => {
+  //   try {
+  //     const raw = localStorage.getItem(LS_VISUAL_OPEN);
+  //     return raw === "1"; // défaut false si null
+  //   } catch {
+  //     return false;
+  //   }
+  // });
+// breakpoints
+const isLE981 = useMediaQuery("(max-width: 981px)");
+
+const LS_VISUAL_OPEN = "ag_about_visual_open_v1";
+
+const readVisualPref = () => {
+  try {
+    return localStorage.getItem(LS_VISUAL_OPEN) === "1";
+  } catch {
+    return false;
+  }
+};
+
+// ✅ init : si petit écran => open direct, sinon => LS
+const [visualOpen, setVisualOpen] = useState(() => {
+  if (typeof window !== "undefined" && window.matchMedia) {
+    if (window.matchMedia("(max-width: 981px)").matches) return true;
+  }
+  return readVisualPref();
+});
+
+// ✅ force open sur tablet/mobile
+useEffect(() => {
+  if (isLE981) setVisualOpen(true);
+  else setVisualOpen(readVisualPref());
+}, [isLE981]);
+
+// ✅ persist seulement sur desktop
+useEffect(() => {
+  if (isLE981) return; // ne touche pas LS en mobile/tablet
+  try {
+    localStorage.setItem(LS_VISUAL_OPEN, visualOpen ? "1" : "0");
+  } catch {}
+}, [visualOpen, isLE981]);
 
   // const userClosedRef = useRef(false);
 
