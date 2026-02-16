@@ -479,7 +479,7 @@ useEffect(() => {
   const visualByTab = useMemo(() => {
     return {
       web: { type: "video", src: "/assets/about/ExcuseApp.mov" },
-      all: { type: "image", src: "/assets/color.png", alt: "All preview" },
+      all: { type: "image", src: "/assets/ab1.png", alt: "All preview" },
       events: { type: "video", src: "/assets/about/video-emotion.mov" }, // ✅ was angels
       threeD: { type: "canvas" },
     };
