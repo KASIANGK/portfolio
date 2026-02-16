@@ -667,3 +667,46 @@
     transform-origin: top right;
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+/* =========================
+   FIX: nav must NOT block page clicks
+   Root is fixed + z-index: 5000
+   => make root "transparent" to pointer events
+========================= */
+.navHUD{
+  pointer-events: none;           /* ✅ ne bloque plus la page */
+  width: fit-content;             /* ✅ évite un hitbox trop large */
+  max-width: 100vw;
+}
+
+/* Seuls les vrais éléments cliquables reprennent les events */
+.navHUD__topbar,
+.navHUD__hamburger,
+.navHUD__gameBtn,
+.navHUD__panel{
+  pointer-events: auto;
+}
+
+/* Déjà bon chez toi, on sécurise juste */
+.navHUD__panel{
+  pointer-events: none;
+}
+.navHUD__panel.open{
+  pointer-events: auto;
+}
+
+/* Bonus mobile: tap plus fiable */
+.navHUD :is(button, a){
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}

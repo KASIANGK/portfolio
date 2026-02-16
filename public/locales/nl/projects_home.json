@@ -132,7 +132,7 @@
           "/assets/WhyNot/wn_2.jpg",
           "/assets/WhyNot/wn_3.jpg",
           "/assets/WhyNot/wn_4.jpg",
-          "/assets/WhyNot/wn_5.jpg"
+          "/assets/WhyNot/wn_5.png"
         ]
       },
       "link": "https://www.lien.com",
@@ -395,7 +395,7 @@
       "images": {
         "laptop": [],
         "tablet": [],
-        "mobile": ["/assets/WhyNot/wn_1.jpg", "/assets/WhyNot/wn_2.jpg", "/assets/WhyNot/wn_3.jpg", "/assets/WhyNot/wn_4.jpg", "/assets/WhyNot/wn_5.jpg"]
+        "mobile": ["/assets/WhyNot/wn_1.jpg", "/assets/WhyNot/wn_2.jpg", "/assets/WhyNot/wn_3.jpg", "/assets/WhyNot/wn_4.jpg", "/assets/WhyNot/wn_5.png"]
       },
       "link": "https://www.lien.com",
       "links": { "demo": "https://www.lien.com", "repo": "" }

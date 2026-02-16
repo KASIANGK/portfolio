@@ -167,7 +167,7 @@
           "/assets/WhyNot/wn_2.jpg",
           "/assets/WhyNot/wn_3.jpg",
           "/assets/WhyNot/wn_4.jpg",
-          "/assets/WhyNot/wn_5.jpg"
+          "/assets/WhyNot/wn_5.png"
         ]
       },
       "link": "https://www.lien.com",
@@ -404,7 +404,7 @@
         "/assets/WhyNot/wn_2.jpg",
         "/assets/WhyNot/wn_3.jpg",
         "/assets/WhyNot/wn_4.jpg",
-        "/assets/WhyNot/wn_5.jpg"
+        "/assets/WhyNot/wn_5.png"
       ]
     }, "link": "https://www.lien.com", "links": { "demo": "https://www.lien.com", "repo": "" } },
     { "id": 18, "slug": "nisa", "refSlug": "nisa","title": "NISA", "function": "Web Dev", "lead": "Institut Neurosciences : maquette Figma, dark/light, structure claire.", "description": "Maquette Figma pour un institut de neurosciences : hiérarchie éditoriale, sections, et déclinaisons dark & light.", "overview": "Projet orienté contenu et lisibilité : une structure pensée pour présenter un institut (missions, recherche, actus, contact) sans surcharge. J’ai travaillé la hiérarchie typographique, les grilles, et les composants réutilisables pour obtenir un rendu sérieux mais moderne. Le double thème (dark/light) a été conçu dès le départ pour rester cohérent (contrastes, accents, états).", "stack": ["Figma", "UI/UX", "Design System"], "role": ["Architecture de l’information (pages, sections, navigation)", "Design UI dark/light (cohérence, contrastes, états)", "Composants réutilisables + grilles", "Handoff prêt intégration"],       "images": {

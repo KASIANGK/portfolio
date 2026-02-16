@@ -502,7 +502,7 @@
 .aboutX__canvasWrap,
 .aboutX__mediaWrap{
   position: relative;
-  height: 340px;
+  height: 330px;
   border-radius: 18px;
   overflow: hidden;
   border: 1px solid rgba(255,255,255,0.08);
