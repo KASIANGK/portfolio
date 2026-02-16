@@ -1,5 +1,5 @@
 // src/App.jsx
-import React, { useEffect, useState, lazy, Suspense } from "react";
+import React, { useEffect, useState } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -17,43 +17,114 @@ import Footer from "./Components/Footer/Footer";
 import LanguageToast from "./Components/Navbar/LanguageToast";
 import Portfolio from "./Components/Portfolio/Portfolio";
 import ProjectPage from "./Components/Portfolio/ProjectPage/ProjectPage";
+import MobileCityPreview from "./Components/Home/HomeCity/MobileCityPreview";
 
-// ✅ Lazy load the heavy 3D route
-const HomeCity = lazy(() => import("./Components/Home/HomeCity/HomeCity"));
+/* ----------------------------------
+   Dynamic import (DESKTOP ONLY)
+-----------------------------------*/
+const loadCityComponent = async () => {
+  return (await import("./Components/Home/HomeCity/HomeCity")).default;
+};
 
 function Layout() {
   const location = useLocation();
   const isCity = location.pathname === "/city";
 
+  const [isMobile, setIsMobile] = useState(null);
+  const [CityComponent, setCityComponent] = useState(null);
   const [cityLoading, setCityLoading] = useState(false);
 
+  /* ----------------------------------
+     Detect mobile safely
+  -----------------------------------*/
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 900px)");
+
+    const onChange = (e) => setIsMobile(e.matches);
+
+    // initial value
+    setIsMobile(mq.matches);
+
+    if ("addEventListener" in mq) {
+      mq.addEventListener("change", onChange);
+      return () => mq.removeEventListener("change", onChange);
+    }
+
+    // Safari fallback
+    mq.addListener(onChange);
+    return () => mq.removeListener(onChange);
+  }, []);
+
+  /* ----------------------------------
+     Load CITY only on desktop
+  -----------------------------------*/
+  useEffect(() => {
+    if (location.pathname !== "/city") {
+      setCityComponent(null);
+      return;
+    }
+
+    // wait mobile detection
+    if (isMobile === null) return;
+
+    // mobile → NEVER load 3D
+    if (isMobile) {
+      setCityComponent(null);
+      return;
+    }
+
+    let alive = true;
+
+    loadCityComponent().then((Comp) => {
+      if (alive) setCityComponent(() => Comp);
+    });
+
+    return () => {
+      alive = false;
+    };
+  }, [location.pathname, isMobile]);
+
+  /* ----------------------------------
+     Listen loader events (3D scene)
+  -----------------------------------*/
   useEffect(() => {
     const on = () => setCityLoading(true);
     const off = () => setCityLoading(false);
 
     window.addEventListener("ag:cityLoaderOn", on);
     window.addEventListener("ag:cityLoaderOff", off);
+
     return () => {
       window.removeEventListener("ag:cityLoaderOn", on);
       window.removeEventListener("ag:cityLoaderOff", off);
     };
   }, []);
 
-  // ✅ optional: prewarm the HomeCity chunk when you're on Home (idle)
+  /* ----------------------------------
+     Desktop prewarm (premium feeling)
+  -----------------------------------*/
   useEffect(() => {
-    if (location.pathname !== "/") return;
-    const prewarm = () => import("./Components/Home/HomeCity/HomeCity").catch(() => {});
+    if (location.pathname !== "/" || isMobile) return;
+
+    const prewarm = () =>
+      import("./Components/Home/HomeCity/HomeCity").catch(() => {});
+
     const id =
-      "requestIdleCallback" in window ? window.requestIdleCallback(prewarm) : window.setTimeout(prewarm, 800);
+      "requestIdleCallback" in window
+        ? window.requestIdleCallback(prewarm)
+        : window.setTimeout(prewarm, 800);
 
     return () => {
       if (typeof id === "number") window.clearTimeout(id);
       else window.cancelIdleCallback?.(id);
     };
-  }, [location.pathname]);
+  }, [location.pathname, isMobile]);
 
-  const hideFooter = isCity || cityLoading;
+  const hideFooter = (!isMobile && isCity) || cityLoading;
 
+  /* ----------------------------------
+     RENDER
+  -----------------------------------*/
   return (
     <>
       <Navbar />
@@ -65,9 +136,11 @@ function Layout() {
         <Route
           path="/city"
           element={
-            <Suspense fallback={null /* or your small global loader */}>
-              <HomeCity />
-            </Suspense>
+            isMobile
+              ? <MobileCityPreview />
+              : CityComponent
+                ? <CityComponent />
+                : <MobileCityPreview />
           }
         />
 
@@ -78,7 +151,6 @@ function Layout() {
         <Route path="/contact" element={<Navigate to="/#contact" replace />} />
         <Route path="/skills" element={<Skills />} />
 
-        {/* fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
 
@@ -96,81 +168,3 @@ export default function App() {
     </ThemeProvider>
   );
 }
-
-
-
-
-// // src/App.jsx
-// import React, { useEffect, useState } from "react";import {
-//   BrowserRouter as Router,
-//   Routes,
-//   Route,
-//   useLocation,
-//   Navigate,
-// } from "react-router-dom";
-
-// import { ThemeProvider } from "./ThemeContext";
-
-// import Home from "./Components/Home/Home";
-// import HomeCity from "./Components/Home/HomeCity/HomeCity";
-// import Skills from "./Components/Skills/Skills";
-// import Navbar from "./Components/Navbar/Navbar";
-// import Footer from "./Components/Footer/Footer";
-// import LanguageToast from "./Components/Navbar/LanguageToast";
-// import Portfolio from "./Components/Portfolio/Portfolio";
-// import ProjectPage from "./Components/Portfolio/ProjectPage/ProjectPage";
-
-// function Layout() {
-//   const location = useLocation();
-//   const isHome = location.pathname === "/";
-//   const isCity = location.pathname === "/city";
-
-//   const [cityLoading, setCityLoading] = useState(false)
-//   useEffect(() => {
-//     const on = () => setCityLoading(true);
-//     const off = () => setCityLoading(false);
-
-//     window.addEventListener("ag:cityLoaderOn", on);
-//     window.addEventListener("ag:cityLoaderOff", off);
-//     return () => {
-//       window.removeEventListener("ag:cityLoaderOn", on);
-//       window.removeEventListener("ag:cityLoaderOff", off);
-//     };
-//   }, []);
-
-//   const hideFooter = isCity || cityLoading;
-
-//   return (
-//     <>
-//       <Navbar />
-//       <LanguageToast />
-
-//       <Routes>
-//         <Route path="/" element={<Home />} />
-//         <Route path="/city" element={<HomeCity />} />
-//         <Route path="/projects" element={<Navigate to="/#projects" replace />} />
-//         <Route path="/portfolio" element={<Portfolio />} />
-//         <Route path="/project/:slug" element={<ProjectPage />} />
-//         <Route path="/about" element={<Navigate to="/#about" replace />} />
-//         <Route path="/contact" element={<Navigate to="/#contact" replace />} />
-
-//         <Route path="/skills" element={<Skills />} />
-
-//         {/* fallback */}
-//         <Route path="*" element={<Navigate to="/" replace />} />
-//       </Routes>
-//       {!hideFooter && <Footer />}
-//       {/* <Footer /> */}
-//     </>
-//   );
-// }
-
-// export default function App() {
-//   return (
-//     <ThemeProvider>
-//       <Router>
-//         <Layout />
-//       </Router>
-//     </ThemeProvider>
-//   );
-// }

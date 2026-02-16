@@ -1,0 +1,133 @@
+.mcp{
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+    background: #050016;
+    display: grid;
+    place-items: center;
+    padding: 22px;
+  }
+  
+  .mcp__bg{
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  
+  .mcp__img{
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transform: scale(1.02);
+    transition: opacity 300ms ease, transform 800ms ease;
+    filter: saturate(1.1) contrast(1.05);
+  }
+  
+  .mcp__img.isReady{
+    opacity: 1;
+    transform: scale(1);
+  }
+  
+  .mcp__vignette{
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(70% 70% at 50% 35%,
+      rgba(5,0,22,0.25) 0%,
+      rgba(5,0,22,0.65) 55%,
+      rgba(5,0,22,0.92) 100%);
+  }
+  
+  .mcp__scan{
+    position: absolute;
+    inset: -40%;
+    background: linear-gradient(
+      to bottom,
+      rgba(255,255,255,0) 0%,
+      rgba(124,92,255,0.08) 35%,
+      rgba(255,76,170,0.10) 50%,
+      rgba(0,255,255,0.08) 65%,
+      rgba(255,255,255,0) 100%
+    );
+    transform: translateY(-35%);
+    animation: mcpScan 5.5s linear infinite;
+    mix-blend-mode: screen;
+    opacity: 0.9;
+  }
+  
+  @keyframes mcpScan{
+    0%{ transform: translateY(-35%); }
+    100%{ transform: translateY(35%); }
+  }
+  
+  .mcp__grain{
+    position: absolute;
+    inset: 0;
+    opacity: 0.08;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+    background-size: 160px 160px;
+    mix-blend-mode: overlay;
+  }
+  
+  .mcp__content{
+    position: relative;
+    z-index: 2;
+    width: min(520px, 100%);
+    padding: 18px 18px 16px;
+    border-radius: 18px;
+    background: rgba(10, 10, 30, 0.38);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.10);
+    box-shadow: 0 18px 55px rgba(0,0,0,0.35);
+  }
+  
+  .mcp__kicker{
+    font-size: 12px;
+    letter-spacing: 0.22em;
+    opacity: 0.85;
+    margin-bottom: 10px;
+  }
+  
+  .mcp__title{
+    margin: 0 0 10px;
+    font-size: 22px;
+    line-height: 1.15;
+  }
+  
+  .mcp__text{
+    margin: 0 0 16px;
+    opacity: 0.88;
+    line-height: 1.5;
+    font-size: 14px;
+  }
+  
+  .mcp__actions{
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  
+  .mcp__btn{
+    border: 0;
+    border-radius: 14px;
+    padding: 12px 14px;
+    font-weight: 600;
+    cursor: pointer;
+    background: rgba(255,255,255,0.92);
+    color: #0a0620;
+  }
+  
+  .mcp__btn--ghost{
+    background: rgba(255,255,255,0.10);
+    color: rgba(255,255,255,0.92);
+    border: 1px solid rgba(255,255,255,0.16);
+  }
+  
+  .mcp__hint{
+    margin-top: 12px;
+    font-size: 12px;
+    opacity: 0.75;
+  }
+  

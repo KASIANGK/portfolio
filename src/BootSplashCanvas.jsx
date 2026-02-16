@@ -200,7 +200,7 @@ export default function BootSplashCanvas() {
       ctx.restore();
     }
 
-    // ✅ Keep EXACT (your animation is perfect)
+
     function drawBuildings3(time) {
       const w = window.innerWidth;
       const base = floorY();
