@@ -9,7 +9,7 @@ import "./Home.css";
 
 import Contact from "../Contact/Contact";
 import About from "../About/About";
-import NavbarScrollHomePage from "./NavbarScrollHomePage/NavbarScrollHomePage";
+// import NavbarScrollHomePage from "./NavbarScrollHomePage/NavbarScrollHomePage";
 import ProjectsMasonryMessy from "../Projects/ProjectsMasonryMessy";
 
 /* ---------------------------------------
@@ -65,6 +65,32 @@ export default function Home() {
   const location = useLocation();
   const { shouldShowLanguageStep } = useOnboarding();
   const boot = useBoot();
+
+  /* ---------------------------------------
+     Desktop / Mobile gating
+  --------------------------------------- */
+  const [isDesktop, setIsDesktop] = useState(() => {
+    try {
+      return window.matchMedia("(min-width:1025px)").matches;
+    } catch {
+      return true;
+    }
+  });
+
+  useEffect(() => {
+    let mq;
+    try {
+      mq = window.matchMedia("(min-width:1025px)");
+    } catch {
+      return;
+    }
+
+    const onChange = () => setIsDesktop(mq.matches);
+    onChange();
+
+    mq.addEventListener?.("change", onChange);
+    return () => mq.removeEventListener?.("change", onChange);
+  }, []);
 
   /* ---------------------------------------
      Boot data
@@ -168,12 +194,24 @@ export default function Home() {
   }, [overlayStep]);
 
   /* ---------------------------------------
-     BG BLEND (native scroll)
+     BG BLEND
+     - Desktop: keep your RAF blend behavior
+     - <1025px: force BG1 only (blend=0)
   --------------------------------------- */
   useEffect(() => {
     if (overlayStep !== 2) return;
 
     const root = document.documentElement;
+
+    // ✅ Mobile / Tablet: BG1 only
+    if (!isDesktop) {
+      root.style.setProperty("--projectsBlend", "0");
+      return () => {
+        root.style.removeProperty("--projectsBlend");
+      };
+    }
+
+    // ✅ Desktop: your current behavior (RAF loop)
     const prj = projectsRef.current;
     if (!prj) return;
 
@@ -198,14 +236,12 @@ export default function Home() {
       cancelAnimationFrame(rafId);
       root.style.removeProperty("--projectsBlend");
     };
-  }, [overlayStep]);
+  }, [overlayStep, isDesktop]);
 
   /* ---------------------------------------
-   Preload + GPU decode BG images (ONCE)
+     Preload + GPU decode BG images (ONCE)
   --------------------------------------- */
   useEffect(() => {
-    let cancelled = false;
-
     const warm = async () => {
       try {
         const imgA = new Image();
@@ -221,12 +257,7 @@ export default function Home() {
     };
 
     warm();
-
-    return () => {
-      cancelled = true;
-    };
   }, []);
-
 
   /* ---------------------------------------
      Render
@@ -256,7 +287,7 @@ export default function Home() {
 
       {overlayStep === 2 && <div className="homePage__afterHeader" />}
 
-      {/* ===== BG STARTS HERE ===== */}
+      {/* ===== BG + SECTIONS ===== */}
       <div className="homeStage" data-enabled={overlayStep === 2 ? "1" : "0"}>
         <div className="bgScene" aria-hidden>
           <img
@@ -274,19 +305,31 @@ export default function Home() {
         </div>
 
         <section ref={aboutRef} id="about" className="homeSection">
-          <div className={`homeSection__card ${ready.about ? "isReady" : "isLoading"}`}>
+          <div
+            className={`homeSection__card ${
+              ready.about ? "isReady" : "isLoading"
+            }`}
+          >
             <About />
           </div>
         </section>
 
         <section ref={projectsRef} id="projects" className="homeSection">
-          <div className={`homeSection__card ${ready.projects ? "isReady" : "isLoading"}`}>
+          <div
+            className={`homeSection__card ${
+              ready.projects ? "isReady" : "isLoading"
+            }`}
+          >
             <ProjectsMasonryMessy />
           </div>
         </section>
 
         <section ref={contactRef} id="contact" className="homeSection">
-          <div className={`homeSection__card ${ready.contact ? "isReady" : "isLoading"}`}>
+          <div
+            className={`homeSection__card ${
+              ready.contact ? "isReady" : "isLoading"
+            }`}
+          >
             <Contact
               initialContactInfo={contactInfoData}
               initialSubjects={subjectsData}
