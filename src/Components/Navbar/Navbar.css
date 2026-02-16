@@ -564,7 +564,7 @@
   /* stack vertical */
   .navHUD__topbar {
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
     align-items: flex-end;
     gap: 8px;
   }
@@ -621,6 +621,43 @@
   .navHUD__hamburgerBars {
     width: 26px;
     margin: 0 auto;
+  }
+
+  /* panel aligné à droite */
+  .navHUD__panel {
+    width: min(240px, 86vw);
+    margin-left: auto;
+    transform-origin: top right;
+  }
+}
+/* =========================================
+   MOBILE <=768px : GAME HUD disabled
+========================================= */
+@media (max-width: 768px) {
+
+  /* cacher complètement GAME */
+  .navHUD__gameBtn {
+    display: none;
+  }
+
+  /* le topbar redevient simple */
+  .navHUD__topbar {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  /* burger seul */
+  .navHUD__hamburger {
+    width: 56px;
+    height: 56px;
+    padding: 0;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* cacher texte MENU */
+  .navHUD__label {
+    display: none;
   }
 
   /* panel aligné à droite */
