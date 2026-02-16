@@ -22,15 +22,17 @@ const rafN = async (n = 2) => {
 const clamp01 = (v) => Math.max(0, Math.min(1, v));
 
 /* ---------------------------------------
-   Scroll lock (step 1)
+   Scroll lock (SAFE MOBILE)
 --------------------------------------- */
 function lockScrollHard() {
-  document.body.style.overflow = "hidden";
-  document.documentElement.style.overflow = "hidden";
+  document.documentElement.style.overflowY = "hidden";
+  document.body.style.overflowY = "hidden";
 }
+
 function unlockScrollHard() {
-  document.body.style.overflow = "";
-  document.documentElement.style.overflow = "";
+  document.documentElement.style.overflowY = "auto";
+  document.body.style.overflowY = "auto";
+  document.body.style.webkitOverflowScrolling = "touch";
 }
 
 /* ---------------------------------------
@@ -44,9 +46,7 @@ function waitEventOnce(name, timeoutMs = 2600) {
       done = true;
       resolve();
     };
-    try {
-      window.addEventListener(name, finish, { once: true });
-    } catch {}
+    window.addEventListener(name, finish, { once: true });
     setTimeout(finish, timeoutMs);
   });
 }
@@ -65,6 +65,20 @@ export default function Home() {
   const location = useLocation();
   const { shouldShowLanguageStep } = useOnboarding();
   const boot = useBoot();
+
+  /* ---------------------------------------
+     Detect mobile/tablet
+  --------------------------------------- */
+  const [isSmall, setIsSmall] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width:1024px)");
+    const update = () => setIsSmall(mq.matches);
+
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
 
   /* ---------------------------------------
      Boot data
@@ -91,7 +105,7 @@ export default function Home() {
   }, []);
 
   /* ---------------------------------------
-     Lock scroll in step 1
+     Scroll lock
   --------------------------------------- */
   useEffect(() => {
     if (overlayStep === 1) {
@@ -106,8 +120,13 @@ export default function Home() {
   --------------------------------------- */
   const scrollToRef = useCallback((ref) => {
     if (!ref?.current) return;
+
     requestAnimationFrame(() => {
-      const y = ref.current.getBoundingClientRect().top + window.scrollY - 90;
+      const y =
+        ref.current.getBoundingClientRect().top +
+        window.scrollY -
+        90;
+
       window.scrollTo({ top: y, behavior: "smooth" });
     });
   }, []);
@@ -162,13 +181,11 @@ export default function Home() {
       window.dispatchEvent(new Event("ag:homeFirstPaint"));
     })();
 
-    return () => {
-      alive = false;
-    };
+    return () => (alive = false);
   }, [overlayStep]);
 
   /* ---------------------------------------
-     BG BLEND (native scroll)
+     BG BLEND (🔥 FIX — NO RAF LOOP)
   --------------------------------------- */
   useEffect(() => {
     if (overlayStep !== 2) return;
@@ -179,7 +196,9 @@ export default function Home() {
 
     let rafId = 0;
 
-    const update = () => {
+    const compute = () => {
+      rafId = 0;
+
       const vh = window.innerHeight || 1;
       const r = prj.getBoundingClientRect();
 
@@ -188,52 +207,34 @@ export default function Home() {
 
       const blend = clamp01((start - r.top) / (start - end));
       root.style.setProperty("--projectsBlend", blend.toFixed(4));
-
-      rafId = requestAnimationFrame(update);
     };
 
-    update();
+    const onScroll = () => {
+      if (rafId) return;
+      rafId = requestAnimationFrame(compute);
+    };
+
+    compute();
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
 
     return () => {
-      cancelAnimationFrame(rafId);
+      if (rafId) cancelAnimationFrame(rafId);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
       root.style.removeProperty("--projectsBlend");
     };
   }, [overlayStep]);
-
-  /* ---------------------------------------
-   Preload + GPU decode BG images (ONCE)
-  --------------------------------------- */
-  useEffect(() => {
-    let cancelled = false;
-
-    const warm = async () => {
-      try {
-        const imgA = new Image();
-        imgA.src = "/assets/about_officee.jpg";
-        await imgA.decode?.();
-
-        const imgP = new Image();
-        imgP.src = "/assets/projects_officee.jpg";
-        await imgP.decode?.();
-      } catch {
-        // never block
-      }
-    };
-
-    warm();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
 
   /* ---------------------------------------
      Render
   --------------------------------------- */
   return (
     <div ref={pageRef} className="homePage">
-      {overlayStep === 2 && (
+
+      {/* ✅ DESKTOP ONLY */}
+      {overlayStep === 2 && !isSmall && (
         <NavbarScrollHomePage
           enabled
           refs={{
@@ -256,21 +257,11 @@ export default function Home() {
 
       {overlayStep === 2 && <div className="homePage__afterHeader" />}
 
-      {/* ===== BG STARTS HERE ===== */}
       <div className="homeStage" data-enabled={overlayStep === 2 ? "1" : "0"}>
+
         <div className="bgScene" aria-hidden>
-          <img
-            className="bgScene__img bgScene__wire"
-            src="/assets/about_officee.jpg"
-            alt=""
-            draggable="false"
-          />
-          <img
-            className="bgScene__img bgScene__tex"
-            src="/assets/projects_officee.jpg"
-            alt=""
-            draggable="false"
-          />
+          <img className="bgScene__img bgScene__wire" src="/assets/about_officee.jpg" alt="" />
+          <img className="bgScene__img bgScene__tex" src="/assets/projects_officee.jpg" alt="" />
         </div>
 
         <section ref={aboutRef} id="about" className="homeSection">

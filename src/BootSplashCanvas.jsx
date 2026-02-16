@@ -371,6 +371,7 @@ export default function BootSplashCanvas() {
         height: "100%",
         background: "transparent",
         display: "block",
+        pointerEvents: "none",
       }}
     />
   );

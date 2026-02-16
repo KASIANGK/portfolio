@@ -11,7 +11,6 @@ const SECTIONS = [
   { key: "contact", label: "Contact" },
 ];
 
-const raf = (fn) => requestAnimationFrame(fn);
 const LS_POS = "ag_navscrollhp_pos_v2_abs";
 
 function clamp(v, a, b) {
@@ -21,11 +20,12 @@ function clamp(v, a, b) {
 export default function NavbarScrollHomePage({
   enabled = true,
   refs,
-  showAfterY = 5,
-  disableBelow = 980, // ✅ phone + tablet cutoff
+  showAfterY = 5, // kept for API compatibility (we reveal on any scroll intent)
+  disableBelow = 980, // phone/tablet cutoff
 }) {
   const { t } = useTranslation("nav");
 
+  // ✅ Hooks ALWAYS called
   const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(false);
   const [activeKey, setActiveKey] = useState("welcome");
@@ -51,21 +51,21 @@ export default function NavbarScrollHomePage({
     nextY: 0,
   });
 
+  // mount flag (portal safe)
   useEffect(() => setMounted(true), []);
 
-  // ✅ detect mobile/tablet once + on resize (NO deprecated addListener)
+  // detect mobile/tablet
   useEffect(() => {
     const mq = window.matchMedia(`(max-width: ${disableBelow}px)`);
     const onChange = (e) => setIsSmall(e.matches);
 
     setIsSmall(mq.matches);
     mq.addEventListener?.("change", onChange);
-
     return () => mq.removeEventListener?.("change", onChange);
   }, [disableBelow]);
 
-  // ✅ HARD OFF on mobile/tablet (unmount the whole thing)
-  if (!enabled || !mounted || isSmall) return null;
+  // decide render (but hooks still run)
+  const shouldRender = enabled && mounted && !isSmall;
 
   const sectionEls = useMemo(() => {
     return SECTIONS.map((s) => ({
@@ -89,8 +89,10 @@ export default function NavbarScrollHomePage({
     return { x: clamp(x, minX, maxX), y: clamp(y, minY, maxY) };
   }, []);
 
-  // init pos (desktop only)
+  // init pos (only when shouldRender)
   useEffect(() => {
+    if (!shouldRender) return;
+
     const init = () => {
       let x = window.innerWidth - 50 - 190;
       let y = 470;
@@ -119,12 +121,14 @@ export default function NavbarScrollHomePage({
     requestAnimationFrame(() => requestAnimationFrame(init));
     window.addEventListener("resize", init);
     return () => window.removeEventListener("resize", init);
-  }, [clampAbs]);
+  }, [shouldRender, clampAbs]);
 
   /* -----------------------------
      Visible: reveal after any scroll intent
   ----------------------------- */
   useEffect(() => {
+    if (!shouldRender) return;
+
     let ticking = false;
 
     const reveal = () => {
@@ -138,7 +142,7 @@ export default function NavbarScrollHomePage({
     const onAnyScrollIntent = () => {
       if (ticking) return;
       ticking = true;
-      raf(reveal);
+      requestAnimationFrame(reveal);
     };
 
     window.addEventListener("wheel", onAnyScrollIntent, { passive: true });
@@ -148,62 +152,64 @@ export default function NavbarScrollHomePage({
       window.removeEventListener("wheel", onAnyScrollIntent);
       window.removeEventListener("scroll", onAnyScrollIntent);
     };
-  }, [showAfterY]);
+  }, [shouldRender, showAfterY]);
 
   /* -----------------------------
-     Active section observer
+     Active section: robust scroll-based pick
+     (No IntersectionObserver → no "Welcome stuck")
   ----------------------------- */
   useEffect(() => {
+    if (!shouldRender) return;
     if (!sectionEls.length) return;
 
-    const ratios = new Map();
+    let rafId = 0;
 
-    const commitActive = (nextKey) => {
-      if (!nextKey) return;
-      if (activeRef.current === nextKey) return;
-      activeRef.current = nextKey;
-      setActiveKey(nextKey);
-    };
+    const compute = () => {
+      rafId = 0;
 
-    const pickBest = () => {
-      const y = window.scrollY || 0;
-      if (y < 40) return commitActive("welcome");
-
+      const markerY = window.innerHeight * 0.45;
       let bestKey = "welcome";
-      let bestScore = -1;
-      for (const [k, v] of ratios.entries()) {
-        if (v > bestScore) {
-          bestScore = v;
-          bestKey = k;
+      let bestDist = Infinity;
+
+      for (const s of sectionEls) {
+        const r = s.el.getBoundingClientRect();
+
+        // marker inside section → win
+        if (r.top <= markerY && r.bottom >= markerY) {
+          bestKey = s.key;
+          bestDist = 0;
+          break;
+        }
+
+        // else closest edge to marker
+        const dist = Math.min(Math.abs(r.top - markerY), Math.abs(r.bottom - markerY));
+        if (dist < bestDist) {
+          bestDist = dist;
+          bestKey = s.key;
         }
       }
-      if (bestScore >= 0) commitActive(bestKey);
+
+      if (activeRef.current !== bestKey) {
+        activeRef.current = bestKey;
+        setActiveKey(bestKey);
+      }
     };
 
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) {
-          const key = e.target?.dataset?.navkey;
-          if (!key) continue;
-          ratios.set(key, e.intersectionRatio || 0);
-        }
-        pickBest();
-      },
-      {
-        root: null,
-        rootMargin: "-35% 0px -45% 0px",
-        threshold: [0, 0.08, 0.16, 0.25, 0.4, 0.6, 0.8, 1],
-      }
-    );
+    const onScroll = () => {
+      if (rafId) return;
+      rafId = requestAnimationFrame(compute);
+    };
 
-    sectionEls.forEach(({ key, el }) => {
-      el.dataset.navkey = key;
-      io.observe(el);
-    });
+    compute();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
 
-    pickBest();
-    return () => io.disconnect();
-  }, [sectionEls]);
+    return () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [shouldRender, sectionEls]);
 
   /* -----------------------------
      Scroll to section
@@ -217,18 +223,14 @@ export default function NavbarScrollHomePage({
     } catch {}
   }, []);
 
+  // ✅ always scrollIntoView (including welcome) so ↑ returns to HomeOverlay reliably
   const scrollToKey = useCallback(
     (key) => {
-      if (key === "welcome") {
-        setHashSoft("welcome");
-        window.scrollTo({ top: 0, behavior: "smooth" });
-        return;
-      }
-
       const el = refs?.[key]?.current ?? document.getElementById(key);
       if (!el) return;
 
       setHashSoft(key);
+
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           el.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
@@ -239,7 +241,7 @@ export default function NavbarScrollHomePage({
   );
 
   /* -----------------------------
-     Drag (desktop only)
+     Drag
   ----------------------------- */
   const commitPos = useCallback((x, y) => {
     dragRef.current.x = x;
@@ -311,6 +313,8 @@ export default function NavbarScrollHomePage({
   }, []);
 
   useEffect(() => {
+    if (!shouldRender) return;
+
     window.addEventListener("pointermove", onMove, { passive: false });
     window.addEventListener("pointerup", onUp);
     window.addEventListener("pointercancel", onUp);
@@ -328,7 +332,12 @@ export default function NavbarScrollHomePage({
       window.removeEventListener("pointercancel", onUp);
       window.removeEventListener("blur", onBlur);
     };
-  }, [onMove, onUp]);
+  }, [shouldRender, onMove, onUp]);
+
+  /* -----------------------------
+     Render
+  ----------------------------- */
+  if (!shouldRender) return null;
 
   const ui = (
     <nav
