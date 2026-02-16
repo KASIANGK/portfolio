@@ -397,7 +397,7 @@ export default function Portfolio({ jsonUrl }) {
             </div>
           </div>
 
-          <div className="portfolio__chip">{t("chip")}</div>
+          {/* <div className="portfolio__chip">{t("chip")}</div> */}
         </div>
       </header>
 
