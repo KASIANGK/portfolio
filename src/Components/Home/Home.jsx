@@ -22,15 +22,41 @@ const rafN = async (n = 2) => {
 const clamp01 = (v) => Math.max(0, Math.min(1, v));
 
 /* ---------------------------------------
-   Scroll lock (step 1)
+   Scroll lock (iOS/Safari SAFE)
+   - Avoid overflow hidden lock (can freeze scroll on mobile)
 --------------------------------------- */
+let __lockY = 0;
+
 function lockScrollHard() {
-  document.body.style.overflow = "hidden";
+  __lockY = window.scrollY || window.pageYOffset || 0;
+
+  // lock root
   document.documentElement.style.overflow = "hidden";
+
+  // lock body in a way Safari understands
+  document.body.style.position = "fixed";
+  document.body.style.top = `-${__lockY}px`;
+  document.body.style.left = "0";
+  document.body.style.right = "0";
+  document.body.style.width = "100%";
 }
+
 function unlockScrollHard() {
-  document.body.style.overflow = "";
+  // unlock root
   document.documentElement.style.overflow = "";
+
+  // unlock body
+  document.body.style.position = "";
+  document.body.style.top = "";
+  document.body.style.left = "";
+  document.body.style.right = "";
+  document.body.style.width = "";
+
+  // restore scroll
+  window.scrollTo(0, __lockY);
+
+  // nice-to-have for iOS momentum
+  document.body.style.webkitOverflowScrolling = "touch";
 }
 
 /* ---------------------------------------
@@ -117,22 +143,29 @@ export default function Home() {
   }, []);
 
   /* ---------------------------------------
-     Lock scroll in step 1
+     Lock scroll in step 1 (SAFE)
   --------------------------------------- */
   useEffect(() => {
     if (overlayStep === 1) {
       lockScrollHard();
       return () => unlockScrollHard();
     }
+    // step 2 => ensure unlocked (in case of weird transitions)
     unlockScrollHard();
   }, [overlayStep]);
 
   /* ---------------------------------------
-     Hash scroll
+     Hash scroll (avoid fighting scroll-lock)
   --------------------------------------- */
   const scrollToRef = useCallback((ref) => {
     if (!ref?.current) return;
+
     requestAnimationFrame(() => {
+      // If something left the body fixed (edge case), unlock before scrolling
+      if (getComputedStyle(document.body).position === "fixed") {
+        unlockScrollHard();
+      }
+
       const y = ref.current.getBoundingClientRect().top + window.scrollY - 90;
       window.scrollTo({ top: y, behavior: "smooth" });
     });
