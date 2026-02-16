@@ -163,5 +163,8 @@
   "downloadPdf": "Download PDF",
   "close": "Close",
 
-  "visual": { "title": "Visual", "open": "Open", "close": "Close" }
+  "visual": { "title": "Visual", "open": "Open", "close": "Close" },
+  "cv": {
+    "lead": "Fullstack developerka z mocnym zapleczem kreatywnym/3D. Tworzę wydajne systemy UI, interaktywne doświadczenia i wizualizacje w czasie rzeczywistym (React, Vite, Three.js/R3F, Blender)."
+  }
 }

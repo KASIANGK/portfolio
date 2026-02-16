@@ -1230,7 +1230,7 @@
 .aboutX__modalOverlay{
   position: fixed;
   inset: 0;
-  z-index: 9999;
+  z-index: 9999999999999999999999999999;
   display:grid;
   place-items:center;
   padding: 22px;
@@ -2100,4 +2100,15 @@
   outline: 2px solid rgba(0,255,255,0.35);
   outline-offset: 3px;
   border-bottom-color: transparent;
+}
+
+
+
+
+
+
+/* CV modal: hide email + left summary list on mobile/tablet */
+@media (max-width: 980px){
+  .aboutX__modalEmail{ display: none !important; }
+  .aboutX__summaryList{ display: none !important; }
 }

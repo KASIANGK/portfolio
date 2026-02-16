@@ -1124,11 +1124,11 @@ useEffect(() => {
                 {/* ✅ ALL title here (name + role) */}
                 <div className="aboutX__modalIdentity">
                   <span className="aboutX__modalName">Kasia Nagorka</span>
-                  <span className="aboutX__modalSep">—</span>
+                  {/* <span className="aboutX__modalSep">—</span> */}
                   <span className="aboutX__modalRole">
                     {t("bio.all.title", { defaultValue: "Creative Technologist" })}
                   </span>
-                  <span className="aboutX__modalSep">—</span>
+                  {/* <span className="aboutX__modalSep">—</span> */}
                   <a
                     className="aboutX__modalEmail"
                     href="mailto:ngk.kasia@gmail.com"
@@ -1152,20 +1152,22 @@ useEffect(() => {
                 <div className="aboutX__modalKicker">SUMMARY</div>
 
                 <div className="aboutX__summaryGrid">
-                  <div className="aboutX__summaryLeft">
-                    {/* ✅ ALL moved out of here */}
+                  {/* <div className="aboutX__summaryLeft">
                       <div className="aboutX__summaryList">
                         {(skillsByTab.all || []).map((s) => (
                           <p key={`all-${s}`}>{s}</p>
                         ))}
                     </div>
-                  </div>
+                  </div> */}
 
                   <div className="aboutX__summaryRight">
                     <p className="aboutX__modalLead">
-                      Fullstack developer with a strong creative/3D background. Builds performant UI systems,
-                      interactive experiences, and real-time visuals (React, Vite, Three.js/R3F, Blender).
+                      {t("cv.lead", {
+                        defaultValue:
+                          "Fullstack developer with a strong creative/3D background. Builds performant UI systems, interactive experiences, and real-time visuals (React, Vite, Three.js/R3F, Blender).",
+                      })}
                     </p>
+
                     <div className="aboutX__summaryAvatar">
                       <img
                         src="/assets/about/avatar.jpg"

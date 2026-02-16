@@ -188,5 +188,8 @@
     "title": "Visual",
     "open": "Open",
     "close": "Close"
+  },
+  "cv": {
+    "lead": "Développeuse fullstack avec un solide background créatif/3D. Je construis des systèmes UI performants, des expériences interactives et des visuels temps réel (React, Vite, Three.js/R3F, Blender)."
   }
 }

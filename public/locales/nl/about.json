@@ -163,6 +163,9 @@
   "downloadPdf": "Download PDF",
   "close": "Close",
 
-  "visual": { "title": "Visual", "open": "Open", "close": "Close" }
+  "visual": { "title": "Visual", "open": "Open", "close": "Close" },
+  "cv": {
+    "lead": "Fullstack developer met een sterke creatieve/3D-achtergrond. Bouwt performante UI-systemen, interactieve ervaringen en realtime visuals (React, Vite, Three.js/R3F, Blender)."
+  }
 }
 
