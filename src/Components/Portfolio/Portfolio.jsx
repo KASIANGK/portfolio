@@ -474,7 +474,7 @@ export default function Portfolio({ jsonUrl }) {
                 </div>
 
 
-                {isTouch ? <div className="pcard__hint">{t("hintSwipe")}</div> : null}
+                {/* {isTouch ? <div className="pcard__hint">{t("hintSwipe")}</div> : null} */}
               </div>
             </article>
           );
