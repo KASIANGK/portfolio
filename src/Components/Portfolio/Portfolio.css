@@ -837,3 +837,51 @@
   font-family: var(--fontUI);
   color: rgba(220,230,255,0.80);
 }
+
+
+
+
+
+
+/* ✅ Mobile/tablet: no horizontal slider */
+@media (max-width: 768px) {
+  /* le viewport ne scroll plus horizontalement */
+  .pcard__slider {
+    overflow: hidden;
+    scroll-snap-type: none;
+    -webkit-overflow-scrolling: auto;
+  }
+
+  /* on affiche uniquement la 1ère image (cover) */
+  .pcard__imgWrap:not(:first-child) {
+    display: none;
+  }
+
+  /* sécurité: pas de transform animée sur track */
+  .pcard__track {
+    transform: none !important;
+  }
+
+  /* meilleure réactivité tactile */
+  .pcard__btn,
+  .ppg__btn,
+  .ppg__dot,
+  .portfolio__backBtn,
+  .pf {
+    touch-action: manipulation;
+  }
+}
+
+@media (max-width: 768px) {
+  .pcard__btn {
+    min-height: 48px;
+    padding: 16px 16px;
+    font-size: 15px;
+  }
+
+  .ppg__btn {
+    height: 48px;
+    padding: 0 16px;
+    font-size: 12px;
+  }
+}
