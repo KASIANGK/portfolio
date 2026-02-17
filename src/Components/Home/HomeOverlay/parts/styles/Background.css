@@ -72,3 +72,10 @@
     transition: opacity 450ms ease;
   }
   
+
+  /* Hide keyboard hints on tablet + mobile */
+@media (max-width: 1024px){
+  .homeOverlay__kbdHint{
+    display: none !important;
+  }
+}
