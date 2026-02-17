@@ -10,7 +10,7 @@
     margin-inline: auto;
     width: min(720px, 100%);
     padding: clamp(18px, 3.2vw, 34px);
-    border-radius: 22px;
+    border-radius: 22px !important;
   
     background: rgba(16, 10, 38, 0.45);
   
@@ -70,7 +70,7 @@
   .homeOverlay__fx{
     position: absolute;
     inset: 0;
-    border-radius: 22px;
+    border-radius: 22px !important;
     z-index: 2;
   }
   
