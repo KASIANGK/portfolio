@@ -163,37 +163,71 @@ export default function Navbar() {
   // -----------------------------
   // ✅ Hash navigation helper (works from any page)
   // -----------------------------
+  // const goHash = useCallback(
+  //   (hash) => {
+  //     const targetHash = hash.startsWith("#") ? hash : `#${hash}`;
+  //     const targetUrl = `/${targetHash}`;
+
+  //     // Close MENU overlay immediately for UX
+  //     closeMenu();
+
+  //     // If we are already on "/", just update hash + scroll
+  //     const alreadyHome = location.pathname === "/";
+
+  //     if (alreadyHome) {
+  //       // update hash without double navigation
+  //       if (window.location.hash !== targetHash) {
+  //         window.history.pushState({}, "", targetUrl);
+  //       }
+  //     } else {
+  //       navigate(targetUrl);
+  //     }
+
+  //     // Scroll after DOM has had time to paint (Home + sections)
+  //     requestAnimationFrame(() => {
+  //       requestAnimationFrame(() => {
+  //         const el = document.querySelector(targetHash);
+  //         if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  //       });
+  //     });
+  //   },
+  //   [closeMenu, location.pathname, navigate]
+  // );
+  const setPendingScroll = (id) => {
+    try {
+      sessionStorage.setItem("ag_pending_scroll", id);
+      sessionStorage.setItem("ag_pending_scroll_at", String(Date.now()));
+    } catch {}
+  };
+  
   const goHash = useCallback(
     (hash) => {
-      const targetHash = hash.startsWith("#") ? hash : `#${hash}`;
-      const targetUrl = `/${targetHash}`;
-
-      // Close MENU overlay immediately for UX
+      const id = hash.replace("#", "");
       closeMenu();
-
-      // If we are already on "/", just update hash + scroll
-      const alreadyHome = location.pathname === "/";
-
-      if (alreadyHome) {
-        // update hash without double navigation
-        if (window.location.hash !== targetHash) {
-          window.history.pushState({}, "", targetUrl);
+  
+      // ✅ CASE 1 — already on Home → scroll immediately
+      if (location.pathname === "/") {
+        const el = document.getElementById(id);
+        if (el) {
+          el.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
         }
-      } else {
-        navigate(targetUrl);
+        return;
       }
-
-      // Scroll after DOM has had time to paint (Home + sections)
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          const el = document.querySelector(targetHash);
-          if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-        });
+  
+      // ✅ CASE 2 — coming from another page
+      setPendingScroll(id);
+  
+      navigate("/", {
+        replace: false,
+        state: { __scrollIntent: id, t: Date.now() },
       });
     },
-    [closeMenu, location.pathname, navigate]
+    [navigate, location.pathname, closeMenu]
   );
-
+  
   
   
   // -----------------------------

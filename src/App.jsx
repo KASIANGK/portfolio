@@ -33,9 +33,6 @@ function Layout() {
   const [isMobile, setIsMobile] = useState(null);
   const [CityComponent, setCityComponent] = useState(null);
   const [cityLoading, setCityLoading] = useState(false);
-  const hideNavbar =
-  location.pathname.startsWith("/portfolio") ||
-  location.pathname.startsWith("/project");
 
   /* ----------------------------------
      Detect mobile safely
@@ -130,7 +127,7 @@ function Layout() {
   -----------------------------------*/
   return (
     <>
-      {!hideNavbar && <Navbar />}
+      <Navbar />
       <LanguageToast />
 
       <Routes>
