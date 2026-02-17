@@ -2112,3 +2112,9 @@
   .aboutX__modalEmail{ display: none !important; }
   .aboutX__summaryList{ display: none !important; }
 }
+/* mobile standard */
+@media (max-width: 425px) {
+  .aboutX__header {
+    margin-left: -30px;
+  }
+}
