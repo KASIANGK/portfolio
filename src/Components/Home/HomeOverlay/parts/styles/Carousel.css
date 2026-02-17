@@ -59,3 +59,11 @@
   
 
 
+  @media (max-width: 520px){
+    .homeOverlay__slide{
+      align-items: flex-start; /* ✅ clé */
+      padding-top: 14px;       /* petit breathing */
+      padding-bottom: 18px;
+    }
+  }
+  
