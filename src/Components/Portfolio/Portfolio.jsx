@@ -107,14 +107,14 @@ export default function Portfolio({ jsonUrl }) {
   const lang = (i18n.resolvedLanguage || i18n.language || "en").split("-")[0];
   const base = import.meta.env.BASE_URL || "/";
   const effectiveJsonUrl = jsonUrl || `${base}locales/${lang}/projects_home.json`;
-
   const goBackToProjects = () => {
-    navigate("/#projects", { replace: false });
-    requestAnimationFrame(() => {
-      const el = document.getElementById("projects");
-      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
+    // ✅ on dit à Home où scroller APRÈS montage
+    sessionStorage.setItem("ag_pending_scroll", "projects");
+    sessionStorage.setItem("ag_pending_scroll_at", Date.now());
+  
+    navigate("/");
   };
+  
 
   // ✅ read preset from query ?filter=all|web|3d
   const presetTab = useMemo(() => {

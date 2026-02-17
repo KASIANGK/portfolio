@@ -44,7 +44,7 @@ export default function StepMenu({
         </div>
         <div className="homeOverlay__shine" aria-hidden="true" />
 
-        <div className="homeOverlay__badge">Creative Technologist://Fullstack Developer</div>
+        <div className="homeOverlay__badge">Creative_Technologist://Fullstack_Developer</div>
 
         <h1 className="homeOverlay__title">
           {t("menu.titleLine1")}

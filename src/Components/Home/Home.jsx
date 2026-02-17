@@ -9,7 +9,6 @@ import "./Home.css";
 
 import Contact from "../Contact/Contact";
 import About from "../About/About";
-// import NavbarScrollHomePage from "./NavbarScrollHomePage/NavbarScrollHomePage";
 import ProjectsMasonryMessy from "../Projects/ProjectsMasonryMessy";
 
 /* ---------------------------------------
@@ -22,18 +21,15 @@ const rafN = async (n = 2) => {
 const clamp01 = (v) => Math.max(0, Math.min(1, v));
 
 /* ---------------------------------------
-   Scroll lock (iOS/Safari SAFE)
-   - Avoid overflow hidden lock (can freeze scroll on mobile)
+   Scroll lock SAFE (fixed body)
 --------------------------------------- */
 let __lockY = 0;
 
 function lockScrollHard() {
   __lockY = window.scrollY || window.pageYOffset || 0;
 
-  // lock root
   document.documentElement.style.overflow = "hidden";
 
-  // lock body in a way Safari understands
   document.body.style.position = "fixed";
   document.body.style.top = `-${__lockY}px`;
   document.body.style.left = "0";
@@ -41,21 +37,40 @@ function lockScrollHard() {
   document.body.style.width = "100%";
 }
 
-function unlockScrollHard() {
-  // unlock root
-  document.documentElement.style.overflow = "";
+/**
+ * HARD unlock:
+ * - clears ALL inline lock styles
+ * - restores scroll position from body.top (or __lockY)
+ * - targets scrollingElement
+ */
+function unlockScrollHard({ restore = true } = {}) {
+  const bodyTop = document.body.style.top || "";
+  const topNum = Number.parseInt(bodyTop.replace("px", ""), 10);
+  const restoreY = Number.isFinite(topNum) ? Math.abs(topNum) : (__lockY || 0);
 
-  // unlock body
+  // clear locks
+  document.documentElement.style.overflow = "";
+  document.documentElement.style.height = "";
+  document.documentElement.style.position = "";
+
+  document.body.style.overflow = "";
+  document.body.style.height = "";
   document.body.style.position = "";
   document.body.style.top = "";
   document.body.style.left = "";
   document.body.style.right = "";
   document.body.style.width = "";
+  document.body.style.touchAction = "";
 
-  // restore scroll
-  window.scrollTo(0, __lockY);
+  // restore scroll (IMPORTANT)
+  if (restore) {
+    const scroller = document.scrollingElement || document.documentElement;
+    // force a sync reflow before scrolling
+    // eslint-disable-next-line no-unused-expressions
+    scroller.offsetHeight;
+    window.scrollTo(0, restoreY);
+  }
 
-  // nice-to-have for iOS momentum
   document.body.style.webkitOverflowScrolling = "touch";
 }
 
@@ -78,11 +93,42 @@ function waitEventOnce(name, timeoutMs = 2600) {
 }
 
 /* ---------------------------------------
+   Debug helpers
+--------------------------------------- */
+function logScrollState(tag) {
+  const html = document.documentElement;
+  const body = document.body;
+  const scroller = document.scrollingElement || html;
+
+  const s = {
+    tag,
+    hash: window.location.hash,
+    htmlOverflow: getComputedStyle(html).overflow,
+    bodyOverflow: getComputedStyle(body).overflow,
+    bodyPos: getComputedStyle(body).position,
+    bodyTopInline: body.style.top || "",
+    scrollY: window.scrollY,
+    scrollerTag: scroller === document.documentElement ? "documentElement" : "scrollingElement",
+    scrollTop: scroller.scrollTop,
+    clientH: scroller.clientHeight,
+    scrollH: scroller.scrollHeight,
+  };
+
+  console.log("%c[HOME][SCROLL_STATE]", "color:#7df", s);
+
+  // quick red flags
+  if (s.htmlOverflow === "hidden" || s.bodyPos === "fixed") {
+    console.warn("[HOME] ⚠️ Scroll still locked (overflow hidden or body fixed).");
+  }
+  if (s.scrollH <= s.clientH + 5) {
+    console.warn("[HOME] ⚠️ No scrollable height (scrollHeight ~= clientHeight). CSS/layout issue.");
+  }
+}
+
+/* ---------------------------------------
    Home
 --------------------------------------- */
 export default function Home() {
-  const pageRef = useRef(null);
-
   const headerRef = useRef(null);
   const aboutRef = useRef(null);
   const projectsRef = useRef(null);
@@ -110,10 +156,8 @@ export default function Home() {
     } catch {
       return;
     }
-
     const onChange = () => setIsDesktop(mq.matches);
     onChange();
-
     mq.addEventListener?.("change", onChange);
     return () => mq.removeEventListener?.("change", onChange);
   }, []);
@@ -146,52 +190,26 @@ export default function Home() {
      Lock scroll in step 1 (SAFE)
   --------------------------------------- */
   useEffect(() => {
+    console.log("[HOME] overlayStep =", overlayStep);
+
     if (overlayStep === 1) {
+      console.log("[HOME] 🔒 lockScrollHard");
       lockScrollHard();
-      return () => unlockScrollHard();
+      logScrollState("after lock");
+      return () => {
+        console.log("[HOME] 🔓 cleanup unlockScrollHard");
+        unlockScrollHard({ restore: true });
+        logScrollState("after unlock cleanup");
+      };
     }
-    // step 2 => ensure unlocked (in case of weird transitions)
-    unlockScrollHard();
+
+    console.log("[HOME] 🔓 unlockScrollHard (step2)");
+    unlockScrollHard({ restore: true });
+    logScrollState("after unlock step2");
   }, [overlayStep]);
 
   /* ---------------------------------------
-     Hash scroll (avoid fighting scroll-lock)
-  --------------------------------------- */
-  const scrollToRef = useCallback((ref) => {
-    if (!ref?.current) return;
-
-    requestAnimationFrame(() => {
-      // If something left the body fixed (edge case), unlock before scrolling
-      if (getComputedStyle(document.body).position === "fixed") {
-        unlockScrollHard();
-      }
-
-      const y = ref.current.getBoundingClientRect().top + window.scrollY - 90;
-      window.scrollTo({ top: y, behavior: "smooth" });
-    });
-  }, []);
-
-  const scrollToSection = useCallback(
-    (key) =>
-      scrollToRef(
-        {
-          welcome: headerRef,
-          about: aboutRef,
-          projects: projectsRef,
-          contact: contactRef,
-        }[key]
-      ),
-    [scrollToRef]
-  );
-
-  useEffect(() => {
-    const key = (location.hash || "").replace("#", "");
-    if (!key || overlayStep === 1) return;
-    scrollToSection(key);
-  }, [location.hash, overlayStep, scrollToSection]);
-
-  /* ---------------------------------------
-     Section ready
+     READY events
   --------------------------------------- */
   const [ready, setReady] = useState({
     about: false,
@@ -208,16 +226,22 @@ export default function Home() {
     let alive = true;
 
     (async () => {
+      console.log("[HOME] waiting ready events…");
+
       await waitEventOnce("ag:aboutReady");
       alive && setReady((s) => ({ ...s, about: true }));
+      console.log("[HOME] ✅ aboutReady");
 
       await waitEventOnce("ag:projectsReady");
       alive && setReady((s) => ({ ...s, projects: true }));
+      console.log("[HOME] ✅ projectsReady");
 
       await waitEventOnce("ag:contactReady");
       alive && setReady((s) => ({ ...s, contact: true }));
+      console.log("[HOME] ✅ contactReady");
 
       await rafN(2);
+      console.log("[HOME] dispatch ag:homeFirstPaint");
       window.dispatchEvent(new Event("ag:homeFirstPaint"));
     })();
 
@@ -227,24 +251,59 @@ export default function Home() {
   }, [overlayStep]);
 
   /* ---------------------------------------
-     BG BLEND
-     - Desktop: keep your RAF blend behavior
-     - <1025px: force BG1 only (blend=0)
+     ✅ Hash scroll AFTER homeFirstPaint
+     - uses document.scrollingElement
+     - hard-unlocks again right before scroll
+  --------------------------------------- */
+  useEffect(() => {
+    const onReady = async () => {
+      const hash = window.location.hash.replace("#", "");
+      console.log("[HOME] HOME READY EVENT →", hash);
+
+      // always re-unlock right before trying to scroll
+      unlockScrollHard({ restore: true });
+      logScrollState("before hash scroll");
+
+      if (!hash) return;
+
+      // wait layout settle
+      await rafN(3);
+
+      const el = document.getElementById(hash);
+      console.log("[HOME] target el =", el);
+
+      if (!el) return;
+
+      const scroller = document.scrollingElement || document.documentElement;
+
+      // compute y relative to scroller
+      const y = el.getBoundingClientRect().top + window.scrollY - 90;
+      console.log("[HOME] ✅ FINAL SCROLL y =", y);
+
+      // scroll using the actual scroller
+      scroller.scrollTo({ top: y, behavior: "smooth" });
+
+      await rafN(2);
+      logScrollState("after hash scroll");
+    };
+
+    window.addEventListener("ag:homeFirstPaint", onReady);
+    return () => window.removeEventListener("ag:homeFirstPaint", onReady);
+  }, [location.key]);
+
+  /* ---------------------------------------
+     BG BLEND (unchanged)
   --------------------------------------- */
   useEffect(() => {
     if (overlayStep !== 2) return;
 
     const root = document.documentElement;
 
-    // ✅ Mobile / Tablet: BG1 only
     if (!isDesktop) {
       root.style.setProperty("--projectsBlend", "0");
-      return () => {
-        root.style.removeProperty("--projectsBlend");
-      };
+      return () => root.style.removeProperty("--projectsBlend");
     }
 
-    // ✅ Desktop: your current behavior (RAF loop)
     const prj = projectsRef.current;
     if (!prj) return;
 
@@ -272,7 +331,7 @@ export default function Home() {
   }, [overlayStep, isDesktop]);
 
   /* ---------------------------------------
-     Preload + GPU decode BG images (ONCE)
+     Preload bg (unchanged)
   --------------------------------------- */
   useEffect(() => {
     const warm = async () => {
@@ -284,43 +343,51 @@ export default function Home() {
         const imgP = new Image();
         imgP.src = "/assets/projects_officee.jpg";
         await imgP.decode?.();
-      } catch {
-        // never block
-      }
+      } catch {}
     };
-
     warm();
   }, []);
-
+  useEffect(() => {
+    const target = sessionStorage.getItem("ag_pending_scroll");
+    if (!target) return;
+  
+    // petit délai → attendre layout + fonts + sections
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const el = document.getElementById(target);
+        if (el) {
+          el.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }
+        sessionStorage.removeItem("ag_pending_scroll");
+        sessionStorage.removeItem("ag_pending_scroll_at");
+      });
+    });
+  }, []);
+  
   /* ---------------------------------------
-     Render
+     Render (unchanged)
   --------------------------------------- */
   return (
-    <div ref={pageRef} className="homePage">
-      {/* {overlayStep === 2 && (
-        <NavbarScrollHomePage
-          enabled
-          refs={{
-            welcome: headerRef,
-            about: aboutRef,
-            projects: projectsRef,
-            contact: contactRef,
-          }}
-        />
-      )} */}
-
-      {/* Welcome */}
+    <div className="homePage">
       <div ref={headerRef} id="welcome">
         <HomeOverlay
           onStepChange={setOverlayStep}
-          onGoProjects={() => scrollToSection("projects")}
-          onGoContact={() => scrollToSection("contact")}
+          onGoProjects={() => {
+            const el = document.getElementById("projects");
+            el?.scrollIntoView({ behavior: "smooth", block: "start" });
+          }}
+          onGoContact={() => {
+            const el = document.getElementById("contact");
+            el?.scrollIntoView({ behavior: "smooth", block: "start" });
+          }}
         />
       </div>
 
       {overlayStep === 2 && <div className="homePage__afterHeader" />}
 
-      {/* ===== BG + SECTIONS ===== */}
       <div className="homeStage" data-enabled={overlayStep === 2 ? "1" : "0"}>
         <div className="bgScene" aria-hidden>
           <img
@@ -338,31 +405,19 @@ export default function Home() {
         </div>
 
         <section ref={aboutRef} id="about" className="homeSection">
-          <div
-            className={`homeSection__card ${
-              ready.about ? "isReady" : "isLoading"
-            }`}
-          >
+          <div className={`homeSection__card ${ready.about ? "isReady" : "isLoading"}`}>
             <About />
           </div>
         </section>
 
         <section ref={projectsRef} id="projects" className="homeSection">
-          <div
-            className={`homeSection__card ${
-              ready.projects ? "isReady" : "isLoading"
-            }`}
-          >
+          <div className={`homeSection__card ${ready.projects ? "isReady" : "isLoading"}`}>
             <ProjectsMasonryMessy />
           </div>
         </section>
 
         <section ref={contactRef} id="contact" className="homeSection">
-          <div
-            className={`homeSection__card ${
-              ready.contact ? "isReady" : "isLoading"
-            }`}
-          >
+          <div className={`homeSection__card ${ready.contact ? "isReady" : "isLoading"}`}>
             <Contact
               initialContactInfo={contactInfoData}
               initialSubjects={subjectsData}
@@ -373,3 +428,4 @@ export default function Home() {
     </div>
   );
 }
+

@@ -87,6 +87,7 @@
     font-family: var(--terminalFont);
     position: relative;
     isolation: isolate;
+    min-height: 100vh;
   }
   /* Background uniquement sous le header */
 /* background qui couvre TOUT (même sous le footer transparent) */
@@ -281,7 +282,7 @@
   ========================= */
   .portfolio__grid {
     /* width: var(--container); */
-    width: 95vw;
+    width: 85vw;
     margin: 0 auto;
     gap: 20px;
     display: flex;

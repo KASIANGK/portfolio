@@ -33,6 +33,9 @@ function Layout() {
   const [isMobile, setIsMobile] = useState(null);
   const [CityComponent, setCityComponent] = useState(null);
   const [cityLoading, setCityLoading] = useState(false);
+  const hideNavbar =
+  location.pathname.startsWith("/portfolio") ||
+  location.pathname.startsWith("/project");
 
   /* ----------------------------------
      Detect mobile safely
@@ -127,7 +130,7 @@ function Layout() {
   -----------------------------------*/
   return (
     <>
-      <Navbar />
+      {!hideNavbar && <Navbar />}
       <LanguageToast />
 
       <Routes>
@@ -143,12 +146,11 @@ function Layout() {
                 : <MobileCityPreview />
           }
         />
-
-        <Route path="/projects" element={<Navigate to="/#projects" replace />} />
         <Route path="/portfolio" element={<Portfolio />} />
         <Route path="/project/:slug" element={<ProjectPage />} />
+        {/* <Route path="/projects" element={<Navigate to="/#projects" replace />} />
         <Route path="/about" element={<Navigate to="/#about" replace />} />
-        <Route path="/contact" element={<Navigate to="/#contact" replace />} />
+        <Route path="/contact" element={<Navigate to="/#contact" replace />} /> */}
         <Route path="/skills" element={<Skills />} />
 
         <Route path="*" element={<Navigate to="/" replace />} />

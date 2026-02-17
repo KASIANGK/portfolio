@@ -194,6 +194,8 @@ export default function Navbar() {
     [closeMenu, location.pathname, navigate]
   );
 
+  
+  
   // -----------------------------
   // Items
   // -----------------------------
