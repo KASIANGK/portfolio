@@ -18,6 +18,7 @@ import LanguageToast from "./Components/Navbar/LanguageToast";
 import Portfolio from "./Components/Portfolio/Portfolio";
 import ProjectPage from "./Components/Portfolio/ProjectPage/ProjectPage";
 import MobileCityPreview from "./Components/Home/HomeCity/MobileCityPreview";
+import ScrollToTop from "./utils/ScrollToTop";
 
 /* ----------------------------------
    Dynamic import (DESKTOP ONLY)
@@ -27,13 +28,21 @@ const loadCityComponent = async () => {
 };
 
 function Layout() {
+  // const location = useLocation();
   const location = useLocation();
+
+  useEffect(() => {
+    document.documentElement.style.overflow = "";
+    document.body.style.position = "";
+    document.body.style.top = "";
+  }, [location.pathname]);
   const isCity = location.pathname === "/city";
 
   const [isMobile, setIsMobile] = useState(null);
   const [CityComponent, setCityComponent] = useState(null);
   const [cityLoading, setCityLoading] = useState(false);
 
+  
   /* ----------------------------------
      Detect mobile safely
   -----------------------------------*/
@@ -129,7 +138,7 @@ function Layout() {
     <>
       <Navbar />
       <LanguageToast />
-
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />
 

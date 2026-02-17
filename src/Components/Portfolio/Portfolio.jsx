@@ -460,7 +460,16 @@ export default function Portfolio({ jsonUrl }) {
                   <button
                     type="button"
                     className="pcard__btn"
-                    onClick={() => navigate(`/project/${project.slug}`)}
+                    onClick={() =>
+                      navigate(`/project/${project.slug}`, {
+                        state: {
+                          from: "portfolio",
+                          filter: activeTab,          // "web" | "3d" | "all"
+                          page,                        // optionnel: si tu veux restaurer page
+                          // scrollY: window.scrollY,   // optionnel: pour restore exact
+                        },
+                      })
+                    }
                     disabled={!project.slug}
                   >
                     Découvrir plus

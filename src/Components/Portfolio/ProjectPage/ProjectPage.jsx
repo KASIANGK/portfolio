@@ -1,6 +1,6 @@
 // src/Pages/ProjectPage/ProjectPage.jsx
 import React, { useEffect, useMemo, useState, useCallback } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import "./ProjectPage.css";
 
@@ -48,6 +48,7 @@ export default function ProjectPage({ jsonUrl }) {
   const { slug } = useParams();
   const navigate = useNavigate();
   const { i18n } = useTranslation();
+  const location = useLocation();
 
   const lang = (i18n.resolvedLanguage || i18n.language || "en").split("-")[0];
   const base = import.meta.env.BASE_URL || "/";
@@ -179,9 +180,16 @@ export default function ProjectPage({ jsonUrl }) {
           {/* LEFT META */}
           <article className="ppage__card ppage__meta">
             <div className="ppage__backRow">
-              <button className="ppage__backBtn" onClick={() => navigate(-1)}>
+              <button
+                className="ppage__backBtn"
+                onClick={() => {
+                  const filter = location.state?.filter || "all";
+                  navigate(`/portfolio?filter=${filter}`, { replace: false });
+                }}
+              >
                 Back
               </button>
+
             </div>
 
             <div className="ppage__cat">{project.function}</div>

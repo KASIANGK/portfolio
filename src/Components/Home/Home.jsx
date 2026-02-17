@@ -114,15 +114,14 @@ function logScrollState(tag) {
     scrollH: scroller.scrollHeight,
   };
 
-  console.log("%c[HOME][SCROLL_STATE]", "color:#7df", s);
+  // console.log("%c[HOME][SCROLL_STATE]", "color:#7df", s);
 
-  // quick red flags
-  if (s.htmlOverflow === "hidden" || s.bodyPos === "fixed") {
-    console.warn("[HOME] ⚠️ Scroll still locked (overflow hidden or body fixed).");
-  }
-  if (s.scrollH <= s.clientH + 5) {
-    console.warn("[HOME] ⚠️ No scrollable height (scrollHeight ~= clientHeight). CSS/layout issue.");
-  }
+  // if (s.htmlOverflow === "hidden" || s.bodyPos === "fixed") {
+  //   console.warn("[HOME] ⚠️ Scroll still locked (overflow hidden or body fixed).");
+  // }
+  // if (s.scrollH <= s.clientH + 5) {
+  //   console.warn("[HOME] ⚠️ No scrollable height (scrollHeight ~= clientHeight). CSS/layout issue.");
+  // }
 }
 
 /* ---------------------------------------
@@ -190,20 +189,14 @@ export default function Home() {
      Lock scroll in step 1 (SAFE)
   --------------------------------------- */
   useEffect(() => {
-    console.log("[HOME] overlayStep =", overlayStep);
-
     if (overlayStep === 1) {
-      console.log("[HOME] 🔒 lockScrollHard");
       lockScrollHard();
       logScrollState("after lock");
       return () => {
-        console.log("[HOME] 🔓 cleanup unlockScrollHard");
         unlockScrollHard({ restore: true });
         logScrollState("after unlock cleanup");
       };
     }
-
-    console.log("[HOME] 🔓 unlockScrollHard (step2)");
     unlockScrollHard({ restore: true });
     logScrollState("after unlock step2");
   }, [overlayStep]);
@@ -226,22 +219,16 @@ export default function Home() {
     let alive = true;
 
     (async () => {
-      console.log("[HOME] waiting ready events…");
-
       await waitEventOnce("ag:aboutReady");
       alive && setReady((s) => ({ ...s, about: true }));
-      console.log("[HOME] ✅ aboutReady");
 
       await waitEventOnce("ag:projectsReady");
       alive && setReady((s) => ({ ...s, projects: true }));
-      console.log("[HOME] ✅ projectsReady");
 
       await waitEventOnce("ag:contactReady");
       alive && setReady((s) => ({ ...s, contact: true }));
-      console.log("[HOME] ✅ contactReady");
 
       await rafN(2);
-      console.log("[HOME] dispatch ag:homeFirstPaint");
       window.dispatchEvent(new Event("ag:homeFirstPaint"));
     })();
 
@@ -258,7 +245,6 @@ export default function Home() {
   useEffect(() => {
     const onReady = async () => {
       const hash = window.location.hash.replace("#", "");
-      console.log("[HOME] HOME READY EVENT →", hash);
 
       // always re-unlock right before trying to scroll
       unlockScrollHard({ restore: true });
@@ -270,7 +256,6 @@ export default function Home() {
       await rafN(3);
 
       const el = document.getElementById(hash);
-      console.log("[HOME] target el =", el);
 
       if (!el) return;
 
@@ -278,7 +263,6 @@ export default function Home() {
 
       // compute y relative to scroller
       const y = el.getBoundingClientRect().top + window.scrollY - 90;
-      console.log("[HOME] ✅ FINAL SCROLL y =", y);
 
       // scroll using the actual scroller
       scroller.scrollTo({ top: y, behavior: "smooth" });
