@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
-export default function ScrollToTop() {
+export default function scrollToTop() {
   const location = useLocation();
 
   useEffect(() => {
@@ -11,7 +11,6 @@ export default function ScrollToTop() {
 
     if (!mustReset) return;
 
-    // reset locks laissés par HomeOverlay
     document.documentElement.style.overflow = "";
     document.body.style.overflow = "";
     document.body.style.position = "";
