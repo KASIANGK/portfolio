@@ -18,7 +18,7 @@ import LanguageToast from "./Components/Navbar/LanguageToast";
 import Portfolio from "./Components/Portfolio/Portfolio";
 import ProjectPage from "./Components/Portfolio/ProjectPage/ProjectPage";
 import MobileCityPreview from "./Components/Home/HomeCity/MobileCityPreview";
-import ScrollToTop from "./utils/scrollToTop";
+import ScrollToTop from "./utils/ScrollToTop";
 
 /* ----------------------------------
    Dynamic import (DESKTOP ONLY)
