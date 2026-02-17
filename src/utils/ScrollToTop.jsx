@@ -2,17 +2,30 @@ import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
 export default function ScrollToTop() {
-  const { pathname, search } = useLocation();
+  const location = useLocation();
 
   useEffect(() => {
-    // attendre que React + layout finissent
+    const mustReset =
+      location.pathname.startsWith("/portfolio") ||
+      location.pathname.startsWith("/project");
+
+    if (!mustReset) return;
+
+    // reset locks laissés par HomeOverlay
+    document.documentElement.style.overflow = "";
+    document.body.style.overflow = "";
+    document.body.style.position = "";
+    document.body.style.top = "";
+    document.body.style.left = "";
+    document.body.style.right = "";
+    document.body.style.width = "";
+
     requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        window.scrollTo(0, 0);
-      });
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
     });
-  }, [pathname, search]);
+  }, [location.pathname, location.search]);
 
   return null;
 }
-
