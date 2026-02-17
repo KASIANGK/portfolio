@@ -1,7 +1,9 @@
 // src/Components/Navbar/Navbar.jsx
 import React, { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { FaEnvelope, FaPhoneAlt, FaInstagram, FaTwitter } from "react-icons/fa";
+import { FaEnvelope, FaPhoneAlt, FaInstagram } from "react-icons/fa";
+import { FaTiktok } from "react-icons/fa6";
+
 import { useTranslation } from "react-i18next";
 import LanguagePicker from "./LanguagePicker";
 import "./Navbar.css";
@@ -610,7 +612,7 @@ export default function Navbar() {
 
             <div className="navHUD__divider" />
 
-            <div className="navHUD__social social-icons-navbar">
+            {/* <div className="navHUD__social social-icons-navbar">
               <a href="mailto:ngk.kasia@gmail.com" aria-label={t("social.email")}>
                 <FaEnvelope size={18} />
               </a>
@@ -633,7 +635,35 @@ export default function Navbar() {
               >
                 <FaTwitter size={18} />
               </a>
+            </div> */}
+            <div className="navHUD__social social-icons-navbar">
+              <a href="mailto:ngk.kasia@gmail.com" aria-label={t("social.email")}>
+                <FaEnvelope size={18} />
+              </a>
+
+              <a href="tel:+32472845612" aria-label={t("social.phone")}>
+                <FaPhoneAlt size={18} />
+              </a>
+
+              <a
+                href="https://www.instagram.com/angels_gang_style/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={t("social.instagram")}
+              >
+                <FaInstagram size={18} />
+              </a>
+
+              <a
+                href="https://www.tiktok.com/@kiss_my_fire"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={t("social.tiktok")}
+              >
+                <FaTiktok size={18} />
+              </a>
             </div>
+
           </>
         ) : (
           <div className="navHUD__gameWrap">
