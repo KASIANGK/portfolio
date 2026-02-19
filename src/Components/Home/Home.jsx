@@ -391,13 +391,33 @@ export default function Home() {
   //   });
   // }, []);
 
+  // useEffect(() => {
+  //   if (overlayStep !== 2) return;
+  
+  //   const target = sessionStorage.getItem("ag_pending_scroll");
+  //   if (!target) return;
+  
+  //   // ✅ re-unlock juste avant de scroller (au cas où)
+  //   unlockScrollHard({ restore: true });
+  
+  //   requestAnimationFrame(() => {
+  //     requestAnimationFrame(() => {
+  //       const el = document.getElementById(target);
+  //       if (el) {
+  //         el.scrollIntoView({ behavior: "smooth", block: "start" });
+  //       }
+  
+  //       sessionStorage.removeItem("ag_pending_scroll");
+  //       sessionStorage.removeItem("ag_pending_scroll_at");
+  //     });
+  //   });
+  // }, [location.key, overlayStep]);
   useEffect(() => {
     if (overlayStep !== 2) return;
   
     const target = sessionStorage.getItem("ag_pending_scroll");
     if (!target) return;
   
-    // ✅ re-unlock juste avant de scroller (au cas où)
     unlockScrollHard({ restore: true });
   
     requestAnimationFrame(() => {

@@ -124,6 +124,23 @@ export default function HomeCity() {
     } catch {}
   }, []);
   
+  // useEffect(() => {
+  //   const nav = performance.getEntriesByType?.("navigation")?.[0];
+  //   const type = nav?.type;
+  
+  //   const cameFromExplore =
+  //     !!location.state?.autoEnterCity || !!location.state?.resetCityTutorial;
+  
+  //   if ((type === "reload" || type === "navigate") && !cameFromExplore) {
+  //     // ✅ force step 2 sur Home au prochain mount (même après refresh)
+  //     try {
+  //       sessionStorage.setItem("ag_home_step_once", "2");
+  //     } catch {}
+  
+  //     navigate("/", { replace: true });
+  //   }
+  // }, [navigate, location.state]);
+  
   useEffect(() => {
     const nav = performance.getEntriesByType?.("navigation")?.[0];
     const type = nav?.type;
@@ -131,15 +148,19 @@ export default function HomeCity() {
     const cameFromExplore =
       !!location.state?.autoEnterCity || !!location.state?.resetCityTutorial;
   
-    if ((type === "reload" || type === "navigate") && !cameFromExplore) {
-      // ✅ force step 2 sur Home au prochain mount (même après refresh)
-      try {
-        sessionStorage.setItem("ag_home_step_once", "2");
-      } catch {}
+    // ✅ on ne force le retour Home QUE si refresh/back-forward sur /city
+    const shouldBounce =
+      (type === "reload" || type === "back_forward") && !cameFromExplore;
   
-      navigate("/", { replace: true });
-    }
+    if (!shouldBounce) return;
+  
+    try {
+      sessionStorage.setItem("ag_home_step_once", "2");
+    } catch {}
+  
+    navigate("/", { replace: true });
   }, [navigate, location.state]);
+  
   
   const [tutorialDone, setTutorialDone] = useState(() => {
     try {
@@ -576,27 +597,45 @@ export default function HomeCity() {
       sessionStorage.setItem("ag_pending_scroll_at", String(Date.now()));
     } catch {}
   };
-  
   const onMarkerTrigger = useCallback((id) => {
-    if (id === "TRIGGER_ABOUT") {
-      setPendingScroll("about");
+    const jumpHome = (sectionId) => {
+      try {
+        sessionStorage.setItem("ag_pending_scroll", sectionId);
+        sessionStorage.setItem("ag_pending_scroll_at", String(Date.now()));
+        sessionStorage.setItem("ag_home_step_once", "2"); // ✅ force step2 au prochain mount Home
+      } catch {}
+  
       navigate("/", { replace: false, state: { goHomeStep: 2 } });
-      return;
-    }
-    if (id === "TRIGGER_PROJECT") {
-      setPendingScroll("projects");
-      navigate("/", { replace: false, state: { goHomeStep: 2 } });
-      return;
-    }
-    if (id === "TRIGGER_PORTFOLIO") {
-      setPendingScroll("contact");
-      navigate("/", { replace: false, state: { goHomeStep: 2 } });
-      return;
-    }
-    if (id === "TRIGGER_VISION_HOME") {
-      navigate("/", { replace: false, state: { goHomeStep: 2 } });
-    }
+    };
+  
+    if (id === "TRIGGER_ABOUT") return jumpHome("about");
+    if (id === "TRIGGER_PROJECT") return jumpHome("projects");
+    if (id === "TRIGGER_PORTFOLIO") return jumpHome("contact");
+    if (id === "TRIGGER_VISION_HOME") return jumpHome("welcome");
+  
   }, [navigate]);
+  
+  // const onMarkerTrigger = useCallback((id) => {
+  //   if (id === "TRIGGER_ABOUT") {
+  //     setPendingScroll("about");
+  //     navigate("/", { replace: false, state: { goHomeStep: 2 } });
+  //     return;
+  //   }
+  //   if (id === "TRIGGER_PROJECT") {
+  //     setPendingScroll("projects");
+  //     navigate("/", { replace: false, state: { goHomeStep: 2 } });
+  //     return;
+  //   }
+  //   if (id === "TRIGGER_PORTFOLIO") {
+  //     setPendingScroll("contact");
+  //     navigate("/", { replace: false, state: { goHomeStep: 2 } });
+  //     return;
+  //   }
+  //   if (id === "TRIGGER_VISION_HOME") {
+  //     navigate("/", { replace: false, state: { goHomeStep: 2 } });
+  //     return;
+  //   }
+  // }, [navigate]);
   
   
 

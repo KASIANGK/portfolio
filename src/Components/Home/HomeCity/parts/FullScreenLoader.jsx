@@ -8,31 +8,23 @@ export default function FullScreenLoader({
   label = "Loading…",
   subLabel, // si undefined => i18n
   force = false,
-
-  // optional external control (App overlay during dynamic import)
-  externalActive = null, // boolean | null
-  externalPct = null, // number 0..100 | null
+  externalActive = null,
+  externalPct = null,
 }) {
   const { t } = useTranslation("home");
   const { active: r3fActive, progress: r3fProgress } = useProgress();
 
-  /* -----------------------------
-     i18n sublabel by default
-  ------------------------------ */
+  // ✅ i18n sublabel by default
   const finalSubLabel =
     subLabel ?? t("loader.subLabel", { defaultValue: "Intrusion dans la matrice" });
 
-  /* -----------------------------
-     choose progress source
-  ------------------------------ */
+  // progress source
   const isExternal = externalActive !== null || externalPct !== null;
   const active = isExternal ? !!externalActive : r3fActive;
   const rawProgress = isExternal ? (externalPct ?? 0) : r3fProgress;
   const pctGlobal = Math.min(100, Math.max(0, Math.round(rawProgress)));
 
-  /* -----------------------------
-     phases coming from HomeCity
-  ------------------------------ */
+  // ✅ phases venant de HomeCity
   const [phases, setPhases] = useState({
     scenePct: 0,
     collisionPct: 0,
@@ -52,22 +44,156 @@ export default function FullScreenLoader({
     return () => window.removeEventListener("ag:cityPhaseProgress", onPhase);
   }, []);
 
-  /* -----------------------------
-     Auto-hide only if NOT forced
-  ------------------------------ */
+  // Auto-hide only if NOT forced
   if (!force && !active && pctGlobal >= 100) return null;
 
-  /* -----------------------------
-     Progress bar = phases.overallPct if present, else pctGlobal
-  ------------------------------ */
-  const pctBar = useMemo(() => {
+  // Real progress
+  const pctReal = useMemo(() => {
     const g = phases.overallPct || pctGlobal;
     return Math.min(100, Math.max(0, Math.round(g)));
   }, [phases.overallPct, pctGlobal]);
 
-  /* -----------------------------
-     Meta left = phases
-  ------------------------------ */
+  /* -------------------------------------------
+     DISPLAY PROGRESS (smooth + anti-flash)
+     - monte vite au début
+     - ralentit dans la zone lente (70-95)
+     - ne fait jamais marche arrière
+  -------------------------------------------- */
+  const [pctDisplay, setPctDisplay] = useState(0);
+  const lastRealRef = useRef(0);
+
+  useEffect(() => {
+    if (!active) {
+      setPctDisplay(0);
+      lastRealRef.current = 0;
+      return;
+    }
+
+    // target = pctReal, mais on limite la vitesse d'affichage
+    const target = pctReal;
+
+    const tick = () => {
+      setPctDisplay((cur) => {
+        const nextTarget = target;
+
+        // vitesse selon zone
+        const zone =
+          nextTarget < 55 ? 1.35 :
+          nextTarget < 75 ? 0.95 :
+          nextTarget < 92 ? 0.45 :
+          nextTarget < 98 ? 0.25 :
+          0.18;
+
+        // step d'incrément max par tick
+        const maxStep = zone * 1.1; // ~1-2% / 250ms au début, plus lent ensuite
+
+        // on ne dépasse jamais target, et jamais en arrière
+        const next = Math.min(nextTarget, cur + maxStep);
+        return Math.max(cur, next);
+      });
+    };
+
+    tick();
+    const id = setInterval(tick, 250);
+    return () => clearInterval(id);
+  }, [active, pctReal]);
+
+  /* -------------------------------------------
+     SAFE ETA
+     Objectif: jamais "2s" qui dure 10s.
+     - ETA basée sur le display progress (plus stable)
+     - arrondie par tranche de 5s
+     - monotone (ne remonte pas)
+     - n’affiche pas d’ETA tant qu’elle n’est pas crédible
+  -------------------------------------------- */
+  const startRef = useRef(0);
+  const etaShownRef = useRef(null); // last displayed ETA (monotone)
+  const [etaSafeSec, setEtaSafeSec] = useState(null);
+
+  useEffect(() => {
+    if (active && !startRef.current) {
+      startRef.current = performance.now();
+      etaShownRef.current = null;
+      setEtaSafeSec(null);
+      return;
+    }
+    if (!active) {
+      startRef.current = 0;
+      etaShownRef.current = null;
+      setEtaSafeSec(null);
+    }
+  }, [active]);
+
+  useEffect(() => {
+    if (!active) return;
+    if (pctDisplay >= 99.5) {
+      setEtaSafeSec(0);
+      return;
+    }
+
+    const elapsed = (performance.now() - startRef.current) / 1000;
+    if (elapsed < 1.0) {
+      setEtaSafeSec(null); // trop tôt
+      return;
+    }
+
+    // speed en %/sec
+    const speed = pctDisplay / Math.max(0.001, elapsed);
+    if (speed < 0.15) {
+      // trop lent / stall → ETA pas fiable
+      setEtaSafeSec(null);
+      return;
+    }
+
+    const rawEta = (100 - pctDisplay) / Math.max(0.001, speed); // seconds
+
+    // clamp
+    let eta = Math.max(5, Math.min(180, rawEta)); // jamais en dessous de 5s, jamais au-delà de 3min
+    // round to 5s steps (plus "calme")
+    eta = Math.ceil(eta / 5) * 5;
+
+    // monotone: on ne remonte jamais l'ETA affichée
+    const prev = etaShownRef.current;
+    const next = prev == null ? eta : Math.min(prev, eta);
+
+    // encore une protection: pas d'ETA < 10s tant qu'on n'est pas très proche
+    const guarded = pctDisplay < 95 ? Math.max(10, next) : next;
+
+    etaShownRef.current = guarded;
+    setEtaSafeSec(guarded);
+  }, [active, pctDisplay]);
+
+  /* -------------------------------------------
+     Steps (10) mais SAFE:
+     - on veut éviter le "5/10 forever"
+     - on pousse vite vers 8/10
+     - on hold 8/10 ou 9/10 pendant la zone lente
+  -------------------------------------------- */
+  const stepInfo = useMemo(() => {
+    const TOTAL = 10;
+
+    // seuils (à tweaker)
+    const HOLD_8_FROM = 55;  // on arrive à 8/10 assez tôt
+    const HOLD_9_FROM = 82;  // on passe à 9/10 dans la zone lente
+    const FINISH_FROM = 96;  // 10/10 seulement quand on est vraiment proche
+
+    let step;
+    if (pctDisplay >= 100) step = 10;
+    else if (pctDisplay >= FINISH_FROM) step = 9; // 9/10 jusqu'à quasi fin
+    else if (pctDisplay >= HOLD_9_FROM) step = 8; // 8/10 pendant le gros stall
+    else if (pctDisplay >= HOLD_8_FROM) step = 7; // monte avant
+    else {
+      // early: 1..7 répartis sur 0..55
+      const p = Math.max(0, Math.min(HOLD_8_FROM, pctDisplay));
+      step = Math.max(1, Math.min(7, Math.floor((p / HOLD_8_FROM) * 7) + 1));
+    }
+
+    return { step, total: TOTAL };
+  }, [pctDisplay]);
+
+  /* -------------------------------------------
+     MetaLeft = phases (comme tu avais)
+  -------------------------------------------- */
   const metaLeft = useMemo(() => {
     const parts = [
       `SCENE ${Math.round(phases.scenePct || 0)}%`,
@@ -77,160 +203,26 @@ export default function FullScreenLoader({
     return parts.join(" · ");
   }, [phases.scenePct, phases.collisionPct, phases.portalsPct]);
 
-  /* -----------------------------
-     Real ETA engine + stall fallback
-     Goal: ALWAYS show seconds during collision/shader/finalization stalls
-  ------------------------------ */
-  const startRef = useRef(0);
-  const lastEtaRef = useRef(null);
-  const [etaSec, setEtaSec] = useState(null);
-
-  const [elapsedSec, setElapsedSec] = useState(0);
-
-  const lastPctRef = useRef(pctBar);
-  const lastPctAtRef = useRef(performance.now());
-  const [stallSec, setStallSec] = useState(0);
-
-  // When active toggles: reset clocks
-  useEffect(() => {
-    if (active && !startRef.current) {
-      startRef.current = performance.now();
-      lastEtaRef.current = null;
-      setEtaSec(null);
-      setElapsedSec(0);
-
-      lastPctRef.current = pctBar;
-      lastPctAtRef.current = performance.now();
-      setStallSec(0);
-      return;
-    }
-
-    if (!active) {
-      startRef.current = 0;
-      lastEtaRef.current = null;
-      setEtaSec(null);
-      setElapsedSec(0);
-
-      lastPctRef.current = pctBar;
-      lastPctAtRef.current = performance.now();
-      setStallSec(0);
-    }
-  }, [active]); // intentionally not depending on pct
-
-  // Compute ETA from speed (smooth) when we have meaningful movement
-  useEffect(() => {
-    if (!active) return;
-
-    // If complete
-    if (pctBar >= 100) {
-      setEtaSec(0);
-      return;
-    }
-
-    // Ignore too early / too low
-    if (pctBar <= 1) {
-      setEtaSec(null);
-      return;
-    }
-
-    const elapsed = (performance.now() - startRef.current) / 1000;
-    if (elapsed < 0.35) return;
-
-    const speed = pctBar / Math.max(0.001, elapsed); // % per sec
-    const rawEta = (100 - pctBar) / Math.max(0.001, speed);
-
-    const clamped = Math.max(1, Math.min(999, rawEta));
-    const prev = lastEtaRef.current;
-
-    // smooth
-    const smooth = prev == null ? clamped : prev * 0.7 + clamped * 0.3;
-
-    lastEtaRef.current = smooth;
-    setEtaSec(Math.ceil(smooth));
-  }, [active, pctBar]);
-
-  // Tick: elapsed + stall seconds
-  useEffect(() => {
-    if (!active) return;
-
-    const tick = () => {
-      const now = performance.now();
-      if (startRef.current) {
-        setElapsedSec(Math.floor((now - startRef.current) / 1000));
-      }
-
-      // stall tracking
-      if (pctBar !== lastPctRef.current) {
-        lastPctRef.current = pctBar;
-        lastPctAtRef.current = now;
-        setStallSec(0);
-      } else {
-        const s = (now - lastPctAtRef.current) / 1000;
-        setStallSec(Math.floor(s));
-      }
-    };
-
-    tick();
-    const id = setInterval(tick, 250);
-    return () => clearInterval(id);
-  }, [active, pctBar]);
-
-  /* -----------------------------
-     Step counter fallback (i/N)
-     - used when ETA is not reliable yet (early stage)
-     - also useful if you want "progress story" even when pct stalls
-  ------------------------------ */
-  const STEPS = useMemo(
-    () => [
-      { key: "SCENE", pct: phases.scenePct },
-      { key: "COLLISION", pct: phases.collisionPct },
-      { key: "PORTALS", pct: phases.portalsPct },
-      { key: "PLAYER", pct: phases.playerPct },
-      { key: "GATE", pct: phases.gatePct },
-
-      // “virtual” steps driven by global progress / stall:
-      { key: "SHADERS", pct: Math.max(0, Math.min(100, (pctBar - 70) * 3.33)) }, // 70->100 maps to 0->100
-      { key: "POSTFX", pct: Math.max(0, Math.min(100, (pctBar - 78) * 4.55)) },
-      { key: "TEXTURES", pct: Math.max(0, Math.min(100, (pctBar - 60) * 2.5)) },
-      { key: "FINALIZE", pct: Math.max(0, Math.min(100, (pctBar - 85) * 6.67)) },
-      { key: "READY", pct: pctBar >= 100 ? 100 : 0 },
-    ],
-    [phases.scenePct, phases.collisionPct, phases.portalsPct, phases.playerPct, phases.gatePct, pctBar]
-  );
-
-  const stepInfo = useMemo(() => {
-    const total = STEPS.length;
-
-    // current step = first not completed (pct < 100)
-    let idx = STEPS.findIndex((s) => (s.pct ?? 0) < 100);
-    if (idx === -1) idx = total - 1;
-
-    const stepNumber = Math.min(total, Math.max(1, idx + 1));
-    const stepKey = STEPS[idx]?.key || "LOADING";
-
-    return { total, stepNumber, stepKey };
-  }, [STEPS]);
-
-  /* -----------------------------
-     Meta right policy:
-     - If we have ETA -> show ~XXs (ALWAYS, even during stalls)
-     - Else show step i/N
-     - If stalling hard (>=2s) and eta exists -> still show ~XXs (no "finalisation" text)
-  ------------------------------ */
+  /* -------------------------------------------
+     MetaRight:
+     - si ETA safe dispo => ~XXs
+     - sinon => step i/10
+  -------------------------------------------- */
   const metaRight = useMemo(() => {
-    if (pctBar >= 100) return t("loader.calibrating");
+    if (pctDisplay >= 99.5) return t("loader.calibrating");
 
-    // ✅ Always show seconds if eta is available
-    if (etaSec != null) return t("loader.eta", { seconds: etaSec });
+    if (etaSafeSec != null) {
+      return t("loader.eta", { seconds: etaSafeSec });
+    }
 
-    // fallback: show steps
-    return t("loader.step", {
-      defaultValue: `${stepInfo.stepNumber}/${stepInfo.total}`,
-      current: stepInfo.stepNumber,
-      total: stepInfo.total,
-      key: stepInfo.stepKey,
-    });
-  }, [pctBar, etaSec, stepInfo, t]);
+    // fallback steps
+    return `${stepInfo.step}/${stepInfo.total}`;
+  }, [pctDisplay, etaSafeSec, stepInfo, t]);
+
+  /* -------------------------------------------
+     pctBar = pctDisplay (visuel)
+  -------------------------------------------- */
+  const pctBar = Math.min(100, Math.max(0, Math.round(pctDisplay)));
 
   return (
     <div className="agLoader" role="status" aria-live="polite" aria-label="Loading">
@@ -278,12 +270,8 @@ export default function FullScreenLoader({
           <span className="agLoader__metaLeft">{metaLeft}</span>
           <span className="agLoader__metaRight">{metaRight}</span>
         </div>
-
-        {/* optionnel debug discret  */}
-        {/* <div style={{ marginTop: 8, fontSize: 10, opacity: 0.5 }}>
-          elapsed {elapsedSec}s · stall {stallSec}s
-        </div> */}
       </div>
     </div>
   );
 }
+
