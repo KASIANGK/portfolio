@@ -439,27 +439,76 @@ export default function Home() {
   //     });
   //   });
   // }, [location.key, overlayStep]);
+
+  useEffect(() => {
+    // ✅ si on arrive avec un pending scroll, on doit être en step2 (sinon body lock casse le scroll)
+    if (overlayStep === 2) return;
+  
+    const pending = sessionStorage.getItem("ag_pending_scroll");
+    if (!pending) return;
+  
+    _setOverlayStep(2);
+  }, [overlayStep]);
+  
+  // useEffect(() => {
+  //   if (overlayStep !== 2) return;
+  
+  //   const target = sessionStorage.getItem("ag_pending_scroll");
+  //   if (!target) return;
+  
+  //   unlockScrollHard({ restore: true });
+  
+  //   requestAnimationFrame(() => {
+  //     requestAnimationFrame(() => {
+  //       const el = document.getElementById(target);
+  //       if (el) {
+  //         el.scrollIntoView({ behavior: "smooth", block: "start" });
+  //       }
+  
+  //       sessionStorage.removeItem("ag_pending_scroll");
+  //       sessionStorage.removeItem("ag_pending_scroll_at");
+  //     });
+  //   });
+  // }, [location.key, overlayStep]);
+  
   useEffect(() => {
     if (overlayStep !== 2) return;
   
     const target = sessionStorage.getItem("ag_pending_scroll");
     if (!target) return;
   
+    // ✅ re-unlock juste avant de scroller
     unlockScrollHard({ restore: true });
   
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        const el = document.getElementById(target);
-        if (el) {
-          el.scrollIntoView({ behavior: "smooth", block: "start" });
+    let cancelled = false;
+    const t0 = performance.now();
+  
+    const tick = () => {
+      if (cancelled) return;
+  
+      const el = document.getElementById(target);
+  
+      // ✅ attendre que la section existe (render + images + i18n)
+      if (!el) {
+        if (performance.now() - t0 < 4000) {
+          requestAnimationFrame(tick);
         }
+        return;
+      }
   
-        sessionStorage.removeItem("ag_pending_scroll");
-        sessionStorage.removeItem("ag_pending_scroll_at");
-      });
-    });
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+  
+      // ✅ purge seulement après succès
+      sessionStorage.removeItem("ag_pending_scroll");
+      sessionStorage.removeItem("ag_pending_scroll_at");
+    };
+  
+    requestAnimationFrame(() => requestAnimationFrame(tick));
+  
+    return () => {
+      cancelled = true;
+    };
   }, [location.key, overlayStep]);
-  
   
   /* ---------------------------------------
      Render (unchanged)
