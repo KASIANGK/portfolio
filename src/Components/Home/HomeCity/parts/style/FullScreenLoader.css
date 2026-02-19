@@ -4,7 +4,7 @@
 .agLoader{
   position: fixed;
   inset: 0;
-  z-index: 300;
+  z-index: 3000000000000;
   display: grid;
   place-items: center;
   padding: 22px;

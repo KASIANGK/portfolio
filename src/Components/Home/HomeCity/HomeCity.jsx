@@ -7,6 +7,7 @@ import React, {
   useEffect,
   useCallback,
   useRef,
+  useLayoutEffect
 } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
@@ -91,7 +92,6 @@ export default function HomeCity() {
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation("home");
-
   const autoEnterCity = !!location.state?.autoEnterCity;
   const openedGameHudOnceRef = useRef(false);
 
@@ -404,9 +404,21 @@ export default function HomeCity() {
           ? "Spawning player…"
           : "Finalizing…";
 
+  // const shouldShowLoader = requestedEnter && !gateOpen;
+
+  // useEffect(() => {
+  //   if (!requestedEnter) return;
+  
+  //   if (shouldShowLoader) {
+  //     window.dispatchEvent(new Event("ag:cityLoaderOn"));
+  //   } else {
+  //     window.dispatchEvent(new Event("ag:cityLoaderOff"));
+  //   }
+  // }, [requestedEnter, shouldShowLoader]);
   const shouldShowLoader = requestedEnter && !gateOpen;
 
-  useEffect(() => {
+  // ✅ IMPORTANT: useLayoutEffect pour éviter 1-frame flash
+  useLayoutEffect(() => {
     if (!requestedEnter) return;
   
     if (shouldShowLoader) {
@@ -415,7 +427,6 @@ export default function HomeCity() {
       window.dispatchEvent(new Event("ag:cityLoaderOff"));
     }
   }, [requestedEnter, shouldShowLoader]);
-
   
   useEffect(() => {
     if (!requestedEnter || uiIntro || !isMobile) return;
