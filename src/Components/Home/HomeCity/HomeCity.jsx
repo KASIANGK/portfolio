@@ -667,6 +667,38 @@ export default function HomeCity() {
   }, [minimapMarkers, streetPos]);
 
 
+  useEffect(() => {
+    // petits helpers pour faire un % "smooth" même avant ready
+    const clamp01 = (v) => Math.max(0, Math.min(1, v));
+
+    // Phase % basés sur tes milestones réels
+    const scene = visualReady ? 1 : 0;          // 0→100 quand le GLB visuel est prêt
+    const collision = colliderShown ? 1 : colliderReady ? 0.75 : 0; // shown = 100
+    const portals = markersReady ? 1 : 0;
+    const player = playerReady ? 1 : 0;
+    const gate = gateOpen ? 1 : 0;
+
+    // Pondération (tu peux ajuster)
+    const overall =
+      0.45 * scene +
+      0.25 * collision +
+      0.15 * portals +
+      0.10 * player +
+      0.05 * gate;
+
+    const detail = {
+      scenePct: Math.round(clamp01(scene) * 100),
+      collisionPct: Math.round(clamp01(collision) * 100),
+      portalsPct: Math.round(clamp01(portals) * 100),
+      playerPct: Math.round(clamp01(player) * 100),
+      gatePct: Math.round(clamp01(gate) * 100),
+      overallPct: Math.round(clamp01(overall) * 100),
+    };
+
+    window.dispatchEvent(new CustomEvent("ag:cityPhaseProgress", { detail }));
+  }, [visualReady, colliderReady, colliderShown, markersReady, playerReady, gateOpen]);
+
+
   return (
     <div className={rootClass}>
       {/* Loader / Tutorial (layers hautes) */}
