@@ -135,6 +135,17 @@ export default function Home() {
 
   const location = useLocation();
   const { shouldShowLanguageStep } = useOnboarding();
+  const forceStep2 = useMemo(() => {
+    try {
+      return (
+        location.state?.goHomeStep === 2 ||
+        sessionStorage.getItem("ag_home_step_once") === "2"
+      );
+    } catch {
+      return location.state?.goHomeStep === 2;
+    }
+  }, [location.state]);
+  
   const boot = useBoot();
 
   /* ---------------------------------------
@@ -177,10 +188,14 @@ export default function Home() {
   /* ---------------------------------------
      Overlay step
   --------------------------------------- */
-  const [overlayStep, _setOverlayStep] = useState(() =>
-    shouldShowLanguageStep ? 1 : 2
-  );
-
+  // const [overlayStep, _setOverlayStep] = useState(() =>
+  //   shouldShowLanguageStep ? 1 : 2
+  // );
+  const [overlayStep, _setOverlayStep] = useState(() => {
+    if (forceStep2) return 2;
+    return shouldShowLanguageStep ? 1 : 2;
+  });
+  
   const setOverlayStep = useCallback((next) => {
     _setOverlayStep((prev) => (prev === 2 ? 2 : next));
   }, []);
@@ -201,6 +216,18 @@ export default function Home() {
     logScrollState("after unlock step2");
   }, [overlayStep]);
 
+  useEffect(() => {
+    if (!forceStep2) return;
+  
+    // ✅ force step2 même si on arrive avec state après le mount
+    _setOverlayStep(2);
+  
+    // ✅ consume pour ne pas bypass le language step plus tard
+    try {
+      sessionStorage.removeItem("ag_home_step_once");
+    } catch {}
+  }, [forceStep2]);
+  
   /* ---------------------------------------
      READY events
   --------------------------------------- */
