@@ -274,45 +274,45 @@ export default function Home() {
   //   window.addEventListener("ag:homeFirstPaint", onReady);
   //   return () => window.removeEventListener("ag:homeFirstPaint", onReady);
   // }, [location.key]);
-  useEffect(() => {
-    const onReady = async () => {
-      const hash = window.location.hash.replace("#", "");
-      const pending = sessionStorage.getItem("ag_pending_scroll");
-      const targetId = hash || pending;
+  // useEffect(() => {
+  //   const onReady = async () => {
+  //     const hash = window.location.hash.replace("#", "");
+  //     const pending = sessionStorage.getItem("ag_pending_scroll");
+  //     const targetId = hash || pending;
   
-      // 🔸 rien à scroller
-      if (!targetId) return;
+  //     // 🔸 rien à scroller
+  //     if (!targetId) return;
   
-      // ✅ toujours re-unlock juste avant de scroller
-      unlockScrollHard({ restore: true });
-      logScrollState("before target scroll");
+  //     // ✅ toujours re-unlock juste avant de scroller
+  //     unlockScrollHard({ restore: true });
+  //     logScrollState("before target scroll");
   
-      // ✅ attendre que le layout soit stable
-      await rafN(3);
+  //     // ✅ attendre que le layout soit stable
+  //     await rafN(3);
   
-      const el = document.getElementById(targetId);
-      if (!el) return;
+  //     const el = document.getElementById(targetId);
+  //     if (!el) return;
   
-      const scroller = document.scrollingElement || document.documentElement;
+  //     const scroller = document.scrollingElement || document.documentElement;
   
-      // y relative à la page (avec offset header)
-      const y = el.getBoundingClientRect().top + window.scrollY - 90;
+  //     // y relative à la page (avec offset header)
+  //     const y = el.getBoundingClientRect().top + window.scrollY - 90;
   
-      scroller.scrollTo({ top: y, behavior: "smooth" });
+  //     scroller.scrollTo({ top: y, behavior: "smooth" });
   
-      // ✅ si on a consommé le pending, on le purge
-      if (pending && !hash) {
-        sessionStorage.removeItem("ag_pending_scroll");
-        sessionStorage.removeItem("ag_pending_scroll_at");
-      }
+  //     // ✅ si on a consommé le pending, on le purge
+  //     if (pending && !hash) {
+  //       sessionStorage.removeItem("ag_pending_scroll");
+  //       sessionStorage.removeItem("ag_pending_scroll_at");
+  //     }
   
-      await rafN(2);
-      logScrollState("after target scroll");
-    };
+  //     await rafN(2);
+  //     logScrollState("after target scroll");
+  //   };
   
-    window.addEventListener("ag:homeFirstPaint", onReady);
-    return () => window.removeEventListener("ag:homeFirstPaint", onReady);
-  }, [location.key]);
+  //   window.addEventListener("ag:homeFirstPaint", onReady);
+  //   return () => window.removeEventListener("ag:homeFirstPaint", onReady);
+  // }, [location.key]);
   
   /* ---------------------------------------
      BG BLEND (unchanged)
