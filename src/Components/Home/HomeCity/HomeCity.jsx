@@ -559,27 +559,34 @@ export default function HomeCity() {
     return chosen ? { x: chosen.position[0], y: chosen.position[1], z: chosen.position[2] } : null;
   }, [orbits]);
   
+  const setPendingScroll = (id) => {
+    try {
+      sessionStorage.setItem("ag_pending_scroll", id);
+      sessionStorage.setItem("ag_pending_scroll_at", String(Date.now()));
+    } catch {}
+  };
+  
   const onMarkerTrigger = useCallback((id) => {
-    // NAV triggers (orbits roses)
     if (id === "TRIGGER_ABOUT") {
-      navigate("/", { state: { goHomeStep: 2, scrollTo: "about" } });
+      setPendingScroll("about");
+      navigate("/", { replace: false, state: { goHomeStep: 2 } });
       return;
     }
     if (id === "TRIGGER_PROJECT") {
-      navigate("/", { state: { goHomeStep: 2, scrollTo: "projects" } });
+      setPendingScroll("projects");
+      navigate("/", { replace: false, state: { goHomeStep: 2 } });
       return;
     }
     if (id === "TRIGGER_PORTFOLIO") {
-      navigate("/", { state: { goHomeStep: 2, scrollTo: "contact" } });
+      setPendingScroll("contact");
+      navigate("/", { replace: false, state: { goHomeStep: 2 } });
       return;
     }
     if (id === "TRIGGER_VISION_HOME") {
       navigate("/", { replace: false, state: { goHomeStep: 2 } });
-      return;
     }
-  
-    // Non-nav triggers: laisse CityMarkers gérer popup (ou un toast)
   }, [navigate]);
+  
   
 
   useEffect(() => {
@@ -741,6 +748,7 @@ export default function HomeCity() {
               onLoaded={() => setMarkersReady(true)}
               onOrbits={setOrbits}
               onMinimapPoints={setMinimapMarkers}
+              onNavTrigger={onMarkerTrigger}
             />
           </Suspense>
 

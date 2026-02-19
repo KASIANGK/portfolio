@@ -2,6 +2,7 @@
   "loader": {
     "subLabel": "Inbreken in de matrix",
     "eta": "~{{seconds}}s",
+    "elapsed": "{{seconds}}s elapsed",
     "calibrating": "Portalen kalibreren… even geduld 😇"
   },
   "cityTutorial": {

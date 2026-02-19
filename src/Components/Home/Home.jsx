@@ -242,39 +242,78 @@ export default function Home() {
      - uses document.scrollingElement
      - hard-unlocks again right before scroll
   --------------------------------------- */
+  // useEffect(() => {
+  //   const onReady = async () => {
+  //     const hash = window.location.hash.replace("#", "");
+
+  //     // always re-unlock right before trying to scroll
+  //     unlockScrollHard({ restore: true });
+  //     logScrollState("before hash scroll");
+
+  //     if (!hash) return;
+
+  //     // wait layout settle
+  //     await rafN(3);
+
+  //     const el = document.getElementById(hash);
+
+  //     if (!el) return;
+
+  //     const scroller = document.scrollingElement || document.documentElement;
+
+  //     // compute y relative to scroller
+  //     const y = el.getBoundingClientRect().top + window.scrollY - 90;
+
+  //     // scroll using the actual scroller
+  //     scroller.scrollTo({ top: y, behavior: "smooth" });
+
+  //     await rafN(2);
+  //     logScrollState("after hash scroll");
+  //   };
+
+  //   window.addEventListener("ag:homeFirstPaint", onReady);
+  //   return () => window.removeEventListener("ag:homeFirstPaint", onReady);
+  // }, [location.key]);
   useEffect(() => {
     const onReady = async () => {
       const hash = window.location.hash.replace("#", "");
-
-      // always re-unlock right before trying to scroll
+      const pending = sessionStorage.getItem("ag_pending_scroll");
+      const targetId = hash || pending;
+  
+      // 🔸 rien à scroller
+      if (!targetId) return;
+  
+      // ✅ toujours re-unlock juste avant de scroller
       unlockScrollHard({ restore: true });
-      logScrollState("before hash scroll");
-
-      if (!hash) return;
-
-      // wait layout settle
+      logScrollState("before target scroll");
+  
+      // ✅ attendre que le layout soit stable
       await rafN(3);
-
-      const el = document.getElementById(hash);
-
+  
+      const el = document.getElementById(targetId);
       if (!el) return;
-
+  
       const scroller = document.scrollingElement || document.documentElement;
-
-      // compute y relative to scroller
+  
+      // y relative à la page (avec offset header)
       const y = el.getBoundingClientRect().top + window.scrollY - 90;
-
-      // scroll using the actual scroller
+  
       scroller.scrollTo({ top: y, behavior: "smooth" });
-
+  
+      // ✅ si on a consommé le pending, on le purge
+      if (pending && !hash) {
+        sessionStorage.removeItem("ag_pending_scroll");
+        sessionStorage.removeItem("ag_pending_scroll_at");
+      }
+  
       await rafN(2);
-      logScrollState("after hash scroll");
+      logScrollState("after target scroll");
     };
-
+  
     window.addEventListener("ag:homeFirstPaint", onReady);
     return () => window.removeEventListener("ag:homeFirstPaint", onReady);
   }, [location.key]);
-
+  
   /* ---------------------------------------
      BG BLEND (unchanged)
   --------------------------------------- */
@@ -331,25 +370,49 @@ export default function Home() {
     };
     warm();
   }, []);
+
+  // useEffect(() => {
+  //   const target = sessionStorage.getItem("ag_pending_scroll");
+  //   if (!target) return;
+  
+  //   // petit délai → attendre layout + fonts + sections
+  //   requestAnimationFrame(() => {
+  //     requestAnimationFrame(() => {
+  //       const el = document.getElementById(target);
+  //       if (el) {
+  //         el.scrollIntoView({
+  //           behavior: "smooth",
+  //           block: "start",
+  //         });
+  //       }
+  //       sessionStorage.removeItem("ag_pending_scroll");
+  //       sessionStorage.removeItem("ag_pending_scroll_at");
+  //     });
+  //   });
+  // }, []);
+
   useEffect(() => {
+    if (overlayStep !== 2) return;
+  
     const target = sessionStorage.getItem("ag_pending_scroll");
     if (!target) return;
   
-    // petit délai → attendre layout + fonts + sections
+    // ✅ re-unlock juste avant de scroller (au cas où)
+    unlockScrollHard({ restore: true });
+  
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         const el = document.getElementById(target);
         if (el) {
-          el.scrollIntoView({
-            behavior: "smooth",
-            block: "start",
-          });
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
         }
+  
         sessionStorage.removeItem("ag_pending_scroll");
         sessionStorage.removeItem("ag_pending_scroll_at");
       });
     });
-  }, []);
+  }, [location.key, overlayStep]);
+  
   
   /* ---------------------------------------
      Render (unchanged)

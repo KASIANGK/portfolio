@@ -26,11 +26,12 @@ const NAV_ORBITS = new Set([
 ]);
 
 const MARKER_ROUTES = {
-  TRIGGER_ABOUT: "/about",
-  TRIGGER_PROJECT: "/#projects",
-  TRIGGER_PORTFOLIO: "/contact",
+  TRIGGER_ABOUT: null,
+  TRIGGER_PROJECT: null,
+  TRIGGER_PORTFOLIO: null,
   TRIGGER_VISION_HOME: "/",
 };
+
 
 const MARKER_CHIPS = {
   TRIGGER_PROJECT: ["React", "3D", "UX", "Ship it"],
@@ -133,6 +134,7 @@ export default function CityMarkers({
   onShown,
   onOrbits,
   onMinimapPoints,
+  onNavTrigger,
 }) {
   const { scene } = useGLTF(url);
   const { camera } = useThree();
@@ -488,13 +490,24 @@ export default function CityMarkers({
    *  -------------------------- */
   const triggerAction = useCallback(() => {
     if (!selected) return;
-
-    // NAV
-    if (selected.group === GROUP.NAV && selected.route) {
-      navigate(selected.route);
+  
+    // ✅ NAV (only)
+    if (selected.group === GROUP.NAV) {
+      // preferred: delegate to HomeCity
+      if (onNavTrigger) {
+        onNavTrigger(selected.name);
+        return;
+      }
+  
+      // fallback: legacy route
+      if (selected.route) {
+        navigate(selected.route);
+        return;
+      }
+  
       return;
     }
-
+  
     // Distributor
     if (selected.name === "TRIGGER_DRINK_DISTRIBUTOR") {
       if (distStep === DIST_STEP.INTRO) {
@@ -506,13 +519,13 @@ export default function CityMarkers({
       setDistStep(DIST_STEP.INTRO);
       return;
     }
-
+  
     // NOTHING
     if (selected.name === NOTHING.ID) {
       startNothingCutscene();
       return;
     }
-
+  
     // GLOW / FUN
     if (selected.group === GROUP.GLOW || selected.group === GROUP.FUN) {
       const ui = markerI18n(selected.name, selected.group);
@@ -520,6 +533,7 @@ export default function CityMarkers({
     }
   }, [
     selected,
+    onNavTrigger,
     navigate,
     distStep,
     rollDrink,
@@ -527,6 +541,7 @@ export default function CityMarkers({
     markerI18n,
     flashDescription,
   ]);
+  
 
   /** ---------------------------
    *  Keyboard: Enter/Space triggers same action

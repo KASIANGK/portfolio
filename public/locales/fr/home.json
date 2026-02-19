@@ -2,6 +2,7 @@
   "loader": {
     "subLabel": "Intrusion dans la matrice",
     "eta": "~{{seconds}}s",
+    "elapsed": "{{seconds}}s elapsed",
     "calibrating": "Calibration des portails… tiens bon 😇"
   },
   "cityTutorial": {
