@@ -570,14 +570,24 @@ export default function CityMarkers({
     const ctaPrimary = t("drinks.ctaPrimary");
     const letsGo = t("drinks.ctaLetsGo", { defaultValue: "Let’s go" });
 
-    const cityImg = t("drinks.city.image");
-    const futureImg = t("drinks.future.image");
+    // const cityImg = t("drinks.city.image");
+    // const futureImg = t("drinks.future.image");
 
+    // const isCity = drinkMode === DRINK_MODE.CITY;
+    // const isFuture = drinkMode === DRINK_MODE.FUTURE;
+    // const isSass = drinkMode === DRINK_MODE.SASS;
+
+    // const screenImg = isFuture ? futureImg : cityImg;
+    const cityImg = t("drinks.city.image", { defaultValue: "" });
+    const futureImg = t("drinks.future.image", { defaultValue: "" });
+    const sassImg = t("drinks.sass.image", { defaultValue: "" }); // ✅ NEW
+    
     const isCity = drinkMode === DRINK_MODE.CITY;
     const isFuture = drinkMode === DRINK_MODE.FUTURE;
     const isSass = drinkMode === DRINK_MODE.SASS;
-
-    const screenImg = isFuture ? futureImg : cityImg;
+    
+    const screenImg = isFuture ? futureImg : isSass ? sassImg : cityImg;
+    const shouldShowImg = !!screenImg && (isCity || isFuture || isSass);
 
     const pickedName = drinkPick?.item?.name || "—";
     const pickedLine = drinkPick?.item?.line || "";
@@ -685,7 +695,7 @@ export default function CityMarkers({
                 }}
               />
 
-              {(isCity || isFuture) && (
+              {/* {(isCity || isFuture) && (
                 <div
                   style={{
                     borderRadius: 12,
@@ -712,6 +722,34 @@ export default function CityMarkers({
                     }}
                   />
                 </div>
+              )} */}
+              {shouldShowImg && (
+                <div
+                  style={{
+                    borderRadius: 12,
+                    border: "1px solid rgba(255,255,255,0.10)",
+                    background: "rgba(0,0,0,0.28)",
+                    boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.05)",
+                    marginBottom: 10,
+                    overflow: "hidden",
+                    display: "grid",
+                    placeItems: "center",
+                    padding: 8,
+                  }}
+                >
+                  <img
+                    src={screenImg}
+                    alt={isFuture ? "future juice" : isSass ? "mood machine" : "city drinks"}
+                    draggable={false}
+                    style={{
+                      width: "100%",
+                      height: 200,
+                      objectFit: "cover",
+                      display: "block",
+                      userSelect: "none",
+                    }}
+                  />
+                </div>
               )}
 
               <div
@@ -722,14 +760,14 @@ export default function CityMarkers({
                   fontSize: 12,
                 }}
               >
-                <div style={{ opacity: 0.75 }}>drink.name</div>
+                {/* <div style={{ opacity: 0.75 }}>drink.name</div> */}
                 <div style={{ fontSize: 14, fontWeight: 900, marginTop: 2 }}>
                   <span style={{ color: "rgba(0,242,255,0.98)" }}>{pickedName}</span>
                 </div>
 
                 {isFuture && (
                   <>
-                    <div style={{ marginTop: 10, opacity: 0.75 }}>prediction</div>
+                    <div style={{ marginTop: 10, opacity: 0.75 }}>prediction :</div>
                     <div
                       style={{
                         marginTop: 2,
@@ -744,7 +782,7 @@ export default function CityMarkers({
 
                 {isCity && (
                   <>
-                    <div style={{ marginTop: 10, opacity: 0.75 }}>note</div>
+                    <div style={{ marginTop: 10, opacity: 0.75 }}>note :</div>
                     <div
                       style={{
                         marginTop: 2,
@@ -759,7 +797,7 @@ export default function CityMarkers({
 
                 {isSass && (
                   <>
-                    <div style={{ marginTop: 10, opacity: 0.75 }}>machine.says</div>
+                    <div style={{ marginTop: 10, opacity: 0.75 }}>machine says :</div>
                     <div style={{ marginTop: 2 }}>{pickedLine || "…"}</div>
                   </>
                 )}

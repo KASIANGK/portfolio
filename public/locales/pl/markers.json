@@ -15,7 +15,7 @@
     "hint": "Kliknij, żeby losować",
 
     "city": {
-      "image": "/assets/homeCity/city_drinks.png",
+      "image": "/assets/homeCity/can.jpg",
       "items": [
         { "name": "Soft Reset", "line": "Smakuje jak przerwa." },
         { "name": "Low Voltage", "line": "Cicho działa najlepiej." },
@@ -31,7 +31,7 @@
     },
 
     "future": {
-      "image": "/assets/homeCity/future_juice.png",
+      "image": "/assets/homeCity/bout.jpg",
       "items": [
         { "name": "Neon Intuition", "prediction": "To, co teraz wygląda chaotycznie, ułoży się samo." },
         { "name": "Next Build", "prediction": "Pierwsza wersja była wystarczająca." },
@@ -47,6 +47,7 @@
     },
 
     "sass": {
+      "image": "/assets/homeCity/dist.jpg",
       "items": [
         { "name": "Side-Eye Soda", "line": "…serio?" },
         { "name": "Machine Mood", "line": "OK." },
@@ -113,7 +114,7 @@
           "kicker": "Parking level: expert",
           "description": "Zaparkowany idealnie. Od 2019. Rekord nadal niepobity.",
           "cta": "Doceniam",
-          "description2": "To nie auto — to pomnik stabilności. Propsy wysłane. Render zatwierdzony."
+          "description2": "Dzięki, to nie auto — to pomnik stabilności."
         },
 
         "TRIGGER_DRINK_COFFEE": {

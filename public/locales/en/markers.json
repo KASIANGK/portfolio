@@ -15,7 +15,7 @@
     "hint": "Click to roll",
 
     "city": {
-      "image": "/assets/homeCity/city_drinks.png",
+      "image": "/assets/homeCity/can.jpg",
       "items": [
         { "name": "Soft Reset", "line": "Tastes like a break." },
         { "name": "Low Voltage", "line": "Quiet runs best." },
@@ -31,7 +31,7 @@
     },
 
     "future": {
-      "image": "/assets/homeCity/future_juice.png",
+      "image": "/assets/homeCity/bout.jpg",
       "items": [
         { "name": "Neon Intuition", "prediction": "What looks chaotic now will sort itself out." },
         { "name": "Next Build", "prediction": "The first version was enough." },
@@ -47,6 +47,7 @@
     },
 
     "sass": {
+      "image": "/assets/homeCity/dist.jpg",
       "items": [
         { "name": "Side-Eye Soda", "line": "…seriously?" },
         { "name": "Machine Mood", "line": "OK." },
@@ -113,7 +114,7 @@
           "kicker": "Parking level: expert",
           "description": "Parked perfectly. Since 2019. Record still unbeaten.",
           "cta": "Respect",
-          "description2": "Not a car — a monument to stability. Props sent. Render approved."
+          "description2": "Thanks, not a car — a monument to stability."
         },
 
         "TRIGGER_DRINK_COFFEE": {
