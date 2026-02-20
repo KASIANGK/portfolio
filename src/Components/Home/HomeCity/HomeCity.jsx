@@ -591,29 +591,63 @@ export default function HomeCity() {
     return chosen ? { x: chosen.position[0], y: chosen.position[1], z: chosen.position[2] } : null;
   }, [orbits]);
   
-  const setPendingScroll = (id) => {
+
+// ✅ IDENTIQUE à Navbar
+const setPendingScroll = (id) => {
+  try {
+    sessionStorage.setItem("ag_pending_scroll", id);
+    sessionStorage.setItem("ag_pending_scroll_at", String(Date.now()));
+  } catch {}
+};
+
+// ✅ IDENTIQUE à Navbar.goHash (juste sans closeMenu)
+const goHomeLikeNavbar = useCallback(
+  (hashOrId) => {
+    const id = String(hashOrId).replace("#", "");
+
+    // exit pointer lock (ok)
     try {
-      sessionStorage.setItem("ag_pending_scroll", id);
-      sessionStorage.setItem("ag_pending_scroll_at", String(Date.now()));
+      if (document.pointerLockElement) document.exitPointerLock?.();
     } catch {}
-  };
-  const onMarkerTrigger = useCallback((id) => {
-    const jumpHome = (sectionId) => {
-      try {
-        sessionStorage.setItem("ag_pending_scroll", sectionId);
-        sessionStorage.setItem("ag_pending_scroll_at", String(Date.now()));
-        sessionStorage.setItem("ag_home_step_once", "2"); // ✅ force step2 au prochain mount Home
-      } catch {}
-  
-      navigate("/", { replace: false, state: { goHomeStep: 2 } });
-    };
-  
-    if (id === "TRIGGER_ABOUT") return jumpHome("about");
-    if (id === "TRIGGER_PROJECT") return jumpHome("projects");
-    if (id === "TRIGGER_PORTFOLIO") return jumpHome("contact");
-    if (id === "TRIGGER_VISION_HOME") return jumpHome("welcome");
-  
-  }, [navigate]);
+
+    // CASE 1 — already on Home → scroll immediately
+    if (location.pathname === "/") {
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+      return;
+    }
+
+    // CASE 2 — coming from another page
+    setPendingScroll(id);
+
+    navigate("/", {
+      replace: false,
+      state: { __scrollIntent: id, t: Date.now() },
+    });
+  },
+  [navigate, location.pathname]
+);
+
+
+  const onMarkerTrigger = useCallback(
+    (triggerId) => {
+      // mapping triggers -> sections home
+      const map = {
+        TRIGGER_ABOUT: "about",
+        TRIGGER_PROJECT: "projects",
+        TRIGGER_PORTFOLIO: "contact",
+        TRIGGER_VISION_HOME: "welcome",
+      };
+
+      const target = map[triggerId];
+      if (!target) return;
+
+      goHomeLikeNavbar(target);
+    },
+    [goHomeLikeNavbar]
+  );
   
   // const onMarkerTrigger = useCallback((id) => {
   //   if (id === "TRIGGER_ABOUT") {

@@ -73,7 +73,35 @@ function unlockScrollHard({ restore = true } = {}) {
 
   document.body.style.webkitOverflowScrolling = "touch";
 }
+function getScroller() {
+  return document.scrollingElement || document.documentElement;
+}
 
+function scrollToIdWithOffset(id, { behavior = "smooth", offset = 72 } = {}) {
+  const el = document.getElementById(id);
+  if (!el) return false;
+
+  const scroller = getScroller();
+  const rect = el.getBoundingClientRect();
+
+  // position absolue dans le document
+  const y = (window.scrollY || scroller.scrollTop || 0) + rect.top - offset;
+
+  // clamp
+  const maxY = Math.max(0, scroller.scrollHeight - scroller.clientHeight);
+  const targetY = Math.max(0, Math.min(y, maxY));
+
+  window.scrollTo({ top: targetY, behavior });
+  return true;
+}
+
+// utile si tu veux une heuristique d’offset (navbar height)
+function computeTopOffset() {
+  // adapte si tu as une navbar fixed avec une hauteur connue
+  const nav = document.querySelector(".navHUD");
+  const h = nav?.getBoundingClientRect?.().height;
+  return Number.isFinite(h) && h > 20 ? Math.round(h + 12) : 72;
+}
 /* ---------------------------------------
    waitEventOnce
 --------------------------------------- */
@@ -135,17 +163,27 @@ export default function Home() {
 
   const location = useLocation();
   const { shouldShowLanguageStep } = useOnboarding();
+  // const forceStep2 = useMemo(() => {
+  //   try {
+  //     return (
+  //       location.state?.goHomeStep === 2 ||
+  //       sessionStorage.getItem("ag_home_step_once") === "2"
+  //     );
+  //   } catch {
+  //     return location.state?.goHomeStep === 2;
+  //   }
+  // }, [location.state]);
   const forceStep2 = useMemo(() => {
     try {
       return (
         location.state?.goHomeStep === 2 ||
+        !!location.state?.__scrollIntent || // ✅ IMPORTANT: même logique que navbar
         sessionStorage.getItem("ag_home_step_once") === "2"
       );
     } catch {
-      return location.state?.goHomeStep === 2;
+      return location.state?.goHomeStep === 2 || !!location.state?.__scrollIntent;
     }
   }, [location.state]);
-  
   const boot = useBoot();
 
   /* ---------------------------------------
@@ -269,77 +307,6 @@ export default function Home() {
      - uses document.scrollingElement
      - hard-unlocks again right before scroll
   --------------------------------------- */
-  // useEffect(() => {
-  //   const onReady = async () => {
-  //     const hash = window.location.hash.replace("#", "");
-
-  //     // always re-unlock right before trying to scroll
-  //     unlockScrollHard({ restore: true });
-  //     logScrollState("before hash scroll");
-
-  //     if (!hash) return;
-
-  //     // wait layout settle
-  //     await rafN(3);
-
-  //     const el = document.getElementById(hash);
-
-  //     if (!el) return;
-
-  //     const scroller = document.scrollingElement || document.documentElement;
-
-  //     // compute y relative to scroller
-  //     const y = el.getBoundingClientRect().top + window.scrollY - 90;
-
-  //     // scroll using the actual scroller
-  //     scroller.scrollTo({ top: y, behavior: "smooth" });
-
-  //     await rafN(2);
-  //     logScrollState("after hash scroll");
-  //   };
-
-  //   window.addEventListener("ag:homeFirstPaint", onReady);
-  //   return () => window.removeEventListener("ag:homeFirstPaint", onReady);
-  // }, [location.key]);
-  // useEffect(() => {
-  //   const onReady = async () => {
-  //     const hash = window.location.hash.replace("#", "");
-  //     const pending = sessionStorage.getItem("ag_pending_scroll");
-  //     const targetId = hash || pending;
-  
-  //     // 🔸 rien à scroller
-  //     if (!targetId) return;
-  
-  //     // ✅ toujours re-unlock juste avant de scroller
-  //     unlockScrollHard({ restore: true });
-  //     logScrollState("before target scroll");
-  
-  //     // ✅ attendre que le layout soit stable
-  //     await rafN(3);
-  
-  //     const el = document.getElementById(targetId);
-  //     if (!el) return;
-  
-  //     const scroller = document.scrollingElement || document.documentElement;
-  
-  //     // y relative à la page (avec offset header)
-  //     const y = el.getBoundingClientRect().top + window.scrollY - 90;
-  
-  //     scroller.scrollTo({ top: y, behavior: "smooth" });
-  
-  //     // ✅ si on a consommé le pending, on le purge
-  //     if (pending && !hash) {
-  //       sessionStorage.removeItem("ag_pending_scroll");
-  //       sessionStorage.removeItem("ag_pending_scroll_at");
-  //     }
-  
-  //     await rafN(2);
-  //     logScrollState("after target scroll");
-  //   };
-  
-  //   window.addEventListener("ag:homeFirstPaint", onReady);
-  //   return () => window.removeEventListener("ag:homeFirstPaint", onReady);
-  // }, [location.key]);
   
   /* ---------------------------------------
      BG BLEND (unchanged)
@@ -398,57 +365,17 @@ export default function Home() {
     warm();
   }, []);
 
-  // useEffect(() => {
-  //   const target = sessionStorage.getItem("ag_pending_scroll");
-  //   if (!target) return;
-  
-  //   // petit délai → attendre layout + fonts + sections
-  //   requestAnimationFrame(() => {
-  //     requestAnimationFrame(() => {
-  //       const el = document.getElementById(target);
-  //       if (el) {
-  //         el.scrollIntoView({
-  //           behavior: "smooth",
-  //           block: "start",
-  //         });
-  //       }
-  //       sessionStorage.removeItem("ag_pending_scroll");
-  //       sessionStorage.removeItem("ag_pending_scroll_at");
-  //     });
-  //   });
-  // }, []);
+
 
   // useEffect(() => {
-  //   if (overlayStep !== 2) return;
+  //   // ✅ si on arrive avec un pending scroll, on doit être en step2 (sinon body lock casse le scroll)
+  //   if (overlayStep === 2) return;
   
-  //   const target = sessionStorage.getItem("ag_pending_scroll");
-  //   if (!target) return;
+  //   const pending = sessionStorage.getItem("ag_pending_scroll");
+  //   if (!pending) return;
   
-  //   // ✅ re-unlock juste avant de scroller (au cas où)
-  //   unlockScrollHard({ restore: true });
-  
-  //   requestAnimationFrame(() => {
-  //     requestAnimationFrame(() => {
-  //       const el = document.getElementById(target);
-  //       if (el) {
-  //         el.scrollIntoView({ behavior: "smooth", block: "start" });
-  //       }
-  
-  //       sessionStorage.removeItem("ag_pending_scroll");
-  //       sessionStorage.removeItem("ag_pending_scroll_at");
-  //     });
-  //   });
-  // }, [location.key, overlayStep]);
-
-  useEffect(() => {
-    // ✅ si on arrive avec un pending scroll, on doit être en step2 (sinon body lock casse le scroll)
-    if (overlayStep === 2) return;
-  
-    const pending = sessionStorage.getItem("ag_pending_scroll");
-    if (!pending) return;
-  
-    _setOverlayStep(2);
-  }, [overlayStep]);
+  //   _setOverlayStep(2);
+  // }, [overlayStep]);
   
   // useEffect(() => {
   //   if (overlayStep !== 2) return;
@@ -471,45 +398,39 @@ export default function Home() {
   //   });
   // }, [location.key, overlayStep]);
   
+
   useEffect(() => {
     if (overlayStep !== 2) return;
   
     const target = sessionStorage.getItem("ag_pending_scroll");
     if (!target) return;
   
-    // ✅ re-unlock juste avant de scroller
     unlockScrollHard({ restore: true });
   
-    let cancelled = false;
-    const t0 = performance.now();
-  
-    const tick = () => {
-      if (cancelled) return;
-  
+    const tryScroll = () => {
       const el = document.getElementById(target);
-  
-      // ✅ attendre que la section existe (render + images + i18n)
-      if (!el) {
-        if (performance.now() - t0 < 4000) {
-          requestAnimationFrame(tick);
-        }
-        return;
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+        sessionStorage.removeItem("ag_pending_scroll");
+        sessionStorage.removeItem("ag_pending_scroll_at");
+        return true;
       }
-  
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
-  
-      // ✅ purge seulement après succès
-      sessionStorage.removeItem("ag_pending_scroll");
-      sessionStorage.removeItem("ag_pending_scroll_at");
+      return false;
     };
   
-    requestAnimationFrame(() => requestAnimationFrame(tick));
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (tryScroll()) return;
   
-    return () => {
-      cancelled = true;
-    };
+        // ✅ fallback: 6 essais max (~100ms) au cas où les sections montent un poil après
+        let n = 0;
+        const iv = setInterval(() => {
+          n++;
+          if (tryScroll() || n >= 6) clearInterval(iv);
+        }, 16);
+      });
+    });
   }, [location.key, overlayStep]);
-  
   /* ---------------------------------------
      Render (unchanged)
   --------------------------------------- */

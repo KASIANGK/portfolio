@@ -195,6 +195,20 @@ function About() {
   //   }
   // });
 // breakpoints
+
+useEffect(() => {
+  let cancelled = false;
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      if (cancelled) return;
+      window.dispatchEvent(new Event("ag:aboutReady"));
+    });
+  });
+
+  return () => { cancelled = true; };
+}, []);
+
 const isLE981 = useMediaQuery("(max-width: 981px)");
 
 const LS_VISUAL_OPEN = "ag_about_visual_open_v1";
