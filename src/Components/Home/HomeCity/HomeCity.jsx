@@ -649,29 +649,6 @@ const goHomeLikeNavbar = useCallback(
     [goHomeLikeNavbar]
   );
   
-  // const onMarkerTrigger = useCallback((id) => {
-  //   if (id === "TRIGGER_ABOUT") {
-  //     setPendingScroll("about");
-  //     navigate("/", { replace: false, state: { goHomeStep: 2 } });
-  //     return;
-  //   }
-  //   if (id === "TRIGGER_PROJECT") {
-  //     setPendingScroll("projects");
-  //     navigate("/", { replace: false, state: { goHomeStep: 2 } });
-  //     return;
-  //   }
-  //   if (id === "TRIGGER_PORTFOLIO") {
-  //     setPendingScroll("contact");
-  //     navigate("/", { replace: false, state: { goHomeStep: 2 } });
-  //     return;
-  //   }
-  //   if (id === "TRIGGER_VISION_HOME") {
-  //     navigate("/", { replace: false, state: { goHomeStep: 2 } });
-  //     return;
-  //   }
-  // }, [navigate]);
-  
-  
 
   useEffect(() => {
     const fn = () => import("./parts/FullScreenLoader").catch(() => {});

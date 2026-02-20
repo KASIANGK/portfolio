@@ -45,9 +45,14 @@ export default function PlayerController({
 
   playerHeight = 1.8,
 
-  speed = 4.6,
-  sprintAfterMs = 2000,
-  sprintMultiplier = 2.6,
+  // speed = 4.6,
+  // sprintAfterMs = 2000,
+  // sprintMultiplier = 2.6,
+  walkSpeed = 7.2,      // 0-2s
+  runSpeed = 12.2,       // 2-8s
+  sprintSpeed = 20.5,    // 8s+
+  walkMs = 2000,
+  sprintMs = 6000,
 
   stepHeight = 0.55,
   maxSlopeDeg = 50,
@@ -417,11 +422,53 @@ export default function PlayerController({
     }
 
     // Sprint only from arrow hold
+    // const now = performance.now();
+    // const heldLong =
+    //   holdRef.current.anyArrowDownAt !== null &&
+    //   now - holdRef.current.anyArrowDownAt >= sprintAfterMs;
+    // const sprintMul = heldLong ? sprintMultiplier : 1.0;
+    // ---------- 3-STAGE SPEED: walk -> run -> sprint ----------
     const now = performance.now();
-    const heldLong =
-      holdRef.current.anyArrowDownAt !== null &&
-      now - holdRef.current.anyArrowDownAt >= sprintAfterMs;
-    const sprintMul = heldLong ? sprintMultiplier : 1.0;
+
+    const anyMove = Math.abs(mx) > 0.01 || Math.abs(my) > 0.01;
+
+    // Start timer when movement starts, reset when fully stopped
+    if (anyMove) {
+      if (holdRef.current.anyArrowDownAt === null) {
+        holdRef.current.anyArrowDownAt = now;
+      }
+    } else {
+      holdRef.current.anyArrowDownAt = null;
+    }
+
+    const heldMs =
+      holdRef.current.anyArrowDownAt === null ? 0 : (now - holdRef.current.anyArrowDownAt);
+    
+    const blend = (from, to, t) => from + (to - from) * clamp(t, 0, 1);
+    // Piecewise speeds
+    let baseSpeed = walkSpeed;
+
+    // if (heldMs >= sprintMs) {
+    //   baseSpeed = sprintSpeed;
+    // } else if (heldMs >= walkMs) {
+    //   baseSpeed = runSpeed;
+    // }
+
+    const BLEND_MS = 250;
+
+    if (heldMs >= sprintMs) {
+      // blend run -> sprint near sprintMs
+      const t = (heldMs - sprintMs) / BLEND_MS;
+      baseSpeed = blend(runSpeed, sprintSpeed, t);
+    } else if (heldMs >= walkMs) {
+      // blend walk -> run near walkMs
+      const t = (heldMs - walkMs) / BLEND_MS;
+      baseSpeed = blend(walkSpeed, runSpeed, t);
+    }
+
+    // Mobile multiplier only for joystick movement (optional)
+    const hasJoy = Math.abs(jx) > 0.01 || Math.abs(jy) > 0.01;
+    const moveSpeed = baseSpeed * (hasJoy ? mobileSpeedMultiplier : 1.0);
 
     // Forward/right based on current yaw
     tmp.yawEuler.set(0, yawPitchCurrent.current.yaw + yawOffset, 0, "YXZ");
@@ -434,8 +481,8 @@ export default function PlayerController({
     velY.current -= g * dt;
     velY.current = Math.max(velY.current, -25);
 
-    const hasJoy = Math.abs(jx) > 0.01 || Math.abs(jy) > 0.01;
-    const moveSpeed = speed * sprintMul * (hasJoy ? mobileSpeedMultiplier : 1.0);
+    // const hasJoy = Math.abs(jx) > 0.01 || Math.abs(jy) > 0.01;
+    // const moveSpeed = speed * sprintMul * (hasJoy ? mobileSpeedMultiplier : 1.0);
 
     const dxw = tmp.move.x * moveSpeed * dt;
     const dzw = tmp.move.z * moveSpeed * dt;
