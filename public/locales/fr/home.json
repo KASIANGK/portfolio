@@ -19,7 +19,7 @@
       "badge": "CALIBRATE://POV",
       "preCapture": {
         "title": "Vue ON/OFF",
-        "desc": "Clique dans la scène, hors de la carte.",
+        "desc": "Clique dans la scène.",
         "subLock": ""
       },
       "captured": {
