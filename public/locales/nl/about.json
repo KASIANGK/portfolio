@@ -1,35 +1,35 @@
 {
-  "title": "About",
+  "title": "Over mij",
   "playHint": "Speel met mij",
   "skillsLink": "SKILLS",
-  "aboutVisualAlt": "About visual",
+  "aboutVisualAlt": "Over mij visual",
 
   "bio": {
     "kicker": "PROFIEL",
 
     "web": {
-      "title": "Web Developer",
-      "lead": "Waar code en design samenkomen in bruikbare interfaces.",
-      "timeline": "2023–2025 · Fullstack Coach (Molengeek) → 2025–2026 · Developer (Urban Tech)"
+      "title": "Frontend Developer",
+      "lead": "Performance-first, UX-gedreven interfaces: helder, solide, schaalbaar.",
+      "timeline": "11/2023–01/2025 · Fullstack Coach (MolenGeek) → 01/2025–02/2026 · Developer (Urban Tech)"
     },
 
     "threeD": {
       "title": "3D & Creative Tech",
-      "lead": "3D ontworpen voor interactie, niet alleen voor effect.",
-      "timeline": "2023 · 3D modeling & video design (Tarmac)"
+      "lead": "Real-time visuals ontworpen voor interactie — niet alleen voor de ‘wow’.",
+      "timeline": "03/2023–12/2023 · 3D / Modeling & Video Design (Tarmac)"
     },
 
     "events": {
       "title": "Creative Events",
-      "lead": "Ideeën die vorm krijgen, van concept tot beleving.",
-      "timeline": "2018–2020 · Styling & creative direction (Bloody Louis) → 2021 · Art direction & events (Emotion)"
+      "lead": "Van concept tot beleving: direction, productie, uitvoering.",
+      "timeline": "02/2018–07/2020 · Creative Direction (Bloody Louis) → 04/2021–11/2021 · Art Direction (Emotion)"
     },
 
     "all": {
       "title": "Creative Technologist",
-      "lead": "Een kruispunt van dev, visuals en productie.",
-      "timeline": "2015–2018 · Visual Merch (MMFG) → 2018–2020 · Visual Merch (Swarovski) → 2020–2023 · Visual Merch (Pinko) → 2023–2025 · Fullstack Coach (Molengeek) → 2025–2026 · Dev (Urban Tech) · + 2023 · 3D (Tarmac) · + 2018–2021 · Events (Bloody Louis / Emotion)",
-      "educationLine": "Opleiding: 2023–2024 Fullstack (Molengeek) · 2023 3D (Blender/Tuto) · 2017 Grafisch design (Domestika) · 2018 Styling (Reggio Emilia)"
+      "lead": "Op het snijvlak van dev, design en productie — zonder creatieve vaagheid.",
+      "timeline": "2018–2020 · Events (Bloody Louis) · 2021 · AD (Emotion) · 2023 · 3D (Tarmac) · 2023–2025 · Fullstack coaching (MolenGeek) · 2025–2026 · Dev (Urban Tech)",
+      "educationLine": "Opleidingen: 2023–2024 Fullstack (MolenGeek) · 2023 3D (Julien Deville) · 2017 Graphic Design (Domestika) · 2018 Styling (MMFG · Reggio Emilia)"
     },
 
     "pills": {
@@ -47,65 +47,49 @@
           "id": "urbanTech",
           "bold": "Urban Tech",
           "meta": "Developer",
-          "year":"2025–2026",
-          "text": "Production-ready apps voor echte klanten.",
-          "note": "Concreet werk."
+          "year": "2025–2026",
+          "text": "Webapplicaties opgeleverd in team: UI-architectuur, features, backend-integratie.",
+          "note": "Echte delivery, geen demo."
         },
         {
           "id": "molengeek",
-          "bold": "Molengeek",
-          "meta": "Fullstack Coach",
-          "year":"2023–2025",
-          "text": "Coaching en webprojecten in echte omstandigheden.",
-          "note": "Leren + shippen."
+          "bold": "MolenGeek",
+          "meta": "Fullstack Web Dev Coach",
+          "year": "2023–2025",
+          "text": "Coaching en begeleiding: webprojecten onder real-life omstandigheden.",
+          "note": "Teaching + delivery = een zeldzame skill."
         },
         {
           "id": "tarmac",
           "bold": "Tarmac",
-          "meta": "3D / video",
-          "year":"2023",
-          "text": "3D assets en video content met focus op verhaal en impact.",
-          "note": "Mooi, maar ook nuttig."
-        },
-        {
-          "id": "pinko",
-          "bold": "Pinko",
-          "meta": "Visual Merchandiser",
-          "year":"2020–2023",
-          "text": "Brand storytelling en boutique scenografie.",
-          "note": "Visueel dat beweegt."
+          "meta": "3D / Modeling & Video Design",
+          "year": "2023",
+          "text": "Real-time 3D-assets, animatie en visuele content geïntegreerd in digitale productie-pipelines.",
+          "note": "Visueel, gericht op het product."
         },
         {
           "id": "emotion",
           "bold": "Emotion",
-          "meta": "Art direction / events",
-          "year":"2021",
-          "text": "Visual identity, strategie en event experience.",
-          "note": "Van visie naar uitvoering."
+          "meta": "Event Project Lead / Art Director",
+          "year": "2021–2021",
+          "text": "Visuele identiteit, strategie, communicatie en event experience.",
+          "note": "Visie → uitvoering → impact."
         },
         {
           "id": "bloodyLouis",
           "bold": "Bloody Louis",
-          "meta": "Events",
-          "year":"2018–2020",
-          "text": "Scenografie, visuals, productie en logistiek.",
-          "note": "Details + timing."
+          "meta": "Event Styling & Creative Direction",
+          "year": "2018–2020",
+          "text": "Scenografie, productie, coördinatie van visuals en logistiek.",
+          "note": "Wanneer elk detail telt."
         },
         {
-          "id": "swarovski",
-          "bold": "Swarovski",
+          "id": "visualMerch",
+          "bold": "Pinko · MMFG · Swarovski",
           "meta": "Visual Merchandiser",
-          "year":"2018–2020",
-          "text": "Luxury retail visuals en uitvoering met details.",
-          "note": "Ritme + rigor."
-        },
-        {
-          "id": "mmfg",
-          "bold": "MMFG",
-          "meta": "Visual Merchandiser",
-          "year":"2015–2018",
-          "text": "Productpresentatie, merkconsistentie, customer experience.",
-          "note": "Precisie."
+          "year": "2018–2023",
+          "text": "Productpresentatie, merkconsistentie, retailstandaarden en customer experience.",
+          "note": "Rigor + ritme + oog voor detail."
         }
       ]
     },
@@ -113,16 +97,36 @@
     "education": {
       "title": "Opleiding",
       "items": [
-        { "year": "2023–2024", "label": "Fullstack Development", "place": "Molengeek", "note": "Moderne webbasis." },
-        { "year": "2023", "label": "3D Modeling & Animation", "place": "Blender / Tuto.com", "note": "Real-time assets." },
-        { "year": "2017", "label": "Grafisch design", "place": "Domestika", "note": "Compositie en visuele cultuur." },
-        { "year": "2018", "label": "Styling", "place": "Reggio Emilia", "note": "Product en materiaal." }
+        {
+          "year": "2023–2024",
+          "label": "Fullstack Development",
+          "place": "MolenGeek · Brussels",
+          "note": "HTML/CSS/JavaScript + moderne frameworks, sterke basis."
+        },
+        {
+          "year": "2023–05/2023",
+          "label": "3D Modeling & Animation",
+          "place": "Julien Deville Training · Brussels",
+          "note": "Modeling, lighting, animatie, real-time optimalisatie, exports."
+        },
+        {
+          "year": "2017",
+          "label": "Graphic Design",
+          "place": "Domestika · Brussels",
+          "note": "Typografie, compositie, layout, visuele identiteit."
+        },
+        {
+          "year": "2018",
+          "label": "Styling",
+          "place": "MMFG · Reggio Emilia",
+          "note": "Visuele storytelling, creative direction, compositie."
+        }
       ]
     },
 
     "highlights": {
       "title": "Highlights",
-      "text": "Ik hou van premium systems: glass UI, neon accents, smooth motion en interactions die je willen laten ontdekken."
+      "text": "Ik hou van premium systemen: leesbare UI, smooth motion, interacties die je doen willen ontdekken."
     },
 
     "seeMore": "Meer",
@@ -130,16 +134,21 @@
   },
 
   "buttons": {
-    "portfolio": "Portfolio",
-    "cv": "Volledige CV",
+    "portfolio": "Bekijk Portfolio",
+    "cv": "Bekijk volledige CV",
     "contact": "Contact"
   },
 
   "skills": {
     "title": "Skills",
-    "seeAll": "Alles",
+    "seeAll": "Alles zien",
 
-    "tabs": { "web": "Web Dev", "threeD": "3D Artist", "events": "Events", "all": "All" },
+    "tabs": {
+      "web": "Web Dev",
+      "threeD": "3D Artist",
+      "events": "Events",
+      "all": "All"
+    },
 
     "tabTaglines": {
       "web": "React / Vite / UI systems",
@@ -161,11 +170,15 @@
 
   "pdfHref": "/pdf/kasia_cv.pdf",
   "downloadPdf": "Download PDF",
-  "close": "Close",
+  "close": "Sluiten",
 
-  "visual": { "title": "Visual", "open": "Open", "close": "Close" },
+  "visual": {
+    "title": "Visual",
+    "open": "Open",
+    "close": "Sluiten"
+  },
+
   "cv": {
-    "lead": "Fullstack developer met een sterke creatieve/3D-achtergrond. Bouwt performante UI-systemen, interactieve ervaringen en realtime visuals (React, Vite, Three.js/R3F, Blender)."
+    "lead": "Frontend Developer gespecialiseerd in interactieve, UX-gedreven producten. Ik bouw performante interfaces die complexe systemen omzetten in intuïtieve journeys."
   }
 }
-

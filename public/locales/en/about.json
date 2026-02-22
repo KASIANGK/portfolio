@@ -1,39 +1,39 @@
 {
   "title": "About",
-  "playHint": "Play with me",
+  "playHint": "Joue avec moi",
   "skillsLink": "SKILLS",
-  "aboutVisualAlt": "About visual",
+  "aboutVisualAlt": "Visuel About",
 
   "bio": {
-    "kicker": "PROFILE",
+    "kicker": "PROFIL",
 
     "web": {
-      "title": "Web Developer",
-      "lead": "Where code and design align to build useful interfaces.",
-      "timeline": "2023–2025 · Fullstack Coach (Molengeek) → 2025–2026 · Developer (Urban Tech)"
+      "title": "Frontend Developer",
+      "lead": "Interfaces performantes, pensées UX : du clair, du solide, du scalable.",
+      "timeline": "11/2023–01/2025 · Coach Fullstack (MolenGeek) → 01/2025–02/2026 · Developer (Urban Tech)"
     },
 
     "threeD": {
       "title": "3D & Creative Tech",
-      "lead": "3D designed for interaction, not just visual impact.",
-      "timeline": "2023 · 3D modeling & video design (Tarmac)"
+      "lead": "Des visuels temps réel conçus pour l’interaction, pas juste pour le “wow”.",
+      "timeline": "03/2023–12/2023 · 3D / Modeling & Video Design (Tarmac)"
     },
 
     "events": {
       "title": "Creative Events",
-      "lead": "Ideas brought to life, from concept to real experience.",
-      "timeline": "2018–2020 · Styling & creative direction (Bloody Louis) → 2021 · Art direction & events (Emotion)"
+      "lead": "Du concept à l’expérience : direction, production, exécution.",
+      "timeline": "02/2018–07/2020 · Creative Direction (Bloody Louis) → 04/2021–11/2021 · Art Direction (Emotion)"
     },
 
     "all": {
       "title": "Creative Technologist",
-      "lead": "A space where dev, visuals, and production meet.",
-      "timeline": "2015–2018 · Visual Merch (MMFG) → 2018–2020 · Visual Merch (Swarovski) → 2020–2023 · Visual Merch (Pinko) → 2023–2025 · Fullstack Coach (Molengeek) → 2025–2026 · Dev (Urban Tech) · + 2023 · 3D (Tarmac) · + 2018–2021 · Events (Bloody Louis / Emotion)",
-      "educationLine": "Education: 2023–2024 Fullstack (Molengeek) · 2023 3D (Blender/Tuto) · 2017 Graphic design (Domestika) · 2018 Styling (Reggio Emilia)"
+      "lead": "À l’intersection du dev, du design et de la production — sans flou artistique.",
+      "timeline": "2018–2020 · Events (Bloody Louis) · 2021 · DA (Emotion) · 2023 · 3D (Tarmac) · 2023–2025 · Fullstack coaching (MolenGeek) · 2025–2026 · Dev (Urban Tech)",
+      "educationLine": "Formations : 2023–2024 Fullstack (MolenGeek) · 2023 3D (Julien Deville) · 2017 Graphisme (Domestika) · 2018 Stylisme (MMFG · Reggio Emilia)"
     },
 
     "pills": {
-      "location": "Brussels",
+      "location": "Bruxelles",
       "stack": "React / Three.js",
       "tool": "Blender"
     }
@@ -41,123 +41,107 @@
 
   "sections": {
     "exp": {
-      "title": "Experience",
+      "title": "Expérience",
       "items": [
         {
           "id": "urbanTech",
           "bold": "Urban Tech",
           "meta": "Developer",
           "year": "2025–2026",
-          "text": "Building production-ready applications for real client use cases.",
-          "note": "Concrete work, not PowerPoint."
+          "text": "Applications web déployées en équipe : UI architecture, features, intégration backend.",
+          "note": "Delivery réel, pas de démo."
         },
         {
           "id": "molengeek",
-          "bold": "Molengeek",
-          "meta": "Fullstack Web Dev Coach",
+          "bold": "MolenGeek",
+          "meta": "Coach Web Dev Fullstack",
           "year": "2023–2025",
-          "text": "Coaching, mentoring, and building web projects in real-life conditions.",
-          "note": "Teaching + delivery: fewer surprises."
+          "text": "Coaching et accompagnement : projets web en conditions réelles.",
+          "note": "Pédago + delivery = skill rare."
         },
         {
           "id": "tarmac",
           "bold": "Tarmac",
-          "meta": "3D / Modeling & video design",
+          "meta": "3D / Modeling & Video Design",
           "year": "2023",
-          "text": "Creating 3D assets and video content focused on narrative and impact.",
-          "note": "Visuals with a purpose."
-        },
-        {
-          "id": "pinko",
-          "bold": "Pinko",
-          "meta": "Visual Merchandiser",
-          "year": "2020–2023",
-          "text": "Brand storytelling, boutique scenography, and product presentation.",
-          "note": "Visuals in motion."
+          "text": "Assets 3D temps réel, animation et contenus visuels intégrés à des pipelines de production digitale.",
+          "note": "Visuel utile, orienté produit."
         },
         {
           "id": "emotion",
           "bold": "Emotion",
-          "meta": "Event project lead / Art director",
-          "year": "2021",
-          "text": "Visual identity, strategy, communication, and event experience.",
-          "note": "Vision → execution → lived experience."
+          "meta": "Event Project Lead / Art Director",
+          "year": "2021–2021",
+          "text": "Identité visuelle, stratégie, communication et expérience événementielle.",
+          "note": "Vision → exécution → impact."
         },
         {
           "id": "bloodyLouis",
           "bold": "Bloody Louis",
-          "meta": "Event styling & creative direction",
+          "meta": "Event Styling & Creative Direction",
           "year": "2018–2020",
-          "text": "Scenography, production, visuals, and logistics.",
-          "note": "When every detail matters (and timing is real)."
+          "text": "Scénographie, production, coordination des visuels et logistique.",
+          "note": "Quand chaque détail compte."
         },
         {
-          "id": "swarovski",
-          "bold": "Swarovski",
+          "id": "visualMerch",
+          "bold": "Pinko · MMFG · Swarovski",
           "meta": "Visual Merchandiser",
-          "year": "2018–2020",
-          "text": "Luxury retail visuals, merchandising standards, and precision.",
-          "note": "Luxury = rigor + rhythm."
-        },
-        {
-          "id": "mmfg",
-          "bold": "MMFG",
-          "meta": "Visual Merchandiser",
-          "year": "2015–2018",
-          "text": "Product staging, brand consistency, and customer experience.",
-          "note": "Training the eye down to the millimeter."
+          "year": "2018–2023",
+          "text": "Mise en scène produit, cohérence de marque, standards retail et expérience client.",
+          "note": "Rigueur + rythme + sens du détail."
         }
       ]
     },
 
     "education": {
-      "title": "Education",
+      "title": "Formation",
       "items": [
         {
           "year": "2023–2024",
           "label": "Fullstack Development",
-          "place": "Molengeek",
-          "note": "Strong foundation in modern web development."
+          "place": "MolenGeek · Brussels",
+          "note": "HTML/CSS/JavaScript + frameworks modernes, bases solides."
         },
         {
-          "year": "2023",
+          "year": "2023–05/2023",
           "label": "3D Modeling & Animation",
-          "place": "Blender / Tuto.com",
-          "note": "Real-time assets and optimization."
+          "place": "Formation Julien Deville · Brussels",
+          "note": "Modélisation, lighting, animation, optimisation temps réel, exports."
         },
         {
           "year": "2017",
           "label": "Graphic Design",
-          "place": "Domestika",
-          "note": "Visual culture, composition, and framing."
+          "place": "Domestika · Brussels",
+          "note": "Typo, composition, layout, identité visuelle."
         },
         {
           "year": "2018",
           "label": "Styling",
-          "place": "Reggio Emilia",
-          "note": "Understanding product, material, and intent."
+          "place": "MMFG · Reggio Emilia",
+          "note": "Storytelling visuel, direction créative, composition."
         }
       ]
     },
 
     "highlights": {
       "title": "Highlights",
-      "text": "I enjoy premium systems: glass UI, neon accents, smooth motion, and interactions that invite exploration."
+      "text": "J’aime les systèmes premium : UI lisible, motion smooth, interactions qui donnent envie d’explorer."
     },
 
-    "seeMore": "See more",
-    "seeLess": "See less"
+    "seeMore": "Voir plus",
+    "seeLess": "Voir moins"
   },
 
   "buttons": {
-    "portfolio": "View Portfolio",
-    "cv": "View full CV",
+    "portfolio": "Voir Portfolio",
+    "cv": "Voir CV complet",
     "contact": "Contact"
   },
 
   "skills": {
     "title": "Skills",
-    "seeAll": "See all",
+    "seeAll": "Tout voir",
 
     "tabs": {
       "web": "Web Dev",
@@ -193,7 +177,8 @@
     "open": "Open",
     "close": "Close"
   },
+
   "cv": {
-    "lead": "Fullstack developer with a strong creative/3D background. Builds performant UI systems, interactive experiences, and real-time visuals (React, Vite, Three.js/R3F, Blender)."
+    "lead": "Frontend Developer spécialisée dans des produits interactifs et orientés UX. Je construis des interfaces performantes qui transforment des systèmes complexes en parcours intuitifs."
   }
 }

@@ -1131,18 +1131,14 @@ useEffect(() => {
           tabIndex={-1}
         >
           <div className="aboutX__modal" onPointerDown={(e) => e.stopPropagation()}>
-            <div className="aboutX__modalTop">
+            {/* <div className="aboutX__modalTop">
               <div className="aboutX__modalTitleRow">
                 <div className="aboutX__modalTitle">CURRICULUM VITAE — ATS</div>
-
-                {/* ✅ ALL title here (name + role) */}
                 <div className="aboutX__modalIdentity">
                   <span className="aboutX__modalName">Kasia Nagorka</span>
-                  {/* <span className="aboutX__modalSep">—</span> */}
                   <span className="aboutX__modalRole">
                     {t("bio.all.title", { defaultValue: "Creative Technologist" })}
                   </span>
-                  {/* <span className="aboutX__modalSep">—</span> */}
                   <a
                     className="aboutX__modalEmail"
                     href="mailto:ngk.kasia@gmail.com"
@@ -1155,124 +1151,18 @@ useEffect(() => {
               <button type="button" className="aboutX__btn isGhost" onClick={closeCv}>
                 {t("close", { defaultValue: "Close" })}
               </button>
-            </div>
+            </div> */}
 
             {/* ✅ scroll uniquement ici */}
             <div className="aboutX__modalBody" role="document">
-              {/* =========================
-                  SUMMARY (2 colonnes)
-                ========================= */}
-              <section className="aboutX__modalBlock">
-                <div className="aboutX__modalKicker">SUMMARY</div>
-
-                <div className="aboutX__summaryGrid">
-                  {/* <div className="aboutX__summaryLeft">
-                      <div className="aboutX__summaryList">
-                        {(skillsByTab.all || []).map((s) => (
-                          <p key={`all-${s}`}>{s}</p>
-                        ))}
-                    </div>
-                  </div> */}
-
-                  <div className="aboutX__summaryRight">
-                    <p className="aboutX__modalLead">
-                      {t("cv.lead", {
-                        defaultValue:
-                          "Fullstack developer with a strong creative/3D background. Builds performant UI systems, interactive experiences, and real-time visuals (React, Vite, Three.js/R3F, Blender).",
-                      })}
-                    </p>
-
-                    <div className="aboutX__summaryAvatar">
-                      <img
-                        src="/assets/about/avatar.jpg"
-                        alt="Kasia – creative technologist"
-                        draggable="false"
-                        loading="lazy"
-                        decoding="async"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </section>
-
-              {/* =========================
-                  CORE SKILLS (4 tables)
-                ========================= */}
-              <section className="aboutX__modalBlock">
-                <div className="aboutX__modalKicker">CORE SKILLS</div>
-
-                <div className="aboutX__skillsGrid4">
-                  {/* WEB — FRONTEND */}
-                  <div className="aboutX__skillCard aboutX__skillCard--web">
-                    <div className="aboutX__skillCardTitle">Web — Frontend</div>
-                    <ul className="aboutX__modalList">
-                      {(skillsByTab.web?.frontend || []).map((s) => (
-                        <li key={`wf-${s}`}>{s}</li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  {/* WEB — BACKEND */}
-                  <div className="aboutX__skillCard aboutX__skillCard--web">
-                    <div className="aboutX__skillCardTitle">Web — Backend</div>
-                    <ul className="aboutX__modalList">
-                      {(skillsByTab.web?.backend || []).map((s) => (
-                        <li key={`wb-${s}`}>{s}</li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  {/* 3D */}
-                  <div className="aboutX__skillCard aboutX__skillCard--3d">
-                    <div className="aboutX__skillCardTitle">3D</div>
-                    <ul className="aboutX__modalList">
-                      {(skillsByTab.threeD || []).map((s) => (
-                        <li key={`d3-${s}`}>{s}</li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  {/* EVENTS */}
-                  <div className="aboutX__skillCard aboutX__skillCard--events">
-                    <div className="aboutX__skillCardTitle">Events</div>
-                    <ul className="aboutX__modalList">
-                      {(skillsByTab.events || []).map((s) => (
-                        <li key={`ev-${s}`}>{s}</li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              </section>
-
-              {/* =========================
-                  EXPERIENCE (2 colonnes)
-                ========================= */}
-              <section className="aboutX__modalBlock">
-                <div className="aboutX__modalKicker">EXPERIENCE</div>
-
-                <div className="aboutX__xpGrid">
-                  {expItems.map((it, i) => (
-                    <div className="aboutX__xpRow" key={`${it.key}-${i}`}>
-                      <div className="aboutX__xpLeft">
-                        {it.year ? <div className="aboutX__xpYear">{it.year}</div> : null}
-                        <div className="aboutX__xpTitleLine">
-                          {it.meta ? <div className="aboutX__xpRole">{it.meta}</div> : null}
-                          {it.bold ? <div className="aboutX__xpCompany">{it.bold}</div> : null}
-                        </div>
-                        {/* si tu ajoutes `place` plus tard dans JSON */}
-                        {it.place ? <div className="aboutX__xpPlace">{it.place}</div> : null}
-                      </div>
-
-                      <div className="aboutX__xpRight">
-                        {it.text ? <div className="aboutX__xpDesc">{it.text}</div> : null}
-                        {it.note ? <div className="aboutX__xpNote">{it.note}</div> : null}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </section>
-
-              {/* ✅ PAS de project highlights */}
+              <div className="aboutX__pdfWrap">
+                <iframe
+                  className="aboutX__pdfFrame"
+                  src={`${pdfHref}#view=FitH`}
+                  title="Kasia CV PDF"
+                  loading="lazy"
+                />
+              </div>
             </div>
 
             <div className="aboutX__modalFooter">
