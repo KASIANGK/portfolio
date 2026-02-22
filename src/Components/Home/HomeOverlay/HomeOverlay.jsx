@@ -531,13 +531,13 @@ export default function HomeOverlay({
     <header className="homeOverlay" data-step={slideIndex === 0 ? "1" : "2"} aria-label="Home onboarding header">
       <OverlayBackground slideIndex={slideIndex} noAnimOnce={noAnimOnce} bgTrackRef={bgTrackRef} />
 
-      <OverlayResetButtons
+      {/* <OverlayResetButtons
         t={t}
         onResetLanguage={handleResetLanguage}
         onResetHint={handleResetHint}
         onResetStep={handleResetFirstStep}
         onResetSteps={handleResetHomeCitySteps}
-      />
+      /> */}
 
       <div className="homeOverlay__viewport">
         <div
