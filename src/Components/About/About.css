@@ -1380,7 +1380,7 @@
     height: 170px;
     min-height: 0;
     left: 370px;
-    top: -5px;
+    top: -38px;
     background-color: rgba(10, 8, 22, 0.788);
   }
   .aboutX__skillsScrollWrap {
@@ -2139,4 +2139,8 @@
   .aboutX__header {
     margin-left: -45px;
   }
+}
+
+.aboutX__xpNav { display:flex; gap:10px; justify-content: flex-end; align-items: center; padding-top: 10px; width: min(260px, 78vw);}
+.aboutX__xpNavBtn { background-color: #82229a; height: 25px; display: flex; justify-content: center; align-items: center;   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
 }

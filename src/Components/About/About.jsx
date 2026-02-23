@@ -144,6 +144,9 @@ function About() {
   const [skillsScrollable, setSkillsScrollable] = useState(false);
   useLockBodyScroll(isCvOpen);
 
+  const timelineCardsRef = useRef([]); // array of nodes
+  const [timelineIndex, setTimelineIndex] = useState(0);
+  
   const updateSkillsScrollState = useCallback(() => {
     const el = skillsScrollRef.current;
     const wrap = skillsWrapRef.current;
@@ -465,7 +468,60 @@ useEffect(() => {
     };
   }, [t]);
   
-  
+  const setTimelineCardRef = useCallback((el, i) => {
+    if (!el) return;
+    timelineCardsRef.current[i] = el;
+  }, []);
+
+  const scrollToTimelineIndex = useCallback((idx) => {
+    const cards = timelineCardsRef.current;
+    const target = cards?.[idx];
+    if (!target) return;
+
+    target.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "center",
+    });
+
+    setTimelineIndex(idx);
+  }, []);
+
+  const detectCenteredTimelineIndex = useCallback(() => {
+    const wrap = timelineRef.current;
+    const cards = timelineCardsRef.current;
+    if (!wrap || !cards?.length) return;
+
+    const wrapRect = wrap.getBoundingClientRect();
+    const centerX = wrapRect.left + wrapRect.width / 2;
+
+    let best = 0;
+    let bestDist = Infinity;
+
+    for (let i = 0; i < cards.length; i++) {
+      const c = cards[i];
+      if (!c) continue;
+      const r = c.getBoundingClientRect();
+      const cCenter = r.left + r.width / 2;
+      const d = Math.abs(centerX - cCenter);
+      if (d < bestDist) {
+        bestDist = d;
+        best = i;
+      }
+    }
+
+    setTimelineIndex(best);
+  }, []);
+
+  const goPrevTimeline = useCallback(() => {
+    if (!expItems.length) return;
+    scrollToTimelineIndex(Math.max(0, timelineIndex - 1));
+  }, [timelineIndex, expItems.length, scrollToTimelineIndex]);
+
+  const goNextTimeline = useCallback(() => {
+    if (!expItems.length) return;
+    scrollToTimelineIndex(Math.min(expItems.length - 1, timelineIndex + 1));
+  }, [timelineIndex, expItems.length, scrollToTimelineIndex]);
 
   const skillsByTab = useMemo(() => {
     const get = (path) => t(path, { returnObjects: true });
@@ -741,7 +797,8 @@ useEffect(() => {
 
   const onTimelineScroll = useCallback(() => {
     computeTimelineTarget();
-  }, [computeTimelineTarget]);
+    detectCenteredTimelineIndex();
+  }, [computeTimelineTarget, detectCenteredTimelineIndex]);
 
   const ctaDownload = t("downloadPdf", { defaultValue: "Download PDF" });
 
@@ -809,7 +866,6 @@ useEffect(() => {
               <div className="aboutX__xpHeader">
                 <div className="aboutX__xpTitle">{expTitle}</div>
               </div>
-
               <div className="aboutX__timelineArea">
                 <div className="aboutX__timelineRail" aria-hidden="true">
                   <div className="aboutX__timelineProg" aria-hidden="true" />
@@ -823,7 +879,12 @@ useEffect(() => {
                   aria-label="Experience timeline"
                 >
                   {expItems.map((it, i) => (
-                    <div className="aboutX__timeCard" key={`${it.key}-${i}`} role="listitem">
+                    <div
+                      className={`aboutX__timeCard ${i === timelineIndex ? "isActive" : ""}`}
+                      key={`${it.key}-${i}`}
+                      role="listitem"
+                      ref={(el) => setTimelineCardRef(el, i)}
+                    >
                       <div className="aboutX__timeCardHead">
                       <div className="aboutX__timeDot" aria-hidden="true" />
                         <div className="aboutX__timeYear">      
@@ -841,6 +902,28 @@ useEffect(() => {
                   ))}
                 </div>
               </div>
+              {isGE1245 && (
+                <div className="aboutX__xpNav">
+                  <button
+                    type="button"
+                    className="aboutX__xpNavBtn"
+                    onClick={goPrevTimeline}
+                    disabled={timelineIndex <= 0}
+                    aria-label="Previous experience"
+                  >
+                    &lt;
+                  </button>
+                  <button
+                    type="button"
+                    className="aboutX__xpNavBtn"
+                    onClick={goNextTimeline}
+                    disabled={timelineIndex >= expItems.length - 1}
+                    aria-label="Next experience"
+                  >
+                    &gt;
+                  </button>
+                </div>
+              )}
             </div>
 
             <div className="holoPanel aboutX__skillsPanel">
@@ -881,11 +964,7 @@ useEffect(() => {
                   </div>
                 )}
               </div>
-
             </div>
-
-
-
           </div>
         </div>
 
@@ -910,7 +989,7 @@ useEffect(() => {
               <div className="aboutX__ticks" aria-hidden="true" />     {/* ✅ ticks overlay */}
               <div className="aboutX__ringWide" aria-hidden="true" />  {/* ✅ ring large (2e contour) */}
 
-              <div className="aboutX__ringMid" aria-hidden="true" />   {/* tu peux le garder mais on va le repenser */}
+              <div className="aboutX__ringMid" aria-hidden="true" />  
               <div className="aboutX__ringInner" aria-hidden="true" /> {/* ✅ 3e contour sombre -> blanc au scar */}
               <div className="aboutX__distort" aria-hidden="true" />
               <div className="aboutX__hole" aria-hidden="true" />
@@ -1089,7 +1168,6 @@ useEffect(() => {
                           onPause={() => setIsPlaying(false)}
                           onEnded={() => {
                             setIsPlaying(false);
-                            // ✅ à toi : soit tu reset à 0 pour “Replay”
                             if (videoRef.current) videoRef.current.currentTime = 0;
                           }}
                         />
@@ -1131,27 +1209,6 @@ useEffect(() => {
           tabIndex={-1}
         >
           <div className="aboutX__modal" onPointerDown={(e) => e.stopPropagation()}>
-            {/* <div className="aboutX__modalTop">
-              <div className="aboutX__modalTitleRow">
-                <div className="aboutX__modalTitle">CURRICULUM VITAE — ATS</div>
-                <div className="aboutX__modalIdentity">
-                  <span className="aboutX__modalName">Kasia Nagorka</span>
-                  <span className="aboutX__modalRole">
-                    {t("bio.all.title", { defaultValue: "Creative Technologist" })}
-                  </span>
-                  <a
-                    className="aboutX__modalEmail"
-                    href="mailto:ngk.kasia@gmail.com"
-                  >
-                    ngk.kasia@gmail.com
-                  </a>
-                </div>
-              </div>
-
-              <button type="button" className="aboutX__btn isGhost" onClick={closeCv}>
-                {t("close", { defaultValue: "Close" })}
-              </button>
-            </div> */}
 
             {/* ✅ scroll uniquement ici */}
             <div className="aboutX__modalBody" role="document">
