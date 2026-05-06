@@ -110,20 +110,42 @@ export function preloadBootOnce() {
   if (_bootPromise) return _bootPromise;
 
   _bootPromise = (async () => {
+    console.time("🧠 BOOT TOTAL");
     // Expose for DEV / other modules
     if (typeof window !== "undefined") window.__AG_BOOT_PROMISE__ = _bootPromise;
+    
 
     // 1) i18n blocking
     await i18n.loadNamespaces(["intro", "nav", "about", "portfolio", "home"]);
     await i18n.loadLanguages(["en", "fr", "pl", "nl"]);
 
     // 2) JSON blocking
-    const [projects, projectsHome, contactMessages, subjects] = await Promise.all([
+    // const [projects, projectsHome, contactMessages, subjects] = await Promise.all([
+    //   fetchJson("/projects.json"),
+    //   fetchJson(urlLocales("projects_home.json")),
+    //   // fetchJson("/messages.json"),
+    //   fetchJson("/subjects.json"),
+    // ]);
+    // const [projects, projectsHome, subjects] = await Promise.all([
+    //   fetchJson("/projects.json"),
+    //   fetchJson(urlLocales("projects_home.json")),
+    //   fetchJson("/subjects.json"),
+    // ]);
+    console.time("🌍 i18n");
+    await i18n.loadNamespaces(["intro", "nav", "about", "portfolio", "home"]);
+    await i18n.loadLanguages(["en", "fr", "pl", "nl"]);
+    console.timeEnd("🌍 i18n");
+
+    console.time("📦 JSON");
+    const [projects, projectsHome, subjects] = await Promise.all([
       fetchJson("/projects.json"),
       fetchJson(urlLocales("projects_home.json")),
-      // fetchJson("/messages.json"),
       fetchJson("/subjects.json"),
     ]);
+    console.timeEnd("📦 JSON");
+
+    
+    const safeContactMessages = [];
     
     const safeProjectsHome =
     projectsHome && typeof projectsHome === "object"
@@ -137,7 +159,7 @@ export function preloadBootOnce() {
   
     const safeProjects = Array.isArray(projects) ? projects : [];
     const safeSubjects = Array.isArray(subjects) ? subjects : [];
-    const safeContactMessages = Array.isArray(contactMessages) ? contactMessages : [];
+    // const safeContactMessages = Array.isArray(contactMessages) ? contactMessages : [];
 
     // 3) images to preload
     const portfolioImages = collectPortfolioImages(safeProjects);
@@ -146,32 +168,55 @@ export function preloadBootOnce() {
     // Stage 1 (blocking) — overlay + first portfolio + ALL essential
     const FIRST_PORTFOLIO_PRELOAD = 18;
 
+    // const stage1 = uniq([
+    //   ...HOMEOVERLAY_ASSETS,
+    //   ...homeProjectsImages.slice(0, 14),
+    //   ...portfolioImages.slice(0, FIRST_PORTFOLIO_PRELOAD),
+    //   "/assets/about_web.jpg",
+    //   "/assets/about_3d.jpg",
+    //   "/assets/about_angels.jpg",
+    //   "/assets/about_all.jpg",
+    // ]);
     const stage1 = uniq([
-      ...HOMEOVERLAY_ASSETS,
-      ...homeProjectsImages.slice(0, 14),
-      ...portfolioImages.slice(0, FIRST_PORTFOLIO_PRELOAD),
-      "/assets/about_web.jpg",
-      "/assets/about_3d.jpg",
-      "/assets/about_angels.jpg",
-      "/assets/about_all.jpg",
+      "/home_bg.jpg",
+      "/home_bg_step2.jpg",
+      "/preview_city.png",
+      "/preview_kasia.jpg",
     ]);
+    runIdle(() => {
+      requestAnimationFrame(() => {
+        const rest = uniq([
+          ...HOMEOVERLAY_ASSETS,
+          ...homeProjectsImages.slice(0, 14),
+          ...portfolioImages.slice(0, FIRST_PORTFOLIO_PRELOAD),
+          "/assets/about_web.jpg",
+          "/assets/about_3d.jpg",
+          "/assets/about_angels.jpg",
+          "/assets/about_all.jpg",
+        ]);
+    
+        preloadImagesOnce(rest).catch(() => {});
+      });
+    });
 
     // One single preload pipeline (deduped)
-    await preloadImagesOnce(stage1, { fetchPriority: "high", decoding: "async" });
-    try {
-      window.__AG_ABOUT_READY__ = true;
-      window.dispatchEvent(new Event("ag:aboutReady"));
+    // await preloadImagesOnce(stage1, { fetchPriority: "high", decoding: "async" });
+    // try {
+    //   window.__AG_ABOUT_READY__ = true;
+    //   window.dispatchEvent(new Event("ag:aboutReady"));
 
-    } catch {}
-    try {
-      window.__AG_CTC_READY__ = true;
-      window.dispatchEvent(new Event("ag:contactReady"));
-    } catch {}
-    try {
-      window.__AG_PRJ_READY__ = true;
-      window.dispatchEvent(new Event("ag:projectsReady"));
-    } catch {}
+    // } catch {}
+    // try {
+    //   window.__AG_CTC_READY__ = true;
+    //   window.dispatchEvent(new Event("ag:contactReady"));
+    // } catch {}
+    // try {
+    //   window.__AG_PRJ_READY__ = true;
+    //   window.dispatchEvent(new Event("ag:projectsReady"));
+    // } catch {}
 
+    // window.__AG_BOOT_READY__ = true;
+    // window.dispatchEvent(new Event("ag:bootReady"));
 
     
     // 4) stash data
@@ -197,8 +242,11 @@ export function preloadBootOnce() {
         preloadImagesOnce(rest).catch(() => {});
       });
     });
+    console.timeEnd("🧠 BOOT TOTAL");
+
     
   })();
+  
 
   // update exposed promise now that it's created
   if (typeof window !== "undefined") window.__AG_BOOT_PROMISE__ = _bootPromise;

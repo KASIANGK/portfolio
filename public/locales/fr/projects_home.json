@@ -20,11 +20,11 @@
         ],
         "tablet": [],
         "mobile": [          
-          "/assets/ExcuseApp/ex1.png",
-          "/assets/ExcuseApp/ex2.png",
-          "/assets/ExcuseApp/ex3.png",
-          "/assets/ExcuseApp/ex4.png",
-          "/assets/ExcuseApp/ex5.png"
+          "/assets/ExcuseApp/ex1.webp",
+          "/assets/ExcuseApp/ex2.webp",
+          "/assets/ExcuseApp/ex3.webp",
+          "/assets/ExcuseApp/ex4.webp",
+          "/assets/ExcuseApp/ex5.webp"
         ],
         "video":[
           "/assets/about/ExcuseApp.mov"
@@ -53,9 +53,9 @@
       ],
       "images": {
         "laptop": [
-          "/assets/SideGeek/s1.png",
-          "/assets/SideGeek/s3.png",
-          "/assets/SideGeek/side.png"
+          "/assets/SideGeek/s1.webp",
+          "/assets/SideGeek/s3.webp",
+          "/assets/SideGeek/side.webp"
         ],
         "tablet": [],
         "mobile": []
@@ -121,20 +121,20 @@
       ],
       "images": {
         "laptop": [
-          "/assets/McDo/mc.png",
-          "/assets/McDo/mcdoo.png",
-          "/assets/McDo/mcdooo.png"
+          "/assets/McDo/mc.webp",
+          "/assets/McDo/mcdoo.webp",
+          "/assets/McDo/mcdooo.webp"
         ],
         "tablet": [
-          "/assets/McDo/m1.png",
-          "/assets/McDo/m2.png",
-          "/assets/McDo/m3.png",
-          "/assets/McDo/m5.png",
-          "/assets/McDo/mcdo-tablet.png"
+          "/assets/McDo/m1.webp",
+          "/assets/McDo/m2.webp",
+          "/assets/McDo/m3.webp",
+          "/assets/McDo/m5.webp",
+          "/assets/McDo/mcdo-tablet.webp"
         ],
         "mobile": [
-          "/assets/McDo/m4.png",
-          "/assets/McDo/mcdo-small2.png"
+          "/assets/McDo/m4.webp",
+          "/assets/McDo/mcdo-small2.webp"
         ]
       },
       "link": "https://www.lien.com",
@@ -193,23 +193,23 @@
       ],
       "images": {
         "laptop": [
-          "/assets/Sneakers/snlight.png",
-          "/assets/Sneakers/sneakers.png",
-          "/assets/Sneakers/sn9.png",
-          "/assets/Sneakers/sn10.png"
+          "/assets/Sneakers/snlight.webp",
+          "/assets/Sneakers/sneakers.webp",
+          "/assets/Sneakers/sn9.webp",
+          "/assets/Sneakers/sn10.webp"
         ],
         "tablet": [
-          "/assets/Sneakers/sn2.png",
-          "/assets/Sneakers/sn3.png",
-          "/assets/Sneakers/sn4.png",
-          "/assets/Sneakers/sn5.png",
-          "/assets/Sneakers/sn6.png",
-          "/assets/Sneakers/sn7.png",
-          "/assets/Sneakers/sn8.png"
+          "/assets/Sneakers/sn2.webp",
+          "/assets/Sneakers/sn3.webp",
+          "/assets/Sneakers/sn4.webp",
+          "/assets/Sneakers/sn5.webp",
+          "/assets/Sneakers/sn6.webp",
+          "/assets/Sneakers/sn7.webp",
+          "/assets/Sneakers/sn8.webp"
         ],
         "mobile": [
-          "/assets/Sneakers/s1.png",
-          "/assets/Sneakers/sneakersDark.png"
+          "/assets/Sneakers/s1.webp",
+          "/assets/Sneakers/sneakersDark.webp"
         ]
       },
       "link": "https://www.lien.com",
@@ -300,7 +300,7 @@
         "laptop": [],
         "tablet": [],
         "mobile": [
-          "/assets/Brainy/b1.png"
+          "/assets/Brainy/b1.webp"
         ],
         "video":[
           "/assets/Brainy/Brainy.mov",
@@ -319,7 +319,7 @@
       "laptop": [],
       "tablet": [],
       "mobile": [
-        "/assets/Brainy/b1.png"
+        "/assets/Brainy/b1.webp"
       ],
       "video":[
         "/assets/Brainy/Brainy.mov",
@@ -328,20 +328,20 @@
     }, "link": "https://www.lien.com", "links": { "demo": "https://www.lien.com", "repo": "" } },
     { "id": 11, "slug": "mc-do","refSlug": "mc-do", "title": "McDo", "function": "Web Dev", "lead": "E-commerce demo : panier, commande et livraison avec UI responsive.", "description": "Site d’achat/livraison avec parcours produit → panier → confirmation, pensé pour être clair et maintenable.", "overview": "Projet orienté front + logique de state : navigation, catalogue, panier, récapitulatif et UX responsive. J’ai travaillé la structure des composants, la cohérence UI et la lisibilité du flux d’achat. Objectif : une app simple mais propre, avec un comportement prévisible et une base scalable. J’ai aussi réalisé la direction artistique et les assets (visuels, composition, cohérence graphique).", "stack": ["React", "JavaScript", "CSS", "JSON"], "role": ["UI/UX + intégration responsive", "State management du panier", "Structuration composants + routing (si présent)", "DA + création d’assets (visuels) + performance perçue"],       "images": {
       "laptop": [
-        "/assets/McDo/mc.png",
-        "/assets/McDo/mcdoo.png",
-        "/assets/McDo/mcdooo.png"
+        "/assets/McDo/mc.webp",
+        "/assets/McDo/mcdoo.webp",
+        "/assets/McDo/mcdooo.webp"
       ],
       "tablet": [
-        "/assets/McDo/m1.png",
-        "/assets/McDo/m2.png",
-        "/assets/McDo/m3.png",
-        "/assets/McDo/m5.png",
-        "/assets/McDo/mcdo-tablet.png"
+        "/assets/McDo/m1.webp",
+        "/assets/McDo/m2.webp",
+        "/assets/McDo/m3.webp",
+        "/assets/McDo/m5.webp",
+        "/assets/McDo/mcdo-tablet.webp"
       ],
       "mobile": [
-        "/assets/McDo/m4.png",
-        "/assets/McDo/mcdo-small2.png"
+        "/assets/McDo/m4.webp",
+        "/assets/McDo/mcdo-small2.webp"
       ]
     },"link": "https://www.lien.com", "links": { "demo": "https://www.lien.com", "repo": "" } },
     { "id": 12, "slug": "tarmac", "refSlug": "tarmac","title": "Tarmac", "function": "3D", "lead": "Modélisation + animation Blender : assets, shading, vidéo finale.", "description": "Projet 3D complet : modélisation, shading, animation et montage vidéo, avec création d’assets dédiés.", "overview": "Projet orienté production : construire un rendu cohérent de A à Z (modélisation, matériaux, lumière, animation), puis livrer une vidéo propre (rythme, cuts, export). J’ai travaillé la qualité perçue via shading/lights et la lisibilité des mouvements, tout en gardant un pipeline clair (scènes, assets, exports) pour itérer sans casser.", "stack": ["Blender", "3D Modeling", "Shading", "Animation", "Video Editing"], "role": ["Modélisation & création d’assets", "Shading / matériaux / lighting", "Animation + rendu", "Montage vidéo + export final"],       "images": {
@@ -356,9 +356,9 @@
     }, "link": "https://www.lien.com", "links": { "demo": "https://www.lien.com", "repo": "" } },
     { "id": 13, "slug": "sidegeek", "refSlug": "sidegeek","title": "SideGeek", "function": "Web Dev", "lead": "Plateforme info + base élèves : Vue.js & Laravel, travail en équipe.", "description": "Projet collaboratif (Vue.js + Laravel) : mise en place d’une plateforme de formation et d’une base de données liée aux profils/apprenants.", "overview": "Projet d’équipe où l’objectif était de livrer une app structurée, maintenable et cohérente côté front/back. J’ai participé à l’intégration, au cadrage des composants, et à l’organisation du travail via Git/GitHub (branches, PR, revue). Le focus était autant sur la livraison que sur une base saine : conventions, découpage clair et communication d’équipe.", "stack": ["Vue.js", "Laravel", "PHP", "MySQL", "GitHub"], "role": ["Développement en équipe (workflow Git/GitHub, PR, branches)", "Intégration UI (Vue) et structuration composants", "Contribution côté logique et données (selon périmètre)", "Coordination : conventions, découpage, cohérence UI"],       "images": {
       "laptop": [
-        "/assets/SideGeek/s1.png",
-        "/assets/SideGeek/s3.png",
-        "/assets/SideGeek/side.png"
+        "/assets/SideGeek/s1.webp",
+        "/assets/SideGeek/s3.webp",
+        "/assets/SideGeek/side.webp"
       ],
       "tablet": [],
       "mobile": []
@@ -385,11 +385,11 @@
       ],
       "tablet": [],
       "mobile": [          
-        "/assets/ExcuseApp/ex1.png",
-        "/assets/ExcuseApp/ex2.png",
-        "/assets/ExcuseApp/ex3.png",
-        "/assets/ExcuseApp/ex4.png",
-        "/assets/ExcuseApp/ex5.png"
+        "/assets/ExcuseApp/ex1.webp",
+        "/assets/ExcuseApp/ex2.webp",
+        "/assets/ExcuseApp/ex3.webp",
+        "/assets/ExcuseApp/ex4.webp",
+        "/assets/ExcuseApp/ex5.webp"
       ],
       "video":[
         "/assets/about/ExcuseApp.mov"
@@ -434,23 +434,23 @@
       ],
       "images": {
         "laptop": [
-          "/assets/Sneakers/snlight.png",
-          "/assets/Sneakers/sneakers.png",
-          "/assets/Sneakers/sn9.png",
-          "/assets/Sneakers/sn10.png"
+          "/assets/Sneakers/snlight.webp",
+          "/assets/Sneakers/sneakers.webp",
+          "/assets/Sneakers/sn9.webp",
+          "/assets/Sneakers/sn10.webp"
         ],
         "tablet": [
-          "/assets/Sneakers/sn2.png",
-          "/assets/Sneakers/sn3.png",
-          "/assets/Sneakers/sn4.png",
-          "/assets/Sneakers/sn5.png",
-          "/assets/Sneakers/sn6.png",
-          "/assets/Sneakers/sn7.png",
-          "/assets/Sneakers/sn8.png"
+          "/assets/Sneakers/sn2.webp",
+          "/assets/Sneakers/sn3.webp",
+          "/assets/Sneakers/sn4.webp",
+          "/assets/Sneakers/sn5.webp",
+          "/assets/Sneakers/sn6.webp",
+          "/assets/Sneakers/sn7.webp",
+          "/assets/Sneakers/sn8.webp"
         ],
         "mobile": [
-          "/assets/Sneakers/s1.png",
-          "/assets/Sneakers/sneakersDark.png"
+          "/assets/Sneakers/s1.webp",
+          "/assets/Sneakers/sneakersDark.webp"
         ]
       },
       "link": "https://www.lien.com",

@@ -136,22 +136,22 @@ function Layout() {
   /* ----------------------------------
      Desktop prewarm (premium feeling)
   -----------------------------------*/
-  useEffect(() => {
-    if (location.pathname !== "/" || isMobile) return;
+  // useEffect(() => {
+  //   if (location.pathname !== "/" || isMobile) return;
 
-    const prewarm = () =>
-      import("./Components/Home/HomeCity/HomeCity").catch(() => {});
+  //   const prewarm = () =>
+  //     import("./Components/Home/HomeCity/HomeCity").catch(() => {});
 
-    const id =
-      "requestIdleCallback" in window
-        ? window.requestIdleCallback(prewarm)
-        : window.setTimeout(prewarm, 800);
+  //   const id =
+  //     "requestIdleCallback" in window
+  //       ? window.requestIdleCallback(prewarm)
+  //       : window.setTimeout(prewarm, 800);
 
-    return () => {
-      if (typeof id === "number") window.clearTimeout(id);
-      else window.cancelIdleCallback?.(id);
-    };
-  }, [location.pathname, isMobile]);
+  //   return () => {
+  //     if (typeof id === "number") window.clearTimeout(id);
+  //     else window.cancelIdleCallback?.(id);
+  //   };
+  // }, [location.pathname, isMobile]);
 
   /* ----------------------------------
      Footer policy

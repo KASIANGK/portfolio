@@ -9,9 +9,9 @@ import { whenImageReady } from "../../../../utils/projectsCache";
 const clamp01 = (n) => Math.max(0, Math.min(1, n));
 
 const PREVIEW = {
-  explore: "/preview_city.png",
-  about: "/preview_kasia.jpg",
-  projectsFallback: ["/preview_project_1.png", "/preview_project_2.png", "/preview_project_3.png"],
+  explore: "/preview_city.webp",
+  about: "/preview_kasia.webp",
+  projectsFallback: ["/preview_project_1.webp", "/preview_project_2.webp", "/preview_project_3.webp"],
 };
 
 function isDesktopFinePointer() {

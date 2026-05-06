@@ -1,5 +1,5 @@
 // src/Components/Home/Home.jsx
-import { useEffect, useMemo, useRef, useState, useCallback } from "react";
+import {useEffect,useMemo,useRef,useState,useCallback,lazy,Suspense} from "react";
 import { useLocation } from "react-router-dom";
 
 import HomeOverlay from "./HomeOverlay/HomeOverlay";
@@ -7,9 +7,12 @@ import useOnboarding from "../../hooks/useOnboarding";
 import useBoot from "../../hooks/useBoot";
 import "./Home.css";
 
-import Contact from "../Contact/Contact";
-import About from "../About/About";
-import ProjectsMasonryMessy from "../Projects/ProjectsMasonryMessy";
+// import Contact from "../Contact/Contact";
+// import About from "../About/About";
+// import ProjectsMasonryMessy from "../Projects/ProjectsMasonryMessy";
+const About = lazy(() => import("../About/About"));
+const ProjectsMasonryMessy = lazy(() => import("../Projects/ProjectsMasonryMessy"));
+const Contact = lazy(() => import("../Contact/Contact"));
 
 /* ---------------------------------------
    Utils
@@ -95,7 +98,7 @@ function scrollToIdWithOffset(id, { behavior = "smooth", offset = 72 } = {}) {
   return true;
 }
 
-// utile si tu veux une heuristique d’offset (navbar height)
+// utile si on veut une heuristique d’offset (navbar height)
 function computeTopOffset() {
   // adapte si tu as une navbar fixed avec une hauteur connue
   const nav = document.querySelector(".navHUD");
@@ -177,7 +180,7 @@ export default function Home() {
     try {
       return (
         location.state?.goHomeStep === 2 ||
-        !!location.state?.__scrollIntent || // ✅ IMPORTANT: même logique que navbar
+        !!location.state?.__scrollIntent || // même logique que navbar
         sessionStorage.getItem("ag_home_step_once") === "2"
       );
     } catch {
@@ -354,11 +357,11 @@ export default function Home() {
     const warm = async () => {
       try {
         const imgA = new Image();
-        imgA.src = "/assets/about_officee.jpg";
+        imgA.src = "/assets/about_officee.webp";
         await imgA.decode?.();
 
         const imgP = new Image();
-        imgP.src = "/assets/projects_officee.jpg";
+        imgP.src = "/assets/projects_officee.webp";
         await imgP.decode?.();
       } catch {}
     };
@@ -456,6 +459,25 @@ export default function Home() {
         <div className="bgScene" aria-hidden>
           <img
             className="bgScene__img bgScene__wire"
+            src="/assets/about_officee.webp"
+            alt=""
+            draggable="false"
+            loading="eager"
+            decoding="async"
+            fetchPriority="high"
+          />
+
+          <img
+            className="bgScene__img bgScene__tex"
+            src="/assets/projects_officee.webp"
+            alt=""
+            draggable="false"
+            loading="eager"
+            decoding="async"
+            fetchPriority="high"
+          />
+          {/* <img
+            className="bgScene__img bgScene__wire"
             src="/assets/about_officee.jpg"
             alt=""
             draggable="false"
@@ -465,29 +487,41 @@ export default function Home() {
             src="/assets/projects_officee.jpg"
             alt=""
             draggable="false"
-          />
+          /> */}
         </div>
-
         <section ref={aboutRef} id="about" className="homeSection">
           <div className={`homeSection__card ${ready.about ? "isReady" : "isLoading"}`}>
-            <About />
+            {overlayStep === 2 && (
+              <Suspense fallback={null}>
+                <About />
+              </Suspense>
+            )}
           </div>
         </section>
 
         <section ref={projectsRef} id="projects" className="homeSection">
           <div className={`homeSection__card ${ready.projects ? "isReady" : "isLoading"}`}>
-            <ProjectsMasonryMessy />
+            {overlayStep === 2 && (
+              <Suspense fallback={null}>
+                <ProjectsMasonryMessy />
+              </Suspense>
+            )}
           </div>
         </section>
 
         <section ref={contactRef} id="contact" className="homeSection">
           <div className={`homeSection__card ${ready.contact ? "isReady" : "isLoading"}`}>
-            <Contact
-              initialContactInfo={contactInfoData}
-              initialSubjects={subjectsData}
-            />
+            {overlayStep === 2 && (
+              <Suspense fallback={null}>
+                <Contact
+                  initialContactInfo={contactInfoData}
+                  initialSubjects={subjectsData}
+                />
+              </Suspense>
+            )}
           </div>
         </section>
+
       </div>
     </div>
   );

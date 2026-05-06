@@ -19,11 +19,11 @@
         "laptop": [],
         "tablet": [],
         "mobile": [
-          "/assets/ExcuseApp/ex1.png",
-          "/assets/ExcuseApp/ex2.png",
-          "/assets/ExcuseApp/ex3.png",
-          "/assets/ExcuseApp/ex4.png",
-          "/assets/ExcuseApp/ex5.png"
+          "/assets/ExcuseApp/ex1.webp",
+          "/assets/ExcuseApp/ex2.webp",
+          "/assets/ExcuseApp/ex3.webp",
+          "/assets/ExcuseApp/ex4.webp",
+          "/assets/ExcuseApp/ex5.webp"
         ],
         "video": ["/assets/about/ExcuseApp.mov"]
       },
@@ -46,7 +46,7 @@
         "Coördinatie: conventies, opdeling, UI-consistentie"
       ],
       "images": {
-        "laptop": ["/assets/SideGeek/s1.png", "/assets/SideGeek/s3.png", "/assets/SideGeek/side.png"],
+        "laptop": ["/assets/SideGeek/s1.webp", "/assets/SideGeek/s3.webp", "/assets/SideGeek/side.webp"],
         "tablet": [],
         "mobile": []
       },
@@ -102,9 +102,9 @@
         "Art direction + assetcreatie (visuals) + perceived performance"
       ],
       "images": {
-        "laptop": ["/assets/McDo/mc.png", "/assets/McDo/mcdoo.png", "/assets/McDo/mcdooo.png"],
-        "tablet": ["/assets/McDo/m1.png", "/assets/McDo/m2.png", "/assets/McDo/m3.png", "/assets/McDo/m5.png", "/assets/McDo/mcdo-tablet.png"],
-        "mobile": ["/assets/McDo/m4.png", "/assets/McDo/mcdo-small2.png"]
+        "laptop": ["/assets/McDo/mc.webp", "/assets/McDo/mcdoo.webp", "/assets/McDo/mcdooo.webp"],
+        "tablet": ["/assets/McDo/m1.webp", "/assets/McDo/m2.webp", "/assets/McDo/m3.webp", "/assets/McDo/m5.webp", "/assets/McDo/mcdo-tablet.webp"],
+        "mobile": ["/assets/McDo/m4.webp", "/assets/McDo/mcdo-small2.webp"]
       },
       "link": "https://www.lien.com",
       "links": { "demo": "https://www.lien.com", "repo": "" }
@@ -154,9 +154,9 @@
         "Projectorganisatie (componenten, data, styles)"
       ],
       "images": {
-        "laptop": ["/assets/Sneakers/snlight.png", "/assets/Sneakers/sneakers.png", "/assets/Sneakers/sn9.png", "/assets/Sneakers/sn10.png"],
-        "tablet": ["/assets/Sneakers/sn2.png", "/assets/Sneakers/sn3.png", "/assets/Sneakers/sn4.png", "/assets/Sneakers/sn5.png", "/assets/Sneakers/sn6.png", "/assets/Sneakers/sn7.png", "/assets/Sneakers/sn8.png"],
-        "mobile": ["/assets/Sneakers/s1.png", "/assets/Sneakers/sneakersDark.png"]
+        "laptop": ["/assets/Sneakers/snlight.webp", "/assets/Sneakers/sneakers.webp", "/assets/Sneakers/sn9.webp", "/assets/Sneakers/sn10.webp"],
+        "tablet": ["/assets/Sneakers/sn2.webp", "/assets/Sneakers/sn3.webp", "/assets/Sneakers/sn4.webp", "/assets/Sneakers/sn5.webp", "/assets/Sneakers/sn6.webp", "/assets/Sneakers/sn7.webp", "/assets/Sneakers/sn8.webp"],
+        "mobile": ["/assets/Sneakers/s1.webp", "/assets/Sneakers/sneakersDark.webp"]
       },
       "link": "https://www.lien.com",
       "links": { "demo": "https://www.lien.com", "repo": "" }
@@ -216,7 +216,7 @@
         "Lookdev / belichting / render",
         "Outputs voor social (kadrages, angles)"
       ],
-      "images": { "laptop": [], "tablet": [], "mobile": ["/assets/Brainy/b1.png"], "video": ["/assets/Brainy/Brainy.mov", "/assets/Brainy/Brainy2.mov"] },
+      "images": { "laptop": [], "tablet": [], "mobile": ["/assets/Brainy/b1.webp"], "video": ["/assets/Brainy/Brainy.mov", "/assets/Brainy/Brainy2.mov"] },
       "link": "https://www.lien.com",
       "links": { "demo": "https://www.lien.com", "repo": "" }
     }
@@ -241,7 +241,7 @@
       "images": {
         "laptop": [],
         "tablet": [],
-        "mobile": ["/assets/Brainy/b1.png"],
+        "mobile": ["/assets/Brainy/b1.webp"],
         "video": ["/assets/Brainy/Brainy.mov", "/assets/Brainy/Brainy2.mov"]
       },
       "link": "https://www.lien.com",
@@ -265,9 +265,9 @@
         "Art direction + asset creatie (visuals) + perceived performance"
       ],
       "images": {
-        "laptop": ["/assets/McDo/mc.png", "/assets/McDo/mcdoo.png", "/assets/McDo/mcdooo.png"],
-        "tablet": ["/assets/McDo/m1.png", "/assets/McDo/m2.png", "/assets/McDo/m3.png", "/assets/McDo/m5.png", "/assets/McDo/mcdo-tablet.png"],
-        "mobile": ["/assets/McDo/m4.png", "/assets/McDo/mcdo-small2.png"]
+        "laptop": ["/assets/McDo/mc.webp", "/assets/McDo/mcdoo.webp", "/assets/McDo/mcdooo.webp"],
+        "tablet": ["/assets/McDo/m1.webp", "/assets/McDo/m2.webp", "/assets/McDo/m3.webp", "/assets/McDo/m5.webp", "/assets/McDo/mcdo-tablet.webp"],
+        "mobile": ["/assets/McDo/m4.webp", "/assets/McDo/mcdo-small2.webp"]
       },
       "link": "https://www.lien.com",
       "links": { "demo": "https://www.lien.com", "repo": "" }
@@ -316,7 +316,7 @@
         "Coördinatie: conventies, opdeling, UI-consistentie"
       ],
       "images": {
-        "laptop": ["/assets/SideGeek/s1.png", "/assets/SideGeek/s3.png", "/assets/SideGeek/side.png"],
+        "laptop": ["/assets/SideGeek/s1.webp", "/assets/SideGeek/s3.webp", "/assets/SideGeek/side.webp"],
         "tablet": [],
         "mobile": []
       },
@@ -369,7 +369,7 @@
       "images": {
         "laptop": [],
         "tablet": [],
-        "mobile": ["/assets/ExcuseApp/ex1.png", "/assets/ExcuseApp/ex2.png", "/assets/ExcuseApp/ex3.png", "/assets/ExcuseApp/ex4.png", "/assets/ExcuseApp/ex5.png"],
+        "mobile": ["/assets/ExcuseApp/ex1.webp", "/assets/ExcuseApp/ex2.webp", "/assets/ExcuseApp/ex3.webp", "/assets/ExcuseApp/ex4.webp", "/assets/ExcuseApp/ex5.webp"],
         "video": ["/assets/about/ExcuseApp.mov"]
       },
       "link": "https://www.lien.com",
@@ -443,9 +443,9 @@
         "Projectorganisatie (componenten, data, styles)"
       ],
       "images": {
-        "laptop": ["/assets/Sneakers/snlight.png", "/assets/Sneakers/sneakers.png", "/assets/Sneakers/sn9.png", "/assets/Sneakers/sn10.png"],
-        "tablet": ["/assets/Sneakers/sn2.png", "/assets/Sneakers/sn3.png", "/assets/Sneakers/sn4.png", "/assets/Sneakers/sn5.png", "/assets/Sneakers/sn6.png", "/assets/Sneakers/sn7.png", "/assets/Sneakers/sn8.png"],
-        "mobile": ["/assets/Sneakers/s1.png", "/assets/Sneakers/sneakersDark.png"]
+        "laptop": ["/assets/Sneakers/snlight.webp", "/assets/Sneakers/sneakers.webp", "/assets/Sneakers/sn9.webp", "/assets/Sneakers/sn10.webp"],
+        "tablet": ["/assets/Sneakers/sn2.webp", "/assets/Sneakers/sn3.webp", "/assets/Sneakers/sn4.webp", "/assets/Sneakers/sn5.webp", "/assets/Sneakers/sn6.webp", "/assets/Sneakers/sn7.webp", "/assets/Sneakers/sn8.webp"],
+        "mobile": ["/assets/Sneakers/s1.webp", "/assets/Sneakers/sneakersDark.webp"]
       },
       "link": "https://www.lien.com",
       "links": { "demo": "https://www.lien.com", "repo": "" }

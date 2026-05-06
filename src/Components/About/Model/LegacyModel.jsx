@@ -7,7 +7,7 @@ const clamp = THREE.MathUtils.clamp;
 
 export default function LegacyModel({ mousePosition, isActive }) {
   const groupRef = useRef();
-  const { scene } = useGLTF("/emoji.glb");
+  const { scene } = useGLTF("/emoji_optimized.glb");
   const model = useMemo(() => scene.clone(true), [scene]);
 
   const targetPos = useRef(new THREE.Vector3(0, 0, 0));
@@ -59,4 +59,4 @@ export default function LegacyModel({ mousePosition, isActive }) {
   );
 }
 
-useGLTF.preload("/emoji.glb");
+useGLTF.preload("/emoji_optimized.glb");

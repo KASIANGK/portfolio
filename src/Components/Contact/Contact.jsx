@@ -120,6 +120,11 @@ function Contact() {
     () => SUBJECTS.find((s) => s.id === subject)?.label || "Contact",
     [subject]
   );
+  useEffect(() => {
+    requestAnimationFrame(() => {
+      window.dispatchEvent(new Event("ag:contactReady"));
+    });
+  }, []);
 
   // READY event (same ecosystem as other sections)
   useEffect(() => {

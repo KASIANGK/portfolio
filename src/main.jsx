@@ -61,6 +61,16 @@ function armReadyFlag(eventName, datasetKey, already = false) {
   return () => window.removeEventListener(eventName, on);
 }
 
+function warmHomeSections() {
+  return Promise.allSettled([
+    import("./Components/About/About"),
+    import("./Components/Projects/ProjectsMasonryMessy"),
+    import("./Components/Contact/Contact"),
+  ]);
+}
+
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 /* -----------------------------
    Root
 ----------------------------- */
@@ -83,15 +93,21 @@ function Root() {
       setShowApp(true);
 
       // (optional) ensure splash stays at least a bit (prevents flash on hot cache)
-      const MIN_SPLASH_MS = 350;
-      const tMin = performance.now() + MIN_SPLASH_MS;
+      const MIN_SPLASH_MS = 1400;
 
-      // 1) preload critical boot (json + warm images)
+      const bootPromise = preloadBootOnce();
+      const warmSectionsPromise = warmHomeSections();
+      
       try {
-        await preloadBootOnce();
+        await Promise.allSettled([
+          bootPromise,
+          warmSectionsPromise,
+          wait(MIN_SPLASH_MS),
+        ]);
       } catch (e) {
-        devLog("[Boot] preloadBootOnce failed (ignored)", e);
+        devLog("[Boot] boot warmup failed (ignored)", e);
       }
+
       if (!alive) return;
       mark("bootPreloadDone");
       devLog("[Boot] boot preload done", T.bootPreloadDone - T.start, "ms");
@@ -110,7 +126,7 @@ function Root() {
       mark("afterCommit");
       devLog("[Boot] after 2 RAF", T.afterCommit - T.start, "ms");
 
-      // 4) reveal (DO NOT WAIT for about/projects/contact)
+      // 4) reveal after boot + warm home sections
       try {
         window.__AG_REVEAL_DONE__ = true;
         document.documentElement.dataset.agReveal = "1";
@@ -120,10 +136,10 @@ function Root() {
       devLog("[Boot] reveal fired", T.revealFired - T.start, "ms");
 
       // wait until min splash time
-      while (performance.now() < tMin) {
-        await raf();
-        if (!alive) return;
-      }
+      // while (performance.now() < tMin) {
+      //   await raf();
+      //   if (!alive) return;
+      // }
 
       // one more frame then hide splash
       await raf();
