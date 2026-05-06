@@ -24,7 +24,16 @@ html, body {
 
 .dark-mode {
   margin: 0;
+  background-image: none;
+  background-position-x: none;
+  background-position-y: none;
+  background-size: none;
+  background-repeat: none;
+  background-attachment: none;
+  background-origin: none;
+  background-clip: none;
 }
+
 
 button {
   background: rgba(255, 119, 0, 0.8); 

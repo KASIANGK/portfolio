@@ -312,39 +312,79 @@ export default function Home() {
   --------------------------------------- */
   
   /* ---------------------------------------
-     BG BLEND (unchanged)
+     BG BLEND (non stop
   --------------------------------------- */
+  // useEffect(() => {
+  //   if (overlayStep !== 2) return;
+
+  //   const root = document.documentElement;
+
+  //   if (!isDesktop) {
+  //     root.style.setProperty("--projectsBlend", "0");
+  //     return () => root.style.removeProperty("--projectsBlend");
+  //   }
+
+  //   const prj = projectsRef.current;
+  //   if (!prj) return;
+
+  //   let rafId = 0;
+
+  //   const update = () => {
+  //     const vh = window.innerHeight || 1;
+  //     const r = prj.getBoundingClientRect();
+
+  //     const start = vh * 0.6;
+  //     const end = vh * -0.6;
+
+  //     const blend = clamp01((start - r.top) / (start - end));
+  //     root.style.setProperty("--projectsBlend", blend.toFixed(4));
+
+  //     rafId = requestAnimationFrame(update);
+  //   };
+
+  //   update();
+
+  //   return () => {
+  //     cancelAnimationFrame(rafId);
+  //     root.style.removeProperty("--projectsBlend");
+  //   };
+  // }, [overlayStep, isDesktop]);
+
   useEffect(() => {
     if (overlayStep !== 2) return;
-
+  
     const root = document.documentElement;
-
+  
     if (!isDesktop) {
       root.style.setProperty("--projectsBlend", "0");
       return () => root.style.removeProperty("--projectsBlend");
     }
-
+  
     const prj = projectsRef.current;
     if (!prj) return;
-
+  
     let rafId = 0;
-
+    let active = true;
+  
     const update = () => {
+      if (!active) return;
+  
       const vh = window.innerHeight || 1;
       const r = prj.getBoundingClientRect();
-
+  
       const start = vh * 0.6;
       const end = vh * -0.6;
-
+  
       const blend = clamp01((start - r.top) / (start - end));
       root.style.setProperty("--projectsBlend", blend.toFixed(4));
-
+  
       rafId = requestAnimationFrame(update);
     };
-
-    update();
-
+  
+    rafId = requestAnimationFrame(update);
+  
     return () => {
+      active = false;
       cancelAnimationFrame(rafId);
       root.style.removeProperty("--projectsBlend");
     };

@@ -1,6 +1,16 @@
 /* ===============================
    PAGE BASE
    =============================== */
+
+  html,
+  body,
+  .homePage,
+  .homeStage,
+  .homeSection {
+    scroll-snap-type: none !important;
+    scroll-snap-align: none !important;
+  }
+
    .homePage {
     position: relative;
     width: 100%;
@@ -67,6 +77,7 @@
   .homeStage {
     position: relative;
     z-index: 1;
+    /* overflow: visible; */
   }
   
   .homeStage[data-enabled="0"] {

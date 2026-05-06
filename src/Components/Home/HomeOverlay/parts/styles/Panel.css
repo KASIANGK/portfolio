@@ -15,8 +15,8 @@
     background: rgba(16, 10, 38, 0.45);
   
     /* keep as-is since you tested it's not the culprit */
-    backdrop-filter: blur(14px) saturate(130%);
-    -webkit-backdrop-filter: blur(14px) saturate(130%);
+    backdrop-filter: blur(8px) saturate(130%);
+    -webkit-backdrop-filter: blur(8px) saturate(130%);
   
     border: 1px solid rgba(255, 255, 255, 0.10);
   
@@ -26,7 +26,7 @@
   
     isolation: isolate;
     transform: translateZ(0);
-    will-change: transform;
+    /* will-change: transform; */
   
     overflow: hidden;
   }
@@ -48,13 +48,15 @@
   .homeOverlay__panel::after{
     content: "";
     position: absolute;
-    inset: -60px;
+    /* inset: -60px; */
   
     background:
       radial-gradient(420px 260px at 25% 30%, rgba(255, 0, 170, 0.28), transparent 60%),
       radial-gradient(420px 260px at 80% 70%, rgba(0, 255, 255, 0.18), transparent 60%);
   
-    filter: blur(18px);
+    /* filter: blur(18px); */
+    inset: -20px;
+    filter: blur(8px);
     opacity: 0.65;
     pointer-events: none;
   }
@@ -73,7 +75,8 @@
     border-radius: 22px !important;
     z-index: 2;
   }
-  
+
+  /* div scan */
   .homeOverlay__shine{
     position: absolute;
     inset: -40%;
@@ -81,11 +84,11 @@
     z-index: 3;
   
     opacity: 0;
-    mix-blend-mode: screen;
-    filter: blur(14px);
+    /* mix-blend-mode: screen;
+    filter: blur(14px); */
   
     transform: translate(-30%, -40%) rotate(18deg);
-    will-change: transform, opacity;
+    /* will-change: transform, opacity; */
   
     background: linear-gradient(
       115deg,
@@ -106,7 +109,9 @@
     80%  { opacity: 0.12; }
     100% { transform: translate(-40%, -55%) rotate(18deg); opacity: 0.00; }
   }
-  
+
+
+  /* div square anim */
   .homeOverlay__orb{
     position: absolute;
     width: 420px;
@@ -118,7 +123,7 @@
       radial-gradient(circle at 35% 35%, rgba(255, 0, 170, 0.40), transparent 55%),
       radial-gradient(circle at 70% 65%, rgba(0, 255, 255, 0.22), transparent 60%);
   
-    filter: blur(20px);
+    filter: blur(10px);
     opacity: 0.75;
     animation: orbFloat 7s ease-in-out infinite;
   }

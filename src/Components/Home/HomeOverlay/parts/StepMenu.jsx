@@ -39,10 +39,10 @@ export default function StepMenu({
     >
       <div className="homeOverlay__panel">
         <div className="homeOverlay__fx" aria-hidden="true">
-          <div className="homeOverlay__orb" />
+          {/* <div className="homeOverlay__orb" /> */}
           <div className="homeOverlay__grid" />
         </div>
-        <div className="homeOverlay__shine" aria-hidden="true" />
+        {/* <div className="homeOverlay__shine" aria-hidden="true" /> */}
 
         <div className="homeOverlay__badge">Creative Tech://Fullstack_Dev</div>
 
