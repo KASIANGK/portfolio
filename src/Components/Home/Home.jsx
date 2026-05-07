@@ -3,6 +3,7 @@ import {useEffect,useMemo,useRef,useState,useCallback,lazy,Suspense} from "react
 import { useLocation } from "react-router-dom";
 
 import HomeOverlay from "./HomeOverlay/HomeOverlay";
+import NavbarScrollHomePage from "./NavbarScrollHomePage/NavbarScrollHomePage";
 import useOnboarding from "../../hooks/useOnboarding";
 import useBoot from "../../hooks/useBoot";
 import "./Home.css";
@@ -160,6 +161,15 @@ export default function Home() {
   const aboutRef = useRef(null);
   const projectsRef = useRef(null);
   const contactRef = useRef(null);
+  const sectionRefs = useMemo(
+    () => ({
+      welcome: headerRef,
+      about: aboutRef,
+      projects: projectsRef,
+      contact: contactRef,
+    }),
+    []
+  );
 
   const location = useLocation();
   const { shouldShowLanguageStep } = useOnboarding();
@@ -442,6 +452,11 @@ export default function Home() {
   --------------------------------------- */
   return (
     <div className="homePage">
+      <NavbarScrollHomePage
+        enabled={overlayStep === 2}
+        refs={sectionRefs}
+        disableBelow={980}
+      />
       <div ref={headerRef} id="welcome">
         <HomeOverlay
           onStepChange={setOverlayStep}

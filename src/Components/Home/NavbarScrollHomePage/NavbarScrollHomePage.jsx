@@ -4,12 +4,7 @@ import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import "./NavbarScrollHomePage.css";
 
-const SECTIONS = [
-  { key: "welcome", label: "Welcome" },
-  { key: "about", label: "About" },
-  { key: "projects", label: "Projects" },
-  { key: "contact", label: "Contact" },
-];
+const SECTION_KEYS = ["welcome", "about", "projects", "contact"];
 
 const LS_POS = "ag_navscrollhp_pos_v2_abs";
 
@@ -24,6 +19,28 @@ export default function NavbarScrollHomePage({
   disableBelow = 980, // phone/tablet cutoff
 }) {
   const { t } = useTranslation("nav");
+
+  const SECTIONS = useMemo(
+    () => [
+      {
+        key: "welcome",
+        label: t("items.home"),
+      },
+      {
+        key: "about",
+        label: t("items.about"),
+      },
+      {
+        key: "projects",
+        label: t("items.projects"),
+      },
+      {
+        key: "contact",
+        label: t("items.contact"),
+      },
+    ],
+    [t]
+  );
 
   // ✅ Hooks ALWAYS called
   const [mounted, setMounted] = useState(false);
@@ -72,7 +89,7 @@ export default function NavbarScrollHomePage({
       ...s,
       el: refs?.[s.key]?.current ?? document.getElementById(s.key),
     })).filter((x) => x.el);
-  }, [refs]);
+  }, [refs, SECTIONS]);
 
   const clampAbs = useCallback((x, y) => {
     const nav = navRef.current;

@@ -10,6 +10,7 @@ import {
 
 import { ThemeProvider } from "./ThemeContext";
 
+import { applyPerfProfile } from "./utils/perfProfile";
 import Home from "./Components/Home/Home";
 import Skills from "./Components/Skills/Skills";
 import Navbar from "./Components/Navbar/Navbar";
@@ -18,7 +19,7 @@ import LanguageToast from "./Components/Navbar/LanguageToast";
 import Portfolio from "./Components/Portfolio/Portfolio";
 import ProjectPage from "./Components/Portfolio/ProjectPage/ProjectPage";
 import MobileCityPreview from "./Components/Home/HomeCity/MobileCityPreview";
-import ScrollToTop from "./utils/ScrollToTop";
+import ScrollToTop from "./Components/Home/ScrollToTop";
 import FullScreenLoader from "./Components/Home/HomeCity/parts/FullScreenLoader";
 
 /* ----------------------------------
@@ -131,6 +132,10 @@ function Layout() {
       window.removeEventListener("ag:cityLoaderOn", on);
       window.removeEventListener("ag:cityLoaderOff", off);
     };
+  }, []);
+
+  useEffect(() => {
+    applyPerfProfile();
   }, []);
 
   /* ----------------------------------

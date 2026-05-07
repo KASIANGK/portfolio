@@ -2153,6 +2153,39 @@
   .aboutX__modalEmail{ display: none !important; }
   .aboutX__summaryList{ display: none !important; }
 }
+@media (max-width: 742px) and (min-width: 672px){
+
+  .aboutX__center{
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 55px;
+  }
+
+  .aboutX__core{
+    --wheel: 220px;
+    margin-top: -130%;
+    margin-bottom: 0;
+  }
+
+  .aboutX__rightZone{
+    width: 240px;
+  }
+
+}
+@media (max-width: 671px) {
+  .aboutX__header {
+    margin-left: -30px;
+  }
+  .aboutX__core {
+    margin-bottom: 25%;
+  }
+  .aboutX__center {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+}
 /* mobile standard */
 @media (max-width: 425px) {
   .aboutX__header {

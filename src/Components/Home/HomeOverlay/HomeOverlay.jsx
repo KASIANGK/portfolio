@@ -16,7 +16,7 @@ import "./parts/styles/Carousel.css";
 import "./parts/styles/Typography.css";
 import "./HomeOverlay.css";
 
-import { LANGS, MENU } from "./constants";
+import { LANGS, MENU } from "../../../utils/constants";
 import OverlayBackground from "./parts/OverlayBackground";
 import OverlayResetButtons from "./parts/OverlayResetButtons";
 import StepLanguage from "./parts/StepLanguage";

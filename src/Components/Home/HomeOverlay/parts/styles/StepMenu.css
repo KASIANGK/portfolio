@@ -269,3 +269,40 @@ letter-spacing: 0.06em;
   align-self: flex-end;
 }
 }
+
+@media (pointer: coarse){
+
+  .homeOverlay__previewViewport{
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    scroll-snap-type: x mandatory;
+
+    -webkit-overflow-scrolling: touch;
+
+    touch-action: pan-x;
+
+    scrollbar-width: none;
+  }
+
+  .homeOverlay__previewViewport::-webkit-scrollbar{
+    display:none;
+  }
+
+  .homeOverlay__previewTrack{
+    transform: none !important;
+    width: max-content;
+
+    display:flex;
+    gap: 14px;
+
+    padding-inline: 12px;
+  }
+
+  .homeOverlay__previewSlideBtn{
+    scroll-snap-align: center;
+
+    flex: 0 0 auto;
+  }
+
+}
