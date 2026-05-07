@@ -7,9 +7,6 @@ import useOnboarding from "../../hooks/useOnboarding";
 import useBoot from "../../hooks/useBoot";
 import "./Home.css";
 
-// import Contact from "../Contact/Contact";
-// import About from "../About/About";
-// import ProjectsMasonryMessy from "../Projects/ProjectsMasonryMessy";
 const About = lazy(() => import("../About/About"));
 const ProjectsMasonryMessy = lazy(() => import("../Projects/ProjectsMasonryMessy"));
 const Contact = lazy(() => import("../Contact/Contact"));
@@ -314,41 +311,6 @@ export default function Home() {
   /* ---------------------------------------
      BG BLEND (non stop
   --------------------------------------- */
-  // useEffect(() => {
-  //   if (overlayStep !== 2) return;
-
-  //   const root = document.documentElement;
-
-  //   if (!isDesktop) {
-  //     root.style.setProperty("--projectsBlend", "0");
-  //     return () => root.style.removeProperty("--projectsBlend");
-  //   }
-
-  //   const prj = projectsRef.current;
-  //   if (!prj) return;
-
-  //   let rafId = 0;
-
-  //   const update = () => {
-  //     const vh = window.innerHeight || 1;
-  //     const r = prj.getBoundingClientRect();
-
-  //     const start = vh * 0.6;
-  //     const end = vh * -0.6;
-
-  //     const blend = clamp01((start - r.top) / (start - end));
-  //     root.style.setProperty("--projectsBlend", blend.toFixed(4));
-
-  //     rafId = requestAnimationFrame(update);
-  //   };
-
-  //   update();
-
-  //   return () => {
-  //     cancelAnimationFrame(rafId);
-  //     root.style.removeProperty("--projectsBlend");
-  //   };
-  // }, [overlayStep, isDesktop]);
 
   useEffect(() => {
     if (overlayStep !== 2) return;
@@ -474,8 +436,9 @@ export default function Home() {
       });
     });
   }, [location.key, overlayStep]);
+
   /* ---------------------------------------
-     Render (unchanged)
+     Render 
   --------------------------------------- */
   return (
     <div className="homePage">
@@ -516,18 +479,7 @@ export default function Home() {
             decoding="async"
             fetchPriority="high"
           />
-          {/* <img
-            className="bgScene__img bgScene__wire"
-            src="/assets/about_officee.jpg"
-            alt=""
-            draggable="false"
-          />
-          <img
-            className="bgScene__img bgScene__tex"
-            src="/assets/projects_officee.jpg"
-            alt=""
-            draggable="false"
-          /> */}
+
         </div>
         <section ref={aboutRef} id="about" className="homeSection">
           <div className={`homeSection__card ${ready.about ? "isReady" : "isLoading"}`}>

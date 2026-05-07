@@ -130,6 +130,20 @@ function useLockBodyScroll(locked) {
 }
 
 
+function getExpCategory(id = "") {
+  const map = {
+    urbanTech: "web",
+    molengeek: "web",
+    tarmac: "threeD",
+    emotion: "events",
+    bloodyLouis: "events",
+    visualMerch: "events",
+  };
+
+  return map[id] || "all";
+}
+
+
 function About() {
   useMountLog("About");
   
@@ -249,7 +263,11 @@ useEffect(() => {
   // const userClosedRef = useRef(false);
 
   // hover/preview wins over active
-  const displayKey = previewKey ?? activeKey;
+  // const displayKey = previewKey ?? activeKey;
+
+  // click wins over hover
+  const displayKey = activeKey;
+  const wheelKey = previewKey ?? activeKey;
 
   // Wheel hover (for hole rim highlight)
   const [isWheelHover, setIsWheelHover] = useState(false);
@@ -426,28 +444,61 @@ useEffect(() => {
 
   const expTitle = t("sections.exp.title", { defaultValue: "Experience" });
 
+  // const expItems = useMemo(() => {
+  //   const arr = t("sections.exp.items", { returnObjects: true });
+  //   if (!Array.isArray(arr)) return [];
+  
+  //   const seen = new Set();
+  //   return arr
+  //     .map((it, idx) => ({
+  //       key: it?.id ?? String(idx),
+  //       bold: it?.bold ?? "",
+  //       meta: it?.meta ?? "",
+  //       year: it?.year ?? "",
+  //       text: it?.text ?? "",
+  //       note: it?.note ?? "",
+  //     }))
+  //     .filter((it) => {
+  //       const sig = `${it.bold}__${it.meta}__${it.year}__${it.text}`;
+  //       if (!it.bold && !it.text) return false;
+  //       if (seen.has(sig)) return false;
+  //       seen.add(sig);
+  //       return true;
+  //     });
+  // }, [t]);
+
   const expItems = useMemo(() => {
     const arr = t("sections.exp.items", { returnObjects: true });
     if (!Array.isArray(arr)) return [];
   
     const seen = new Set();
+  
     return arr
-      .map((it, idx) => ({
-        key: it?.id ?? String(idx),
-        bold: it?.bold ?? "",
-        meta: it?.meta ?? "",
-        year: it?.year ?? "",
-        text: it?.text ?? "",
-        note: it?.note ?? "",
-      }))
+      .map((it, idx) => {
+        const id = it?.id ?? String(idx);
+  
+        return {
+          key: id,
+          id,
+          category: getExpCategory(id),
+          bold: it?.bold ?? "",
+          meta: it?.meta ?? "",
+          year: it?.year ?? "",
+          text: it?.text ?? "",
+          note: it?.note ?? "",
+        };
+      })
       .filter((it) => {
+        if (displayKey !== "all" && it.category !== displayKey) return false;
+  
         const sig = `${it.bold}__${it.meta}__${it.year}__${it.text}`;
         if (!it.bold && !it.text) return false;
         if (seen.has(sig)) return false;
+  
         seen.add(sig);
         return true;
       });
-  }, [t]);
+  }, [t, displayKey]);
   
 
   const tabLabel = useCallback(
@@ -585,12 +636,16 @@ useEffect(() => {
 
   const computeTimelineTarget = useCallback(() => {
     const el = timelineRef.current;
+    if (expItems.length <= 1) {
+      timelineProgTargetRef.current = 1;
+      return 1;
+    }
     if (!el) return 0;
     const max = el.scrollWidth - el.clientWidth;
     const p = max > 0 ? el.scrollLeft / max : 0;
     timelineProgTargetRef.current = clamp(p, 0, 1);
     return timelineProgTargetRef.current;
-  }, []);
+  }, [expItems.length]);
 
   useEffect(() => {
     const id = requestAnimationFrame(() => computeTimelineTarget());
@@ -720,50 +775,118 @@ useEffect(() => {
     setPreviewKey(near.key);
   }, []);
 
-  
+  const wheelDraggingRef = useRef(false);
+
   const onPointerMove = useCallback(
     (e) => {
       if (!coreRef.current) return;
+  
+      if (wheelDraggingRef.current) {
+        e.preventDefault?.();
+        updateFromPointer(e.clientX, e.clientY);
+        return;
+      }
+  
       updateFromPointer(e.clientX, e.clientY);
     },
     [updateFromPointer]
   );
-
+  
+  const onPointerDown = useCallback(
+    (e) => {
+      wheelDraggingRef.current = true;
+      setIsWheelHover(true);
+  
+      try {
+        coreRef.current?.setPointerCapture?.(e.pointerId);
+      } catch {}
+  
+      updateFromPointer(e.clientX, e.clientY);
+    },
+    [updateFromPointer]
+  );
+  
+  const commitWheelSelection = useCallback((clientX, clientY) => {
+    const el = coreRef.current;
+    if (!el) return;
+  
+    const r = el.getBoundingClientRect();
+    const cx = r.left + r.width / 2;
+    const cy = r.top + r.height / 2;
+    const deg = angleFromPointer(cx, cy, clientX, clientY);
+    const near = nearestTabFromAngle(deg);
+  
+    setActiveKey(near.key);
+    setPreviewKey(null);
+    needleAngleTargetRef.current = near.angleDeg;
+    glowTargetRef.current = 0.9;
+  }, []);
+  
+  const onPointerUp = useCallback(
+    (e) => {
+      wheelDraggingRef.current = false;
+  
+      try {
+        coreRef.current?.releasePointerCapture?.(e.pointerId);
+      } catch {}
+  
+      commitWheelSelection(e.clientX, e.clientY);
+    },
+    [commitWheelSelection]
+  );
+  
   const onPointerLeave = useCallback(() => {
+    if (wheelDraggingRef.current) return;
+  
     glowTargetRef.current = 0.18;
     parXRef.current = 0;
     parYRef.current = 0;
     setIsWheelHover(false);
   }, []);
+  
+  // const onPointerMove = useCallback(
+  //   (e) => {
+  //     if (!coreRef.current) return;
+  //     updateFromPointer(e.clientX, e.clientY);
+  //   },
+  //   [updateFromPointer]
+  // );
+
+  // const onPointerLeave = useCallback(() => {
+  //   glowTargetRef.current = 0.18;
+  //   parXRef.current = 0;
+  //   parYRef.current = 0;
+  //   setIsWheelHover(false);
+  // }, []);
 
   const onPointerEnter = useCallback(() => {
     setIsWheelHover(true);
   }, []);
 
-  const onPointerDown = useCallback(
-    (e) => {
-      coreRef.current?.setPointerCapture?.(e.pointerId);
-      updateFromPointer(e.clientX, e.clientY);
+  // const onPointerDown = useCallback(
+  //   (e) => {
+  //     coreRef.current?.setPointerCapture?.(e.pointerId);
+  //     updateFromPointer(e.clientX, e.clientY);
 
-      const el = coreRef.current;
-      if (!el) return;
-      const r = el.getBoundingClientRect();
-      const cx = r.left + r.width / 2;
-      const cy = r.top + r.height / 2;
-      const deg = angleFromPointer(cx, cy, e.clientX, e.clientY);
-      const near = nearestTabFromAngle(deg);
+  //     const el = coreRef.current;
+  //     if (!el) return;
+  //     const r = el.getBoundingClientRect();
+  //     const cx = r.left + r.width / 2;
+  //     const cy = r.top + r.height / 2;
+  //     const deg = angleFromPointer(cx, cy, e.clientX, e.clientY);
+  //     const near = nearestTabFromAngle(deg);
 
-      setActiveKey(near.key);
-      setPreviewKey(null);
-    },
-    [updateFromPointer]
-  );
+  //     setActiveKey(near.key);
+  //     setPreviewKey(null);
+  //   },
+  //   [updateFromPointer]
+  // );
 
-  const onPointerUp = useCallback((e) => {
-    try {
-      coreRef.current?.releasePointerCapture?.(e.pointerId);
-    } catch {}
-  }, []);
+  // const onPointerUp = useCallback((e) => {
+  //   try {
+  //     coreRef.current?.releasePointerCapture?.(e.pointerId);
+  //   } catch {}
+  // }, []);
 
   const onWheel = useCallback(
     (e) => {
@@ -780,8 +903,13 @@ useEffect(() => {
     [activeKey]
   );
 
+  // const onNodeEnter = useCallback((key) => {
+  //   setPreviewKey(key);
+  //   const tab = TABS.find((x) => x.key === key) || TABS[0];
+  //   needleAngleTargetRef.current = tab.angleDeg;
+  //   glowTargetRef.current = Math.max(glowTargetRef.current, 0.85);
+  // }, []);
   const onNodeEnter = useCallback((key) => {
-    setPreviewKey(key);
     const tab = TABS.find((x) => x.key === key) || TABS[0];
     needleAngleTargetRef.current = tab.angleDeg;
     glowTargetRef.current = Math.max(glowTargetRef.current, 0.85);
@@ -999,7 +1127,8 @@ useEffect(() => {
 
               {TABS.map((tab) => {
                 const isActive = tab.key === activeKey;
-                const isDisplay = tab.key === displayKey;
+                // const isDisplay = tab.key === displayKey;
+                const isDisplay = tab.key === wheelKey;
                 return (
                   <button
                     key={tab.key}
@@ -1023,7 +1152,8 @@ useEffect(() => {
 
               <div className="aboutX__centerLabel" aria-hidden="true">
                 <div className="aboutX__centerTop">{t("title", { defaultValue: "ABOUT" })}</div>
-                <div className="aboutX__centerSub">{tabLabel(displayKey)}</div>
+                {/* <div className="aboutX__centerSub">{tabLabel(displayKey)}</div> */}
+                <div className="aboutX__centerSub">{tabLabel(wheelKey)}</div>
               </div>
             </div>
           </div>

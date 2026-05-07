@@ -8,7 +8,7 @@
     "kicker": "PROFIEL",
 
     "web": {
-      "title": "Frontend Developer",
+      "title": "FullStack Developer",
       "lead": "Performance-first, UX-gedreven interfaces: helder, solide, schaalbaar.",
       "timeline": "11/2023–01/2025 · Fullstack Coach (MolenGeek) → 01/2025–02/2026 · Developer (Urban Tech)"
     },
@@ -48,7 +48,7 @@
           "bold": "Urban Tech",
           "meta": "Developer",
           "year": "2025–2026",
-          "text": "Webapplicaties opgeleverd in team: UI-architectuur, features, backend-integratie.",
+          "text": "Webapplicaties ontwikkeld in teamverband: UI-architectuur, business features en schaalbare backendintegratie.",
           "note": "Echte delivery, geen demo."
         },
         {
@@ -56,7 +56,7 @@
           "bold": "MolenGeek",
           "meta": "Fullstack Web Dev Coach",
           "year": "2023–2025",
-          "text": "Coaching en begeleiding: webprojecten onder real-life omstandigheden.",
+          "text": "Fullstack coaching en begeleiding van webprojecten ontwikkeld in realistische productieomgevingen.",
           "note": "Teaching + delivery = een zeldzame skill."
         },
         {
@@ -64,7 +64,7 @@
           "bold": "Tarmac",
           "meta": "3D / Modeling & Video Design",
           "year": "2023",
-          "text": "Real-time 3D-assets, animatie en visuele content geïntegreerd in digitale productie-pipelines.",
+          "text": "Custom realtime 3D-assets, animaties en visuele content geïntegreerd in digitale productie- en videopipelines.",
           "note": "Visueel, gericht op het product."
         },
         {
@@ -72,7 +72,7 @@
           "bold": "Emotion",
           "meta": "Event Project Lead / Art Director",
           "year": "2021–2021",
-          "text": "Visuele identiteit, strategie, communicatie en event experience.",
+          "text": "Art direction, visuele strategie en event experiences ontworpen voor immersieve producties.",
           "note": "Visie → uitvoering → impact."
         },
         {
@@ -80,7 +80,7 @@
           "bold": "Bloody Louis",
           "meta": "Event Styling & Creative Direction",
           "year": "2018–2020",
-          "text": "Scenografie, productie, coördinatie van visuals en logistiek.",
+          "text": "Scenografie, creative direction en visuele coördinatie geïntegreerd in complexe eventproducties.",
           "note": "Wanneer elk detail telt."
         },
         {
@@ -88,7 +88,7 @@
           "bold": "Pinko · MMFG · Swarovski",
           "meta": "Visual Merchandiser",
           "year": "2018–2023",
-          "text": "Productpresentatie, merkconsistentie en customer experience.",
+          "text": "Productpresentatie, visuele merkconsistentie en customer experience.",
           "note": "Rigor + ritme + oog voor detail."
         }
       ]

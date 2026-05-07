@@ -9,7 +9,7 @@ export default function MobileCityPreview() {
 
   const [bgReady, setBgReady] = useState(false);
 
-  const bg = useMemo(() => "/preview_city.png", []);
+  const bg = useMemo(() => "/preview_city.webp", []);
 
   /* ----------------------------------
      Preload background image

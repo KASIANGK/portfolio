@@ -1538,17 +1538,28 @@
   }
 }
 
+
+
+
 @media (max-width: 776px) {
-  .aboutX__core {
-    margin-bottom: 50px;
+  .aboutX__xpSkillsPanel{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 12px;
+    align-items: stretch;
   }
-  .aboutX__rightZone {
-    flex-direction: column;
+  
+  .aboutX__xpPanel{
+    width: 100%;
+    max-width: none;
+    min-width: 0;
   }
-  .aboutX__center {
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+  
+  .aboutX__skillsPanel{
+    width: 100%;
+    max-width: none;
+    min-width: 0;
   }
 }
 @media (prefers-reduced-motion: reduce){
@@ -2155,6 +2166,138 @@
   }
 }
 
+@media (max-width: 492px){
+  .aboutX__leftZone{
+    width: 88vw;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    /* grid-template-columns: minmax(0, 1fr) clamp(120px, 32vw, 150px); */
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .aboutX__bioPanel{
+    width: 100%;
+    height: auto;
+    max-width: none;
+    height: var(--bioHMobile);
+  }
+
+  .aboutX__xpSkillsPanel{
+    display: contents;
+  }
+
+  .aboutX__skillsPanel{
+    grid-column: 2;
+    grid-row: 1;
+    width: 100%;
+    max-width: none;
+    height: var(--skillsH);
+  }
+
+  .aboutX__xpPanel{
+    grid-column: 1 / -1;
+    grid-row: 2;
+    width: 100%;
+    max-width: none;
+    height: var(--xpH);
+    overflow: hidden;
+  }
+
+  .aboutX{
+    --xpH: 250px;
+    --skillsH: 250px;
+    --bioHMobile: 250px;
+
+  }
+  .aboutX__bioPanel,
+.aboutX__skillsPanel{
+  align-self: stretch;
+}
+}
+
 .aboutX__xpNav { display:flex; gap:10px; justify-content: flex-end; align-items: center; padding-top: 10px; width: min(260px, 78vw);}
 .aboutX__xpNavBtn { background-color: #82229a; height: 25px; display: flex; justify-content: center; align-items: center;   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+}
+
+
+
+
+/* =========================
+   ABOUT PERF PATCH
+========================= */
+
+/* garder le rendu holo, mais éviter les blend modes coûteux */
+.holoPanel::after,
+.aboutX__visualFxBR::before,
+.aboutX__visualFxBR::after,
+.aboutX__summaryGrid::before,
+.aboutX__ringMid::after,
+.aboutX__ringInner::after,
+.aboutX__hole::before,
+.aboutX__distort,
+.aboutX__scar {
+  mix-blend-mode: normal !important;
+}
+
+/* garder l’effet mais moins lourd */
+.aboutX__visualFxBR::before {
+  opacity: .72;
+}
+
+.aboutX__visualFxBR::after {
+  opacity: .08;
+}
+
+/* éviter le filter animé inutile */
+.aboutX__visualBodyInner {
+  filter: none !important;
+}
+
+.aboutX__videoMute {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background: rgba(10,8,22,0.72) !important;
+}
+
+/* modal seulement quand ouvert */
+.aboutX__modalOverlay {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background: rgba(0,0,0,0.68);
+}
+
+/* le cercle reste beau, mais moins agressif sur GPU */
+.aboutX__ringOuter {
+  box-shadow:
+    inset 0 20px 34px rgba(255,255,255,0.05),
+    inset 0 -28px 42px rgba(0,0,0,0.50),
+    0 22px 70px rgba(0,0,0,0.42);
+}
+
+.aboutX__ringMid {
+  box-shadow:
+    inset 0 18px 28px rgba(255,255,255,0.05),
+    inset 0 -24px 36px rgba(0,0,0,0.48),
+    inset 0 0 0 1px rgba(255,255,255,0.08);
+}
+
+/* mobile/touch : permet de tourner la roue sans scroll parasite */
+.aboutX__core {
+  touch-action: none;
+}
+
+/* .aboutX__timeCard{
+  min-height: 145px;
+} */
+
+
+.aboutX__nodeLabel{
+  opacity: .78;
+}
+
+.aboutX__node.isDisplay .aboutX__nodeLabel,
+.aboutX__node.isActive .aboutX__nodeLabel{
+  opacity: 1;
+  color: rgba(245,245,255,0.95);
 }
