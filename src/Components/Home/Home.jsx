@@ -303,7 +303,7 @@ export default function Home() {
       await waitEventOnce("ag:contactReady");
       alive && setReady((s) => ({ ...s, contact: true }));
 
-      await rafN(2);
+      await rafN(4);
       window.dispatchEvent(new Event("ag:homeFirstPaint"));
     })();
 

@@ -17,6 +17,7 @@ export default function NavbarScrollHomePage({
   refs,
   showAfterY = 5, // kept for API compatibility (we reveal on any scroll intent)
   disableBelow = 980, // phone/tablet cutoff
+  compactBelow = 980,
 }) {
   const { t } = useTranslation("nav");
 
@@ -48,6 +49,7 @@ export default function NavbarScrollHomePage({
   const [activeKey, setActiveKey] = useState("welcome");
   const [pos, setPos] = useState({ x: 0, y: 0 });
   const [isSmall, setIsSmall] = useState(false);
+  const [isCompact, setIsCompact] = useState(false);
 
   const navRef = useRef(null);
   const activeRef = useRef("welcome");
@@ -82,7 +84,7 @@ export default function NavbarScrollHomePage({
   }, [disableBelow]);
 
   // decide render (but hooks still run)
-  const shouldRender = enabled && mounted && !isSmall;
+  const shouldRender = enabled && mounted;
 
   const sectionEls = useMemo(() => {
     return SECTIONS.map((s) => ({
@@ -105,6 +107,20 @@ export default function NavbarScrollHomePage({
 
     return { x: clamp(x, minX, maxX), y: clamp(y, minY, maxY) };
   }, []);
+
+  useEffect(() => {
+    const mq = window.matchMedia(`(max-width: ${compactBelow}px)`);
+  
+    const onChange = (e) => {
+      setIsCompact(e.matches);
+    };
+  
+    setIsCompact(mq.matches);
+  
+    mq.addEventListener?.("change", onChange);
+  
+    return () => mq.removeEventListener?.("change", onChange);
+  }, [compactBelow]);
 
   // init pos (only when shouldRender)
   useEffect(() => {
@@ -282,6 +298,7 @@ export default function NavbarScrollHomePage({
 
   const onHandlePointerDown = useCallback((e) => {
     if (!visibleRef.current) return;
+    if (isCompact) return;
 
     const nav = navRef.current;
     if (!nav) return;
@@ -359,54 +376,82 @@ export default function NavbarScrollHomePage({
   const ui = (
     <nav
       ref={navRef}
-      className={`navbar__scroll__hp ${visible ? "isVisible" : ""}`}
+      className={`navbar__scroll__hp ${
+        visible ? "isVisible" : ""
+      } ${isCompact ? "isCompactNav" : ""}`}
       aria-label="Scroll navigation"
-      style={{ "--x": `${pos.x}px`, "--y": `${pos.y}px` }}
+      // style={{ "--x": `${pos.x}px`, "--y": `${pos.y}px` }}
+      style={
+        isCompact
+          ? undefined
+          : {
+              "--x": `${pos.x}px`,
+              "--y": `${pos.y}px`,
+            }
+      }
     >
-      <div className="navbar__scroll__hp__card">
-        <div className="navbar__scroll__hp__list">
-          {SECTIONS.map((s) => {
-            const isActive = activeKey === s.key;
-            return (
-              <button
-                key={s.key}
-                type="button"
-                className={`navbar__scroll__hp__item ${isActive ? "isActive" : ""}`}
-                onClick={() => scrollToKey(s.key)}
-              >
-                <span className="navbar__scroll__hp__dot" aria-hidden="true" />
-                <span className="navbar__scroll__hp__txt">{s.label}</span>
-              </button>
-            );
-          })}
-        </div>
+      <div
+        className={`navbar__scroll__hp__card ${
+          isCompact ? "isCompact" : ""
+        }`}
+      >
+      {!isCompact && (
+        <>
+          <div className="navbar__scroll__hp__list">
+            {SECTIONS.map((s) => {
+              const isActive = activeKey === s.key;
+              return (
+                <button
+                  key={s.key}
+                  type="button"
+                  className={`navbar__scroll__hp__item ${isActive ? "isActive" : ""}`}
+                  onClick={() => scrollToKey(s.key)}
+                >
+                  <span className="navbar__scroll__hp__dot" aria-hidden="true" />
+                  <span className="navbar__scroll__hp__txt">{s.label}</span>
+                </button>
+              );
+            })}
+          </div>
 
-        <div className="navbar__scroll__hp__bottomRow">
-          <button
-            type="button"
-            className="navbar__scroll__hp__dragHandle"
-            onPointerDown={onHandlePointerDown}
-            aria-label={t("navHp.drag", { defaultValue: "drag me" })}
-            title={t("navHp.drag", { defaultValue: "drag me" })}
-          >
-            <span className="navbar__scroll__hp__dragDots" aria-hidden="true" />
-            <span className="navbar__scroll__hp__dragTxt">
-              {t("navHp.drag", { defaultValue: "drag me" })}
-            </span>
-          </button>
+          <div className="navbar__scroll__hp__bottomRow">
+            <button
+              type="button"
+              className="navbar__scroll__hp__dragHandle"
+              onPointerDown={onHandlePointerDown}
+              aria-label={t("navHp.drag", { defaultValue: "drag me" })}
+              title={t("navHp.drag", { defaultValue: "drag me" })}
+            >
+              <span className="navbar__scroll__hp__dragDots" aria-hidden="true" />
+              <span className="navbar__scroll__hp__dragTxt">
+                {t("navHp.drag", { defaultValue: "drag me" })}
+              </span>
+            </button>
 
-          <button
-            type="button"
-            className="navbar__scroll__hp__topBtn"
-            onClick={() => scrollToKey("welcome")}
-            aria-label={t("navHp.top", { defaultValue: "Back to top" })}
-            title={t("navHp.top", { defaultValue: "Back to top" })}
-          >
-            <span className="navbar__scroll__hp__topIcon" aria-hidden="true">
-              ↑
-            </span>
-          </button>
-        </div>
+            <button
+              type="button"
+              className="navbar__scroll__hp__topBtn"
+              onClick={() => scrollToKey("welcome")}
+              aria-label={t("navHp.top", { defaultValue: "Back to top" })}
+              title={t("navHp.top", { defaultValue: "Back to top" })}
+            >
+              <span className="navbar__scroll__hp__topIcon" aria-hidden="true">
+                ↑
+              </span>
+            </button>
+          </div>
+        </>
+      )}
+      {isCompact && (
+        <button
+          type="button"
+          className="navbar__scroll__hp__mobileTop"
+          onClick={() => scrollToKey("welcome")}
+          aria-label={t("navHp.top")}
+        >
+          ↑
+        </button>
+      )}
       </div>
     </nav>
   );
