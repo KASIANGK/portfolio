@@ -128,7 +128,7 @@
         "TRIGGER_DRINK_DISTRIBUTOR": {
           "title": "Distributeur",
           "kicker": "Surprise mode",
-          "description": "Tu appuies. Quelque chose arrive. La machine a ses humeurs.",
+          "description": "Tu appuies et pose une question. Quelque chose arrive... ⚠️ La machine a ses humeurs.",
           "cta": "Je prends"
         }
       }

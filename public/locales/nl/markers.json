@@ -128,7 +128,7 @@
         "TRIGGER_DRINK_DISTRIBUTOR": {
           "title": "Drankautomaat",
           "kicker": "Surprise mode",
-          "description": "Je drukt. Iets gebeurt. De automaat heeft moods.",
+          "description": "Je drukt en stel een vrag. Iets gebeurt... ⚠️ De automaat heeft moods.",
           "cta": "Ik neem ’m"
         }
       }

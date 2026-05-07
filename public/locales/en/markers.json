@@ -128,7 +128,7 @@
         "TRIGGER_DRINK_DISTRIBUTOR": {
           "title": "Vending Machine",
           "kicker": "Surprise mode",
-          "description": "You press. Something happens. The machine has moods.",
+          "description": "You press and ask a question. Something happens... ⚠️ The machine has moods.",
           "cta": "I’m taking it"
         }
       }
