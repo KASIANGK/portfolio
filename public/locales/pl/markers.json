@@ -128,7 +128,7 @@
         "TRIGGER_DRINK_DISTRIBUTOR": {
           "title": "Automat z napojami",
           "kicker": "Surprise mode",
-          "description": "Naciskasz i zadaj pytanie. Coś się wydarzy... ⚠️ Automat ma swoje humory.",
+          "description": "Naciskasz i zadaj pytanie. Coś się wydarzy... ⚠️ Automat ma swoje humory...",
           "cta": "Biorę"
         }
       }
