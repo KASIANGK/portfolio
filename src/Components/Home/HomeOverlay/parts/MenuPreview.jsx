@@ -102,7 +102,7 @@ function PreviewExplore() {
         decoding="sync"
         loading="eager"
       />
-      <div className="homeOverlay__previewCaption">MY INTERACTIVE 3D WORLD</div>
+      <div className="homeOverlay__previewCaption">EXPLORE MY 3D WORLD</div>
     </div>
   );
 }
