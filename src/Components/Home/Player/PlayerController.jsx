@@ -184,16 +184,27 @@ export default function PlayerController({
   // Pointer lock tracking
   useEffect(() => {
     const el = gl.domElement;
-
+  
     const onPLC = () => {
-      look.current.locked = document.pointerLockElement === el;
+      const isLocked = document.pointerLockElement === el;
+  
+      look.current.locked = isLocked;
       look.current.dx = 0;
       look.current.dy = 0;
+  
+      // ESC ou toute autre sortie du Pointer Lock :
+      // on synchronise l'état de la caméra.
+      if (!isLocked) {
+        onHeadControlChange?.(false);
+      }
     };
-
+  
     document.addEventListener("pointerlockchange", onPLC);
-    return () => document.removeEventListener("pointerlockchange", onPLC);
-  }, [gl]);
+  
+    return () => {
+      document.removeEventListener("pointerlockchange", onPLC);
+    };
+  }, [gl, onHeadControlChange]);
 
   // HARD BLOCK: if lockLook becomes true, we must stop consuming look
   useEffect(() => {

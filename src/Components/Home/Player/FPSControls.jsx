@@ -183,21 +183,22 @@ export default function FPSControls({
       look.current.lastY = 0;
     };
 
-    const toggleLock = () => {
-      if (document.pointerLockElement === el) {
-        document.exitPointerLock?.();
-      } else {
-        el.requestPointerLock?.();
-      }
-    };
-
     const onMouseDown = (e) => {
       if (e.button !== 0) return;
-      toggleLock();
+    
+      // Déjà verrouillé ? On ne fait rien.
+      if (document.pointerLockElement === el) return;
+    
+      // Sinon, on active le contrôle de la caméra.
+      el.requestPointerLock?.();
     };
 
+
     const onEsc = (e) => {
-      if (e.code === "Escape" && document.pointerLockElement) {
+      if (
+        e.code === "Escape" &&
+        document.pointerLockElement === el
+      ) {
         document.exitPointerLock?.();
       }
     };

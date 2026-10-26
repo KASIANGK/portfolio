@@ -19,7 +19,7 @@
       "badge": "CALIBRATE://POV",
       "preCapture": {
         "title": "Caméra ON/OFF",
-        "desc": "Clique dans la scène pour contrôler la caméra.",
+        "desc": "Clique dans la scène pour actriver la caméra. ESC pour la désactiver.",
         "subLock": ""
       },
       "captured": {

@@ -290,21 +290,15 @@ export default function HomeCity() {
     } catch {}
   }, []);
 
-  const toggleHeadControl = useCallback(() => {
+  const activateHeadControl = useCallback(() => {
     if (uiIntro || lockLook) return;
-
-    setHeadControlEnabled((prev) => {
-      const next = !prev;
-
-      if (!isMobile && next) {
-        window.focus?.();
-        requestPointerLock();
-      }
-      if (!isMobile && !next) {
-        document.exitPointerLock?.();
-      }
-      return next;
-    });
+  
+    setHeadControlEnabled(true);
+  
+    if (!isMobile && !document.pointerLockElement) {
+      window.focus?.();
+      requestPointerLock();
+    }
   }, [uiIntro, lockLook, isMobile, requestPointerLock]);
 
   useEffect(() => {
@@ -798,19 +792,20 @@ const goHomeLikeNavbar = useCallback(
           }}
           onPointerDown={() => {
             if (uiIntro) return;
-
+          
             if (shouldShowTutorial && tutorialControl.requestLookCaptureNow) {
               setHeadControlEnabled(true);
-
-              if (!isMobile) {
+          
+              if (!isMobile && !document.pointerLockElement) {
                 window.focus?.();
                 requestPointerLock();
               }
               return;
             }
-
+          
             if (lockLook) return;
-            toggleHeadControl();
+          
+            activateHeadControl();
           }}
         >
           <OrbitHintProjector
