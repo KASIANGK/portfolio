@@ -1,9 +1,9 @@
 {
   "loader": {
-    "subLabel": "Inbreken in de matrix",
+    "subLabel": "Hack de Matrix",
     "eta": "~{{seconds}}s",
-    "elapsed": "{{seconds}}s elapsed",
-    "calibrating": "Portalen kalibreren… even geduld 😇"
+    "elapsed": "{{seconds}}s verstreken",
+    "calibrating": "Portalen kalibreren… hou je vast 😇"
   },
   "cityTutorial": {
     "common": {
@@ -11,24 +11,24 @@
     },
     "boot": {
       "badge": "CITY://JACK-IN",
-      "title": "Welkom in de matrix.",
-      "desc": "Geen stress — hier is het legaal.",
+      "title": "Welkom in de Matrix.",
+      "desc": "Geen zorgen — hier mag het.",
       "cta": "JACK IN"
     },
     "look": {
       "badge": "CALIBRATE://POV",
       "preCapture": {
-        "title": "View ON/OFF",
-        "desc": "Klik in de scène.",
+        "title": "Camera ON/OFF",
+        "desc": "Klik in de scène om de camera te besturen.",
         "subLock": ""
       },
       "captured": {
-        "title": "Korte opwarming.",
+        "title": "Even opwarmen.",
         "descDesktop": "SCAN DE SCÈNE",
         "descMobile": "RECHTER JOY → SCAN DE SCÈNE",
-        "progressLabel": "PROGRESS"
+        "progressLabel": "VOORTGANG"
       },
-      "cursorOverlayLabel": "KLIK IN DE SCÈNE",
+      "cursorOverlayLabel": "KLIK OM DE CAMERA TE BESTUREN",
       "cursorOverlaySub": "",
       "stretchOverlayLabel": "SCAN DE SCÈNE",
       "stretchOverlaySub": ""
@@ -36,29 +36,29 @@
     "move": {
       "badge": "CALIBRATE://MOVE",
       "title": "Beweging.",
-      "descDesktop": "PIJLEN ← ↑ ↓ → OM TE BEWEGEN",
+      "descDesktop": "BEWEEG MET DE PIJLTJESTOETSEN ← ↑ ↓ → OF WASD / ZQSD",
       "descMobile": "LINKER JOY → BEWEGEN",
       "progressLabel": "MOTOR_LINK",
       "holdArrowHint": ""
     },
     "portals": {
       "badge": "PORTALS://ORBIT",
-      "title": "Zoek de roze orbs — dat zijn portalen.",
-      "desc": "Ik ping er één. Daarna ben jij.",
+      "title": "Zoek de roze bollen — dat zijn portalen.",
+      "desc": "Ik duid er eentje aan. Daarna ben jij aan zet.",
       "cta": "OK",
       "arrowLabel": "ORBIT"
     },
     "hints": {
-      "click": "CLICK",
-      "tap": "TAP",
-      "tapPad": "TAP PAD",
-      "mouse": "MOUSE",
-      "joyRight": "JOY RIGHT",
-      "joyLeft": "JOY LEFT",
+      "click": "KLIK",
+      "tap": "TIK",
+      "tapPad": "TIK OP DE PAD",
+      "mouse": "MUIS",
+      "joyRight": "JOY RECHTS",
+      "joyLeft": "JOY LINKS",
       "moveCamera": "",
-      "toggleAnytime": "toggle anytime",
+      "toggleAnytime": "op elk moment aan/uit",
       "useArrows": "",
-      "move": "move",
+      "move": "bewegen",
       "seconds_2_3": ""
     }
   }

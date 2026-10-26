@@ -1,9 +1,9 @@
 {
   "loader": {
-    "subLabel": "Breaking into the matrix",
+    "subLabel": "Hack into the Matrix",
     "eta": "~{{seconds}}s",
     "elapsed": "{{seconds}}s elapsed",
-    "calibrating": "Calibrating the portals… hang tight 😇"
+    "calibrating": "Calibrating portals… hang tight 😇"
   },
   "cityTutorial": {
     "common": {
@@ -11,24 +11,24 @@
     },
     "boot": {
       "badge": "CITY://JACK-IN",
-      "title": "Welcome to the matrix.",
-      "desc": "Don’t worry - it’s legal in here.",
+      "title": "Welcome to the Matrix.",
+      "desc": "Don't worry — it's legal here.",
       "cta": "JACK IN"
     },
     "look": {
       "badge": "CALIBRATE://POV",
       "preCapture": {
-        "title": "View ON/OFF",
-        "desc": "Click the scene.",
+        "title": "Camera ON/OFF",
+        "desc": "Click the scene to control the camera.",
         "subLock": ""
       },
       "captured": {
         "title": "Quick warm-up.",
-        "descDesktop": "",
-        "descMobile": "",
+        "descDesktop": "SCAN THE SCENE",
+        "descMobile": "RIGHT JOY → SCAN THE SCENE",
         "progressLabel": "PROGRESS"
       },
-      "cursorOverlayLabel": "CLICK THE SCENE",
+      "cursorOverlayLabel": "CLICK TO CONTROL CAMERA",
       "cursorOverlaySub": "",
       "stretchOverlayLabel": "SCAN THE SCENE",
       "stretchOverlaySub": ""
@@ -36,16 +36,16 @@
     "move": {
       "badge": "CALIBRATE://MOVE",
       "title": "Movement.",
-      "descDesktop": "ARROWS ← ↑ ↓ → TO MOVE",
+      "descDesktop": "MOVE WITH ARROWS ← ↑ ↓ → OR WASD / ZQSD",
       "descMobile": "LEFT JOY → MOVE",
       "progressLabel": "MOTOR_LINK",
       "holdArrowHint": ""
     },
     "portals": {
       "badge": "PORTALS://ORBIT",
-      "title": "Spot the pink orbits — they’re portals.",
-      "desc": "I’ll ping one. Then it’s on you.",
-      "cta": "GOT IT",
+      "title": "Spot the pink orbs — they're portals.",
+      "desc": "I'll ping one. Then it's your turn.",
+      "cta": "OK",
       "arrowLabel": "ORBIT"
     },
     "hints": {

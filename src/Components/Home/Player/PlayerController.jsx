@@ -13,7 +13,25 @@ function safeVec3(v, fallback = [0, 2, 0]) {
   return fallback;
 }
 
-const ARROW_KEYS = new Set(["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"]);
+// const ARROW_KEYS = new Set(["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"]);
+// Navigation clavier : flèches + WASD + ZQSD
+  const MOVEMENT_CODES = {
+    ArrowUp: "up",
+    KeyW: "up",
+    KeyZ: "up",
+
+    ArrowDown: "down",
+    KeyS: "down",
+
+    ArrowLeft: "left",
+    KeyA: "left",
+    KeyQ: "left",
+
+    ArrowRight: "right",
+    KeyD: "right",
+  };
+
+  const MOVEMENT_KEYS = new Set(Object.keys(MOVEMENT_CODES));
 
 export default function PlayerController({
   rbRef,
@@ -201,50 +219,85 @@ export default function PlayerController({
     return () => window.removeEventListener("mousemove", onMouseMove);
   }, [active, lockLook, headControlEnabled]);
 
-  // Arrow movement keys
-  useEffect(() => {
-    const onKeyDown = (e) => {
-      if (!active || lockMovement) return;
+  // Keyboard movement: arrows + WASD + ZQSD
+  const heldMovementCodes = useRef(new Set());
 
-      if (ARROW_KEYS.has(e.code)) {
-        e.preventDefault();
-        e.stopPropagation();
-        if (holdRef.current.anyArrowDownAt === null) {
-          holdRef.current.anyArrowDownAt = performance.now();
-        }
+  useEffect(() => {
+    const syncDirections = () => {
+      const held = heldMovementCodes.current;
+
+      for (const direction of ["up", "down", "left", "right"]) {
+        keys.current[direction] = [...held].some(
+          (code) => MOVEMENT_CODES[code] === direction
+        );
       }
 
-      if (e.code === "ArrowUp") keys.current.up = true;
-      if (e.code === "ArrowDown") keys.current.down = true;
-      if (e.code === "ArrowLeft") keys.current.left = true;
-      if (e.code === "ArrowRight") keys.current.right = true;
+      if (held.size === 0) {
+        holdRef.current.anyArrowDownAt = null;
+      }
+    };
+
+    const onKeyDown = (e) => {
+      if (!active || lockMovement || !MOVEMENT_KEYS.has(e.code)) {
+        return;
+      }
+
+      // Ne pas intercepter les touches pendant la saisie de texte
+      const target = e.target;
+
+      if (
+        target?.closest?.(
+          'input, textarea, select, [contenteditable="true"]'
+        )
+      ) {
+        return;
+      }
+
+      e.preventDefault();
+
+      if (heldMovementCodes.current.size === 0) {
+        holdRef.current.anyArrowDownAt = performance.now();
+      }
+
+      heldMovementCodes.current.add(e.code);
+
+      syncDirections();
     };
 
     const onKeyUp = (e) => {
-      if (ARROW_KEYS.has(e.code)) {
+      if (!MOVEMENT_KEYS.has(e.code)) {
+        return;
+      }
+
+      if (heldMovementCodes.current.has(e.code)) {
         e.preventDefault();
-        e.stopPropagation();
       }
 
-      if (e.code === "ArrowUp") keys.current.up = false;
-      if (e.code === "ArrowDown") keys.current.down = false;
-      if (e.code === "ArrowLeft") keys.current.left = false;
-      if (e.code === "ArrowRight") keys.current.right = false;
+      heldMovementCodes.current.delete(e.code);
 
-      if (ARROW_KEYS.has(e.code)) {
-        const k = keys.current;
-        if (!(k.up || k.down || k.left || k.right)) {
-          holdRef.current.anyArrowDownAt = null;
-        }
-      }
+      syncDirections();
     };
 
-    window.addEventListener("keydown", onKeyDown, { passive: false, capture: true });
-    window.addEventListener("keyup", onKeyUp, { passive: false, capture: true });
+    window.addEventListener("keydown", onKeyDown, {
+      passive: false,
+      capture: true,
+    });
+
+    window.addEventListener("keyup", onKeyUp, {
+      passive: false,
+      capture: true,
+    });
 
     return () => {
       window.removeEventListener("keydown", onKeyDown, true);
       window.removeEventListener("keyup", onKeyUp, true);
+
+      heldMovementCodes.current.clear();
+
+      keys.current.up = false;
+      keys.current.down = false;
+      keys.current.left = false;
+      keys.current.right = false;
     };
   }, [active, lockMovement]);
 

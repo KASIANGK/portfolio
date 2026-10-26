@@ -1,9 +1,9 @@
 {
   "loader": {
-    "subLabel": "Intrusion dans la matrice",
+    "subLabel": "Pirate la Matrice",
     "eta": "~{{seconds}}s",
-    "elapsed": "{{seconds}}s elapsed",
-    "calibrating": "Calibration des portails… tiens bon 😇"
+    "elapsed": "{{seconds}}s écoulées",
+    "calibrating": "Calibration des portails… accroche-toi 😇"
   },
   "cityTutorial": {
     "common": {
@@ -11,32 +11,32 @@
     },
     "boot": {
       "badge": "CITY://JACK-IN",
-      "title": "Bienvenue dans la matrice.",
-      "desc": "T’inquiète — ici c’est légal.",
+      "title": "Bienvenue dans la Matrice.",
+      "desc": "T'inquiète — ici, c'est légal.",
       "cta": "JACK IN"
     },
     "look": {
       "badge": "CALIBRATE://POV",
       "preCapture": {
-        "title": "Vue ON/OFF",
-        "desc": "Clique dans la scène.",
+        "title": "Caméra ON/OFF",
+        "desc": "Clique dans la scène pour contrôler la caméra.",
         "subLock": ""
       },
       "captured": {
         "title": "Petit échauffement.",
         "descDesktop": "SCANNE LA SCÈNE",
         "descMobile": "JOY DROIT → SCANNE LA SCÈNE",
-        "progressLabel": "PROGRÈS"
+        "progressLabel": "PROGRESSION"
       },
-      "cursorOverlayLabel": "CLIQUE LA SCÈNE",
+      "cursorOverlayLabel": "CLIQUE POUR CONTRÔLER LA CAMÉRA",
       "cursorOverlaySub": "",
       "stretchOverlayLabel": "SCANNE LA SCÈNE",
       "stretchOverlaySub": ""
     },
     "move": {
       "badge": "CALIBRATE://MOVE",
-      "title": "Mouvement.",
-      "descDesktop": "FLÈCHES ← ↑ ↓ → POUR BOUGER",
+      "title": "Déplacement.",
+      "descDesktop": "DÉPLACE-TOI AVEC LES FLÈCHES ← ↑ ↓ → OU WASD / ZQSD",
       "descMobile": "JOY GAUCHE → BOUGER",
       "progressLabel": "MOTOR_LINK",
       "holdArrowHint": ""
@@ -44,21 +44,21 @@
     "portals": {
       "badge": "PORTALS://ORBIT",
       "title": "Repère les orbes roses — ce sont des portails.",
-      "desc": "J’en ping un. Après, à toi.",
+      "desc": "Je t'en signale un. Ensuite, à toi de jouer.",
       "cta": "OK",
       "arrowLabel": "ORBIT"
     },
     "hints": {
       "click": "CLIC",
-      "tap": "TAP",
-      "tapPad": "TAP PAD",
+      "tap": "TOUCHE",
+      "tapPad": "TOUCHE LE PAD",
       "mouse": "SOURIS",
       "joyRight": "JOY DROIT",
       "joyLeft": "JOY GAUCHE",
       "moveCamera": "",
-      "toggleAnytime": "toggle anytime",
+      "toggleAnytime": "activer/désactiver à tout moment",
       "useArrows": "",
-      "move": "move",
+      "move": "bouger",
       "seconds_2_3": ""
     }
   }

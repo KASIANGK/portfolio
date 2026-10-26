@@ -18,8 +18,8 @@
     "look": {
       "badge": "CALIBRATE://POV",
       "preCapture": {
-        "title": "View ON/OFF",
-        "desc": "Kliknij w scenę.",
+        "title": "Kamera ON/OFF",
+        "desc": "Kliknij w scenę, aby sterować kamerą.",
         "subLock": ""
       },
       "captured": {
@@ -28,7 +28,7 @@
         "descMobile": "PRAWY JOY → SKANUJ SCENĘ",
         "progressLabel": "POSTĘP"
       },
-      "cursorOverlayLabel": "KLIKNIJ W SCENĘ",
+      "cursorOverlayLabel": "KLIKNIJ, ABY STEROWAĆ KAMERĄ",
       "cursorOverlaySub": "",
       "stretchOverlayLabel": "SKANUJ SCENĘ",
       "stretchOverlaySub": ""
@@ -36,7 +36,7 @@
     "move": {
       "badge": "CALIBRATE://MOVE",
       "title": "Ruch.",
-      "descDesktop": "STRZAŁKI ← ↑ ↓ → ABY IŚĆ",
+      "descDesktop": "PORUSZAJ SIĘ STRZAŁKAMI ← ↑ ↓ → LUB WASD / ZQSD",
       "descMobile": "LEWY JOY → RUCH",
       "progressLabel": "MOTOR_LINK",
       "holdArrowHint": ""

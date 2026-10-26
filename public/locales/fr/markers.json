@@ -3,7 +3,6 @@
   "portalBadge": "Portail",
   "ctaHint": "",
   "footerHint": "Approche → popup • Clique l’orb → épingle • ESC → libère la souris",
-
   "drinks": {
     "ctaPrimary": "Je prends",
     "ctaLetsGo": "Let’s go",
@@ -13,23 +12,21 @@
     "labelFuture": "FUTURE JUICE",
     "labelSass": "SASS MODE",
     "hint": "Clique pour tirer au sort",
-
     "city": {
       "image": "/assets/homeCity/can.jpg",
       "items": [
         { "name": "Soft Reset", "line": "Ça a le goût d’une pause." },
-        { "name": "Low Voltage", "line": "Le calme marche mieux." },
-        { "name": "Street Juice", "line": "Ville en mode pause." },
-        { "name": "Stable Mood", "line": "Sans se presser." },
-        { "name": "Night Hydrate", "line": "Comme une lumière de nuit." },
+        { "name": "Low Voltage", "line": "Zeeeeen." },
+        { "name": "Street Juice", "line": "Une pause est nécessaire." },
+        { "name": "Stable Mood", "line": "Chill." },
+        { "name": "Night Hydrate", "line": "La nuit porte conseil." },
         { "name": "Clean Loop", "line": "Rien ne fait semblant." },
         { "name": "Background Refresh", "line": "Étonnamment normal." },
         { "name": "Quiet Boost", "line": "Exactement ce qu’il faut." },
         { "name": "No Drama", "line": "Tranquille." },
-        { "name": "Soft Focus", "line": "Froid. Stable." }
+        { "name": "Soft Focus", "line": "C'est chaotique, mais stable." }
       ]
     },
-
     "future": {
       "image": "/assets/homeCity/bout.jpg",
       "items": [
@@ -45,24 +42,23 @@
         { "name": "Lagless Luck", "prediction": "Tu es plus proche que tu ne le penses." }
       ]
     },
-
     "sass": {
       "image": "/assets/homeCity/dist.jpg",
       "items": [
         { "name": "Side-Eye Soda", "line": "…sérieusement ?" },
         { "name": "Machine Mood", "line": "OK." },
+        { "name": "Delicious Mood", "line": "C'est succulent!" },
         { "name": "Passive Aggressive", "line": "C’était… un choix." },
         { "name": "Dry Response", "line": "Ne demande pas." },
-        { "name": "Silent Judgement", "line": "Toi, encore." },
+        { "name": "Silent Judgement", "line": "Toi?! Encore..." },
         { "name": "Bare Minimum", "line": "Bon. Suivant." },
         { "name": "No Comment", "line": "Sans commentaire." },
         { "name": "OK Whatever", "line": "Ouais." },
-        { "name": "System Tired", "line": "Le système a noté." },
+        { "name": "System Tired", "line": "Ohhh, flemme." },
         { "name": "404 Drink", "line": "Non." }
       ]
     }
   },
-
   "markers": {
     "TRIGGER_ABOUT": {
       "title": "Kasia.exe",
@@ -70,28 +66,24 @@
       "description": "Dev, 3D et design dans un seul corps. J’aime les systèmes clairs et les idées qui osent.",
       "cta": "Me découvrir"
     },
-
     "TRIGGER_PROJECT": {
       "title": "Zone Projets",
       "kicker": "Des builds qui vivent",
       "description": "Code + design + beaucoup d’itération. Regarde ce que je livre vraiment.",
       "cta": "Let's go"
     },
-
     "TRIGGER_PORTFOLIO": {
       "title": "Lien Contact",
       "kicker": "Ping-moi",
       "description": "Un projet, une mission ou du chaos à dompter ? Envoie un signal — je livre l’itération.",
       "cta": "Envoyer"
     },
-
     "TRIGGER_VISION_HOME": {
       "title": "Retour à la base",
       "kicker": "Home, sweet home",
       "description": "Reset vers le lobby. Pas de drama — juste un re-entry.",
       "cta": "Revenir"
     },
-
     "TRIGGER_GLOW": {
       "label": "CITY://SCAN",
       "items": {
@@ -116,7 +108,6 @@
           "cta": "Respect",
           "description2": "Merci, ce n’est pas une voiture - c’est un monument à la stabilité."
         },
-
         "TRIGGER_DRINK_COFFEE": {
           "title": "Café",
           "kicker": "Carburant du cerveau",
@@ -124,7 +115,6 @@
           "cta": "Boire",
           "description2": "Café consommé. +10 focus, -2 patience."
         },
-
         "TRIGGER_DRINK_DISTRIBUTOR": {
           "title": "Distributeur",
           "kicker": "Surprise mode",
@@ -133,7 +123,6 @@
         }
       }
     },
-
     "TRIGGER_FUN": {
       "label": "??://WTF",
       "items": {
@@ -144,7 +133,6 @@
           "cta": "J’attends",
           "description2": "On t’avait dit qu’il ne viendrait pas…"
         },
-
         "TRIGGER_STAIRS": {
           "title": "Escaliers Premium",
           "kicker": "DLC requis",
@@ -152,7 +140,6 @@
           "cta": "Je vois",
           "description2": "Les escaliers marchent. Le scénario, non."
         },
-
         "TRIGGER_FIRE": {
           "title": "Feu de camp",
           "kicker": "Chill zone",
@@ -160,7 +147,6 @@
           "cta": "Je m’assois",
           "description2": "Oui, c’est de la thérapie. Gratuite."
         },
-
         "TRIGGER_NOTHING": {
           "title": "Point fixe",
           "kicker": "Sans pression",

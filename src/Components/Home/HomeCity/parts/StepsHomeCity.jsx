@@ -27,7 +27,19 @@ const LOOK_MAG_THRESHOLD = 0.18;
 const MOVE_MAG_THRESHOLD = 0.18;
 const MOUSE_DELTA_THRESHOLD = 14;
 
-const ARROWS_ONLY = new Set(["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"]);
+// const ARROWS_ONLY = new Set(["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"]);
+const MOVEMENT_KEYS = new Set([
+  "ArrowUp",
+  "ArrowDown",
+  "ArrowLeft",
+  "ArrowRight",
+  "KeyW",
+  "KeyA",
+  "KeyS",
+  "KeyD",
+  "KeyZ",
+  "KeyQ",
+]);
 
 // ✅ 4 steps only
 const STEP = {
@@ -308,7 +320,7 @@ export default function StepsHomeCity({
 
     const onKeyDown = (e) => {
       const code = e.code;
-      if (ARROWS_ONLY.has(code)) arrowsRef.current.add(code);
+      if (MOVEMENT_KEYS.has(code)) arrowsRef.current.add(code);
 
       if (stepRef.current === STEP.BOOT && (code === "Enter" || code === "Space")) {
         e.preventDefault();
@@ -325,7 +337,7 @@ export default function StepsHomeCity({
 
     const onKeyUp = (e) => {
       const code = e.code;
-      if (ARROWS_ONLY.has(code)) arrowsRef.current.delete(code);
+      if (MOVEMENT_KEYS.has(code)) arrowsRef.current.delete(code);
     };
 
     // ✅ Keep SAME options object references for add/remove
@@ -722,13 +734,38 @@ export default function StepsHomeCity({
           <h1 className="agCitySteps__title">{content.title}</h1>
           <div className="agCitySteps__desc">{content.desc}</div>
 
-          {/* ✅ Step 3: ArrowCluster INSIDE card — disappears as soon as step3Confirmed */}
+          {/* Step 3: Movement controls */}
           {step === STEP.MOVE && !isMobile && !step3Confirmed && (
             <div className="agCitySteps__inlineArrows agMoveBlue">
-              <ArrowCluster active pressedSet={pressedKeys} demoPulse />
-              <div className="agCitySteps__inlineArrowsHint">
-                {t("cityTutorial.move.holdArrowHint")}
+
+              <div className="agCitySteps__movementControls">
+
+                {/* Flèches existantes */}
+                <ArrowCluster
+                  active
+                  pressedSet={pressedKeys}
+                  demoPulse
+                />
+
+                <span className="agCitySteps__keySeparator">OU</span>
+
+                {/* WASD / ZQSD */}
+                <div className="agCitySteps__keyGroup">
+
+                  <div className="agCitySteps__keyRow">
+                    <span className="agCitySteps__key">W/Z</span>
+                  </div>
+
+                  <div className="agCitySteps__keyRow">
+                    <span className="agCitySteps__key">A/Q</span>
+                    <span className="agCitySteps__key">S</span>
+                    <span className="agCitySteps__key">D</span>
+                  </div>
+
+                </div>
+
               </div>
+
             </div>
           )}
 

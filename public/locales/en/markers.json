@@ -2,171 +2,157 @@
   "nothing": { "nic": "NOTHING" },
   "portalBadge": "Portal",
   "ctaHint": "",
-  "footerHint": "Walk up → popup • Click orb → pin • ESC → unlock mouse",
-
+  "footerHint": "Approach → popup • Click orb → pin • ESC → release mouse",
   "drinks": {
-    "ctaPrimary": "I’m taking it",
-    "ctaLetsGo": "Let’s go",
+    "ctaPrimary": "I'll take it",
+    "ctaLetsGo": "Let's go",
     "ctaAgain": "Again",
     "ctaClose": "Close",
     "labelCity": "CITY DRINKS",
     "labelFuture": "FUTURE JUICE",
     "labelSass": "SASS MODE",
-    "hint": "Click to roll",
-
+    "hint": "Click for a random pick",
     "city": {
       "image": "/assets/homeCity/can.jpg",
       "items": [
         { "name": "Soft Reset", "line": "Tastes like a break." },
-        { "name": "Low Voltage", "line": "Quiet runs best." },
-        { "name": "Street Juice", "line": "City in pause mode." },
-        { "name": "Stable Mood", "line": "No rush." },
-        { "name": "Night Hydrate", "line": "Like night light." },
-        { "name": "Clean Loop", "line": "No pretending." },
-        { "name": "Background Refresh", "line": "Suspiciously normal." },
-        { "name": "Quiet Boost", "line": "Exactly what you need." },
-        { "name": "No Drama", "line": "Easy." },
-        { "name": "Soft Focus", "line": "Cool. Steady." }
+        { "name": "Low Voltage", "line": "Zeeeeen." },
+        { "name": "Street Juice", "line": "A break is overdue." },
+        { "name": "Stable Mood", "line": "Chill." },
+        { "name": "Night Hydrate", "line": "Sleep on it." },
+        { "name": "Clean Loop", "line": "No pretending here." },
+        { "name": "Background Refresh", "line": "Surprisingly normal." },
+        { "name": "Quiet Boost", "line": "Just what you needed." },
+        { "name": "No Drama", "line": "Easy does it." },
+        { "name": "Soft Focus", "line": "Chaotic, but stable." }
       ]
     },
-
     "future": {
       "image": "/assets/homeCity/bout.jpg",
       "items": [
-        { "name": "Neon Intuition", "prediction": "What looks chaotic now will sort itself out." },
-        { "name": "Next Build", "prediction": "The first version was enough." },
-        { "name": "Prediction Shot", "prediction": "You don’t have to speed this up." },
-        { "name": "Glitch Vision", "prediction": "Not a bug — a signal." },
-        { "name": "Signal Sip", "prediction": "Someone already sees it. They’re just not saying it yet." },
+        { "name": "Neon Intuition", "prediction": "What's chaotic now will fall into place on its own." },
+        { "name": "Next Build", "prediction": "The first version was good enough." },
+        { "name": "Prediction Shot", "prediction": "You don't need to speed up." },
+        { "name": "Glitch Vision", "prediction": "It's not a bug — it's a signal." },
+        { "name": "Signal Sip", "prediction": "Someone already sees it. They're just not saying it yet." },
         { "name": "Patch Incoming", "prediction": "That idea will come back. Stronger." },
-        { "name": "Runtime Oracle", "prediction": "Do less. It’s enough." },
-        { "name": "Quiet Prophecy", "prediction": "Trust what you’re building quietly." },
-        { "name": "Version Bloom", "prediction": "Not everything needs a label." },
-        { "name": "Lagless Luck", "prediction": "You’re closer than you think." }
+        { "name": "Runtime Oracle", "prediction": "Do less. It's enough." },
+        { "name": "Quiet Prophecy", "prediction": "Trust what you're building in silence." },
+        { "name": "Version Bloom", "prediction": "Not everything needs a name." },
+        { "name": "Lagless Luck", "prediction": "You're closer than you think." }
       ]
     },
-
     "sass": {
       "image": "/assets/homeCity/dist.jpg",
       "items": [
         { "name": "Side-Eye Soda", "line": "…seriously?" },
         { "name": "Machine Mood", "line": "OK." },
+        { "name": "Delicious Mood", "line": "Delicious!" },
         { "name": "Passive Aggressive", "line": "That was… a choice." },
-        { "name": "Dry Response", "line": "Don’t ask." },
-        { "name": "Silent Judgement", "line": "You again." },
-        { "name": "Bare Minimum", "line": "Fine. Next." },
-        { "name": "No Comment", "line": "No opinion." },
-        { "name": "OK Whatever", "line": "Yeah." },
-        { "name": "System Tired", "line": "System logged it." },
-        { "name": "404 Drink", "line": "No." }
+        { "name": "Dry Response", "line": "Don't ask." },
+        { "name": "Silent Judgement", "line": "You?! Again…" },
+        { "name": "Bare Minimum", "line": "Right. Next." },
+        { "name": "No Comment", "line": "No comment." },
+        { "name": "OK Whatever", "line": "Yeah, whatever." },
+        { "name": "System Tired", "line": "Ugh, can't be bothered." },
+        { "name": "404 Drink", "line": "Nope." }
       ]
     }
   },
-
   "markers": {
     "TRIGGER_ABOUT": {
       "title": "Kasia.exe",
       "kicker": "Control panel",
-      "description": "Dev, 3D and design in one body. I like clear systems and bold ideas.",
-      "cta": "Meet me"
+      "description": "Dev, 3D and design in one body. I like clean systems and bold ideas.",
+      "cta": "Get to know me"
     },
-
     "TRIGGER_PROJECT": {
-      "title": "Projects Zone",
-      "kicker": "Builds that live",
-      "description": "Code + design + a lot of iteration. See what I actually ship.",
+      "title": "Project Zone",
+      "kicker": "Builds that come alive",
+      "description": "Code + design + a whole lot of iteration. See what I actually ship.",
       "cta": "Let's go"
     },
-
     "TRIGGER_PORTFOLIO": {
       "title": "Contact Link",
       "kicker": "Ping me",
-      "description": "Got a project, a mission, or chaos to fix? Send a signal — I’ll ship the iteration.",
-      "cta": "Send message"
+      "description": "A project, a mission or some chaos to tame? Send a signal — I'll ship the next iteration.",
+      "cta": "Send"
     },
-
     "TRIGGER_VISION_HOME": {
-      "title": "Back to base",
+      "title": "Back to Base",
       "kicker": "Home, sweet home",
-      "description": "Reset to the lobby. No drama — just re-entry.",
-      "cta": "Return"
+      "description": "Reset to the lobby. No drama — just a re-entry.",
+      "cta": "Go back"
     },
-
     "TRIGGER_GLOW": {
       "label": "CITY://SCAN",
       "items": {
         "TRIGGER_PARKMETRE": {
           "title": "Parking Meter: Final Boss",
-          "kicker": "Real-life paywall",
-          "description": "Here even oxygen feels subscription-based. Relax — I’m still free tier… for now.",
-          "cta": "Alright then",
+          "kicker": "Paywall IRL",
+          "description": "Even the air runs on a subscription here. Don't worry — I'm still on the free tier… for now.",
+          "cta": "Fine, whatever",
           "description2": "Free tier: active. Parking meter: offended."
         },
         "TRIGGER_TRASH": {
-          "title": "Trash: Support 24/7",
-          "kicker": "Ticket handling",
-          "description": "Throw a problem in — it’ll come back as a production bug. Circle of life.",
+          "title": "Trash Can: Support 24/7",
+          "kicker": "Ticket management",
+          "description": "Throw a problem in here — it'll come back as a production bug. The magic of recycling.",
           "cta": "Close ticket",
-          "description2": "Status: RESOLVED ✅ (lie)."
+          "description2": "Status: RESOLVED ✅ (a lie)."
         },
         "TRIGGER_CAR": {
           "title": "Car",
           "kicker": "Parking level: expert",
-          "description": "Parked perfectly. Since 2019. Record still unbeaten.",
+          "description": "Perfectly parked. Since 2019. Record still unbeaten.",
           "cta": "Respect",
-          "description2": "Thanks, not a car — a monument to stability."
+          "description2": "Thanks, it's not a car — it's a monument to stability."
         },
-
         "TRIGGER_DRINK_COFFEE": {
           "title": "Coffee",
           "kicker": "Brain fuel",
-          "description": "Won’t solve problems. But gives +10 focus.",
+          "description": "Doesn't fix problems. But gives you +10 focus.",
           "cta": "Drink",
           "description2": "Coffee consumed. +10 focus, -2 patience."
         },
-
         "TRIGGER_DRINK_DISTRIBUTOR": {
           "title": "Vending Machine",
           "kicker": "Surprise mode",
-          "description": "You press and ask a question. Something happens... ⚠️ The machine has moods.",
-          "cta": "I’m taking it"
+          "description": "Press a button and ask a question. Something happens… ⚠️ This machine has moods.",
+          "cta": "I'll take it"
         }
       }
     },
-
     "TRIGGER_FUN": {
       "label": "??://WTF",
       "items": {
         "TRIGGER_BUS": {
           "title": "Bus to Nowhere",
-          "kicker": "Line: ???",
-          "description": "It always arrives… once you stop waiting. Relatable.",
-          "cta": "Keep waiting",
-          "description2": "We did warn you it’s not coming…"
+          "kicker": "Route: ???",
+          "description": "It always shows up… when you stop waiting. Relatable.",
+          "cta": "I'll wait",
+          "description2": "We told you it wasn't coming…"
         },
-
         "TRIGGER_STAIRS": {
           "title": "Premium Stairs",
           "kicker": "DLC required",
           "description": "They exist. They lead somewhere. Not today.",
-          "cta": "Understood",
-          "description2": "Stairs work. The storyline doesn’t."
+          "cta": "I see",
+          "description2": "The stairs work. The storyline doesn't."
         },
-
         "TRIGGER_FIRE": {
           "title": "Campfire",
           "kicker": "Chill zone",
-          "description": "Fire: on. Chair: present. Missing: marshmallows.",
-          "cta": "Sit",
-          "description2": "Yes, this is therapy. For free."
+          "description": "There's a fire. There's a chair. Just missing marshmallows.",
+          "cta": "Take a seat",
+          "description2": "Yes, this is therapy. Free of charge."
         },
-
         "TRIGGER_NOTHING": {
-          "title": "Fixed point",
+          "title": "Fixed Point",
           "kicker": "No pressure",
-          "description": "Nothing will happen here. And that’s okay.",
+          "description": "Nothing's going to happen here. And that's perfectly fine.",
           "description2": "There is literally NOTHING here. 💀",
-          "cta": "ALL RIGHT"
+          "cta": "OK"
         }
       }
     }
